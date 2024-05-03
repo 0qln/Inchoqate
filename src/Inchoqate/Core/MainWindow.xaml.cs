@@ -33,14 +33,35 @@ public partial class MainWindow : Window
         });
     }
 
+
     private readonly ILogger<MainWindow> _logger = LoggerFactory.CreateLogger<MainWindow>();
-    private float[] Vertices;
-    private uint[] Indices;
-    private int ElementBufferObject;
-    private int VertexBufferObject;
-    private int VertexArrayObject;
-    private Shader Shader;
-    private Texture Texture;
+
+    // Because we're adding a texture, we modify the vertex array to include texture coordinates.
+    // Texture coordinates range from 0.0 to 1.0, with (0.0, 0.0) representing the bottom left, and (1.0, 1.0) representing the top right.
+    // The new layout is three floats to create a vertex, then two floats to create the coordinates.
+    private readonly float[] _vertices =
+    {
+        // Position         Texture coordinates
+         0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+    };
+    private readonly uint[] _indices =
+    {   
+        0, 1, 3,
+        1, 2, 3
+    };
+
+    private int _elementBufferObject;
+
+    private int _vertexBufferObject;
+
+    private int _vertexArrayObject;
+
+    private Shader _shader;
+
+    private Texture _texture;
 
 
 
@@ -55,45 +76,32 @@ public partial class MainWindow : Window
         OpenTkControl.Start(settings);
 
 
-        Vertices = [
-            //Position          Texture coordinates
-             0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-             0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
-        ];
-        
-        Indices = [
-            0, 1, 3,   // first triangle
-            1, 2, 3    // second triangle
-        ];
-
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-        VertexArrayObject = GL.GenVertexArray();
-        GL.BindVertexArray(VertexArrayObject);
+        _vertexArrayObject = GL.GenVertexArray();
+        GL.BindVertexArray(_vertexArrayObject);
 
-        VertexBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.StaticDraw);
+        _vertexBufferObject = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+        GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
 
-        ElementBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, Indices.Length * sizeof(uint), Indices, BufferUsageHint.StaticDraw);
+        _elementBufferObject = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
 
-        Shader = new Shader("ShaderBase.vert", "ShaderBase.frag");
-        Shader.Use();
+        _shader = new Shader("ShaderBase.vert", "ShaderBase.frag");
+        _shader.Use();
 
-        int aPositionLoc = GL.GetAttribLocation(Shader.Handle, "aPosition");
+        int aPositionLoc = GL.GetAttribLocation(_shader.Handle, "aPosition");
         GL.EnableVertexAttribArray(aPositionLoc);
         GL.VertexAttribPointer(aPositionLoc, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
-        int aTexCoordLoc = GL.GetAttribLocation(Shader.Handle, "aTexCoord");
+        int aTexCoordLoc = GL.GetAttribLocation(_shader.Handle, "aTexCoord");
         GL.EnableVertexAttribArray(aTexCoordLoc);
         GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
-        Texture = new Texture("container.png");
-        Texture.Use(TextureUnit.Texture0);
+        _texture = new Texture("container.png");
+        _texture.Use(TextureUnit.Texture0);
     }
 
 
@@ -101,10 +109,12 @@ public partial class MainWindow : Window
     {
         GL.Clear(ClearBufferMask.ColorBufferBit);
 
-        GL.BindVertexArray(VertexArrayObject);
-        Texture.Use(TextureUnit.Texture0);
+        GL.BindVertexArray(_vertexArrayObject);
 
-        GL.DrawElements(PrimitiveType.Triangles, Indices.Length, DrawElementsType.UnsignedInt, 0);
+        _texture.Use(TextureUnit.Texture0);
+        _shader.Use();
+
+        GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
 
         FramesDelta.Text = delta.Milliseconds.ToString();
     }
