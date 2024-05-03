@@ -14,7 +14,7 @@
             Render="OpenTkControl_OnRender"/>
 
         <TextBlock
-            x:Name="FPS"
+            x:Name="FramesDelta"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             FontSize="30"

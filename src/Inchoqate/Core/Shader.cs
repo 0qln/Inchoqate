@@ -5,12 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+
 
 namespace Core
 {
     internal class Shader : IDisposable
     {
+        private readonly ILogger _logger = MainWindow.LoggerFactory.CreateLogger<Shader>();
+
         public readonly int Handle;
+
 
         public Shader(string vertexPath, string fragmentPath)
         {
@@ -26,16 +32,14 @@ namespace Core
             GL.GetShader(VertexShader, ShaderParameter.CompileStatus, out int successVertexShader);
             if (successVertexShader == 0)
             {
-                string infoLog = GL.GetShaderInfoLog(VertexShader);
-                Console.WriteLine(infoLog);
+                _logger.LogError(GL.GetShaderInfoLog(VertexShader));
             }
 
             GL.CompileShader(FragmentShader);
             GL.GetShader(FragmentShader, ShaderParameter.CompileStatus, out int successFragmentShader);
             if (successFragmentShader == 0)
             {
-                string infoLog = GL.GetShaderInfoLog(FragmentShader);
-                Console.WriteLine(infoLog);
+                _logger.LogError(GL.GetShaderInfoLog(FragmentShader));
             }
 
             Handle = GL.CreateProgram();
@@ -48,8 +52,7 @@ namespace Core
             GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int successProgram);
             if (successProgram == 0)
             {
-                string infoLog = GL.GetProgramInfoLog(Handle);
-                Console.WriteLine(infoLog);
+                _logger.LogError(GL.GetProgramInfoLog(Handle));
             }
 
             // Clean up
@@ -88,7 +91,8 @@ namespace Core
             // is not possible.
             if (disposedValue == false)
             {
-                Console.WriteLine("[WARN] GPU Resource leak! Did you forget to call Dispose()?");
+                // TODO: Use logging
+                _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
             }
         }
 
