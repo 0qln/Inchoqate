@@ -29,25 +29,49 @@ namespace Inchoqate.GUI
             set => SetValue(TitleProperty, value);
         }
 
+        private Window? _window;
+
 
         public PrettyTitlebar()
         {
             InitializeComponent();
+
+            Loaded += (_,_) => _window = Window.GetWindow(this);
         }
 
         private void WindowedButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_window is null)
+            {
+                return;
+            }
 
+            _window.WindowState = _window.WindowState switch
+            {
+                WindowState.Normal      => WindowState.Maximized,
+                WindowState.Minimized   => WindowState.Normal,
+                _                       => WindowState.Normal
+            };
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_window is null)
+            {
+                return;
+            }
 
+            _window.WindowState = WindowState.Minimized;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_window is null)
+            {
+                return;
+            }
 
+            _window.Close();
         }
     }
 }
