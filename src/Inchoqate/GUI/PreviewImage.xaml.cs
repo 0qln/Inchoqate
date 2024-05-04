@@ -41,10 +41,10 @@ namespace Inchoqate.GUI
         private readonly float[] _vertices =
         {
             // Position         Texture coordinates
-             0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-             0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // top right
+             1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f  // top left
         };
 
         private readonly uint[] _indices =
@@ -102,6 +102,24 @@ namespace Inchoqate.GUI
             _shader.Use();
 
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+        }
+
+        private void Border_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double aspectRatio = (double)_texture.Height / _texture.Width;
+            double boundsRatio = ActualHeight / ActualWidth;
+
+            OpenTkControl.Width = ActualWidth;
+            OpenTkControl.Height = ActualHeight;
+
+            if (boundsRatio > aspectRatio)
+            {
+                OpenTkControl.Height = ActualWidth * aspectRatio;
+            }
+            else if (boundsRatio < aspectRatio)
+            {
+                OpenTkControl.Width = ActualHeight / aspectRatio;
+            }
         }
     }
 }

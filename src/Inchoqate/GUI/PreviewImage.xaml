@@ -7,11 +7,15 @@
              xmlns:local="clr-namespace:Inchoqate.GUI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="Black">
+    <Border Background="DarkGray"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            SizeChanged="Border_SizeChanged">
 
         <glWpfControl:GLWpfControl x:Name="OpenTkControl" 
                                    Render="OpenTkControl_OnRender"
-                                   Margin="10"/>
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
         
-    </Grid>
+    </Border>
 </UserControl>

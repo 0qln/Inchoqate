@@ -12,6 +12,8 @@ namespace Inchoqate.GUI
     public class Texture
     {
         public readonly int Handle;
+        public readonly int Width;
+        public readonly int Height;
 
 
         public Texture(string path)
@@ -25,7 +27,9 @@ namespace Inchoqate.GUI
 
             using Stream stream = File.OpenRead(path);
             ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
+            Width = image.Width;
+            Height = image.Height;
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
 
             //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
