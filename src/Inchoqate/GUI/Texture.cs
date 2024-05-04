@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Miscellaneous.Logging;
 using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
 
@@ -11,6 +13,8 @@ namespace Inchoqate.GUI
 {
     public class Texture
     {
+        private readonly ILogger<Texture> _logger = FileLoggerFactory.CreateLogger<Texture>();
+
         public readonly int Handle;
         public readonly int Width;
         public readonly int Height;
@@ -38,6 +42,9 @@ namespace Inchoqate.GUI
             //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+
+            _logger.LogInformation($"Created texture: {path}");
         }
 
 
