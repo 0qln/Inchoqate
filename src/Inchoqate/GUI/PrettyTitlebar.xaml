@@ -5,12 +5,86 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inchoqate.GUI"
              mc:Ignorable="d" 
-             d:DesignHeight="30" d:DesignWidth="800">
+             d:DesignHeight="30" d:DesignWidth="800"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             x:Name="This">
 
-    <Grid>
+    <UserControl.Resources>
+
+        <Style x:Key="ApplicationButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="{Binding Path=ActualHeight, ElementName=This}"/>
+            <Setter Property="Width" Value="{Binding Path=ActualHeight, ElementName=This}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="BackgroundElement">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="BackgroundElement" Value="Gray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         
-        <!--TODO: Write the content of the titlebar.-->
+    </UserControl.Resources>
+
+    <Grid VerticalAlignment="Stretch"
+          HorizontalAlignment="Stretch">
         
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
+            <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
+            <ColumnDefinition x:Name="ActionButtonsColumn" Width="Auto"/>
+            <ColumnDefinition x:Name="MiscellaneousColumn" Width="*"/>
+            <ColumnDefinition x:Name="ApplicationButtonsColumn" Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Image x:Name="Icon"
+               Grid.Column="0"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"/>
+
+        <TextBlock x:Name="TitleTextBlock"
+                   Grid.Column="1"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Text="{Binding Path=Title, ElementName=This}"
+                   Foreground="{Binding Path=Foreground, ElementName=This}"
+                   Margin="10, 0, 10, 0"/>
+
+
+        <StackPanel x:Name="ActionButtons"
+                    Grid.Column="2"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"/>
+
+        <StackPanel x:Name="ApplicationButtons"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Orientation="Horizontal"
+                    Grid.Column="4">
+
+            <Button x:Name="MinimizeButton"
+                    Style="{StaticResource ApplicationButtonStyle}"
+                    Content="-"/>
+            <Button x:Name="WindowedButton"
+                    Style="{StaticResource ApplicationButtonStyle}"
+                    Content="o"/>
+            <Button x:Name="CloseButton"
+                    Style="{StaticResource ApplicationButtonStyle}"
+                    Content="x"/>
+
+        </StackPanel>
+
     </Grid>
     
 </UserControl>

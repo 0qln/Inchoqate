@@ -20,21 +20,19 @@ namespace Inchoqate.GUI
     /// </summary>
     public partial class PrettyTitlebar : UserControl
     {
-        public Window ContentWindow { get; private set; }
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
+            "Title", typeof(string), typeof(PrettyTitlebar));
 
-
-        public void Initiate(Window contentWindow)
+        public string Title
         {
-            ContentWindow = contentWindow;
-
-            Background = Brushes.Red;
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
         }
 
-#pragma warning disable CS8618 
+
         public PrettyTitlebar()
         {
             InitializeComponent();
         }
-#pragma warning restore CS8618 
     }
 }
