@@ -22,7 +22,7 @@ namespace GUI
             IntPtr handle = new WindowInteropHelper(_window).Handle;
             HwndSource.FromHwnd(handle).AddHook(new HwndSourceHook(WindowProc));
 
-            _logger.LogInformation($"Fixed window: {_window.Name}");
+            _logger.LogInformation($"Fixed window: {_window.Title}");
         }
 
         private static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

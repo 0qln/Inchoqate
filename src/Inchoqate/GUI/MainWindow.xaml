@@ -8,9 +8,9 @@
         Height="450" 
         Width="800"
         Style="{StaticResource BorderlessWindow}"
-        x:Name="This"
         MouseMove="This_MouseMove"
-        MouseUp="This_MouseUp">
+        MouseUp="This_MouseUp"
+        Title="MainWindow">
 
     <Window.Resources>
     </Window.Resources>
