@@ -6,12 +6,24 @@
         xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
         xmlns:local="clr-namespace:Inchoqate.GUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Height="450" 
+        Width="800"
+        Title="flkaejf"
+        Style="{StaticResource BorderlessWindow}"
+        SourceInitialized="Window_SourceInitialized">
+    
     <Grid>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        
         <glWpfControl:GLWpfControl 
             x:Name="OpenTkControl" 
-            Render="OpenTkControl_OnRender"/>
+            Render="OpenTkControl_OnRender"
+            Grid.Row="1"/>
 
     </Grid>
 </Window>

@@ -4,6 +4,37 @@
              xmlns:local="clr-namespace:Inchoqate.GUI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
+        <Style x:Key="BorderlessWindow" TargetType="{x:Type Window}">
+            <Setter Property="WindowStyle" Value="None"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Window}">
+                        <Grid>
+                            <Border Background="Black"  
+                                    Margin="{Binding Source={x:Static SystemParameters.Border}, Path=WindowNonClientFrameThickness}">
+                                <ContentPresenter Content="{TemplateBinding Content}" />
+                            </Border>
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
+                                       VerticalAlignment="Top" HorizontalAlignment="Left"   
+                                       Margin="36,8,0,0"/>
+                            <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"  
+                                   VerticalAlignment="Top" HorizontalAlignment="Left"  
+                                   Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(WindowChrome.WindowChrome).ResizeBorderThickness}"   
+                                   Width="{Binding Source={x:Static SystemParameters.BorderWidth}, Path=SmallIconSize.Width}"  
+                                   WindowChrome.IsHitTestVisibleInChrome="True"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
     </Application.Resources>
 </Application>
