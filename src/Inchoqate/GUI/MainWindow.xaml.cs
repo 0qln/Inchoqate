@@ -159,5 +159,37 @@ namespace Inchoqate.GUI
         private static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
 
         #endregion
+
+
+        #region Seperator logic
+
+        public bool Seperator_IsDragging { get; private set; }
+        private Point Mouse_Position;
+
+        private void Seperator_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Seperator_IsDragging = true;
+        }
+
+        private void Seperator_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Seperator_IsDragging = false;
+        }
+
+        private void This_MouseMove(object sender, MouseEventArgs e)
+        {
+            var nextPosition = e.GetPosition(this);
+
+            if (Seperator_IsDragging)
+            {
+                var mouseDelta = nextPosition - Mouse_Position;
+                if (EditorInputs.Width >= mouseDelta.X)
+                    EditorInputs.Width -= mouseDelta.X;
+            }
+
+            Mouse_Position = e.GetPosition(this);
+        }
+
+        #endregion
     }
 }

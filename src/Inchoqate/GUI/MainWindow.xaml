@@ -9,7 +9,8 @@
         Width="800"
         Style="{StaticResource BorderlessWindow}"
         SourceInitialized="Window_SourceInitialized"
-        x:Name="This">
+        x:Name="This"
+        MouseMove="This_MouseMove">
 
     <Window.Resources>
     </Window.Resources>
@@ -38,9 +39,16 @@
             <local:PreviewImage x:Name="PreviewImage"
                                 Grid.Column="0"/>
 
+            <Rectangle x:Name="Seperator"
+                       Grid.Column="1"
+                       Fill="White"
+                       MouseDown="Seperator_MouseDown"
+                       MouseUp="Seperator_MouseUp"/>
+
             <local:EditorInputs x:Name="EditorInputs"
                                 Grid.Column="2"
-                                Width="200"/>
+                                Width="200"
+                                Background="Maroon"/>
 
         </Grid>
         
