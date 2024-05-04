@@ -75,13 +75,16 @@
 
             <Button x:Name="MinimizeButton"
                     Style="{StaticResource ApplicationButtonStyle}"
-                    Content="-"/>
+                    Content="―"
+                    Click="MinimizeButton_Click"/>
             <Button x:Name="WindowedButton"
                     Style="{StaticResource ApplicationButtonStyle}"
-                    Content="o"/>
+                    Content="▢"
+                    Click="WindowedButton_Click"/>
             <Button x:Name="CloseButton"
                     Style="{StaticResource ApplicationButtonStyle}"
-                    Content="x"/>
+                    Content="✕"
+                    Click="CloseButton_Click"/>
 
         </StackPanel>
 

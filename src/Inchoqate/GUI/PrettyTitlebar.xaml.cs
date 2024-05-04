@@ -34,5 +34,20 @@ namespace Inchoqate.GUI
         {
             InitializeComponent();
         }
+
+        private void WindowedButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

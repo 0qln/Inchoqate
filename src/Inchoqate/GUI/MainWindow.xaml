@@ -3,14 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
         xmlns:local="clr-namespace:Inchoqate.GUI"
         mc:Ignorable="d"
         Height="450" 
         Width="800"
         Style="{StaticResource BorderlessWindow}"
-        SourceInitialized="Window_SourceInitialized">
-    
+        SourceInitialized="Window_SourceInitialized"
+        x:Name="This">
+
+    <Window.Resources>
+    </Window.Resources>
+
     <Grid>
 
         <Grid.RowDefinitions>
@@ -20,14 +23,23 @@
 
         <local:PrettyTitlebar x:Name="Titlebar"
                               Grid.Row="0"
-                              Background="Black"
+                              Background="#000000"
                               Title="Inchoqate"
                               Foreground="White"/>
 
+        <Grid Grid.Row="1">
 
-        <glWpfControl:GLWpfControl x:Name="OpenTkControl" 
-                                   Render="OpenTkControl_OnRender"
-                                   Grid.Row="1"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <local:PreviewImage />
+
+        </Grid>
+        
+        
 
     </Grid>
 </Window>
