@@ -17,12 +17,14 @@ using OpenTK.Graphics.OpenGL4;
 using System.IO;
 using OpenTK.Compute.OpenCL;
 using Inchoqate.Miscellaneous;
+using Utillities.Wpf;
 
 namespace Inchoqate.GUI
 {
     public partial class MainWindow : Window
     {
         private readonly ILogger<MainWindow> _logger = FileLoggerFactory.CreateLogger<MainWindow>();
+        private readonly WindowHandle _windowHandle;
 
 
         private readonly float[] _vertices =
@@ -55,7 +57,12 @@ namespace Inchoqate.GUI
         {
             BuildFiles.Initiate(clearOldData: true);
 
+
             InitializeComponent();
+
+
+            _windowHandle = new WindowHandle(this);
+
 
             var settings = new GLWpfControlSettings
             {

@@ -21,4 +21,10 @@
     <Folder Include="Shaders\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Utillities">
+      <HintPath>..\Miscellaneous\Libraries\Utillities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
