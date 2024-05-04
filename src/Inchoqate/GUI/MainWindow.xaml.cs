@@ -176,7 +176,7 @@ namespace Inchoqate.GUI
             Seperator_IsDragging = false;
         }
 
-        private void This_MouseMove(object sender, MouseEventArgs e)
+        private void Seperator_Dragging(object sender, MouseEventArgs e)
         {
             var nextPosition = e.GetPosition(this);
 
@@ -186,10 +186,21 @@ namespace Inchoqate.GUI
                 if (EditorInputs.Width >= mouseDelta.X)
                     EditorInputs.Width -= mouseDelta.X;
             }
+        }
+
+        #endregion
+
+
+        private void This_MouseMove(object sender, MouseEventArgs e)
+        {
+            Seperator_Dragging(sender, e);
 
             Mouse_Position = e.GetPosition(this);
         }
 
-        #endregion
+        private void This_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Seperator_MouseUp(sender, e);
+        }
     }
 }

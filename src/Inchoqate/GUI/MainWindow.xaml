@@ -10,7 +10,8 @@
         Style="{StaticResource BorderlessWindow}"
         SourceInitialized="Window_SourceInitialized"
         x:Name="This"
-        MouseMove="This_MouseMove">
+        MouseMove="This_MouseMove"
+        MouseUp="This_MouseUp">
 
     <Window.Resources>
     </Window.Resources>
