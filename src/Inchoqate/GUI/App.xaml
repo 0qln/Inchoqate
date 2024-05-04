@@ -20,8 +20,8 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Window}">
                         <Grid>
-                            <Border x:Name="WindowContainer">
-                                <ContentPresenter Content="{TemplateBinding Content}" />
+                            <Border x:Name="WindowContainer" Loaded="BorderlessWindowContainer_Loaded">
+                                <ContentPresenter Content="{TemplateBinding Content}"/>
                             </Border>
                         </Grid>
                     </ControlTemplate>

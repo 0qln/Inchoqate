@@ -8,7 +8,6 @@
         Height="450" 
         Width="800"
         Style="{StaticResource BorderlessWindow}"
-        SourceInitialized="Window_SourceInitialized"
         x:Name="This"
         MouseMove="This_MouseMove"
         MouseUp="This_MouseUp">
