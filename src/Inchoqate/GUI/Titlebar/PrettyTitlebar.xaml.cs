@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Miscellaneous.Logging;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +16,40 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Inchoqate.GUI
+namespace Inchoqate.GUI.Titlebar
 {
-    /// <summary>
-    /// Interaction logic for PrettyTitlebar.xaml
-    /// </summary>
+    public class ActionButtonCollection : ObservableCollection<ActionButton>
+    {
+        public ActionButtonCollection()
+        {
+        }
+
+
+        public void AddButtons(IEnumerable<ActionButton> buttons)
+        {
+            foreach (var button in buttons)
+            {
+                this.Add(button);
+            }
+        }
+    }
+
+
     public partial class PrettyTitlebar : UserControl
     {
+        private readonly ILogger<PrettyTitlebar> _logger = FileLoggerFactory.CreateLogger<PrettyTitlebar>();
+
+
+        public static readonly DependencyProperty ActionButtonsProperty = DependencyProperty.Register(
+            "ActionButtons", typeof(ActionButtonCollection), typeof(PrettyTitlebar));
+
+        public ActionButtonCollection ActionButtons
+        {
+            get => (ActionButtonCollection)GetValue(ActionButtonsProperty);
+            set => SetValue(ActionButtonsProperty, value);
+        }
+
+
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
             "Title", typeof(string), typeof(PrettyTitlebar));
 
@@ -29,6 +59,7 @@ namespace Inchoqate.GUI
             set => SetValue(TitleProperty, value);
         }
 
+
         private Window? _window;
 
 
@@ -37,9 +68,14 @@ namespace Inchoqate.GUI
             InitializeComponent();
 
             Loaded += (_,_) => _window = Window.GetWindow(this);
+
+            //ActionButtons = new ActionButtonCollection([
+            //    new ActionButton { Title = "Example action 1" },
+            //    new ActionButton { Title = "Example action 2" }
+            //]);
         }
 
-        private void WindowedButton_Click(object sender, RoutedEventArgs e)
+        private void E_WindowedButton_Click(object sender, RoutedEventArgs e)
         {
             if (_window is null)
             {
@@ -54,7 +90,7 @@ namespace Inchoqate.GUI
             };
         }
 
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        private void E_MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             if (_window is null)
             {
@@ -64,7 +100,7 @@ namespace Inchoqate.GUI
             _window.WindowState = WindowState.Minimized;
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private void E_CloseButton_Click(object sender, RoutedEventArgs e)
         {
             if (_window is null)
             {

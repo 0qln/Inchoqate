@@ -20,11 +20,25 @@ using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.Windows.Shell;
 using System.Globalization;
+using Inchoqate.GUI.Titlebar;
+using System.Collections.ObjectModel;
 
 namespace Inchoqate.GUI
 {
+    public class ActionButtonCollection : Titlebar.ActionButtonCollection
+    {
+        public ActionButtonCollection()
+        {
+            Add(new ActionButton { Title = "Example action 1" });
+            Add(new ActionButton { Title = "Example action 2" });
+        }
+    }
+
+
     public partial class MainWindow : Window
     {
+
+
         private readonly ILogger<MainWindow> _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
 

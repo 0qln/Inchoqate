@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inchoqate.GUI"
+        xmlns:titlebar="clr-namespace:Inchoqate.GUI.Titlebar"
         mc:Ignorable="d"
         Height="450" 
         Width="800"
@@ -13,6 +14,14 @@
         Title="MainWindow">
 
     <Window.Resources>
+
+        <local:ActionButtonCollection x:Key="K_TitlebarActionButtons"/>        
+        <Style x:Key="K_TitlebarStyle" TargetType="titlebar:PrettyTitlebar">
+            <Setter Property="Title" Value="Inchoqate"/>
+            <Setter Property="Background" Value="{DynamicResource Background_2}"/>
+            <Setter Property="ActionButtons" Value="{Binding Source={StaticResource K_TitlebarActionButtons}}"/>
+        </Style>
+        
     </Window.Resources>
 
     <Grid>
@@ -22,11 +31,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <local:PrettyTitlebar x:Name="Titlebar"
-                              Grid.Row="0"
-                              Background="#000000"
-                              Title="Inchoqate"
-                              Foreground="White"/>
+        <titlebar:PrettyTitlebar x:Name="Titlebar"
+                                 Grid.Row="0"
+                                 Style="{StaticResource K_TitlebarStyle}"/>
 
         <Grid Grid.Row="1">
 
@@ -47,8 +54,7 @@
 
             <local:EditorInputs x:Name="EditorInputs"
                                 Grid.Column="2"
-                                Width="200"
-                                Background="Maroon"/>
+                                Width="200"/>
 
         </Grid>
         

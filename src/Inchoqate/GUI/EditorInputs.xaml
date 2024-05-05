@@ -6,10 +6,12 @@
              xmlns:local="clr-namespace:Inchoqate.GUI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    
+    <Grid Background="{DynamicResource Background_2}">
 
         <Button x:Name="ChangeTheme"
                 Click="ChangeTheme_Click">Change Theme</Button>
         
     </Grid>
+    
 </UserControl>

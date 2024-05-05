@@ -29,7 +29,7 @@ namespace Inchoqate.GUI
         private void ChangeTheme_Click(object sender, RoutedEventArgs e)
         {
             var app = (App)Application.Current;
-            app.ChangeTheme(new Uri(BuildFiles.Get("Themes/Blue.xaml")));
+            app?.ChangeTheme(new Uri(BuildFiles.Get("Themes/Blue.xaml")));
         }
     }
 }
