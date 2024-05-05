@@ -24,6 +24,7 @@ namespace Inchoqate.Miscellaneous
         
         private static readonly string[] SourceDirs = [
             Path.GetFullPath(Path.Combine(AppDir, "../../../Shaders/")),
+            Path.GetFullPath(Path.Combine(AppDir, "../../../Themes/")),
             Path.GetFullPath(Path.Combine(AppDir, "../../../../Sample-Images/"))
         ];
 
