@@ -69,9 +69,13 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
             
-            <!--TODO: Why is this showing vertically?-->
-
-            <ItemsControl ItemsSource="{Binding Path=ActionButtons, ElementName=E_This}"/>
+            <ItemsControl ItemsSource="{Binding Path=ActionButtons, ElementName=E_This}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
             
         </StackPanel>
 
