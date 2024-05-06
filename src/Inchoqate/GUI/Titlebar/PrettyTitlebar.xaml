@@ -68,6 +68,8 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
+            
+            <!--TODO: Why is this showing vertically?-->
 
             <ItemsControl ItemsSource="{Binding Path=ActionButtons, ElementName=E_This}"/>
             

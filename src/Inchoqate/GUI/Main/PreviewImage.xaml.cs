@@ -18,7 +18,7 @@ using OpenTK.Graphics.OpenGL4;
 using Microsoft.Extensions.Logging;
 using Miscellaneous.Logging;
 
-namespace Inchoqate.GUI
+namespace Inchoqate.GUI.Main
 {
     /// <summary>
     /// Interaction logic for PreviewImage.xaml

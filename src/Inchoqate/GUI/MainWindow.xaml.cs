@@ -29,8 +29,16 @@ namespace Inchoqate.GUI
     {
         public ActionButtonCollection()
         {
-            Add(new ActionButton { Title = "Example action 1" });
-            Add(new ActionButton { Title = "Example action 2" });
+            // This is null in xaml preview and will raise an annoying error.
+            // TODO: relocate the resources, s.t. the preview can show the action buttons.
+            if (Application.Current.MainWindow is not null)
+            {
+                var resources = Application.Current.MainWindow.Resources;
+                Add((ActionButton)resources["K_ActionButton_File"]);
+                Add((ActionButton)resources["K_ActionButton_View"]);
+                Add((ActionButton)resources["K_ActionButton_Edit"]);
+                Add((ActionButton)resources["K_ActionButton_Settings"]);
+            }
         }
     }
 

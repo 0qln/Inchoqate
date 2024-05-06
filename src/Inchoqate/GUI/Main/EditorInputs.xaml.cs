@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Inchoqate.GUI
+namespace Inchoqate.GUI.Main
 {
     /// <summary>
     /// Interaction logic for EditorInputs.xaml

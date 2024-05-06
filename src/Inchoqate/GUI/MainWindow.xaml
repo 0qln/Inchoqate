@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inchoqate.GUI"
+        xmlns:main="clr-namespace:Inchoqate.GUI.Main"
         xmlns:titlebar="clr-namespace:Inchoqate.GUI.Titlebar"
         mc:Ignorable="d"
         Height="450" 
@@ -14,6 +15,11 @@
         Title="MainWindow">
 
     <Window.Resources>
+
+        <titlebar:ActionButton x:Key="K_ActionButton_File" Title="File"/>
+        <titlebar:ActionButton x:Key="K_ActionButton_View" Title="View"/>
+        <titlebar:ActionButton x:Key="K_ActionButton_Edit" Title="Edit"/>
+        <titlebar:ActionButton x:Key="K_ActionButton_Settings" Title="Settings"/>
 
         <local:ActionButtonCollection x:Key="K_TitlebarActionButtons"/>        
         <Style x:Key="K_TitlebarStyle" TargetType="titlebar:PrettyTitlebar">
@@ -43,7 +49,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <local:PreviewImage x:Name="PreviewImage"
+            <main:PreviewImage x:Name="PreviewImage"
                                 Grid.Column="0"/>
 
             <Rectangle x:Name="Seperator"
@@ -52,7 +58,7 @@
                        MouseDown="Seperator_MouseDown"
                        MouseUp="Seperator_MouseUp"/>
 
-            <local:EditorInputs x:Name="EditorInputs"
+            <main:EditorInputs x:Name="EditorInputs"
                                 Grid.Column="2"
                                 Width="200"/>
 
