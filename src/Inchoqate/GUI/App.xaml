@@ -17,9 +17,16 @@
 
 
             <Style x:Key="BorderlessWindow" TargetType="{x:Type Window}">
+                
+                <!-- 
+                This can be removed to enable smooth window resizing animations, 
+                but then the window resizing glitch fix will also sieze to work. 
+                -->
                 <Setter Property="WindowStyle" Value="None"/>
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="AllowsTransparency" Value="True"/>
+                <!---->
+                
                 <Setter Property="WindowChrome.WindowChrome">
                     <Setter.Value>
                         <WindowChrome x:Name="WindowChrome"
@@ -27,6 +34,7 @@
                                   CaptionHeight="30"/>
                     </Setter.Value>
                 </Setter>
+                
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Window}">
@@ -38,6 +46,7 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+                
             </Style>
             
             

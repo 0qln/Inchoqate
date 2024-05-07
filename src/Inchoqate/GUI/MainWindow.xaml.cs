@@ -46,6 +46,8 @@ namespace Inchoqate.GUI
 
             InitializeComponent();
 
+            // Enables rounded corners for the borderless window.
+            // TODO: When maximized, the corners are still rounded.
             Wrapping = WindowWrapper.Wrap(this);
 
             _logger.LogInformation("Main window initiated.");

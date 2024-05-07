@@ -15,7 +15,7 @@ namespace Inchoqate.GUI
     {
         public ResourceDictionary ThemeDictionary
         {
-            // You could probably get it via its name with some query logic as well.
+            // TODO: Could probably get this via its name with some query logic.
             get { return Resources.MergedDictionaries[0]; }
         }
 
