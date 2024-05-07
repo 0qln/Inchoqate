@@ -32,11 +32,8 @@
 
                     <ItemsControl x:Name="E_ItemsControl">
                         
-                        <TextBlock Text="Example Action 1"
-                                   Grid.Row="0"/>
-
-                        <TextBlock Text="Example Action 1 with some longer text"
-                                   Grid.Row="0"/>
+                        <TextBlock Text="Example Action 1"/>
+                        <TextBlock Text="Example Action 1 with some longer text"/>
 
                     </ItemsControl>                    
 

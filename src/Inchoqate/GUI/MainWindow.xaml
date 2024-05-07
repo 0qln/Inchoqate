@@ -12,59 +12,84 @@
         Style="{StaticResource BorderlessWindow}"
         MouseMove="This_MouseMove"
         MouseUp="This_MouseUp"
-        Title="MainWindow">
+        Title="MainWindow"
+        x:Name="E_This">
 
     <Window.Resources>
 
-        <titlebar:ActionButton x:Key="K_ActionButton_File" Title="File"/>
-        <titlebar:ActionButton x:Key="K_ActionButton_View" Title="View"/>
-        <titlebar:ActionButton x:Key="K_ActionButton_Edit" Title="Edit"/>
-        <titlebar:ActionButton x:Key="K_ActionButton_Settings" Title="Settings"/>
-
-        <local:ActionButtonCollection x:Key="K_TitlebarActionButtons"/>        
         <Style x:Key="K_TitlebarStyle" TargetType="titlebar:PrettyTitlebar">
             <Setter Property="Title" Value="Inchoqate"/>
             <Setter Property="Background" Value="{DynamicResource Background_2}"/>
-            <Setter Property="ActionButtons" Value="{Binding Source={StaticResource K_TitlebarActionButtons}}"/>
         </Style>
         
     </Window.Resources>
 
-    <Grid>
+    <Canvas x:Name="E_MainCanvas">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <AdornerDecorator >
 
-        <titlebar:PrettyTitlebar x:Name="Titlebar"
-                                 Grid.Row="0"
-                                 Style="{StaticResource K_TitlebarStyle}"/>
 
-        <Grid Grid.Row="1">
+            <Grid Width="{Binding Path=Width, ElementName=E_This}"
+              Height="{Binding Path=Height, ElementName=E_This}">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <main:PreviewImage x:Name="PreviewImage"
-                                Grid.Column="0"/>
 
-            <Rectangle x:Name="Seperator"
-                       Grid.Column="1"
-                       Fill="White"
-                       MouseDown="Seperator_MouseDown"
-                       MouseUp="Seperator_MouseUp"/>
+                <titlebar:PrettyTitlebar x:Name="Titlebar"
+                                         Grid.Row="0"
+                                         Style="{StaticResource K_TitlebarStyle}"
+                                         ClipToBounds="False">
 
-            <main:EditorInputs x:Name="EditorInputs"
-                                Grid.Column="2"
-                                Width="200"/>
+                    <titlebar:PrettyTitlebar.ActionButtons>
+                        <titlebar:ActionButtonCollection>
+                            <titlebar:ActionButton Title="AButton 1"/>
+                            <titlebar:ActionButton Title="AButton 2"/>
+                        </titlebar:ActionButtonCollection>
+                    </titlebar:PrettyTitlebar.ActionButtons>
+                    
+                </titlebar:PrettyTitlebar>
 
-        </Grid>
-        
-        
+                <Grid Grid.Row="1">
 
-    </Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <main:PreviewImage x:Name="PreviewImage"
+                                        Grid.Column="0"/>
+
+                    <Rectangle x:Name="Seperator"
+                                Grid.Column="1"
+                                Fill="White"
+                                MouseDown="Seperator_MouseDown"
+                                MouseUp="Seperator_MouseUp"/>
+
+                    <main:EditorInputs x:Name="EditorInputs"
+                                        Grid.Column="2"
+                                        Width="200"/>
+
+                </Grid>
+
+                <Grid Grid.Row="0" Height="20" >
+
+                    <!--<AdornerDecorator>
+                        <StackPanel>
+                            <TextBlock Foreground="White" Text="aekflj"></TextBlock>
+                            <TextBlock Foreground="White" Text="lakjfe"></TextBlock>
+                        </StackPanel>
+                    </AdornerDecorator>-->
+                
+                </Grid>
+
+            </Grid>
+            
+        </AdornerDecorator>
+
+    </Canvas>
+    
 </Window>

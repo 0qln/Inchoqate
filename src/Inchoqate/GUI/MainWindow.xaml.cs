@@ -25,26 +25,16 @@ using System.Collections.ObjectModel;
 
 namespace Inchoqate.GUI
 {
-    public class ActionButtonCollection : Titlebar.ActionButtonCollection
-    {
-        public ActionButtonCollection()
-        {
-            // This is null in xaml preview and will raise an annoying error.
-            // TODO: relocate the resources, s.t. the preview can show the action buttons.
-            if (Application.Current.MainWindow is not null)
-            {
-                var resources = Application.Current.MainWindow.Resources;
-                Add((ActionButton)resources["K_ActionButton_File"]);
-                Add((ActionButton)resources["K_ActionButton_View"]);
-                Add((ActionButton)resources["K_ActionButton_Edit"]);
-                Add((ActionButton)resources["K_ActionButton_Settings"]);
-            }
-        }
-    }
-
-
     public partial class MainWindow : Window
     {
+        public static readonly DependencyProperty WrappingProperty = DependencyProperty.Register(
+            "Wrapping", typeof(WindowWrapping), typeof(MainWindow));
+
+        public WindowWrapping Wrapping
+        {
+            get => (WindowWrapping)GetValue(WrappingProperty); 
+            set => SetValue(WrappingProperty, value);
+        }
 
 
         private readonly ILogger<MainWindow> _logger = FileLoggerFactory.CreateLogger<MainWindow>();
@@ -55,6 +45,8 @@ namespace Inchoqate.GUI
             BuildFiles.Initiate(clearOldData: true);
 
             InitializeComponent();
+
+            Wrapping = WindowWrapper.Wrap(this);
 
             _logger.LogInformation("Main window initiated.");
         }

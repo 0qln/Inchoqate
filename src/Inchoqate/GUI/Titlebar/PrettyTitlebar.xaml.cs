@@ -23,15 +23,6 @@ namespace Inchoqate.GUI.Titlebar
         public ActionButtonCollection()
         {
         }
-
-
-        public void AddButtons(IEnumerable<ActionButton> buttons)
-        {
-            foreach (var button in buttons)
-            {
-                this.Add(button);
-            }
-        }
     }
 
 
@@ -68,11 +59,6 @@ namespace Inchoqate.GUI.Titlebar
             InitializeComponent();
 
             Loaded += (_,_) => _window = Window.GetWindow(this);
-
-            //ActionButtons = new ActionButtonCollection([
-            //    new ActionButton { Title = "Example action 1" },
-            //    new ActionButton { Title = "Example action 2" }
-            //]);
         }
 
         private void E_WindowedButton_Click(object sender, RoutedEventArgs e)
