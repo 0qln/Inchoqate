@@ -10,20 +10,65 @@ using System.Windows;
 using System.Windows.Interop;
 using Utillities.Wpf;
 
-namespace GUI
+namespace Inchoqate.GUI
 {
-    public class BorderlessWindow(Window window)
+    public class BorderlessWindow : Window
     {
         private readonly ILogger<BorderlessWindow> _logger = FileLoggerFactory.CreateLogger<BorderlessWindow>();
-        private readonly Window _window = window;
+        private int _cornerRadiusCache;
 
 
-        public void FixSizingGlitch()
+        public static readonly DependencyProperty WrappingProperty = DependencyProperty.Register(
+            "Wrapping", typeof(WindowWrapping), typeof(MainWindow));
+
+        public WindowWrapping Wrapping
         {
-            IntPtr handle = new WindowInteropHelper(_window).Handle;
+            get => (WindowWrapping)GetValue(WrappingProperty);
+            set => SetValue(WrappingProperty, value);
+        }
+
+
+        public BorderlessWindow()
+        {
+            Loaded += delegate
+            {
+                FixSizingGlitch();
+                FixCornerGlitch();
+            };
+
+            Initialized += delegate
+            {
+                // Enables rounded corners for the borderless window.
+                Wrapping = WindowWrapper.Wrap(this);
+            };
+        }
+
+
+        private void FixCornerGlitch()
+        {
+            void UpdateCorners()
+            {
+                if (WindowState == WindowState.Normal)
+                {
+                    Wrapping.CornerRadius = _cornerRadiusCache;
+                }
+                else
+                {
+                    _cornerRadiusCache = Wrapping.CornerRadius;
+                    Wrapping.CornerRadius = 0;
+                }
+            }
+
+            SizeChanged += delegate { UpdateCorners(); };
+            StateChanged += delegate { UpdateCorners(); };
+        }
+
+        private void FixSizingGlitch()
+        {
+            IntPtr handle = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(handle).AddHook(new HwndSourceHook(WindowProc));
 
-            _logger.LogInformation($"Fixed window: {_window.Title}");
+            _logger.LogInformation($"Fixed borderless window: {this.Title}");
         }
 
         private static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

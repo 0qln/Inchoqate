@@ -26,42 +26,14 @@ using Inchoqate.GUI.Main.Editor.FlowChart;
 
 namespace Inchoqate.GUI
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : BorderlessWindow
     {
-        public static readonly DependencyProperty WrappingProperty = DependencyProperty.Register(
-            "Wrapping", typeof(WindowWrapping), typeof(MainWindow));
-
-        public WindowWrapping Wrapping
-        {
-            get => (WindowWrapping)GetValue(WrappingProperty); 
-            set => SetValue(WrappingProperty, value);
-        }
-
-
         private readonly ILogger<MainWindow> _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
 
         public MainWindow()
         {
-            BuildFiles.Initiate(clearOldData: true);
-
             InitializeComponent();
-
-            // Enables rounded corners for the borderless window.
-            // TODO: When maximized, the corners are still rounded.
-            Wrapping = WindowWrapper.Wrap(this);
-
-            E_Titlebar.Windowed += delegate
-            {
-                if (WindowState == WindowState.Normal)
-                {
-                    Wrapping.CornerRadius = 15;
-                }
-                else
-                {
-                    Wrapping.CornerRadius = 0;
-                }
-            };
 
             _logger.LogInformation("Main window initiated.");
         }

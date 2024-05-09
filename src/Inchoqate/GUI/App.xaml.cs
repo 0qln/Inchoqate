@@ -1,4 +1,4 @@
-﻿using GUI;
+﻿using Inchoqate.Miscellaneous;
 using System.Configuration;
 using System.Data;
 using System.Runtime.InteropServices;
@@ -20,6 +20,12 @@ namespace Inchoqate.GUI
         }
 
 
+        public App()
+        {
+            BuildFiles.Initiate(clearOldData: true);
+        }
+
+
         public void ChangeTheme(Uri uri)
         {
             ThemeDictionary.MergedDictionaries.Clear();
@@ -29,21 +35,6 @@ namespace Inchoqate.GUI
 
         private void BorderlessWindowContainer_Loaded(object sender, RoutedEventArgs e)
         {
-            var container = (Border)sender;
-            var window = Window.GetWindow(container);
-            
-            if (window is null)
-            {
-                container.Loaded += (_, _) =>
-                {
-                    window = Window.GetWindow(container);
-                    new BorderlessWindow(window).FixSizingGlitch();
-                };
-            }
-            else
-            {
-                new BorderlessWindow(window).FixSizingGlitch();
-            }
         }
     }
 }
