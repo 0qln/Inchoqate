@@ -54,7 +54,10 @@ namespace Inchoqate.GUI
                 }
                 else
                 {
-                    _cornerRadiusCache = Wrapping.CornerRadius;
+                    if (Wrapping.CornerRadius != 0)
+                    {
+                        _cornerRadiusCache = Wrapping.CornerRadius;
+                    }
                     Wrapping.CornerRadius = 0;
                 }
             }
