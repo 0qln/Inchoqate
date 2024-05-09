@@ -12,35 +12,38 @@
              x:Name="E_This">
 
     <UserControl.Resources>
-
         <Style x:Key="ApplicationButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="{Binding Path=ActualHeight, ElementName=E_This}"/>
             <Setter Property="Width" Value="{Binding Path=ActualHeight, ElementName=E_This}"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{Binding Path=Foreground, ElementName=E_This}"/>
             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Foreground" Value="{Binding Path=Foreground, ElementName=E_This}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Grid x:Name="BackgroundElement">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
+                        <Border TextBlock.Foreground="{TemplateBinding Foreground}"
+                                x:Name="Border"
+                                Background="{DynamicResource Background_1}">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" TargetName="BackgroundElement" Value="Gray"/>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource Background_1_Focused}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-
     </UserControl.Resources>
 
     <Grid VerticalAlignment="Stretch"
           HorizontalAlignment="Stretch">
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
             <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
@@ -69,7 +72,7 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     PreviewMouseDown="E_ActionButtonStack_PreviewMouseDown">
-            
+
             <ItemsControl ItemsSource="{Binding Path=ActionButtons, ElementName=E_This}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -90,7 +93,7 @@
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
-            
+
         </StackPanel>
 
         <StackPanel x:Name="E_ApplicationButtonsStack"
@@ -115,5 +118,5 @@
         </StackPanel>
 
     </Grid>
-    
+
 </UserControl>
