@@ -15,7 +15,7 @@ namespace Inchoqate.GUI
     public class BorderlessWindow : Window
     {
         private readonly ILogger<BorderlessWindow> _logger = FileLoggerFactory.CreateLogger<BorderlessWindow>();
-        private int _cornerRadiusCache;
+        private int _cornerRadiusCache = -1;
 
 
         public static readonly DependencyProperty WrappingProperty = DependencyProperty.Register(
@@ -50,14 +50,20 @@ namespace Inchoqate.GUI
             {
                 if (WindowState == WindowState.Normal)
                 {
+                    if (_cornerRadiusCache == -1)
+                    {
+                        return;
+                    }
                     Wrapping.CornerRadius = _cornerRadiusCache;
+                    _cornerRadiusCache = -1;
                 }
                 else
                 {
-                    if (Wrapping.CornerRadius != 0)
+                    if (_cornerRadiusCache != -1)
                     {
-                        _cornerRadiusCache = Wrapping.CornerRadius;
+                        return;
                     }
+                    _cornerRadiusCache = Wrapping.CornerRadius;
                     Wrapping.CornerRadius = 0;
                 }
             }
