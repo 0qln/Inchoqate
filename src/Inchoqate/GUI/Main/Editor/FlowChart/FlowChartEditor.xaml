@@ -6,22 +6,24 @@
       xmlns:local="clr-namespace:Inchoqate.GUI.Main.Editor.FlowChart"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Background="{DynamicResource Background_1}">
+      Background="{DynamicResource Background_1}" Loaded="Page_Loaded">
 
-    <Canvas>
+    <AdornerDecorator>
+        <Canvas x:Name="E_MainCanvas">
 
-        <local:GrayScale Width="244" 
+            <local:GrayScale Width="244" 
                              Height="174"
-                             Canvas.Top="156"
-                             Canvas.Left="415" Loaded="GrayScale_Loaded"/>
-
-        <local:GrayScale Width="244" 
+                             Canvas.Top="0"
+                             Canvas.Left="0"
+                             x:Name="E_Filter1"/>
+            
+            <local:GrayScale Width="244" 
                              Height="174"
-                             Canvas.Top="84"
-                             Canvas.Left="102"/>
+                             Canvas.Top="0"
+                             Canvas.Left="300"
+                             x:Name="E_Filter2"/>
 
-        <local:Node x:Name="E_HeadNode"/>
-
-    </Canvas>
+        </Canvas>
+    </AdornerDecorator>
 
 </Page>

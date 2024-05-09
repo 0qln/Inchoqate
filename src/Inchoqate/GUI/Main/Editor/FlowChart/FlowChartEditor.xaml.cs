@@ -23,11 +23,19 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         public FlowChartEditor()
         {
             InitializeComponent();
+
         }
 
         // TODO: Lazy hotreload.
         // TODO: Compile non-multipass editnodes into a single shader.
         // TODO: output pipeline
         public void Compile() { }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            E_Filter1.Title = "lakefj";
+
+            E_Filter1.Outputs.Add(E_Filter2);
+        }
     }
 }
