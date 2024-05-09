@@ -38,6 +38,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         {
         }
 
+        // TODO: Bind colors to color theme
         protected override void OnRender(DrawingContext drawingContext)
         {
             Node @this = (Node)AdornedElement;
@@ -65,10 +66,10 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 var next = @this.Outputs[i] as Node;
                 var xTo = Canvas.GetLeft(next) - Canvas.GetLeft(@this);
                 var yTo = Canvas.GetTop(next) - Canvas.GetTop(@this) + yPos(next!, next!.Inputs.IndexOf(@this), next!.Inputs.Count);
-                var path2 = Geometry.Parse($"M {xFrom},{yFrom} C {xTo},{yFrom} {xFrom},{yTo} {xTo},{yTo}");
+                var path = Geometry.Parse($"M {xFrom},{yFrom} C {xTo},{yFrom} {xFrom},{yTo} {xTo},{yTo}");
                 drawingContext.DrawEllipse(brush, pen, new Point(xFrom, yFrom), r, r);
                 drawingContext.DrawEllipse(brush, pen, new Point(xTo, yTo), r, r);
-                drawingContext.DrawGeometry(brushCon, penCon, path2);
+                drawingContext.DrawGeometry(brushCon, penCon, path);
             }
         }
     }

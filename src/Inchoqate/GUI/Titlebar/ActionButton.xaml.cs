@@ -50,31 +50,57 @@ public partial class ActionButton : UserControl
     }
 
 
+    public event EventHandler? VisibilityChanged;
+
     public static readonly DependencyProperty IsCollapsedProperty = DependencyProperty.Register(
         "IsCollapsed", typeof(bool), typeof(ActionButton));
 
     public bool IsCollapsed
     {
-        get => (bool)GetValue(TitleProperty);
-        set => SetValue(TitleProperty, value);
+        get => (bool)GetValue(IsCollapsedProperty);
+        set => SetValue(IsCollapsedProperty, value);
     }
 
 
     public ActionButton()
     {
         InitializeComponent();
+
+        Loaded += delegate
+        {
+            Collapse();
+        };
     }
 
 
-    private void E_This_MouseDown(object sender, MouseButtonEventArgs e)
+    public void Toggle()
     {
         if (IsCollapsed)
         {
-            E_ActionsCanvas.Visibility = Visibility.Visible;
+            Show();
         }
         else
         {
-            E_ActionsCanvas.Visibility= Visibility.Collapsed;
+            Collapse();
         }
+    }
+
+    public void Collapse()
+    {
+        E_ActionsCanvas.Visibility = Visibility.Collapsed;
+        IsCollapsed = true;
+        VisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void Show()
+    {
+        E_ActionsCanvas.Visibility = Visibility.Visible;
+        IsCollapsed = false;
+        VisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void E_Title_Click(object sender, RoutedEventArgs e)
+    {
+        Toggle();
     }
 }

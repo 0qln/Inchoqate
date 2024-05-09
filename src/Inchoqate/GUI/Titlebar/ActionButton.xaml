@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Inchoqate.GUI.Titlebar"
              mc:Ignorable="d" 
              x:Name="E_This"
-             MouseDown="E_This_MouseDown"
+             WindowChrome.IsHitTestVisibleInChrome="True"
              Foreground="{DynamicResource Text_1}">
     
     
@@ -18,9 +18,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="E_Title"
-                   Text="{Binding Path=Title, ElementName=E_This}"
-                   Grid.Row="0"/>
+        <Button x:Name="E_Title"
+                Content="{Binding Path=Title, ElementName=E_This}"
+                WindowChrome.IsHitTestVisibleInChrome="True"
+                Click="E_Title_Click"
+                Grid.Row="0"/>
 
         <Canvas x:Name="E_ActionsCanvas"
                 Grid.Row="1">
@@ -29,29 +31,13 @@
                     Background="{DynamicResource Popup_Idle_1}">
 
                 
-                    <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Grid x:Name="E_OptionsGrid">
-
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition x:Name="Col_Icon"/>
-                                        <ColumnDefinition x:Name="Col_Name"/>
-                                        <ColumnDefinition x:Name="Col_Shortcut"/>
-                                        <ColumnDefinition x:Name="Col_Indicator"/>
-                                    </Grid.ColumnDefinitions>
-
-                                </Grid>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                    
-                <!--<StackPanel x:Name="E_OptionsStack">
-
-                    <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}">
-                    </ItemsControl>
-
-                </StackPanel>-->
+                <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
 
             </Border>                 
 

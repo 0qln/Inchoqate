@@ -32,8 +32,6 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            E_Filter1.Title = "lakefj";
-
             E_Filter1.SetNext(E_Filter3);
             E_Filter2.SetNext(E_Filter3);
         }

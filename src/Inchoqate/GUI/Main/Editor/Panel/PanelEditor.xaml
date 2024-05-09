@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Inchoqate.GUI.Main.Editor.Panel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Background="{DynamicResource Background_1}">
             
     </Grid>
 </UserControl>

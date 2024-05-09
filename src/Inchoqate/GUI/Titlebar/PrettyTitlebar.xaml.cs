@@ -95,5 +95,13 @@ namespace Inchoqate.GUI.Titlebar
 
             _window.Close();
         }
+
+        private void E_ActionButtonStack_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            foreach (var button in ActionButtons)
+            {
+                button.Collapse();
+            }
+        }
     }
 }

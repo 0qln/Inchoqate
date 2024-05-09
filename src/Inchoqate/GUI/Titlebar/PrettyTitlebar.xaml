@@ -67,7 +67,8 @@
                     Grid.Column="2"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Orientation="Horizontal">
+                    Orientation="Horizontal"
+                    PreviewMouseDown="E_ActionButtonStack_PreviewMouseDown">
             
             <ItemsControl ItemsSource="{Binding Path=ActionButtons, ElementName=E_This}">
                 <ItemsControl.ItemsPanel>
@@ -75,6 +76,19 @@
                         <StackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="local:ActionButton">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="local:ActionButton">
+                                    <ContentPresenter/>
+                                    <ControlTemplate.Triggers>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
             </ItemsControl>
             
         </StackPanel>
