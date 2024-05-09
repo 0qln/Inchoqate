@@ -22,6 +22,7 @@ using System.Windows.Shell;
 using System.Globalization;
 using Inchoqate.GUI.Titlebar;
 using System.Collections.ObjectModel;
+using Inchoqate.GUI.Main.Editor.FlowChart;
 
 namespace Inchoqate.GUI
 {

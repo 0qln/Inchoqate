@@ -8,6 +8,7 @@
         xmlns:local="clr-namespace:Inchoqate.GUI"
         xmlns:main="clr-namespace:Inchoqate.GUI.Main"
         xmlns:panel="clr-namespace:Inchoqate.GUI.Main.Editor.Panel"
+        xmlns:flow="clr-namespace:Inchoqate.GUI.Main.Editor.FlowChart"
         xmlns:titlebar="clr-namespace:Inchoqate.GUI.Titlebar"
         mc:Ignorable="d"
         Height="450" 
@@ -23,7 +24,7 @@
 
         <Style x:Key="K_TitlebarStyle" TargetType="titlebar:PrettyTitlebar">
             <Setter Property="Title" Value="Inchoqate"/>
-            <Setter Property="Background" Value="{DynamicResource Background_2}"/>
+            <Setter Property="Background" Value="{DynamicResource Background_1}"/>
         </Style>
 
         <Style x:Key="K_TitlebarActionButtonStyle" TargetType="titlebar:ActionButton">
@@ -50,17 +51,30 @@
                                                Style="{StaticResource K_TitlebarActionButtonStyle}">
                             <titlebar:ActionButton.Options>
                                 <titlebar:ActionButtonOptionCollection>
-                                    <!--<Button Content="lakfej"/>
-                                    <Button Content="lakfej"/>
-                                    <Button Content="lakfej"/>-->
+                                    <Button Content="Open"/>
+                                    <Button Content="Save"/>
                                 </titlebar:ActionButtonOptionCollection>
                             </titlebar:ActionButton.Options>
                         </titlebar:ActionButton>
                         
                         <titlebar:ActionButton Title="View"
                                                Style="{StaticResource K_TitlebarActionButtonStyle}">
+                            <titlebar:ActionButton.Options>
+                                <titlebar:ActionButtonOptionCollection>
+                                    <Button Content="Fullscreen"/>
+                                </titlebar:ActionButtonOptionCollection>
+                            </titlebar:ActionButton.Options>
                         </titlebar:ActionButton>
-                        
+
+                        <titlebar:ActionButton Title="View"
+                                               Style="{StaticResource K_TitlebarActionButtonStyle}">
+                            <titlebar:ActionButton.Options>
+                                <titlebar:ActionButtonOptionCollection>
+                                    <Button Content="Flow Chart Editor"/>
+                                </titlebar:ActionButtonOptionCollection>
+                            </titlebar:ActionButton.Options>
+                        </titlebar:ActionButton>
+
                     </titlebar:ActionButtonCollection>
                 </titlebar:PrettyTitlebar.ActionButtons>
 
@@ -73,27 +87,42 @@
               Height="{Binding Path=Height, ElementName=E_MainCanvas}"
               Canvas.Top="{Binding Path=ActualHeight, ElementName=E_TitlebarGrid}">
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="{Binding Path=ActualHeight, ElementName=E_TitlebarGrid}"/>
+            </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="12"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-                <main:PreviewImage x:Name="PreviewImage"
-                                    Grid.Column="0"/>
+            <main:PreviewImage x:Name="PreviewImage"
+                                Grid.Column="0"/>
 
-                <Rectangle x:Name="Seperator"
-                            Grid.Column="1"
-                            Fill="White"
-                            MouseDown="Seperator_MouseDown"
-                            MouseUp="Seperator_MouseUp"/>
+            <Border x:Name="Seperator"
+                        Grid.Column="1"
+                        Background="{DynamicResource Background_1}"
+                        BorderBrush="{DynamicResource Popup_Idle_1}"
+                        BorderThickness="1"
+                        MouseDown="Seperator_MouseDown"
+                        MouseUp="Seperator_MouseUp">
+                
+            </Border>
 
-                <panel:PanelEditor x:Name="EditorInputs"
-                                    Grid.Column="2"
-                                    Width="200"/>
+            <panel:PanelEditor x:Name="EditorInputs"
+                                Grid.Column="2"
+                                Width="200"/>
 
-            </Grid>
+            <!--<Frame Width="800" 
+                    Grid.Column="2">
+                <Frame.Content>
+                    <flow:FlowChartEditor/>
+                </Frame.Content>
+            </Frame>-->
+
+        </Grid>
             
     </Canvas>
     
