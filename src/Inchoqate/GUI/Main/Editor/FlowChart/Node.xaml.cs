@@ -40,11 +40,11 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            Node node = (Node)AdornedElement;
+            Node @this = (Node)AdornedElement;
 
-            double yMin = Margin.Top;
-            double xOut = node.ActualWidth;
-            double yMax = node.ActualHeight - Margin.Bottom - yMin;
+            static double yMin(Node node) => node.Margin.Top;
+            static double yMax(Node node) => node.ActualHeight - node.Margin.Bottom - yMin(node);
+            static double yPos(Node node, int i, int iMax) => Utils.Lerp(yMin(node), yMax(node), (i + 0.5) / iMax);
 
             // Adapters
             var brush = Brushes.White;
@@ -56,15 +56,15 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             var penCon = new Pen(Brushes.Gray, 1);
 
             // Draw outputs
-            var count = node.Outputs.Count;
+            var count = @this.Outputs.Count;
             for (int i = 0; i < count; i++)
             {
                 // TODO: connect to a spefic adapter of the next node.
-                var xFrom = xOut;
-                var yFrom = Utils.Lerp(yMin, yMax, (i + 0.5) / count);
-                var next = node.Outputs[i];
-                var xTo = Canvas.GetLeft(next) - Canvas.GetLeft(node);
-                var yTo = Canvas.GetTop(next) - Canvas.GetTop(node);
+                var xFrom = (double)@this.ActualWidth;
+                var yFrom = yPos(@this, i, count);
+                var next = @this.Outputs[i] as Node;
+                var xTo = Canvas.GetLeft(next) - Canvas.GetLeft(@this);
+                var yTo = Canvas.GetTop(next) - Canvas.GetTop(@this) + yPos(next!, next!.Inputs.IndexOf(@this), next!.Inputs.Count);
                 var path2 = Geometry.Parse($"M {xFrom},{yFrom} C {xTo},{yFrom} {xFrom},{yTo} {xTo},{yTo}");
                 drawingContext.DrawEllipse(brush, pen, new Point(xFrom, yFrom), r, r);
                 drawingContext.DrawEllipse(brush, pen, new Point(xTo, yTo), r, r);
@@ -174,6 +174,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             {
                 _adorner?.InvalidateVisual();
             };
+            _adorner?.InvalidateVisual();
         }
 
 

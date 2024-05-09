@@ -34,7 +34,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         {
             E_Filter1.Title = "lakefj";
 
-            E_Filter1.SetNext(E_Filter2);
+            E_Filter1.SetNext(E_Filter3);
+            E_Filter2.SetNext(E_Filter3);
         }
     }
 }
