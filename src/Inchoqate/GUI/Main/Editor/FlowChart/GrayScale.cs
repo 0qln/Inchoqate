@@ -2,13 +2,13 @@
 using Inchoqate.Miscellaneous;
 using System.Windows;
 
-namespace Inchoqate.GUI.Main.Editor
+namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public class FCN_GrayScale : FlowChartNode, IFlowChartNode
+    public class GrayScale : Node, INode
     {
         public bool RequiresBreak => false;
 
-        public List<IFlowChartNode> Next
+        public List<INode> Next
         {
             get
             {
@@ -16,7 +16,7 @@ namespace Inchoqate.GUI.Main.Editor
             }
         }
 
-        public List<IFlowChartNode> Prev
+        public List<INode> Prev
         {
             get
             {
@@ -26,7 +26,7 @@ namespace Inchoqate.GUI.Main.Editor
 
 
         public static readonly DependencyProperty FilterOpacityProperty = DependencyProperty.Register(
-            "FilterOpacity", typeof(double), typeof(FCN_GrayScale));
+            "FilterOpacity", typeof(double), typeof(GrayScale));
 
         public double FilterOpacity
         {
@@ -35,7 +35,7 @@ namespace Inchoqate.GUI.Main.Editor
         }
 
 
-        public FCN_GrayScale()
+        public GrayScale()
         {
         }
     }

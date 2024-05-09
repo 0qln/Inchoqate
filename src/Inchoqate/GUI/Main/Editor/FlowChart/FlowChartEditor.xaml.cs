@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Inchoqate.GUI.Main.Editor
+namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
     /// <summary>
     /// Interaction logic for EditorFlowChart.xaml
     /// </summary>
-    public partial class EditorFlowChart : Page
+    public partial class FlowChartEditor : Page
     {
-        public EditorFlowChart()
+        public FlowChartEditor()
         {
             InitializeComponent();
         }

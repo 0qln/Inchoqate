@@ -1,5 +1,4 @@
-﻿using Inchoqate.Miscellaneous;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,22 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Inchoqate.GUI.Main
+namespace Inchoqate.GUI.Main.Editor.Panel
 {
     /// <summary>
-    /// Interaction logic for EditorInputs.xaml
+    /// Interaction logic for EditorInputOption.xaml
     /// </summary>
-    public partial class EditorInputs : UserControl
+    public partial class PanelEditor : UserControl
     {
-        public EditorInputs()
+        public PanelEditor()
         {
             InitializeComponent();
-        }
-
-        private void ChangeTheme_Click(object sender, RoutedEventArgs e)
-        {
-            var app = (App)Application.Current;
-            app?.ChangeTheme(new Uri(BuildFiles.Get("Themes/Blue.xaml")));
         }
     }
 }

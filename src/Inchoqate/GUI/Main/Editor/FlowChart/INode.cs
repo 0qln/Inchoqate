@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Inchoqate.GUI.Main.Editor
+namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public interface IFlowChartNode
+    public interface INode
     {
         /// <summary>
         /// Wether this node requires a break in the compute chain.
@@ -24,11 +24,11 @@ namespace Inchoqate.GUI.Main.Editor
         /// <summary>
         /// Each node produces one output, which can be the input to multiple nodes.
         /// </summary>
-        public List<IFlowChartNode> Next { get; }
+        public List<INode> Next { get; }
         
         /// <summary>
         /// The inputs the this node.
         /// </summary>
-        public List<IFlowChartNode> Prev { get; }
+        public List<INode> Prev { get; }
     }
 }

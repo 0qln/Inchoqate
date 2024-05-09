@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:Inchoqate.GUI.Main.Editor">
+                    xmlns:local="clr-namespace:Inchoqate.GUI.Main.Editor.FlowChart">
 
-    <Style TargetType="local:FCN_GrayScale">
+    <Style TargetType="local:GrayScale">
         <Setter Property="Title" Value="Grayscale"/>
         <Setter Property="Options">
             <Setter.Value>

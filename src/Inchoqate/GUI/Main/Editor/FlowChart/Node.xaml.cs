@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Inchoqate.GUI.Main.Editor
+namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
     public partial class OptionCollection : ObservableCollection<Control>
     {
@@ -25,11 +25,11 @@ namespace Inchoqate.GUI.Main.Editor
     /// <summary>
     /// Interaction logic for FlowChartNode.xaml
     /// </summary>
-    public partial class FlowChartNode : UserControl
+    public partial class Node : UserControl
     {
 
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
-            "Title", typeof(string), typeof(FlowChartNode));
+            "Title", typeof(string), typeof(Node));
 
         public string Title
         {
@@ -38,7 +38,7 @@ namespace Inchoqate.GUI.Main.Editor
         }
 
         public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(
-            "Options", typeof(OptionCollection), typeof(FlowChartNode));
+            "Options", typeof(OptionCollection), typeof(Node));
 
         public OptionCollection Options
         {
@@ -47,7 +47,7 @@ namespace Inchoqate.GUI.Main.Editor
         }
 
 
-        public FlowChartNode()
+        public Node()
         {
             InitializeComponent();
         }
