@@ -9,8 +9,7 @@
     
     <Grid Background="{DynamicResource Background_2}">
 
-        <Button x:Name="ChangeTheme"
-                Click="ChangeTheme_Click">Change Theme</Button>
+        
         
     </Grid>
     

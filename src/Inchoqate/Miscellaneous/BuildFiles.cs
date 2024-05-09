@@ -26,6 +26,7 @@ namespace Inchoqate.Miscellaneous
             Path.GetFullPath(Path.Combine(AppDir, "../../../Shaders/")),
             Path.GetFullPath(Path.Combine(AppDir, "../../../Themes/")),
             Path.GetFullPath(Path.Combine(AppDir, "../../../Main/")),
+            //Path.GetFullPath(Path.Combine(AppDir, "../../../Main/Editor/FCN_Grayscale.xaml")),
             Path.GetFullPath(Path.Combine(AppDir, "../../../../Sample-Images/"))
         ];
 

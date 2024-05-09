@@ -28,17 +28,31 @@
             <Border x:Name="E_ActionsBorder"
                     Background="{DynamicResource Popup_Idle_1}">
 
-                <StackPanel x:Name="E_ActionsStack">
+                
+                    <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Grid x:Name="E_OptionsGrid">
 
-                    <ItemsControl x:Name="E_ItemsControl">
-                        
-                        <TextBlock Text="Example Action 1"/>
-                        <TextBlock Text="Example Action 1 with some longer text"/>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition x:Name="Col_Icon"/>
+                                        <ColumnDefinition x:Name="Col_Name"/>
+                                        <ColumnDefinition x:Name="Col_Shortcut"/>
+                                        <ColumnDefinition x:Name="Col_Indicator"/>
+                                    </Grid.ColumnDefinitions>
 
-                    </ItemsControl>                    
+                                </Grid>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    
+                <!--<StackPanel x:Name="E_OptionsStack">
 
-                </StackPanel>
-            
+                    <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}">
+                    </ItemsControl>
+
+                </StackPanel>-->
+
             </Border>                 
 
         </Canvas>

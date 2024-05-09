@@ -22,6 +22,10 @@
             <Setter Property="Title" Value="Inchoqate"/>
             <Setter Property="Background" Value="{DynamicResource Background_2}"/>
         </Style>
+
+        <Style x:Key="K_TitlebarActionButtonStyle" TargetType="titlebar:ActionButton">
+            
+        </Style>
         
     </Window.Resources>
 
@@ -38,8 +42,22 @@
 
                 <titlebar:PrettyTitlebar.ActionButtons>
                     <titlebar:ActionButtonCollection>
-                        <titlebar:ActionButton Title="File"/>
-                        <titlebar:ActionButton Title="View"/>
+                        
+                        <titlebar:ActionButton Title="File"
+                                               Style="{StaticResource K_TitlebarActionButtonStyle}">
+                            <titlebar:ActionButton.Options>
+                                <titlebar:ActionButtonOptionCollection>
+                                    <!--<Button Content="lakfej"/>
+                                    <Button Content="lakfej"/>
+                                    <Button Content="lakfej"/>-->
+                                </titlebar:ActionButtonOptionCollection>
+                            </titlebar:ActionButton.Options>
+                        </titlebar:ActionButton>
+                        
+                        <titlebar:ActionButton Title="View"
+                                               Style="{StaticResource K_TitlebarActionButtonStyle}">
+                        </titlebar:ActionButton>
+                        
                     </titlebar:ActionButtonCollection>
                 </titlebar:PrettyTitlebar.ActionButtons>
 

@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:igme="clr-namespace:Inchoqate.GUI.Main.Editor">
+
+
+    <Style TargetType="{x:Type igme:FCN_Base}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type igme:FCN_Base}">
+                    <Border Background="{DynamicResource Popup_Idle_1}"
+                            BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="3"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0"
+                                        Text="{TemplateBinding Title}"
+                                        Foreground="{DynamicResource Text_1}"
+                                        Margin="10, 5"/>
+                            <Border Grid.Row="1" 
+                                    BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
+                                    BorderThickness="1"
+                                    Height="1"
+                                    Margin="5, 0, 5, 0"/>
+                            <Grid Grid.Row="2"
+                                    x:Name="E_Content">
+                                <ItemsControl Grid.Row="0"
+                                                x:Name="E_ContentStack"
+                                                ItemsSource="{TemplateBinding Options}">
+                                </ItemsControl>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+</ResourceDictionary>

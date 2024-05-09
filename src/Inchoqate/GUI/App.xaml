@@ -8,6 +8,7 @@
 
 
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Main/Editor/FCN_GrayScale.xaml"/>
                 <ResourceDictionary x:Name="ThemeDictionary">
                     <ResourceDictionary.MergedDictionaries>
                         <ResourceDictionary Source="Themes/Default.xaml"/>
