@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Inchoqate.GUI.Main.Editor.FlowChart">
 
-    <Style TargetType="local:GrayScale">
+    <!--<Style TargetType="local:GrayScale">
         <Setter Property="Title" Value="Grayscale"/>
         <Setter Property="Options">
             <Setter.Value>
@@ -12,6 +12,6 @@
                 </local:OptionCollection>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
     
 </ResourceDictionary>

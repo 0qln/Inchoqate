@@ -10,16 +10,15 @@
 
     <Canvas>
 
-        <local:Node Width="244" 
-                             Height="175"
-                             Canvas.Top="50"
-                             Canvas.Left="50"
-                             Title="Abstract Node"/>
-
         <local:GrayScale Width="244" 
                              Height="174"
                              Canvas.Top="156"
-                             Canvas.Left="415"/>
+                             Canvas.Left="415" Loaded="GrayScale_Loaded"/>
+
+        <local:GrayScale Width="244" 
+                             Height="174"
+                             Canvas.Top="84"
+                             Canvas.Left="102"/>
 
         <local:Node x:Name="E_HeadNode"/>
 

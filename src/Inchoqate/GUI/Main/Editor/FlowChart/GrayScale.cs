@@ -1,6 +1,7 @@
 ﻿
 using Inchoqate.Miscellaneous;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
@@ -37,6 +38,12 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         public GrayScale()
         {
+            base.Title = "Grayscale";
+            base.Options =
+            [
+                new Slider(),
+                new Button() { Content="Button" }
+            ];
         }
     }
 }
