@@ -23,7 +23,6 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         public FlowChartEditor()
         {
             InitializeComponent();
-
         }
 
         // TODO: Lazy hotreload.
@@ -35,7 +34,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         {
             E_Filter1.Title = "lakefj";
 
-            E_Filter1.Outputs.Add(E_Filter2);
+            E_Filter1.SetNext(E_Filter2);
         }
     }
 }

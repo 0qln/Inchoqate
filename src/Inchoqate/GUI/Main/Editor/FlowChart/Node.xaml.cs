@@ -46,17 +46,29 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             double xOut = node.ActualWidth;
             double yMax = node.ActualHeight - Margin.Bottom - yMin;
 
+            // Adapters
             var brush = Brushes.White;
             var pen = new Pen(brush, 0);
             var r = 5.0;
+
+            // Connectors
+            var brushCon = Brushes.Transparent;
+            var penCon = new Pen(Brushes.Gray, 1);
 
             // Draw outputs
             var count = node.Outputs.Count;
             for (int i = 0; i < count; i++)
             {
-                var y = Utils.Lerp(yMin, yMax, (i + 0.5) / count);
-                var x = xOut;
-                drawingContext.DrawEllipse(brush, pen, new Point(x, y), r, r);
+                // TODO: connect to a spefic adapter of the next node.
+                var xFrom = xOut;
+                var yFrom = Utils.Lerp(yMin, yMax, (i + 0.5) / count);
+                var next = node.Outputs[i];
+                var xTo = Canvas.GetLeft(next) - Canvas.GetLeft(node);
+                var yTo = Canvas.GetTop(next) - Canvas.GetTop(node);
+                var path2 = Geometry.Parse($"M {xFrom},{yFrom} C {xTo},{yFrom} {xFrom},{yTo} {xTo},{yTo}");
+                drawingContext.DrawEllipse(brush, pen, new Point(xFrom, yFrom), r, r);
+                drawingContext.DrawEllipse(brush, pen, new Point(xTo, yTo), r, r);
+                drawingContext.DrawGeometry(brushCon, penCon, path2);
             }
         }
     }
@@ -67,7 +79,6 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     /// </summary>
     public partial class Node : UserControl
     {
-
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
             "Title", typeof(string), typeof(Node));
 
@@ -118,7 +129,12 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         }
 
 
+        public event EventHandler? Dragged;
+
+
         private Point _dragBegin;
+
+        private Adorner? _adorner;
 
 
         public Node()
@@ -134,7 +150,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         private void Node_Loaded(object sender, RoutedEventArgs e)
         {
             AdornerLayer.GetAdornerLayer(this).Add(
-                new NodeConnectionAdorner(this)
+                _adorner = new NodeConnectionAdorner(this)
                 {
                     Margin = new Thickness
                     {
@@ -148,6 +164,18 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             parent.MouseMove += DragApply;
             parent.MouseUp += DragEnd;
         }
+
+
+        public void SetNext(Node next)
+        {
+            Outputs.Add(next);
+            next.Inputs.Add(this);
+            next.Dragged += delegate
+            {
+                _adorner?.InvalidateVisual();
+            };
+        }
+
 
         private void DragEnd(object sender, MouseButtonEventArgs e)
         {
@@ -163,6 +191,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 {
                     Canvas.SetTop(this, pos.Y - _dragBegin.Y);
                     Canvas.SetLeft(this, pos.X - _dragBegin.X);
+
+                    Dragged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
