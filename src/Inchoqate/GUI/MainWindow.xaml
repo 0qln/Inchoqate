@@ -89,6 +89,7 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
+                <!--Padding to push the window contents into the view-->
                 <RowDefinition Height="{Binding Path=ActualHeight, ElementName=E_TitlebarGrid}"/>
             </Grid.RowDefinitions>
 

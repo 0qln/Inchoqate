@@ -51,6 +51,18 @@ namespace Inchoqate.GUI
             // TODO: When maximized, the corners are still rounded.
             Wrapping = WindowWrapper.Wrap(this);
 
+            E_Titlebar.Windowed += delegate
+            {
+                if (WindowState == WindowState.Normal)
+                {
+                    Wrapping.CornerRadius = 15;
+                }
+                else
+                {
+                    Wrapping.CornerRadius = 0;
+                }
+            };
+
             _logger.LogInformation("Main window initiated.");
         }
 

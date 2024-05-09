@@ -51,6 +51,9 @@ namespace Inchoqate.GUI.Titlebar
         }
 
 
+        public event EventHandler? Minizmized, Windowed, Closed;
+
+
         private Window? _window;
 
 
@@ -74,6 +77,8 @@ namespace Inchoqate.GUI.Titlebar
                 WindowState.Minimized   => WindowState.Normal,
                 _                       => WindowState.Normal
             };
+
+            Windowed?.Invoke(this, EventArgs.Empty);
         }
 
         private void E_MinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -84,6 +89,8 @@ namespace Inchoqate.GUI.Titlebar
             }
 
             _window.WindowState = WindowState.Minimized;
+
+            Minizmized?.Invoke(this, EventArgs.Empty);
         }
 
         private void E_CloseButton_Click(object sender, RoutedEventArgs e)
@@ -94,6 +101,8 @@ namespace Inchoqate.GUI.Titlebar
             }
 
             _window.Close();
+
+            Closed?.Invoke(this, EventArgs.Empty);
         }
 
         private void E_ActionButtonStack_PreviewMouseDown(object sender, MouseButtonEventArgs e)
