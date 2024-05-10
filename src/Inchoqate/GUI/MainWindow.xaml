@@ -119,13 +119,6 @@
                                 Grid.Column="2"
                                 Width="200"/>
 
-            <!--<Frame Width="800" 
-                    Grid.Column="2">
-                <Frame.Content>
-                    <flow:FlowChartEditor/>
-                </Frame.Content>
-            </Frame>-->
-
         </Grid>
             
     </Canvas>

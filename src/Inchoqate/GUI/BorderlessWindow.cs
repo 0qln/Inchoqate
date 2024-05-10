@@ -3,28 +3,40 @@ using Miscellaneous.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
-using Utillities.Wpf;
+using System.Windows.Media;
 
 namespace Inchoqate.GUI
 {
     public class BorderlessWindow : Window
     {
         private readonly ILogger<BorderlessWindow> _logger = FileLoggerFactory.CreateLogger<BorderlessWindow>();
-        private int _cornerRadiusCache = -1;
+        private CornerRadius _cornerRadiusCache = new(-1);
 
 
-        public static readonly DependencyProperty WrappingProperty = DependencyProperty.Register(
-            "Wrapping", typeof(WindowWrapping), typeof(MainWindow));
+        public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+            "CornerRadius", typeof(CornerRadius), typeof(BorderlessWindow));
 
-        public WindowWrapping Wrapping
+        public CornerRadius CornerRadius
         {
-            get => (WindowWrapping)GetValue(WrappingProperty);
-            set => SetValue(WrappingProperty, value);
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+
+        public static readonly DependencyProperty CaptionHeightProperty = DependencyProperty.Register(
+            "CaptionHeight", typeof(double), typeof(BorderlessWindow));
+
+        public double CaptionHeight
+        {
+            get => (double)GetValue(CaptionHeightProperty);
+            set => SetValue(CaptionHeightProperty, value);
         }
 
 
@@ -36,10 +48,15 @@ namespace Inchoqate.GUI
                 FixCornerGlitch();
             };
 
-            Initialized += delegate
+            SizeChanged += (_, e) =>
             {
-                // Enables rounded corners for the borderless window.
-                Wrapping = WindowWrapper.Wrap(this);
+                // When double clicking on the titlebar, the size bindings
+                // of the border do not get updated for some reason.
+                if (GetVisualChild(0) is Border border)
+                {
+                    border.Width = e.NewSize.Width;
+                    border.Height = e.NewSize.Height;
+                }
             };
         }
 
@@ -50,21 +67,22 @@ namespace Inchoqate.GUI
             {
                 if (WindowState == WindowState.Normal)
                 {
-                    if (_cornerRadiusCache == -1)
+                    if (_cornerRadiusCache.Equals(new(-1)))
                     {
                         return;
                     }
-                    Wrapping.CornerRadius = _cornerRadiusCache;
-                    _cornerRadiusCache = -1;
+                    CornerRadius = _cornerRadiusCache;
+                    _cornerRadiusCache = new(-1);
+                    
                 }
                 else
                 {
-                    if (_cornerRadiusCache != -1)
+                    if (!_cornerRadiusCache.Equals(new(-1)))
                     {
                         return;
                     }
-                    _cornerRadiusCache = Wrapping.CornerRadius;
-                    Wrapping.CornerRadius = 0;
+                    _cornerRadiusCache = CornerRadius;
+                    CornerRadius = new (0);
                 }
             }
 

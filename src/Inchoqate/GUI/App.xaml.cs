@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace Inchoqate.GUI
 {
@@ -35,6 +36,23 @@ namespace Inchoqate.GUI
 
         private void BorderlessWindowContainer_Loaded(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void WindowContainer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is Border border)
+            {
+                border.Child.Clip = new RectangleGeometry
+                {
+                    RadiusX = border.CornerRadius.TopLeft,
+                    RadiusY = border.CornerRadius.TopLeft,
+                    Rect = new Rect
+                    {
+                        Width = e.NewSize.Width - border.BorderThickness.Left - border.BorderThickness.Right,
+                        Height = e.NewSize.Height - border.BorderThickness.Top - border.BorderThickness.Bottom
+                    }
+                };
+            }
         }
     }
 }

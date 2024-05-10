@@ -32,10 +32,12 @@
 
         <Grid x:Name="E_TitlebarGrid"
               Width="{Binding Path=Width, ElementName=E_MainCanvas}"
+              Height="{Binding Path=Height, ElementName=E_Titlebar}"
               Panel.ZIndex="1">
 
             <titlebar:PrettyTitlebar x:Name="E_Titlebar"
-                                     Style="{StaticResource K_TitlebarStyle}"/>
+                                     Style="{StaticResource K_TitlebarStyle}"
+                                     Height="{Binding Path=CaptionHeight, ElementName=E_This}"/>
         </Grid>
 
         <Grid x:Name="E_ContentGrid"
