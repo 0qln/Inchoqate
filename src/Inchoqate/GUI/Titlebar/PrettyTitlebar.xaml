@@ -62,6 +62,7 @@
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
                    Text="{Binding Path=Title, ElementName=E_This}"
+                   FontStyle="Italic"
                    Foreground="{Binding Path=Foreground, ElementName=E_This}"
                    Margin="10, 0, 10, 0"/>
 
@@ -81,6 +82,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="local:ActionButton">
+                        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="local:ActionButton">
