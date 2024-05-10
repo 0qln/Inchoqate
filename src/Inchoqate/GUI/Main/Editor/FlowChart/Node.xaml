@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inchoqate.GUI.Main.Editor.FlowChart"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="300"
+             d:DesignHeight="100" d:DesignWidth="200"
+             Height="100" Width="200"
              x:Name="E_This">
     
     <Border Background="{DynamicResource Popup_Idle_1}"

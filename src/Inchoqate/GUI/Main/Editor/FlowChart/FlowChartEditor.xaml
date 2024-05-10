@@ -11,21 +11,15 @@
     <AdornerDecorator>
         <Canvas x:Name="E_MainCanvas">
 
-            <local:GrayScale Width="244" 
-                             Height="174"
-                             Canvas.Left="172"
+            <local:GrayScale Canvas.Left="172"
                              Canvas.Top="43"
                              x:Name="E_Filter1"/>
 
-            <local:GrayScale Width="244" 
-                             Height="174"
-                             Canvas.Left="172"
+            <local:GrayScale Canvas.Left="172"
                              Canvas.Top="231"
                              x:Name="E_Filter2"/>
 
-            <local:GrayScale Width="244" 
-                             Height="174"
-                             Canvas.Left="502"
+            <local:GrayScale Canvas.Left="502"
                              Canvas.Top="123"
                              x:Name="E_Filter3"/>
 
