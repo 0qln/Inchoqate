@@ -46,8 +46,6 @@
                             <Border x:Name="WindowContainer" 
                                     Loaded="BorderlessWindowContainer_Loaded"
                                     SizeChanged="WindowContainer_SizeChanged"
-                                    Width="{TemplateBinding Width}"
-                                    Height="{TemplateBinding Height}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
                                     BorderBrush="Black">
