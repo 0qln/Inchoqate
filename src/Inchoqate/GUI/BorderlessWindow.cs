@@ -59,6 +59,8 @@ namespace Inchoqate.GUI
                     border.Height = e.NewSize.Height;
                 }
             };
+
+            this.DataContext = this;
         }
 
 

@@ -23,12 +23,7 @@
     <Window.Resources>
 
         <Style x:Key="K_TitlebarStyle" TargetType="titlebar:PrettyTitlebar">
-            <Setter Property="Title" Value="Inchoqate"/>
             <Setter Property="Background" Value="{DynamicResource Background_1}"/>
-        </Style>
-
-        <Style x:Key="K_TitlebarActionButtonStyle" TargetType="titlebar:ActionButton">
-            
         </Style>
         
     </Window.Resources>
@@ -47,32 +42,30 @@
                 <titlebar:PrettyTitlebar.ActionButtons>
                     <titlebar:ActionButtonCollection>
                         
-                        <titlebar:ActionButton Title="File"
-                                               Style="{StaticResource K_TitlebarActionButtonStyle}">
+                        <titlebar:ActionButton Title="File">
                             <titlebar:ActionButton.Options>
                                 <titlebar:ActionButtonOptionCollection>
                                     <Button Content="Open"/>
                                     <Button Content="Save"/>
+                                    <Button Content="Some longer text"/>
                                 </titlebar:ActionButtonOptionCollection>
                             </titlebar:ActionButton.Options>
                         </titlebar:ActionButton>
                         
-                        <titlebar:ActionButton Title="View"
-                                               Style="{StaticResource K_TitlebarActionButtonStyle}">
+                        <titlebar:ActionButton Title="View">
                             <titlebar:ActionButton.Options>
                                 <titlebar:ActionButtonOptionCollection>
-                                    <Button Content="Fullscreen"/>
+                                    <titlebar:ActionButtonOption Title="Toggle Fullscreen"
+                                                                 Command="{Binding TE_ToggleFullscreen_Command}"/>
                                 </titlebar:ActionButtonOptionCollection>
                             </titlebar:ActionButton.Options>
                         </titlebar:ActionButton>
 
-                        <titlebar:ActionButton Title="Edit"
-                                               Style="{StaticResource K_TitlebarActionButtonStyle}">
+                        <titlebar:ActionButton Title="Edit">
                             <titlebar:ActionButton.Options>
                                 <titlebar:ActionButtonOptionCollection>
-                                    <Button Content="Open Flow Chart Editor"
-                                            Click="TE_OpenFlowChartEditor_Click"
-                                            WindowChrome.IsHitTestVisibleInChrome="True"/>
+                                    <titlebar:ActionButtonOption Title="Open Flow Chart Editor" 
+                                                                 Command="{Binding TE_OpenFlowChartEditor_Command}"/>
                                 </titlebar:ActionButtonOptionCollection>
                             </titlebar:ActionButton.Options>
                         </titlebar:ActionButton>

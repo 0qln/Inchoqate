@@ -31,9 +31,22 @@ namespace Inchoqate.GUI
         private readonly ILogger<MainWindow> _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
 
+        public static readonly DependencyProperty IsFullscreenProperty = DependencyProperty.Register(
+            "IsFullscreen", typeof(bool), typeof(MainWindow));
+
+        public bool IsFullscreen
+        {
+            get => (bool)GetValue(IsFullscreenProperty);
+            set => SetValue(IsFullscreenProperty, value);
+        }
+
+
         public MainWindow()
         {
             InitializeComponent();
+
+            RegisterCommand("TE_OpenFlowChartEditor_Command", OpenFlowChartEditor);
+            RegisterCommand("TE_ToggleFullscreen_Command", ToggleFullscreen);
 
             _logger.LogInformation("Main window initiated.");
         }
@@ -84,12 +97,35 @@ namespace Inchoqate.GUI
 
         #region Action button logic
 
-        private void TE_OpenFlowChartEditor_Click(object sender, RoutedEventArgs e)
+        public void OpenFlowChartEditor()
         {
-            FlowChartWindow window = new();
+            var window = new FlowChartWindow();
             window.Show();
+        }
 
-            _logger.LogInformation("Prompted to open flow chart editor window.");
+        public void ToggleFullscreen()
+        {
+            // TODO: full implementation.
+            if (IsFullscreen)
+            {
+                E_Titlebar.E_ApplicationButtonsStack.Visibility = Visibility.Visible;
+                IsFullscreen = false;
+            }
+            else
+            {
+                E_Titlebar.E_ApplicationButtonsStack.Visibility = Visibility.Collapsed;
+                IsFullscreen = true;
+            }
+        }
+
+        // Helper method to ease the syntax.
+        private static DependencyProperty RegisterCommand(string name, Action action)
+        {
+            return DependencyProperty.Register(
+                name, 
+                typeof(ICommand), 
+                typeof(MainWindow), 
+                new(new ActionButtonCommand(action)));
         }
 
         #endregion
