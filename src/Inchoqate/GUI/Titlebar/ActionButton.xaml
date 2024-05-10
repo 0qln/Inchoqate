@@ -21,7 +21,7 @@
         <Button x:Name="E_Title"
                 Content="{Binding Path=Title, ElementName=E_This}"
                 WindowChrome.IsHitTestVisibleInChrome="True"
-                Click="E_Title_Click"
+                PreviewMouseUp="E_Title_Click"
                 Grid.Row="0"/>
 
         <Canvas x:Name="E_ActionsCanvas"

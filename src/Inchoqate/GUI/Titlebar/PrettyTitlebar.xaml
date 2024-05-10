@@ -71,7 +71,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
-                    PreviewMouseDown="E_ActionButtonStack_PreviewMouseDown">
+                    PreviewMouseUp="E_ActionButtonStack_PreviewMouseUp">
 
             <ItemsControl ItemsSource="{Binding Path=ActionButtons, ElementName=E_This}">
                 <ItemsControl.ItemsPanel>

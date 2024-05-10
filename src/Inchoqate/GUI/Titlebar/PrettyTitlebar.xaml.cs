@@ -93,6 +93,22 @@ namespace Inchoqate.GUI.Titlebar
             Minizmized?.Invoke(this, EventArgs.Empty);
         }
 
+        private void E_ActionButtonStack_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            foreach (var button in ActionButtons)
+            {
+                // TODO: this logic will not work with keyboard navigation.
+
+                if (// In this case the button toggles itself.
+                    !button.IsMouseOver || 
+                    // In this case the button does not toggle itself and we should collapse it.
+                    button.E_ActionsCanvas.IsMouseOver)
+                {
+                    button.Collapse();
+                }
+            }
+        }
+
         private void E_CloseButton_Click(object sender, RoutedEventArgs e)
         {
             if (_window is null)
@@ -103,14 +119,6 @@ namespace Inchoqate.GUI.Titlebar
             _window.Close();
 
             Closed?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void E_ActionButtonStack_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            foreach (var button in ActionButtons)
-            {
-                button.Collapse();
-            }
         }
     }
 }
