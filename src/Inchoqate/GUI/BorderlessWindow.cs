@@ -18,6 +18,7 @@ namespace Inchoqate.GUI
     {
         private readonly ILogger<BorderlessWindow> _logger = FileLoggerFactory.CreateLogger<BorderlessWindow>();
         private CornerRadius _cornerRadiusCache = new(-1);
+        private Thickness _borderThicknessCache = new(-1);
 
 
         public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
@@ -45,7 +46,7 @@ namespace Inchoqate.GUI
             Loaded += delegate
             {
                 FixSizingGlitch();
-                FixCornerGlitch();
+                ActivateCornerResizing();
             };
 
             SizeChanged += (_, e) =>
@@ -61,28 +62,39 @@ namespace Inchoqate.GUI
         }
 
 
-        private void FixCornerGlitch()
+        private void ActivateCornerResizing()
         {
             void UpdateCorners()
             {
                 if (WindowState == WindowState.Normal)
                 {
-                    if (_cornerRadiusCache.Equals(new(-1)))
+                    if (!_borderThicknessCache.Equals(new(-1)))
                     {
-                        return;
+                        BorderThickness = _borderThicknessCache;
+                        _borderThicknessCache = new(-1);
                     }
-                    CornerRadius = _cornerRadiusCache;
-                    _cornerRadiusCache = new(-1);
+
+                    if (!_cornerRadiusCache.Equals(new(-1)))
+                    {
+                        CornerRadius = _cornerRadiusCache;
+                        _cornerRadiusCache = new(-1);
+                    }
                     
                 }
                 else
                 {
-                    if (!_cornerRadiusCache.Equals(new(-1)))
+                    if (_borderThicknessCache.Equals(new(-1)))
                     {
-                        return;
+                        _borderThicknessCache = BorderThickness;
+                        BorderThickness = new(0);
                     }
-                    _cornerRadiusCache = CornerRadius;
-                    CornerRadius = new (0);
+
+                    if (_cornerRadiusCache.Equals(new(-1)))
+                    {
+                        _cornerRadiusCache = CornerRadius;
+                        CornerRadius = new (0);
+                    }
+
                 }
             }
 
