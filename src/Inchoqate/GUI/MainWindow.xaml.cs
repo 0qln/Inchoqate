@@ -80,5 +80,18 @@ namespace Inchoqate.GUI
         {
             Seperator_MouseUp(sender, e);
         }
+
+
+        #region Action button logic
+
+        private void TE_OpenFlowChartEditor_Click(object sender, RoutedEventArgs e)
+        {
+            FlowChartWindow window = new();
+            window.Show();
+
+            _logger.LogInformation("Prompted to open flow chart editor window.");
+        }
+
+        #endregion
     }
 }

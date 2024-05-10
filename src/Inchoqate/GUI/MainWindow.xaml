@@ -70,7 +70,9 @@
                                                Style="{StaticResource K_TitlebarActionButtonStyle}">
                             <titlebar:ActionButton.Options>
                                 <titlebar:ActionButtonOptionCollection>
-                                    <Button Content="Flow Chart Editor"/>
+                                    <Button Content="Open Flow Chart Editor"
+                                            Click="TE_OpenFlowChartEditor_Click"
+                                            WindowChrome.IsHitTestVisibleInChrome="True"/>
                                 </titlebar:ActionButtonOptionCollection>
                             </titlebar:ActionButton.Options>
                         </titlebar:ActionButton>
@@ -79,6 +81,7 @@
                 </titlebar:PrettyTitlebar.ActionButtons>
 
             </titlebar:PrettyTitlebar>
+            
         </Grid>
 
 

@@ -60,7 +60,6 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             var count = @this.Outputs.Count;
             for (int i = 0; i < count; i++)
             {
-                // TODO: connect to a spefic adapter of the next node.
                 var xFrom = (double)@this.ActualWidth;
                 var yFrom = yPos(@this, i, count);
                 var next = @this.Outputs[i] as Node;
