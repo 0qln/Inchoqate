@@ -48,6 +48,8 @@ namespace Inchoqate.GUI
             RegisterCommand("TE_OpenFlowChartEditor_Command", OpenFlowChartEditor);
             RegisterCommand("TE_ToggleFullscreen_Command", ToggleFullscreen);
 
+            E_Titlebar.Closed += (_, _) => Application.Current.Shutdown();
+
             _logger.LogInformation("Main window initiated.");
         }
 
