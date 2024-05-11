@@ -6,6 +6,7 @@
     <SolidColorBrush x:Key="Background_2">#1f1f1f</SolidColorBrush>
     <SolidColorBrush x:Key="Background_3">#2f2f2f</SolidColorBrush>
     <SolidColorBrush x:Key="Text_1">#f0f0f0</SolidColorBrush>
+    <SolidColorBrush x:Key="Text_2">#a0a0a0</SolidColorBrush>
     <SolidColorBrush x:Key="Popup_Idle_1">#2e2e2e</SolidColorBrush>
     <SolidColorBrush x:Key="Popup_Idle_Contrast_1">#3d3d3d</SolidColorBrush>
     <SolidColorBrush x:Key="Popup_Focused_1">#3d3d3d</SolidColorBrush>

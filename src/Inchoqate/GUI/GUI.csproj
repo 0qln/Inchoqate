@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Titlebar\ActionButton.xaml.depricated" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.3" />
     <PackageReference Include="StbImageSharp" Version="2.27.14" />
   </ItemGroup>

@@ -201,3 +201,11 @@
 [Information] [5/9/2024 4:12:23 PM] [Logging] File logger initiated.
 [Information] [5/9/2024 4:15:31 PM] [Logging] File logger initiated.
 [Information] [5/9/2024 4:15:32 PM] [Inchoqate.GUI.Texture] Created texture: C:\Users\User\AppData\Local\Microsoft\VisualStudio\17.0_6e97f623\Designer\Cache\1-444491269x64DA\Files/Sample-Images/img0/1920x1080.bmp
+[Information] [5/11/2024 2:18:16 PM] [Logging] File logger initiated.
+[Information] [5/11/2024 2:51:37 PM] [Logging] File logger initiated.
+[Information] [5/11/2024 2:51:39 PM] [Inchoqate.GUI.Texture] Created texture: C:\Users\User\AppData\Local\Microsoft\VisualStudio\17.0_6e97f623\Designer\Cache\1-444491269x64DA\Files/Sample-Images/img0/1920x1080.bmp
+[Information] [5/11/2024 2:59:13 PM] [Logging] File logger initiated.
+[Information] [5/11/2024 3:01:30 PM] [Logging] File logger initiated.
+[Information] [5/11/2024 7:15:58 PM] [Logging] File logger initiated.
+[Information] [5/11/2024 7:15:59 PM] [Inchoqate.GUI.Texture] Created texture: C:\Users\User\AppData\Local\Microsoft\VisualStudio\17.0_6e97f623\Designer\Cache\1-444491269x64DA\Files/Sample-Images/img0/1920x1080.bmp
+[Information] [5/11/2024 10:41:30 PM] [Logging] File logger initiated.

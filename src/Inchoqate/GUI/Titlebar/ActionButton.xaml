@@ -4,13 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inchoqate.GUI.Titlebar"
+             xmlns:root="clr-namespace:Inchoqate.GUI"
              mc:Ignorable="d" 
-             x:Name="E_This">
+             x:Name="E_This"
+             d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+        <local:ActionButtonOptionsPositionToIndexConverter x:Key="C_Position_Index"/>
+        
         <Style x:Key="K_ButtonStyle" TargetType="Button">
-            <Setter Property="Height" Value="{Binding Path=ActualHeight, ElementName=E_This}"/>
-            <Setter Property="Width" Value="{Binding Path=ActualHeight, ElementName=E_This}"/>
             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
             <Setter Property="Foreground" Value="{Binding Path=Foreground, ElementName=E_This}"/>
             <Setter Property="Template">
@@ -36,69 +38,82 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-
-    <Grid Margin="5">
+    
+    <Grid x:Name="E_MainGrid">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="{Binding Path=Height, ElementName=E_This}"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding Path=Width, ElementName=E_This}"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <Button x:Name="E_Title"
-                Foreground="{Binding Path=Foreground, ElementName=E_This}"
-                Background="{Binding Path=Background, ElementName=E_This}"
-                BorderBrush="{Binding Path=BorderBrush, ElementName=E_This}"
-                Content="{Binding Path=Title, ElementName=E_This}"
-                WindowChrome.IsHitTestVisibleInChrome="True"
-                PreviewMouseUp="E_Title_Click"
-                Grid.Row="0"/>
+        <Canvas x:Name="E_OptionsCanvas"
+                Grid.Column="{Binding Path=OptionsPosition, 
+                                      ElementName=E_This, 
+                                      Converter={StaticResource C_Position_Index},
+                                      ConverterParameter={x:Static local:GridIndex.Column}}"
+                Grid.Row="{Binding Path=OptionsPosition, 
+                                   ElementName=E_This, 
+                                   Converter={StaticResource C_Position_Index},
+                                   ConverterParameter={x:Static local:GridIndex.Row}}">
 
-        <Canvas x:Name="E_ActionsCanvas"
-                Grid.Row="1">
-
-            <Border x:Name="E_ActionsBorder"
+            <Border x:Name="E_OptionsBorder"
                     BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
-                    BorderThickness="1">                
+                    BorderThickness="1">
                 <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}">
-                    <ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemsPanel >
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Vertical"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                    <!--<ItemsControl.ItemContainerStyle>
-                        <Style TargetType="Button">
-                            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
-                            <Setter Property="Foreground" Value="{Binding Path=Foreground, ElementName=E_This}"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border TextBlock.Foreground="{TemplateBinding Foreground}"
-                                                x:Name="Border"
-                                                Background="{DynamicResource Popup_Idle_1}">
-
-                                            <ContentPresenter HorizontalAlignment="Left"
-                                                              VerticalAlignment="Center"
-                                                              Margin="5, 5"
-                                                              RecognizesAccessKey="True"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="true">
-                                                <Setter TargetName="Border"
-                                                        Property="Background"
-                                                        Value="{DynamicResource Popup_Focused_1}"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>-->
                 </ItemsControl>
 
-            </Border>                 
+            </Border>
 
         </Canvas>
 
+        <Button x:Name="E_Thumb"
+                Grid.Row="0"
+                Grid.Column="0"
+                Style="{StaticResource K_ButtonStyle}">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="Col_Icon" Width="Auto"/>
+                    <ColumnDefinition x:Name="Col_Title" Width="*"/>
+                    <ColumnDefinition x:Name="Col_Shortcut" Width="Auto"/>
+                    <ColumnDefinition x:Name="Col_Indicator" Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Image x:Name="E_Icon"
+                   Grid.Column="0"
+                   Source="{Binding Path=Icon, ElementName=E_This}"/>
+
+                <TextBlock x:Name="E_Title"
+                       Grid.Column="1"
+                       Foreground="{DynamicResource Text_1}"
+                       Text="{Binding Path=Title, ElementName=E_This}"/>
+
+                <TextBlock x:Name="E_Shortcut"
+                       Grid.Column="2"
+                       Foreground="{DynamicResource Text_2}"
+                       FontFamily="Consolas"
+                       Text="{Binding Path=Shortcut, ElementName=E_This, Converter={StaticResource C_Shortcut_String}}"/>
+
+                <TextBlock x:Name="E_Indicator"
+                       Grid.Column="3"
+                       Text=">"
+                       Foreground="{DynamicResource Text_1}"
+                       FontFamily="Consolas"
+                       Visibility="{Binding Path=IndicatorVisibility, ElementName=E_This}"/>
+            </Grid>
+
+        </Button>
+        
     </Grid>
     
 </UserControl>

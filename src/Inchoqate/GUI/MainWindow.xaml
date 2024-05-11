@@ -37,9 +37,23 @@
               Panel.ZIndex="1">
             
             <titlebar:PrettyTitlebar x:Name="E_Titlebar"
-                                     Style="{StaticResource K_TitlebarStyle}">
+                                     Style="{StaticResource K_TitlebarStyle}"
+                                     Height="{Binding Path=CaptionHeight, ElementName=E_This}">
 
                 <titlebar:PrettyTitlebar.ActionButtons>
+                    <titlebar:ActionButtonCollection>
+                        <titlebar:ActionButton Title="Edit">
+                            <titlebar:ActionButton.Options>
+                                <titlebar:ActionButtonOptionCollection>
+                                    <titlebar:ActionButtonAction Title="Open Flow Chart Editor"
+                                                                 Command="{Binding TE_OpenFlowChartEditor_Command}"/>
+                                </titlebar:ActionButtonOptionCollection>
+                            </titlebar:ActionButton.Options>
+                        </titlebar:ActionButton>
+                    </titlebar:ActionButtonCollection>
+                </titlebar:PrettyTitlebar.ActionButtons>
+                
+                <!--<titlebar:PrettyTitlebar.ActionButtons>
                     <titlebar:ActionButtonCollection>
                         
                         <titlebar:ActionButton Title="File">
@@ -55,7 +69,7 @@
                         <titlebar:ActionButton Title="View">
                             <titlebar:ActionButton.Options>
                                 <titlebar:ActionButtonOptionCollection>
-                                    <titlebar:ActionButtonOption Title="Toggle Fullscreen"
+                                    <titlebar:ActionButtonAction Title="Toggle Fullscreen"
                                                                  Command="{Binding TE_ToggleFullscreen_Command}"/>
                                 </titlebar:ActionButtonOptionCollection>
                             </titlebar:ActionButton.Options>
@@ -64,14 +78,14 @@
                         <titlebar:ActionButton Title="Edit">
                             <titlebar:ActionButton.Options>
                                 <titlebar:ActionButtonOptionCollection>
-                                    <titlebar:ActionButtonOption Title="Open Flow Chart Editor" 
+                                    <titlebar:ActionButtonAction Title="Open Flow Chart Editor" 
                                                                  Command="{Binding TE_OpenFlowChartEditor_Command}"/>
                                 </titlebar:ActionButtonOptionCollection>
                             </titlebar:ActionButton.Options>
                         </titlebar:ActionButton>
 
                     </titlebar:ActionButtonCollection>
-                </titlebar:PrettyTitlebar.ActionButtons>
+                </titlebar:PrettyTitlebar.ActionButtons>-->
 
             </titlebar:PrettyTitlebar>
             

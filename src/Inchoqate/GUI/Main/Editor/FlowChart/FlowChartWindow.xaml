@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inchoqate.GUI.Main.Editor.FlowChart"
-        xmlns:titlebar="clr-namespace:Inchoqate.GUI.Titlebar"
+        xmlns:tb="clr-namespace:Inchoqate.GUI.Titlebar"
         xmlns:root="clr-namespace:Inchoqate.GUI"
         mc:Ignorable="d"
         Title="FlowChartWindow" 
@@ -14,7 +14,7 @@
 
     <Window.Resources>
 
-        <Style x:Key="K_TitlebarStyle" TargetType="titlebar:PrettyTitlebar">
+        <Style x:Key="K_TitlebarStyle" TargetType="tb:PrettyTitlebar">
             <Setter Property="Background" Value="{DynamicResource Background_1}"/>
         </Style>
 
@@ -30,21 +30,44 @@
               Height="{Binding Path=Height, ElementName=E_Titlebar}"
               Panel.ZIndex="1">
 
-            <titlebar:PrettyTitlebar x:Name="E_Titlebar"
+            <tb:PrettyTitlebar x:Name="E_Titlebar"
                                      Style="{StaticResource K_TitlebarStyle}"
                                      Height="{Binding Path=CaptionHeight, ElementName=E_This}">
-                <titlebar:PrettyTitlebar.ActionButtons>
-                    <titlebar:ActionButtonCollection>
-                        <titlebar:ActionButton Title="Edit">
-                            <titlebar:ActionButton.Options>
-                                <titlebar:ActionButtonOptionCollection>
-                                    <titlebar:ActionButtonOption Title="Nodes"/>
-                                </titlebar:ActionButtonOptionCollection>
-                            </titlebar:ActionButton.Options>
-                        </titlebar:ActionButton>
-                    </titlebar:ActionButtonCollection>
-                </titlebar:PrettyTitlebar.ActionButtons>
-            </titlebar:PrettyTitlebar>
+                <tb:PrettyTitlebar.ActionButtons>
+                    <tb:ActionButtonCollection>
+                        <tb:ActionButton Title="Edit">
+                            <tb:ActionButton.Options>
+                                <tb:ActionButtonOptionCollection>
+                                    <tb:ActionButton Title="Add Node"
+                                                     OptionsPosition="Right"
+                                                     ClickMode="Hover">
+                                        <tb:ActionButton.Options>
+                                            <tb:ActionButtonOptionCollection>
+                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                            </tb:ActionButtonOptionCollection>
+                                        </tb:ActionButton.Options>
+                                    </tb:ActionButton>
+                                    <tb:ActionButton Title="Add Node"
+                                                     OptionsPosition="Right"
+                                                     ClickMode="Hover">
+                                        <tb:ActionButton.Options>
+                                            <tb:ActionButtonOptionCollection>
+                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                            </tb:ActionButtonOptionCollection>
+                                        </tb:ActionButton.Options>
+                                    </tb:ActionButton>
+                                </tb:ActionButtonOptionCollection>
+                            </tb:ActionButton.Options>
+                        </tb:ActionButton>
+                    </tb:ActionButtonCollection>
+                </tb:PrettyTitlebar.ActionButtons>
+            </tb:PrettyTitlebar>
         </Grid>
 
         <Grid x:Name="E_ContentGrid"
