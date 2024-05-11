@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public class GrayScale : Node, INode
+    public class N_GrayScale : Node, INode
     {
         public bool RequiresBreak => false;
 
@@ -27,7 +27,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
 
         public static readonly DependencyProperty FilterOpacityProperty = DependencyProperty.Register(
-            "FilterOpacity", typeof(double), typeof(GrayScale));
+            "FilterOpacity", typeof(double), typeof(N_GrayScale));
 
         public double FilterOpacity
         {
@@ -36,7 +36,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         }
 
 
-        public GrayScale()
+        public N_GrayScale()
         {
             base.Title = "Grayscale";
             base.Options =

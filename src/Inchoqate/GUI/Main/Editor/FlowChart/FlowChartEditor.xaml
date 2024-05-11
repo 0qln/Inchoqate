@@ -11,17 +11,9 @@
     <AdornerDecorator>
         <Canvas x:Name="E_MainCanvas">
 
-            <local:GrayScale Canvas.Left="172"
-                             Canvas.Top="43"
-                             x:Name="E_Filter1"/>
+            <local:N_DefaultInput x:Name="E_InputNode"/>
 
-            <local:GrayScale Canvas.Left="172"
-                             Canvas.Top="231"
-                             x:Name="E_Filter2"/>
-
-            <local:GrayScale Canvas.Left="502"
-                             Canvas.Top="123"
-                             x:Name="E_Filter3"/>
+            <local:N_DefaultOutput x:Name="E_OutputNode"/>
 
         </Canvas>
     </AdornerDecorator>

@@ -19,10 +19,10 @@
         </Style>
 
     </Window.Resources>
-    
+
     <Canvas x:Name="E_MainCanvas"
-            Width="{Binding Path=Width, ElementName=E_This}"
-            Height="{Binding Path=Height, ElementName=E_This}">
+            Width="{Binding Path=ActualWidth, ElementName=E_This}"
+            Height="{Binding Path=ActualHeight, ElementName=E_This}">
 
 
         <Grid x:Name="E_TitlebarGrid"
@@ -32,7 +32,19 @@
 
             <titlebar:PrettyTitlebar x:Name="E_Titlebar"
                                      Style="{StaticResource K_TitlebarStyle}"
-                                     Height="{Binding Path=CaptionHeight, ElementName=E_This}"/>
+                                     Height="{Binding Path=CaptionHeight, ElementName=E_This}">
+                <titlebar:PrettyTitlebar.ActionButtons>
+                    <titlebar:ActionButtonCollection>
+                        <titlebar:ActionButton Title="Edit">
+                            <titlebar:ActionButton.Options>
+                                <titlebar:ActionButtonOptionCollection>
+                                    <titlebar:ActionButtonOption Title="Nodes"/>
+                                </titlebar:ActionButtonOptionCollection>
+                            </titlebar:ActionButton.Options>
+                        </titlebar:ActionButton>
+                    </titlebar:ActionButtonCollection>
+                </titlebar:PrettyTitlebar.ActionButtons>
+            </titlebar:PrettyTitlebar>
         </Grid>
 
         <Grid x:Name="E_ContentGrid"

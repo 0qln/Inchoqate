@@ -66,9 +66,9 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 var xTo = Canvas.GetLeft(next) - Canvas.GetLeft(@this);
                 var yTo = Canvas.GetTop(next) - Canvas.GetTop(@this) + yPos(next!, next!.Inputs.IndexOf(@this), next!.Inputs.Count);
                 var path = Geometry.Parse($"M {xFrom},{yFrom} C {xTo},{yFrom} {xFrom},{yTo} {xTo},{yTo}");
+                drawingContext.DrawGeometry(brushCon, penCon, path);
                 drawingContext.DrawEllipse(brush, pen, new Point(xFrom, yFrom), r, r);
                 drawingContext.DrawEllipse(brush, pen, new Point(xTo, yTo), r, r);
-                drawingContext.DrawGeometry(brushCon, penCon, path);
             }
         }
     }
@@ -168,11 +168,17 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         public void SetNext(Node next)
         {
-            Outputs.Add(next);
+            this.Outputs.Add(next);
             next.Inputs.Add(this);
             next.Dragged += delegate
             {
-                _adorner?.InvalidateVisual();
+                this._adorner?.InvalidateVisual();
+                next._adorner?.InvalidateVisual();
+            };
+            this.Dragged += delegate
+            {
+                this._adorner?.InvalidateVisual();
+                next._adorner?.InvalidateVisual();
             };
             _adorner?.InvalidateVisual();
         }

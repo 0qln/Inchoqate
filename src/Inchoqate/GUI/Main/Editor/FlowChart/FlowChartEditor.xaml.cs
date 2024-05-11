@@ -32,8 +32,15 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            E_Filter1.SetNext(E_Filter3);
-            E_Filter2.SetNext(E_Filter3);
+            E_InputNode.SetNext(E_OutputNode);
+
+            Canvas.SetTop(E_InputNode, 50);
+            Canvas.SetLeft(E_InputNode, 50);
+
+            // `Canvas.SetRight`/`Canvas.SetBottom` introduces glitches with the connection
+            // adorner for some reason. Can't bother to figure out why...
+            Canvas.SetTop(E_OutputNode, E_MainCanvas.ActualHeight - 50 - E_OutputNode.ActualHeight);
+            Canvas.SetLeft(E_OutputNode, E_MainCanvas.ActualWidth - 50 - E_OutputNode.ActualWidth);
         }
     }
 }

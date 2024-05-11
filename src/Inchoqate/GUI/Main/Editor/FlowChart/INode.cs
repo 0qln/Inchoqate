@@ -24,11 +24,11 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         /// <summary>
         /// Each node produces one output, which can be the input to multiple nodes.
         /// </summary>
-        public List<INode> Next { get; }
+        public List<INode>? Next { get; }
         
         /// <summary>
         /// The inputs the this node.
         /// </summary>
-        public List<INode> Prev { get; }
+        public List<INode>? Prev { get; }
     }
 }
