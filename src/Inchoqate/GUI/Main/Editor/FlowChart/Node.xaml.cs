@@ -209,5 +209,23 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             _dragBegin = e.GetPosition(this);
             IsDragging = true;
         }
+
+        private void Thumb_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+
+        }
+
+        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            Canvas.SetTop(this, Canvas.GetTop(this) + e.VerticalChange);
+            Canvas.SetLeft(this, Canvas.GetLeft(this) + e.HorizontalChange);
+
+            Dragged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Thumb_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+
+        }
     }
 }
