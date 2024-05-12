@@ -39,7 +39,7 @@
                        Grid.Column="2"
                        Foreground="{DynamicResource Text_2}"
                        FontFamily="Consolas"
-                       Text="{Binding Path=Shortcut, ElementName=E_This, Converter={StaticResource C_Shortcut_String}}"/>
+                       Text="{Binding Path=Shortcut, ElementName=E_This, Converter={StaticResource C_CommandBinding_String}}"/>
 
             <TextBlock x:Name="E_Indicator"
                        Grid.Column="3"

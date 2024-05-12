@@ -81,7 +81,7 @@
                 Grid.Column="0"
                 Style="{StaticResource K_ButtonStyle}">
 
-            <Grid>
+            <Grid Margin="{Binding Path=ButtonPadding, ElementName=E_This}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="Col_Icon" Width="Auto"/>
                     <ColumnDefinition x:Name="Col_Title" Width="*"/>
@@ -100,13 +100,12 @@
 
                 <TextBlock x:Name="E_Shortcut"
                        Grid.Column="2"
-                       Foreground="{DynamicResource Text_2}"
-                       FontFamily="Consolas"
-                       Text="{Binding Path=Shortcut, ElementName=E_This, Converter={StaticResource C_Shortcut_String}}"/>
+                       Text=""/>
 
                 <TextBlock x:Name="E_Indicator"
                        Grid.Column="3"
                        Text=">"
+                       Margin="10,0,0,0"
                        Foreground="{DynamicResource Text_1}"
                        FontFamily="Consolas"
                        Visibility="{Binding Path=IndicatorVisibility, ElementName=E_This}"/>

@@ -74,18 +74,8 @@ namespace Inchoqate.GUI.Titlebar
         }
 
 
-        public static readonly DependencyProperty ShortcutProperty = DependencyProperty.Register(
-            "Shortcut", typeof(KeyboardShortcut), typeof(ActionButton), new(null));
-
-        public KeyboardShortcut Shortcut
-        {
-            get => (KeyboardShortcut)GetValue(ShortcutProperty);
-            set => SetValue(ShortcutProperty, value);
-        }
-
-
         public static readonly DependencyProperty IndicatorVisibilityProperty = DependencyProperty.Register(
-            "IndicatorVisibility", typeof(Visibility), typeof(ActionButton), new(Visibility.Hidden));
+            "IndicatorVisibility", typeof(Visibility), typeof(ActionButton), new(Visibility.Collapsed));
 
         public Visibility IndicatorVisibility
         {
@@ -149,6 +139,16 @@ namespace Inchoqate.GUI.Titlebar
                 b.E_Thumb.MouseEnter -= b.HoverMouseEnter;
                 b.E_MainGrid.MouseLeave -= b.HoverMouseLeave;
             }
+        }
+
+
+        public static readonly DependencyProperty ButtonPaddingProperty = DependencyProperty.Register(
+            "ButtonPadding", typeof(Thickness), typeof(ActionButton));
+
+        public Thickness ButtonPadding
+        {
+            get => (Thickness)GetValue(ButtonPaddingProperty);
+            set => SetValue(ButtonPaddingProperty, value);
         }
 
 

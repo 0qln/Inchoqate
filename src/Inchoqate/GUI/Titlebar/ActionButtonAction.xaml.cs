@@ -41,12 +41,19 @@ namespace Inchoqate.GUI.Titlebar
 
 
         public static readonly DependencyProperty ShortcutProperty = DependencyProperty.Register(
-            "Shortcut", typeof(KeyboardShortcut), typeof(ActionButtonAction), new(null));
+            "Shortcut", typeof(CommandBinding), typeof(ActionButtonAction), new(null, OnShortcutChanged));
 
-        public KeyboardShortcut Shortcut
+        public CommandBinding Shortcut
         {
-            get => (KeyboardShortcut)GetValue(ShortcutProperty);
+            get => (CommandBinding)GetValue(ShortcutProperty);
             set => SetValue(ShortcutProperty, value);
+        }
+
+        private static void OnShortcutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var button = (ActionButtonAction)d;
+            var shortcut = (CommandBinding)e.NewValue;
+            shortcut.Executed += (_, args) => button.Command.Execute(args);
         }
 
 

@@ -5,29 +5,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Inchoqate.GUI
 {
-    [ValueConversion(sourceType: typeof(KeyboardShortcut), targetType: typeof(string))]
-    public class KeyboardShortcutToStringConverter : IValueConverter
+    [ValueConversion(sourceType: typeof(CommandBinding), targetType: typeof(string))]
+    public class CommandBindingToStringConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is null)
+            if (value is CommandBinding cb 
+                && cb.Command is RoutedCommand cm 
+                && cm.InputGestures[0] is KeyGesture keys)
             {
-                return "";
+                return $"{keys.Modifiers} + {keys.Key}";
             }
 
-            throw new NotImplementedException();
+            return "";
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
-    }
-
-    public class KeyboardShortcut
-    {
     }
 }

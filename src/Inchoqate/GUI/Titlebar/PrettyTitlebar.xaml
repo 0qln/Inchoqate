@@ -8,19 +8,17 @@
              d:DesignHeight="30" d:DesignWidth="800"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"
-             Foreground="{DynamicResource Text_1}"
              x:Name="E_This">
 
     <UserControl.Resources>
         <Style x:Key="ApplicationButtonStyle" TargetType="Button">
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
             <Setter Property="Height" Value="{Binding Path=ActualHeight, ElementName=E_This}"/>
             <Setter Property="Width" Value="{Binding Path=ActualHeight, ElementName=E_This}"/>
-            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
-            <Setter Property="Foreground" Value="{Binding Path=Foreground, ElementName=E_This}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border TextBlock.Foreground="{TemplateBinding Foreground}"
+                        <Border TextBlock.Foreground="{DynamicResource Text_1}"
                                 x:Name="Border"
                                 Background="{DynamicResource Background_1}">
 
@@ -42,7 +40,8 @@
     </UserControl.Resources>
 
     <Grid VerticalAlignment="Stretch"
-          HorizontalAlignment="Stretch">
+          HorizontalAlignment="Stretch"
+          Background="{DynamicResource Background_1}">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
@@ -63,7 +62,7 @@
                    HorizontalAlignment="Center"
                    Text="{Binding Path=Title, ElementName=E_This}"
                    FontStyle="Italic"
-                   Foreground="{Binding Path=Foreground, ElementName=E_This}"
+                   Foreground="{DynamicResource Text_1}"
                    Margin="10, 0, 10, 0"/>
 
 
@@ -83,16 +82,7 @@
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="local:ActionButton">
                         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
-                        <Setter Property="Margin" Value="5"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="local:ActionButton">
-                                    <ContentPresenter/>
-                                    <ControlTemplate.Triggers>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
+                        <Setter Property="Margin" Value="5,0"/>
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>

@@ -16,7 +16,7 @@
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
-            <local:KeyboardShortcutToStringConverter x:Key="C_Shortcut_String"/>
+            <local:CommandBindingToStringConverter x:Key="C_CommandBinding_String"/>
 
             <Style x:Key="BorderlessWindow" TargetType="{x:Type local:BorderlessWindow}">
                 

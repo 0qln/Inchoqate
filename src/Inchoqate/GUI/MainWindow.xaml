@@ -9,7 +9,7 @@
         xmlns:main="clr-namespace:Inchoqate.GUI.Main"
         xmlns:panel="clr-namespace:Inchoqate.GUI.Main.Editor.Panel"
         xmlns:flow="clr-namespace:Inchoqate.GUI.Main.Editor.FlowChart"
-        xmlns:titlebar="clr-namespace:Inchoqate.GUI.Titlebar"
+        xmlns:tb="clr-namespace:Inchoqate.GUI.Titlebar"
         mc:Ignorable="d"
         Height="450" 
         Width="800"
@@ -20,14 +20,6 @@
         x:Name="E_This"
         Background="Tomato">
 
-    <Window.Resources>
-
-        <Style x:Key="K_TitlebarStyle" TargetType="titlebar:PrettyTitlebar">
-            <Setter Property="Background" Value="{DynamicResource Background_1}"/>
-        </Style>
-        
-    </Window.Resources>
-
     <Canvas x:Name="E_MainCanvas"
             Width="{Binding Path=ActualWidth, ElementName=E_This}"
             Height="{Binding Path=ActualHeight, ElementName=E_This}">
@@ -36,58 +28,42 @@
               Width="{Binding Path=Width, ElementName=E_MainCanvas}"
               Panel.ZIndex="1">
             
-            <titlebar:PrettyTitlebar x:Name="E_Titlebar"
-                                     Style="{StaticResource K_TitlebarStyle}"
+            <tb:PrettyTitlebar x:Name="E_Titlebar"
                                      Height="{Binding Path=CaptionHeight, ElementName=E_This}">
 
-                <titlebar:PrettyTitlebar.ActionButtons>
-                    <titlebar:ActionButtonCollection>
-                        <titlebar:ActionButton Title="Edit">
-                            <titlebar:ActionButton.Options>
-                                <titlebar:ActionButtonOptionCollection>
-                                    <titlebar:ActionButtonAction Title="Open Flow Chart Editor"
-                                                                 Command="{Binding TE_OpenFlowChartEditor_Command}"/>
-                                </titlebar:ActionButtonOptionCollection>
-                            </titlebar:ActionButton.Options>
-                        </titlebar:ActionButton>
-                    </titlebar:ActionButtonCollection>
-                </titlebar:PrettyTitlebar.ActionButtons>
-                
-                <!--<titlebar:PrettyTitlebar.ActionButtons>
-                    <titlebar:ActionButtonCollection>
-                        
-                        <titlebar:ActionButton Title="File">
-                            <titlebar:ActionButton.Options>
-                                <titlebar:ActionButtonOptionCollection>
-                                    <Button Content="Open"/>
-                                    <Button Content="Save"/>
-                                    <Button Content="Some longer text"/>
-                                </titlebar:ActionButtonOptionCollection>
-                            </titlebar:ActionButton.Options>
-                        </titlebar:ActionButton>
-                        
-                        <titlebar:ActionButton Title="View">
-                            <titlebar:ActionButton.Options>
-                                <titlebar:ActionButtonOptionCollection>
-                                    <titlebar:ActionButtonAction Title="Toggle Fullscreen"
-                                                                 Command="{Binding TE_ToggleFullscreen_Command}"/>
-                                </titlebar:ActionButtonOptionCollection>
-                            </titlebar:ActionButton.Options>
-                        </titlebar:ActionButton>
+                <tb:PrettyTitlebar.ActionButtons>
+                    <tb:ActionButtonCollection>
+                        <tb:ActionButton Title="File"
+                                         ButtonPadding="5,5">
+                            <tb:ActionButton.Options>
+                                <tb:ActionButtonOptionCollection>
+                                    <tb:ActionButtonAction Title="Open"/>
+                                    <tb:ActionButtonAction Title="Save"/>
+                                </tb:ActionButtonOptionCollection>
+                            </tb:ActionButton.Options>
+                        </tb:ActionButton>
+                        <tb:ActionButton Title="View"
+                                         ButtonPadding="5,5">
+                            <tb:ActionButton.Options>
+                                <tb:ActionButtonOptionCollection>
+                                    <tb:ActionButtonAction Title="Toggle Fullscreen"
+                                                           Command="{Binding TE_ToggleFullscreen_Command}"/>
+                                </tb:ActionButtonOptionCollection>
+                            </tb:ActionButton.Options>
+                        </tb:ActionButton>
+                        <tb:ActionButton Title="Edit"
+                                         ButtonPadding="5,5">
+                            <tb:ActionButton.Options>
+                                <tb:ActionButtonOptionCollection>
+                                    <tb:ActionButtonAction Title="Open Flow Chart Editor"
+                                                           Command="{Binding TE_OpenFlowChartEditor_Command}"/>
+                                </tb:ActionButtonOptionCollection>
+                            </tb:ActionButton.Options>
+                        </tb:ActionButton>
+                    </tb:ActionButtonCollection>
+                </tb:PrettyTitlebar.ActionButtons>
 
-                        <titlebar:ActionButton Title="Edit">
-                            <titlebar:ActionButton.Options>
-                                <titlebar:ActionButtonOptionCollection>
-                                    <titlebar:ActionButtonAction Title="Open Flow Chart Editor" 
-                                                                 Command="{Binding TE_OpenFlowChartEditor_Command}"/>
-                                </titlebar:ActionButtonOptionCollection>
-                            </titlebar:ActionButton.Options>
-                        </titlebar:ActionButton>
-
-                    </titlebar:ActionButtonCollection>
-                </titlebar:PrettyTitlebar.ActionButtons>-->
-
-            </titlebar:PrettyTitlebar>
+            </tb:PrettyTitlebar>
             
         </Grid>
 

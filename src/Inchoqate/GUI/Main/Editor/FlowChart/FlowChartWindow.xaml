@@ -13,17 +13,19 @@
         Height="450" Width="800">
 
     <Window.Resources>
-
         <Style x:Key="K_TitlebarStyle" TargetType="tb:PrettyTitlebar">
             <Setter Property="Background" Value="{DynamicResource Background_1}"/>
         </Style>
-
     </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding x:Name="CB_AddGrayscaleNodeCommand"
+                        Command="{x:Static local:FlowChartWindow.AddGrayscaleNodeCommand}"/>
+    </Window.CommandBindings>
 
     <Canvas x:Name="E_MainCanvas"
             Width="{Binding Path=ActualWidth, ElementName=E_This}"
             Height="{Binding Path=ActualHeight, ElementName=E_This}">
-
 
         <Grid x:Name="E_TitlebarGrid"
               Width="{Binding Path=Width, ElementName=E_MainCanvas}"
@@ -31,34 +33,26 @@
               Panel.ZIndex="1">
 
             <tb:PrettyTitlebar x:Name="E_Titlebar"
-                                     Style="{StaticResource K_TitlebarStyle}"
-                                     Height="{Binding Path=CaptionHeight, ElementName=E_This}">
+                                Style="{StaticResource K_TitlebarStyle}"
+                                Height="{Binding Path=CaptionHeight, ElementName=E_This}">
                 <tb:PrettyTitlebar.ActionButtons>
                     <tb:ActionButtonCollection>
-                        <tb:ActionButton Title="Edit">
+                        <tb:ActionButton Title="Edit"
+                                         ButtonPadding="5,5">
                             <tb:ActionButton.Options>
                                 <tb:ActionButtonOptionCollection>
                                     <tb:ActionButton Title="Add Node"
                                                      OptionsPosition="Right"
+                                                     IndicatorVisibility="Visible"
+                                                     ButtonPadding="5,0"
                                                      ClickMode="Hover">
                                         <tb:ActionButton.Options>
                                             <tb:ActionButtonOptionCollection>
-                                                <tb:ActionButtonAction Title="Grayscale"/>
-                                                <tb:ActionButtonAction Title="Grayscale"/>
-                                                <tb:ActionButtonAction Title="Grayscale"/>
-                                                <tb:ActionButtonAction Title="Grayscale"/>
-                                            </tb:ActionButtonOptionCollection>
-                                        </tb:ActionButton.Options>
-                                    </tb:ActionButton>
-                                    <tb:ActionButton Title="Add Node"
-                                                     OptionsPosition="Right"
-                                                     ClickMode="Hover">
-                                        <tb:ActionButton.Options>
-                                            <tb:ActionButtonOptionCollection>
-                                                <tb:ActionButtonAction Title="Grayscale"/>
-                                                <tb:ActionButtonAction Title="Grayscale"/>
-                                                <tb:ActionButtonAction Title="Grayscale"/>
-                                                <tb:ActionButtonAction Title="Grayscale"/>
+                                                <tb:ActionButtonAction Title="Grayscale" 
+                                                                       Shortcut="{x:Reference CB_AddGrayscaleNodeCommand}"
+                                                                       Command="{Binding TE_AddGrayscaleNode_Command}">
+                                                </tb:ActionButtonAction>
+                                                <tb:ActionButtonAction Title="Empty"/>
                                             </tb:ActionButtonOptionCollection>
                                         </tb:ActionButton.Options>
                                     </tb:ActionButton>
@@ -84,7 +78,7 @@
             <Frame HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch">
                 <Frame.Content>
-                    <local:FlowChartEditor/>
+                    <local:FlowChartEditor x:Name="E_FlowChartEditor"/>
                 </Frame.Content>
             </Frame>
 
