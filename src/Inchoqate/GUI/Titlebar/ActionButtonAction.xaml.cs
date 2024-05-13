@@ -18,7 +18,7 @@ namespace Inchoqate.GUI.Titlebar
     /// <summary>
     /// Interaction logic for ActionButtonAction.xaml
     /// </summary>
-    public partial class ActionButtonAction : UserControl, IActionButtonOption
+    public partial class ActionButtonAction : ActionButtonOption
     {
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
             "Icon", typeof(ImageSource), typeof(ActionButtonAction));
@@ -37,6 +37,16 @@ namespace Inchoqate.GUI.Titlebar
         {
             get => (string)GetValue(TitleProperty);
             set => SetValue(TitleProperty, value);
+        }
+
+
+        public static readonly DependencyProperty IndicatorVisibilityProperty = DependencyProperty.Register(
+            "IndicatorVisibility", typeof(Visibility), typeof(ActionButtonAction), new(Visibility.Collapsed));
+
+        public Visibility IndicatorVisibility
+        {
+            get => (Visibility)GetValue(IndicatorVisibilityProperty);
+            set => SetValue(IndicatorVisibilityProperty, value);
         }
 
 
@@ -67,10 +77,14 @@ namespace Inchoqate.GUI.Titlebar
         }
 
 
-        ColumnDefinition IActionButtonOption.Col_Icon => Col_Icon;
-        ColumnDefinition IActionButtonOption.Col_Title => Col_Title;
-        ColumnDefinition IActionButtonOption.Col_Shortcut => Col_Shortcut;
-        ColumnDefinition IActionButtonOption.Col_Indicator => Col_Indicator;
+        //double IActionButtonOption.Col_Icon_MinWidth
+        //{
+        //    get => Col_Icon.MinWidth;
+        //    set => Col_Icon.MinWidth = value;
+        //}
+        //double IActionButtonOption.Col_Title_MinWidth => Col_Title;
+        //double IActionButtonOption.Col_Shortcut_MinWidth => Col_Shortcut;
+        //double IActionButtonOption.Col_Indicator_MinWidth => Col_Indicator.MinWidth;
 
 
         public ActionButtonAction()

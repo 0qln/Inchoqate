@@ -8,19 +8,19 @@ using System.Windows.Controls;
 
 namespace Inchoqate.GUI.Titlebar
 {
-    public class ActionButtonOptionCollection : ObservableCollection<IActionButtonOption>
-    {
-        public ActionButtonOptionCollection()
-        {
-        }
-    }
+    //public class ActionButtonOptionCollection : ObservableCollection<IActionButtonOption>
+    //{
+    //    public ActionButtonOptionCollection()
+    //    {
+    //    }
+    //}
 
 
-    public interface IActionButtonOption
-    {
-        public ColumnDefinition Col_Icon { get; }
-        public ColumnDefinition Col_Title { get; }
-        public ColumnDefinition Col_Shortcut { get; }
-        public ColumnDefinition Col_Indicator { get; }
-    }
+    //public interface IActionButtonOption
+    //{
+    //    //public double Col_Icon_MinWidth { get; set; }
+    //    //public double Col_Title_MinWidth { get; set; }
+    //    //public double Col_Shortcut_MinWidth { get; set; }
+    //    //public double Col_Indicator_MinWidth { get; set; }
+    //}
 }

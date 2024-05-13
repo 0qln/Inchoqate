@@ -212,7 +212,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         private void Thumb_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
-
+            
         }
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)

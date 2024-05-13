@@ -52,7 +52,7 @@ namespace Inchoqate.GUI.Titlebar
     /// <summary>
     /// Interaction logic for ActionButton.xaml
     /// </summary>
-    public partial class ActionButton : UserControl, IActionButtonOption
+    public partial class ActionButton : ActionButtonOption
     {
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
             "Icon", typeof(ImageSource), typeof(ActionButton));
@@ -129,13 +129,13 @@ namespace Inchoqate.GUI.Titlebar
 
             if ((ClickMode)e.NewValue == ClickMode.Hover)
             {
-                b.E_Thumb.Click -= b.Click;
+                b.E_Thumb.E_Button.Click -= b.Click;
                 b.E_Thumb.MouseEnter += b.HoverMouseEnter;
                 b.E_MainGrid.MouseLeave += b.HoverMouseLeave;
             }
             else
             {
-                b.E_Thumb.Click += b.Click;
+                b.E_Thumb.E_Button.Click += b.Click;
                 b.E_Thumb.MouseEnter -= b.HoverMouseEnter;
                 b.E_MainGrid.MouseLeave -= b.HoverMouseLeave;
             }
@@ -152,10 +152,14 @@ namespace Inchoqate.GUI.Titlebar
         }
 
 
-        ColumnDefinition IActionButtonOption.Col_Icon => Col_Icon;
-        ColumnDefinition IActionButtonOption.Col_Title => Col_Title;
-        ColumnDefinition IActionButtonOption.Col_Shortcut => Col_Shortcut;
-        ColumnDefinition IActionButtonOption.Col_Indicator => Col_Indicator;
+        //public static readonly DependencyProperty OptionsIconMaxWidthProperty = DependencyProperty.Register(
+        //    "OptionsIconMaxWidth", typeof(double), typeof(ActionButton));
+
+        //public double OptionsIconMaxWidth
+        //{
+        //    get => (double)GetValue(OptionsIconMaxWidthProperty);
+        //    set => SetValue(OptionsIconMaxWidthProperty, value);
+        //}
 
         public event EventHandler? VisibilityChanged;
 
@@ -164,7 +168,7 @@ namespace Inchoqate.GUI.Titlebar
         {
             InitializeComponent();
 
-            E_Thumb.Click += Click;
+            E_Thumb.E_Button.Click += Click;
 
             Loaded += delegate
             {
