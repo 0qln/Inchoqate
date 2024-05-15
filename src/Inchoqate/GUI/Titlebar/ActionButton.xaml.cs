@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,35 @@ using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.Titlebar
 {
+    public class ActionButtonOptionCollection : ObservableCollection<UserControl>
+    {
+        public ActionButtonOptionCollection()
+        {
+        }
+    }
+
+
+    public class ActionButtonCommand(Action<ActionButton> action) : ICommand
+    {
+        public event EventHandler? CanExecuteChanged;
+
+        private readonly Action<ActionButton> _action = action;
+
+        bool ICommand.CanExecute(object? parameter)
+        {
+            return parameter is ActionButton;
+        }
+
+        void ICommand.Execute(object? parameter)
+        {
+            if (parameter is ActionButton button)
+            {
+                _action(button);
+            }
+        }
+    }
+
+
     public enum ActionButtonOptionsPosition
     {
         Bottom, 
@@ -52,7 +82,7 @@ namespace Inchoqate.GUI.Titlebar
     /// <summary>
     /// Interaction logic for ActionButton.xaml
     /// </summary>
-    public partial class ActionButton : ActionButtonOption
+    public partial class ActionButton : UserControl
     {
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
             "Icon", typeof(ImageSource), typeof(ActionButton));
@@ -74,6 +104,16 @@ namespace Inchoqate.GUI.Titlebar
         }
 
 
+        public static readonly DependencyProperty ShortcutProperty = DependencyProperty.Register(
+            "Shortcut", typeof(CommandBinding), typeof(ActionButton));
+
+        public CommandBinding Shortcut
+        {
+            get => (CommandBinding)GetValue(ShortcutProperty);
+            set => SetValue(ShortcutProperty, value);
+        }
+
+
         public static readonly DependencyProperty IndicatorVisibilityProperty = DependencyProperty.Register(
             "IndicatorVisibility", typeof(Visibility), typeof(ActionButton), new(Visibility.Collapsed));
 
@@ -84,6 +124,16 @@ namespace Inchoqate.GUI.Titlebar
         }
 
 
+        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+            "Command", typeof(ICommand), typeof(ActionButton), new(new ActionButtonCommand(b => b.Toggle())));
+
+        public ICommand Command
+        {
+            get => (ICommand)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
+        }
+
+        
         public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(
             "Options", typeof(ActionButtonOptionCollection), typeof(ActionButton));
 
@@ -129,15 +179,15 @@ namespace Inchoqate.GUI.Titlebar
 
             if ((ClickMode)e.NewValue == ClickMode.Hover)
             {
-                b.E_Thumb.E_Button.Click -= b.Click;
-                b.E_Thumb.MouseEnter += b.HoverMouseEnter;
-                b.E_MainGrid.MouseLeave += b.HoverMouseLeave;
+                //b.E_Thumb.E_Button.Click -= b.Click;
+                //b.E_Thumb.MouseEnter += b.HoverMouseEnter;
+                //b.E_MainGrid.MouseLeave += b.HoverMouseLeave;
             }
             else
             {
-                b.E_Thumb.E_Button.Click += b.Click;
-                b.E_Thumb.MouseEnter -= b.HoverMouseEnter;
-                b.E_MainGrid.MouseLeave -= b.HoverMouseLeave;
+                //b.E_Thumb.E_Button.Click += b.Click;
+                //b.E_Thumb.MouseEnter -= b.HoverMouseEnter;
+                //b.E_MainGrid.MouseLeave -= b.HoverMouseLeave;
             }
         }
 
@@ -152,15 +202,6 @@ namespace Inchoqate.GUI.Titlebar
         }
 
 
-        //public static readonly DependencyProperty OptionsIconMaxWidthProperty = DependencyProperty.Register(
-        //    "OptionsIconMaxWidth", typeof(double), typeof(ActionButton));
-
-        //public double OptionsIconMaxWidth
-        //{
-        //    get => (double)GetValue(OptionsIconMaxWidthProperty);
-        //    set => SetValue(OptionsIconMaxWidthProperty, value);
-        //}
-
         public event EventHandler? VisibilityChanged;
 
 
@@ -168,7 +209,7 @@ namespace Inchoqate.GUI.Titlebar
         {
             InitializeComponent();
 
-            E_Thumb.E_Button.Click += Click;
+            //E_Thumb.E_Button.Click += Click;
 
             Loaded += delegate
             {

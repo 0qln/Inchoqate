@@ -1,4 +1,4 @@
-﻿<local:ActionButtonOption x:Class="Inchoqate.GUI.Titlebar.ActionButtonAction"
+﻿<UserControl x:Class="Inchoqate.GUI.Titlebar.ActionButtonAction"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -45,7 +45,8 @@
             Height="{Binding Path=Height, ElementName=E_This}"
             Style="{StaticResource K_ButtonStyle}"
             Command="{Binding Path=Command, ElementName=E_This}"
-            WindowChrome.IsHitTestVisibleInChrome="True">
+            WindowChrome.IsHitTestVisibleInChrome="True"
+            Grid.ColumnSpan="4">
 
         <Grid VerticalAlignment="Center"
               Height="{Binding Path=Height, ElementName=E_This}">
@@ -104,4 +105,4 @@
         </Grid>
     </Button>
 
-</local:ActionButtonOption>
+</UserControl>

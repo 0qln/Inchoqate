@@ -35,7 +35,7 @@
             <tb:PrettyTitlebar x:Name="E_Titlebar"
                                 Style="{StaticResource K_TitlebarStyle}"
                                 Height="{Binding Path=CaptionHeight, ElementName=E_This}">
-                <tb:PrettyTitlebar.ActionButtons>
+                <!--<tb:PrettyTitlebar.ActionButtons>
                     <tb:ActionButtonCollection>
                         <tb:ActionButton Title="Edit"
                                          ButtonPadding="5,5">
@@ -60,7 +60,7 @@
                             </tb:ActionButton.Options>
                         </tb:ActionButton>
                     </tb:ActionButtonCollection>
-                </tb:PrettyTitlebar.ActionButtons>
+                </tb:PrettyTitlebar.ActionButtons>-->
             </tb:PrettyTitlebar>
         </Grid>
 

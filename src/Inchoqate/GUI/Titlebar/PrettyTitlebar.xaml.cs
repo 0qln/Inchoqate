@@ -99,13 +99,13 @@ namespace Inchoqate.GUI.Titlebar
             {
                 // TODO: this logic will not work with keyboard navigation.
 
-                if (// In this case the button toggles itself.
-                    !button.IsMouseOver ||
-                    // In this case the button does not toggle itself and we should collapse it.
-                    button.E_OptionsCanvas.IsMouseOver)
-                {
-                    button.Collapse();
-                }
+                //if (// In this case the button toggles itself.
+                //    !button.IsMouseOver ||
+                //    // In this case the button does not toggle itself and we should collapse it.
+                //    button.E_OptionsCanvas.IsMouseOver)
+                //{
+                //    button.Collapse();
+                //}
             }
         }
 

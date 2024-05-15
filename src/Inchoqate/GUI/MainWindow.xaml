@@ -33,6 +33,20 @@
 
                 <tb:PrettyTitlebar.ActionButtons>
                     <tb:ActionButtonCollection>
+                        <tb:ActionButton Title="Edit"
+                                         ButtonPadding="5,5">
+                            <tb:ActionButton.Options>
+                                <tb:ActionButtonOptionCollection>
+                                    <tb:ActionButton Title="Open Flow Chart Editor"
+                                                     Command="{Binding TE_OpenFlowChartEditor_Command}"/>
+                                </tb:ActionButtonOptionCollection>
+                            </tb:ActionButton.Options>
+                        </tb:ActionButton>
+                    </tb:ActionButtonCollection>
+                </tb:PrettyTitlebar.ActionButtons>
+
+                <!--<tb:PrettyTitlebar.ActionButtons>
+                    <tb:ActionButtonCollection>
                         <tb:ActionButton Title="File"
                                          ButtonPadding="5,5">
                             <tb:ActionButton.Options>
@@ -61,7 +75,7 @@
                             </tb:ActionButton.Options>
                         </tb:ActionButton>
                     </tb:ActionButtonCollection>
-                </tb:PrettyTitlebar.ActionButtons>
+                </tb:PrettyTitlebar.ActionButtons>-->
 
             </tb:PrettyTitlebar>
             

@@ -1,4 +1,4 @@
-﻿<local:ActionButtonOption x:Class="Inchoqate.GUI.Titlebar.ActionButton"
+﻿<UserControl x:Class="Inchoqate.GUI.Titlebar.ActionButton"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,6 +11,34 @@
 
     <UserControl.Resources>
         <local:ActionButtonOptionsPositionToIndexConverter x:Key="C_Position_Index"/>
+        
+        <Style x:Key="K_ButtonStyle" TargetType="Button">
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Foreground" Value="{Binding Path=Foreground, ElementName=E_This}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border TextBlock.Foreground="{TemplateBinding Foreground}"
+                                x:Name="Border"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Background="{DynamicResource Popup_Idle_1}">
+
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource Popup_Focused_1}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
     
     <Grid x:Name="E_MainGrid">
@@ -38,35 +66,92 @@
             <Border x:Name="E_OptionsBorder"
                     BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
                     BorderThickness="1">
-                <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}">
-                    <ItemsControl.ItemsPanel >
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Vertical"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="local:ActionButtonOption">
-                            <Setter Property="Height" Value="25"/>
-                            <Setter Property="IconMinWidth" Value="{Binding Path=OptionsIconMaxWidth, ElementName=E_This}"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                </ItemsControl>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="Col_OptionsIcon" Width="Auto"/>
+                        <ColumnDefinition x:Name="Col_OptionsTitle" Width="Auto"/>
+                        <ColumnDefinition x:Name="Col_OptionsShortcut" Width="Auto"/>
+                        <ColumnDefinition x:Name="Col_OptionsIndicator" Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
+                    <ItemsControl x:Name="E_OptionButtons"
+                                  Grid.ColumnSpan="4">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="local:ActionButton">
+                                <Setter Property="Height" Value="25"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="local:ActionButton">
+                                            <Button Opacity="0" Command="{TemplateBinding Command}"/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+
+                    <ItemsControl x:Name="E_OptionTitles"
+                                  Grid.Column="1"
+                                  Margin="5, 0, 5, 0"
+                                  ItemsSource="{Binding Path=Options, ElementName=E_This}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="local:ActionButton">
+                                <Setter Property="Height" Value="25"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="local:ActionButton">
+                                            <TextBlock VerticalAlignment="Center"
+                                                       HorizontalAlignment="Left"
+                                                       Foreground="{DynamicResource Text_1}"
+                                                       LineHeight="{Binding Path=Height, ElementName=E_This}"
+                                                       LineStackingStrategy="BlockLineHeight">
+                                                <Run Text="{TemplateBinding Title}"
+                                                     BaselineAlignment="Center"/>
+                                            </TextBlock>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+
+                </Grid>
             </Border>
 
         </Canvas>
 
-        <local:ActionButtonAction x:Name="E_Thumb"
-                                  Grid.Row="0"
-                                  Grid.Column="0"
-                                  HorizontalContentAlignment="Left"
-                                  VerticalContentAlignment="Center"
-                                  Height="{Binding Path=Height, ElementName=E_This}"
-                                  Icon="{Binding Path=Icon, ElementName=E_This}"
-                                  Title="{Binding Path=Title, ElementName=E_This}"
-                                  Shortcut="{Binding Path=Shortcut, ElementName=E_This}"
-                                  IndicatorVisibility="{Binding Path=IndicatorVisibility, ElementName=E_This}"/>
+        <Button x:Name="E_Thumb"
+                Style="{StaticResource K_ButtonStyle}"
+                Command="{Binding Path=Command, ElementName=E_This}"
+                CommandParameter="{Binding ElementName=E_This}">
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="Col_Icon" Width="Auto"/>
+                    <ColumnDefinition x:Name="Col_Title" Width="Auto"/>
+                    <ColumnDefinition x:Name="Col_Shortcut" Width="Auto"/>
+                    <ColumnDefinition x:Name="Col_Indicator" Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="E_Title"
+                           Grid.Column="1"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           Foreground="{DynamicResource Text_1}"
+                           LineHeight="{Binding Path=Height, ElementName=E_This}"
+                           LineStackingStrategy="BlockLineHeight">
+                    <Run Text="{Binding Path=Title, ElementName=E_This}"
+                         BaselineAlignment="Center"/>
+                </TextBlock>
+            
+            </Grid>
+        </Button>
 
     </Grid>
     
-</local:ActionButtonOption>
+</UserControl>

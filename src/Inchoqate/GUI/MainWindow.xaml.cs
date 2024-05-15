@@ -127,7 +127,7 @@ namespace Inchoqate.GUI
                 name, 
                 typeof(ICommand), 
                 typeof(MainWindow), 
-                new(new ActionButtonCommand(action)));
+                new(new ActionButtonCommand(b => action())));
         }
 
         #endregion

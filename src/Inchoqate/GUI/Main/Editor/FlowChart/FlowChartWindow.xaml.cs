@@ -55,7 +55,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 name,
                 typeof(ICommand),
                 typeof(FlowChartWindow),
-                new(new ActionButtonCommand(action)));
+                new(new ActionButtonCommand(b => action())));
         }
 
         #endregion
