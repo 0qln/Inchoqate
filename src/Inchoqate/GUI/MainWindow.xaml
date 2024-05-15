@@ -37,7 +37,8 @@
                                          ButtonPadding="5,5">
                             <tb:ActionButton.Options>
                                 <tb:ActionButtonOptionCollection>
-                                    <tb:ActionButtonAction Title="Open"/>
+                                    <tb:ActionButtonAction Title="Open"
+                                                           Command="{Binding TE_UserGetImageSource_Command}"/>
                                     <tb:ActionButtonAction Title="Save"/>
                                 </tb:ActionButtonOptionCollection>
                             </tb:ActionButton.Options>
@@ -85,7 +86,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <main:PreviewImage x:Name="PreviewImage"
+            <main:PreviewImage x:Name="E_PreviewImage"
                                 Grid.Column="0"/>
 
             <Border x:Name="Seperator"

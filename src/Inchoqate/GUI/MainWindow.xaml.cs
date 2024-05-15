@@ -47,6 +47,7 @@ namespace Inchoqate.GUI
 
             RegisterCommand("TE_OpenFlowChartEditor_Command", OpenFlowChartEditor);
             RegisterCommand("TE_ToggleFullscreen_Command", ToggleFullscreen);
+            RegisterCommand("TE_UserGetImageSource_Command", UserGetImageSource);
 
             E_Titlebar.Closed += (_, _) => Application.Current.Shutdown();
 
@@ -103,6 +104,26 @@ namespace Inchoqate.GUI
         {
             var window = new FlowChartWindow();
             window.Show();
+        }
+
+        public void UserGetImageSource()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                // TODO
+                FileName = "Picture",
+                DefaultExt = ".png",
+                Filter = "Images |*.png"
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                string newImage = dialog.FileName;
+
+                E_PreviewImage.Texture = new Texture(newImage);
+            }
         }
 
         public void ToggleFullscreen()

@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using OpenTK.Graphics.OpenGL4;
 using Microsoft.Extensions.Logging;
 using Miscellaneous.Logging;
+using System.Windows.Media.TextFormatting;
 
 namespace Inchoqate.GUI.Main
 {
@@ -36,7 +37,30 @@ namespace Inchoqate.GUI.Main
 
         private Shader _shader;
 
-        private Texture _texture;
+        private Texture? _texture;
+
+        public Texture? Texture
+        {
+            get
+            {
+                return _texture;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    return;
+                }
+
+                _texture = value;
+                _texture.Use(TextureUnit.Texture0);
+
+                // Force a new rendering
+                OpenTkControl.InvalidateVisual();
+                UpdateTextureRenderSize(ActualWidth, ActualHeight);
+            }
+        }
+
 
         private readonly float[] _vertices =
         {
@@ -87,13 +111,15 @@ namespace Inchoqate.GUI.Main
             int aTexCoordLoc = GL.GetAttribLocation(_shader.Handle, "aTexCoord");
             GL.EnableVertexAttribArray(aTexCoordLoc);
             GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-
-            _texture = new Texture(BuildFiles.Get("Sample-Images/img0/1920x1080.bmp"));
-            _texture.Use(TextureUnit.Texture0);
         }
 
         private void OpenTkControl_OnRender(TimeSpan obj)
         {
+            if (_texture is null)
+            {
+                return;
+            }
+
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
@@ -106,19 +132,29 @@ namespace Inchoqate.GUI.Main
 
         private void Border_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double aspectRatio = (double)_texture.Height / _texture.Width;
-            double boundsRatio = ActualHeight / ActualWidth;
+            UpdateTextureRenderSize(e.NewSize.Width, e.NewSize.Height);
+        }
 
-            OpenTkControl.Width = ActualWidth;
-            OpenTkControl.Height = ActualHeight;
+        private void UpdateTextureRenderSize(double boundsX, double boundsY)
+        {
+            if (_texture is null)
+            {
+                return;
+            }
+
+            double aspectRatio = (double)_texture.Height / _texture.Width;
+            double boundsRatio = boundsY / boundsX;
+
+            OpenTkControl.Width = boundsX;
+            OpenTkControl.Height = boundsY;
 
             if (boundsRatio > aspectRatio)
             {
-                OpenTkControl.Height = ActualWidth * aspectRatio;
+                OpenTkControl.Height = boundsX * aspectRatio;
             }
             else if (boundsRatio < aspectRatio)
             {
-                OpenTkControl.Width = ActualHeight / aspectRatio;
+                OpenTkControl.Width = boundsY / aspectRatio;
             }
         }
     }
