@@ -18,12 +18,12 @@ using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public partial class OptionCollection : ObservableCollection<Control>
+    public partial class NodeOptionCollection : ObservableCollection<Control>
     {
     }
 
 
-    public class NodeCollection : ObservableCollection<Control>
+    public class NodeCollection : ObservableCollection<NodeView>
     {
     }
 
@@ -33,7 +33,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     /// </summary>
     public class NodeConnectionAdorner : Adorner
     {
-        public NodeConnectionAdorner(Node adornedElement)
+        public NodeConnectionAdorner(NodeView adornedElement)
             : base(adornedElement)
         {
         }
@@ -41,11 +41,11 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         // TODO: Bind colors to color theme
         protected override void OnRender(DrawingContext drawingContext)
         {
-            Node @this = (Node)AdornedElement;
+            NodeView @this = (NodeView)AdornedElement;
 
-            static double yMin(Node node) => node.Margin.Top;
-            static double yMax(Node node) => node.ActualHeight - node.Margin.Bottom - yMin(node);
-            static double yPos(Node node, int i, int iMax) => Utils.Lerp(yMin(node), yMax(node), (i + 0.5) / iMax);
+            static double yMin(NodeView node) => node.Margin.Top;
+            static double yMax(NodeView node) => node.ActualHeight - node.Margin.Bottom - yMin(node);
+            static double yPos(NodeView node, int i, int iMax) => Utils.Lerp(yMin(node), yMax(node), (i + 0.5) / iMax);
 
             // Adapters
             var brush = Brushes.White;
@@ -62,7 +62,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             {
                 var xFrom = (double)@this.ActualWidth;
                 var yFrom = yPos(@this, i, count);
-                var next = @this.Outputs[i] as Node;
+                var next = @this.Outputs[i] as NodeView;
                 var xTo = Canvas.GetLeft(next) - Canvas.GetLeft(@this);
                 var yTo = Canvas.GetTop(next) - Canvas.GetTop(@this) + yPos(next!, next!.Inputs.IndexOf(@this), next!.Inputs.Count);
                 var path = Geometry.Parse($"M {xFrom},{yFrom} C {xTo},{yFrom} {xFrom},{yTo} {xTo},{yTo}");
@@ -77,10 +77,10 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     /// <summary>
     /// Interaction logic for FlowChartNode.xaml
     /// </summary>
-    public partial class Node : UserControl
+    public partial class NodeView : UserControl
     {
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
-            "Title", typeof(string), typeof(Node));
+            "Title", typeof(string), typeof(NodeView));
 
         public string Title
         {
@@ -90,17 +90,17 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
 
         public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(
-            "Options", typeof(OptionCollection), typeof(Node));
+            "Options", typeof(NodeOptionCollection), typeof(NodeView));
 
-        public OptionCollection Options
+        public NodeOptionCollection Options
         {
-            get => (OptionCollection)GetValue(OptionsProperty);
+            get => (NodeOptionCollection)GetValue(OptionsProperty);
             set => SetValue(OptionsProperty, value);
         }
 
 
         public static readonly DependencyProperty InputsProperty = DependencyProperty.Register(
-            "Inputs", typeof(NodeCollection), typeof(Node));
+            "Inputs", typeof(NodeCollection), typeof(NodeView));
 
         public NodeCollection Inputs
         {
@@ -110,7 +110,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
 
         public static readonly DependencyProperty OutputsProperty = DependencyProperty.Register(
-            "Outputs", typeof(NodeCollection), typeof(Node));
+            "Outputs", typeof(NodeCollection), typeof(NodeView));
 
         public NodeCollection Outputs
         {
@@ -120,7 +120,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
 
         public static readonly DependencyProperty IsDraggingProperty = DependencyProperty.Register(
-            "IsDragging", typeof(bool), typeof(Node));
+            "IsDragging", typeof(bool), typeof(NodeView));
 
         public bool IsDragging
         {
@@ -137,7 +137,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         private Adorner? _adorner;
 
 
-        public Node()
+        public NodeView()
         {
             InitializeComponent();
 
@@ -145,6 +145,9 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             Inputs = [];
 
             Loaded += Node_Loaded;
+
+            Canvas.SetLeft(this, 10);
+            Canvas.SetTop(this, 10);
         }
 
         private void Node_Loaded(object sender, RoutedEventArgs e)
@@ -159,14 +162,10 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                     }
                 }
             );
-
-            var parent = (FrameworkElement)Parent;
-            parent.MouseMove += DragApply;
-            parent.MouseUp += DragEnd;
         }
 
 
-        public void SetNext(Node next)
+        public virtual void SetNext(NodeView next)
         {
             this.Outputs.Add(next);
             next.Inputs.Add(this);
@@ -180,35 +179,9 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 this._adorner?.InvalidateVisual();
                 next._adorner?.InvalidateVisual();
             };
-            _adorner?.InvalidateVisual();
+            this._adorner?.InvalidateVisual();
         }
 
-
-        private void DragEnd(object sender, MouseButtonEventArgs e)
-        {
-            IsDragging = false;
-        }
-
-        private void DragApply(object sender, MouseEventArgs e)
-        {
-            if (IsDragging)
-            {
-                var pos = e.GetPosition(Parent as FrameworkElement);
-                // TODO: check bounds
-                {
-                    Canvas.SetTop(this, pos.Y - _dragBegin.Y);
-                    Canvas.SetLeft(this, pos.X - _dragBegin.X);
-
-                    Dragged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-
-        private void DragBegin(object sender, MouseButtonEventArgs e)
-        {
-            _dragBegin = e.GetPosition(this);
-            IsDragging = true;
-        }
 
         private void Thumb_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {

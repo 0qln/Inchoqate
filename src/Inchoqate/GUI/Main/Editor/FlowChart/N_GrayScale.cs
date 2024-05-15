@@ -5,23 +5,29 @@ using System.Windows.Controls;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public class N_GrayScale : Node, INode
+    public class N_GrayScale : NodeModel
     {
-        public bool RequiresBreak => false;
+        public override bool RequiresBreak => false;
 
-        public List<INode> Next
+
+        private readonly List<NodeModel> _outputs = [];
+        
+        public override List<NodeModel> Next
         {
             get
             {
-                return null;
+                return _outputs;
             }
         }
 
-        public List<INode> Prev
+
+        private readonly List<NodeModel> _inputs = [];
+        
+        public override List<NodeModel> Prev
         {
             get
             {
-                return null;
+                return _inputs;
             }
         }
 

@@ -9,13 +9,14 @@ using System.Windows;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    internal class N_DefaultInput : Node, INode
+    internal class N_DefaultInput : NodeModel
     {
-        public bool RequiresBreak => false;
+        public override bool RequiresBreak => false;
 
-        private List<INode> _outputs = [];
 
-        public List<INode>? Next
+        private readonly List<NodeModel> _outputs = [];
+        
+        public override List<NodeModel> Next
         {
             get
             {
@@ -23,7 +24,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             }
         }
 
-        public List<INode>? Prev
+        
+        public override List<NodeModel>? Prev
         {
             get
             {

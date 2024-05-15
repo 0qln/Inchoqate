@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    internal class N_DefaultOutput : Node, INode
+    internal class N_DefaultOutput : NodeModel
     {
-        public bool RequiresBreak => false;
+        public override bool RequiresBreak => false;
 
-        private INode _input;
 
-        public List<INode>? Next
+        public override List<NodeModel>? Next
         {
             get
             {
@@ -21,11 +20,14 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             }
         }
 
-        public List<INode>? Prev
+        
+        private readonly List<NodeModel> _inputs = [];
+        
+        public override List<NodeModel> Prev
         {
             get
             {
-                return [_input];
+                return _inputs;
             }
         }
 
@@ -36,6 +38,12 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             base.Options =
             [
             ];
+        }
+
+
+        public override void SetNext(NodeModel next)
+        {
+            throw new InvalidOperationException();
         }
     }
 }
