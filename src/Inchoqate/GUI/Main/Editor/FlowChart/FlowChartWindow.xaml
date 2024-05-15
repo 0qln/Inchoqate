@@ -19,8 +19,7 @@
     </Window.Resources>
 
     <Window.CommandBindings>
-        <CommandBinding x:Name="CB_AddGrayscaleNodeCommand"
-                        Command="{x:Static local:FlowChartWindow.AddGrayscaleNodeCommand}"/>
+        <CommandBinding x:Name="CB_AddGrayscaleNode" Command="{x:Static local:FlowChartWindow.AddGrayscaleNodeCommand}"/>
     </Window.CommandBindings>
 
     <Canvas x:Name="E_MainCanvas"
@@ -49,8 +48,8 @@
                                         <tb:ActionButton.Options>
                                             <tb:ActionButtonOptionCollection>
                                                 <tb:ActionButtonAction Title="Grayscale" 
-                                                                       Shortcut="{x:Reference CB_AddGrayscaleNodeCommand}"
-                                                                       Command="{Binding TE_AddGrayscaleNode_Command}">
+                                                                       Shortcut="{x:Reference CB_AddGrayscaleNode}"
+                                                                       Command="{Binding DP_AddGrayscaleNode}">
                                                 </tb:ActionButtonAction>
                                                 <tb:ActionButtonAction Title="Empty"/>
                                             </tb:ActionButtonOptionCollection>

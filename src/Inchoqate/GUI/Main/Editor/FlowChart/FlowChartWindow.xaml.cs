@@ -25,21 +25,13 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         private readonly ILogger<MainWindow> _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
 
+        #region AddGrayscale Command
+
+        public static readonly DependencyProperty AddGrayscaleNodeProperty = DependencyProperty.Register(
+            "DP_AddGrayscaleNode", typeof(ICommand), typeof(FlowChartWindow));
+
         public static readonly RoutedCommand AddGrayscaleNodeCommand = new(
-            "AddGrayscaleNode", typeof(FlowChartWindow), [new KeyGesture(Key.N, ModifierKeys.Control)]);
-
-
-        public FlowChartWindow()
-        {
-            InitializeComponent();
-
-            RegisterCommand("TE_AddGrayscaleNode_Command", AddGrayscaleNode);
-
-            _logger.LogInformation("Flowchart window initiated.");
-        }
-
-
-        #region Action button logic
+            "RC_AddGrayscaleNode", typeof(FlowChartWindow), [new KeyGesture(Key.N, ModifierKeys.Control)]);
 
         public void AddGrayscaleNode()
         {
@@ -48,16 +40,16 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             newNode.SetNext(E_FlowChartEditor.E_OutputNode);
         }
 
-        // Helper method to ease the syntax.
-        private static DependencyProperty RegisterCommand(string name, Action action)
-        {
-            return DependencyProperty.Register(
-                name,
-                typeof(ICommand),
-                typeof(FlowChartWindow),
-                new(new ActionButtonCommand(action)));
-        }
-
         #endregion
+
+
+        public FlowChartWindow()
+        {
+            InitializeComponent();
+
+            SetValue(AddGrayscaleNodeProperty, new ActionButtonCommand(AddGrayscaleNode));
+
+            _logger.LogInformation("Flowchart window initiated.");
+        }
     }
 }
