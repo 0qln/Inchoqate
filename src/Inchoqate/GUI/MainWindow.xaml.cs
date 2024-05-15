@@ -23,6 +23,7 @@ using System.Globalization;
 using Inchoqate.GUI.Titlebar;
 using System.Collections.ObjectModel;
 using Inchoqate.GUI.Main.Editor.FlowChart;
+using Inchoqate.GUI.Main.Editor.Panel;
 
 namespace Inchoqate.GUI
 {
@@ -41,11 +42,15 @@ namespace Inchoqate.GUI
         }
 
 
+        private PanelEditor? _panelEditor;
+
+
         public MainWindow()
         {
             InitializeComponent();
 
             RegisterCommand("TE_OpenFlowChartEditor_Command", OpenFlowChartEditor);
+            RegisterCommand("TE_OpenPanelEditor_Command", OpenPanelEditor);
             RegisterCommand("TE_ToggleFullscreen_Command", ToggleFullscreen);
             RegisterCommand("TE_UserGetImageSource_Command", UserGetImageSource);
 
@@ -72,13 +77,18 @@ namespace Inchoqate.GUI
 
         private void Seperator_Dragging(object sender, MouseEventArgs e)
         {
+            if (_panelEditor is null)
+            {
+                return;
+            }
+
             var nextPosition = e.GetPosition(this);
 
             if (Seperator_IsDragging)
             {
                 var mouseDelta = nextPosition - Mouse_Position;
-                if (EditorInputs.Width >= mouseDelta.X)
-                    EditorInputs.Width -= mouseDelta.X;
+                if (_panelEditor.Width >= mouseDelta.X)
+                    _panelEditor.Width -= mouseDelta.X;
             }
         }
 
@@ -104,6 +114,12 @@ namespace Inchoqate.GUI
         {
             var window = new FlowChartWindow();
             window.Show();
+        }
+
+        public void OpenPanelEditor()
+        {
+            _panelEditor = new PanelEditor { Width = 300 };
+            E_PanelEditorBorder.Child = _panelEditor;
         }
 
         public void UserGetImageSource()

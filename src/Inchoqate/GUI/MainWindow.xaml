@@ -58,6 +58,8 @@
                                 <tb:ActionButtonOptionCollection>
                                     <tb:ActionButtonAction Title="Open Flow Chart Editor"
                                                            Command="{Binding TE_OpenFlowChartEditor_Command}"/>
+                                    <tb:ActionButtonAction Title="Open Panel Editor"
+                                                           Command="{Binding TE_OpenPanelEditor_Command}"/>
                                 </tb:ActionButtonOptionCollection>
                             </tb:ActionButton.Options>
                         </tb:ActionButton>
@@ -99,9 +101,8 @@
                 
             </Border>
 
-            <panel:PanelEditor x:Name="EditorInputs"
-                                Grid.Column="2"
-                                Width="200"/>
+            <Border x:Name="E_PanelEditorBorder"
+                    Grid.Column="2"/>
 
         </Grid>
             

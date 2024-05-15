@@ -16,7 +16,18 @@ using System.Windows.Shapes;
 namespace Inchoqate.GUI.Main.Editor.Panel
 {
     /// <summary>
-    /// Interaction logic for EditorInputOption.xaml
+    /// The Panel Editor is a linear, squential pipeline of simple edits.
+    /// 
+    ///                    Side Panel
+    /// +-----------------+---------+
+    /// |                 | =edit6= | Pipeline Index 1 (collapsed)
+    /// |                 |         |
+    /// |  Preview Image  | =edit3= | Pipeline Index 2 (visible)
+    /// |                 |  opt1   |
+    /// |                 |  opt2   |
+    /// |                 |         |
+    /// +-----------------+---------+
+    /// 
     /// </summary>
     public partial class PanelEditor : UserControl
     {

@@ -16,13 +16,49 @@ using System.Windows.Shapes;
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
     /// <summary>
-    /// Interaction logic for EditorFlowChart.xaml
+    /// The flow chart editor can combine multiple complex edits in a node
+    /// like structure.
+    /// 
+    /// +---------------------------+
+    /// |                           | 
+    /// |                           |
+    /// |       Preview Image       | 
+    /// |                           |
+    /// |          +---Flow chart editor---+
+    /// |          |                       |                
+    /// +----------|    In-----+           |
+    ///            |           |           |
+    ///            | Preset1--->-----Out   |
+    ///            |                       |
+    ///            +-----------------------+
+    /// 
     /// </summary>
-    public partial class FlowChartEditor : Page
+    public partial class FlowChartEditor : Page, IEditor
     {
         public FlowChartEditor()
         {
             InitializeComponent();
+        }
+
+        Texture IEditor.Source
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        Texture IEditor.Result
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         // TODO: Lazy hotreload.
