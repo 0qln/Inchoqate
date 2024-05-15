@@ -11,6 +11,7 @@
 
     <UserControl.Resources>
         <local:ActionButtonOptionsPositionToIndexConverter x:Key="C_Position_Index"/>
+        <local:MaximumSelector x:Key="C_MaximumSelector"/>
     </UserControl.Resources>
     
     <Grid x:Name="E_MainGrid">
@@ -38,7 +39,8 @@
             <Border x:Name="E_OptionsBorder"
                     BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
                     BorderThickness="1">
-                <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}">
+                <ItemsControl ItemsSource="{Binding Path=Options, ElementName=E_This}"
+                              x:Name="E_Options">
                     <ItemsControl.ItemsPanel >
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Vertical"/>
@@ -46,8 +48,9 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemContainerStyle>
                         <Style TargetType="local:ActionButtonOption">
-                            <Setter Property="Height" Value="25"/>
-                            <Setter Property="IconMinWidth" Value="{Binding Path=OptionsIconMaxWidth, ElementName=E_This}"/>
+                            <Setter Property="Height" Value="20"/>
+                            <!--<Setter Property="IconMinWidth" Value="{Binding Path=OptionsIconMaxWidth, ElementName=E_This}"/>-->
+                            <Setter Property="ShortcutMinWidth" Value="{Binding Path=OptionsShortcutMaxWidth, ElementName=E_This}"/>
                         </Style>
                     </ItemsControl.ItemContainerStyle>
                 </ItemsControl>

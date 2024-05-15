@@ -51,9 +51,9 @@
               Height="{Binding Path=Height, ElementName=E_This}">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="Col_Icon" Width="Auto"/>
+                <ColumnDefinition x:Name="Col_Icon" Width="Auto" MinWidth="{Binding Path=IconMinWidth, ElementName=E_This}"/>
                 <ColumnDefinition x:Name="Col_Title" Width="Auto"/>
-                <ColumnDefinition x:Name="Col_Shortcut" Width="Auto"/>
+                <ColumnDefinition x:Name="Col_Shortcut" Width="Auto" MinWidth="{Binding Path=ShortcutMinWidth, ElementName=E_This}"/>
                 <ColumnDefinition x:Name="Col_Indicator" Width="Auto"/>
             </Grid.ColumnDefinitions>
 

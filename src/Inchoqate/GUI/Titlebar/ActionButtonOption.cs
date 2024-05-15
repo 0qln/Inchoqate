@@ -33,5 +33,19 @@ namespace Inchoqate.GUI.Titlebar
             get => (double)GetValue(IconMinWidthProperty);
             set => SetValue(IconMinWidthProperty, value);
         }
+
+
+        public static readonly DependencyProperty ShortcutMinWidthProperty = DependencyProperty.Register(
+            "ShortcutMinWidth", typeof(double), typeof(ActionButtonOption), new(test));
+
+        static void test(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+        }
+
+        public double ShortcutMinWidth
+        {
+            get => (double)GetValue(ShortcutMinWidthProperty);
+            set => SetValue(ShortcutMinWidthProperty, value);
+        }
     }
 }

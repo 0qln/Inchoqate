@@ -22,6 +22,7 @@ namespace Inchoqate.GUI.Titlebar
         Right
     }
 
+
     public enum GridIndex
     {
         Row,
@@ -43,6 +44,20 @@ namespace Inchoqate.GUI.Titlebar
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    public class MaximumSelector : IMultiValueConverter
+    {
+        object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return values.Cast<double>().Max();
+        }
+
+        object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
@@ -152,17 +167,29 @@ namespace Inchoqate.GUI.Titlebar
         }
 
 
-        //public static readonly DependencyProperty OptionsIconMaxWidthProperty = DependencyProperty.Register(
-        //    "OptionsIconMaxWidth", typeof(double), typeof(ActionButton));
+        public static readonly DependencyProperty OptionsIconMaxWidthProperty = DependencyProperty.Register(
+            "OptionsIconMaxWidth", typeof(double), typeof(ActionButton));
 
-        //public double OptionsIconMaxWidth
-        //{
-        //    get => (double)GetValue(OptionsIconMaxWidthProperty);
-        //    set => SetValue(OptionsIconMaxWidthProperty, value);
-        //}
+        public double OptionsIconMaxWidth
+        {
+            get => (double)GetValue(OptionsIconMaxWidthProperty);
+            set => SetValue(OptionsIconMaxWidthProperty, value);
+        }
+        
+
+        public static readonly DependencyProperty OptionsShortcutMaxWidthProperty = DependencyProperty.Register(
+            "OptionsShortcutMaxWidth", typeof(double), typeof(ActionButton));
+
+        public double OptionsShortcutMaxWidth
+        {
+            get => (double)GetValue(OptionsShortcutMaxWidthProperty);
+            set => SetValue(OptionsShortcutMaxWidthProperty, value);
+        }
+
 
         public event EventHandler? VisibilityChanged;
 
+        int ccount = -1;
 
         public ActionButton()
         {
@@ -170,9 +197,75 @@ namespace Inchoqate.GUI.Titlebar
 
             E_Thumb.E_Button.Click += Click;
 
+            E_Options.LayoutUpdated += delegate
+            {
+                if (E_Options.Items.Count == ccount)
+                {
+                    return;
+                }
+
+                ccount = E_Options.Items.Count;
+
+                // Icon
+                //var iconsBinding = new MultiBinding { Converter = new MaximumSelector() };
+                //foreach (ActionButtonOption option in E_Options.Items)
+                //{
+                //    if (option is ActionButtonAction button1)
+                //    {
+                //        var icon = button1.E_Icon;
+                //        iconsBinding.Bindings.Add(new Binding("ActualWidth") { Source = icon });
+                //    }
+                //    else if (option is ActionButton button2)
+                //    {
+                //        var icon = button2.E_Thumb.E_Icon;
+                //        iconsBinding.Bindings.Add(new Binding("ActualWidth") { Source = icon });
+                //    }
+                //}
+                //E_Thumb.SetBinding(ActionButtonAction.IconMinWidthProperty, iconsBinding);
+
+                // Shortcut
+                var shortcutBinding = new MultiBinding { Converter = new MaximumSelector() };
+                foreach (ActionButtonOption option in E_Options.Items)
+                {
+                    if (option is ActionButtonAction button1)
+                    {
+                        var shortcut = button1.E_Shortcut;
+                        shortcutBinding.Bindings.Add(new Binding("ActualWidth") { Source = shortcut });
+                    }
+                    else if (option is ActionButton button2)
+                    {
+                        var shortcut = button2.E_Thumb.E_Shortcut;
+                        shortcutBinding.Bindings.Add(new Binding("ActualWidth") { Source = shortcut });
+                    }
+                }
+
+                this.SetBinding(OptionsShortcutMaxWidthProperty, shortcutBinding);
+
+                //double max = 0;
+                //foreach (ActionButtonOption option in E_Options.Items)
+                //{
+                //    if (option is ActionButtonAction button1)
+                //    {
+                //        var shortcut = button1.E_Shortcut;
+                //        max = Math.Max(shortcut.ActualWidth, max);
+                //    }
+                //    else if (option is ActionButton button2)
+                //    {
+                //        var shortcut = button2.E_Thumb.E_Shortcut;
+                //        max = Math.Max(shortcut.ActualWidth, max);
+                //    }
+                //}
+
+                //foreach (ActionButtonOption option in E_Options.Items)
+                //{
+                //    option.ShortcutMinWidth = max;
+                //}
+            };
+
             Loaded += delegate
             {
                 Collapse();
+
             };
         }
 
