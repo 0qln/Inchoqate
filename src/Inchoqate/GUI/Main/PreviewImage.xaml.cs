@@ -35,7 +35,38 @@ namespace Inchoqate.GUI.Main
 
         private int _vertexArrayObject;
 
-        private Shader _shader;
+        private Shader? _shader;
+
+        public Shader? Shader
+        {
+            get
+            {
+                return _shader;
+            }
+            set
+            {
+                if(value is null)
+                {
+                    return;
+                }
+
+                _shader = value;
+                _shader.Use();
+
+                int aPositionLoc = GL.GetAttribLocation(_shader.Handle, "aPosition");
+                GL.EnableVertexAttribArray(aPositionLoc);
+                GL.VertexAttribPointer(aPositionLoc, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+
+                int aTexCoordLoc = GL.GetAttribLocation(_shader.Handle, "aTexCoord");
+                GL.EnableVertexAttribArray(aTexCoordLoc);
+                GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
+                // Force a new rendering
+                OpenTkControl.InvalidateVisual();
+                UpdateTextureRenderSize(ActualWidth, ActualHeight);
+            }
+        }
+
 
         private Texture? _texture;
 
@@ -101,21 +132,12 @@ namespace Inchoqate.GUI.Main
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
 
-            _shader = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/ShaderBase.frag"));
-            _shader.Use();
-
-            int aPositionLoc = GL.GetAttribLocation(_shader.Handle, "aPosition");
-            GL.EnableVertexAttribArray(aPositionLoc);
-            GL.VertexAttribPointer(aPositionLoc, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-
-            int aTexCoordLoc = GL.GetAttribLocation(_shader.Handle, "aTexCoord");
-            GL.EnableVertexAttribArray(aTexCoordLoc);
-            GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            Shader = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/Grayscale.frag"));
         }
 
         private void OpenTkControl_OnRender(TimeSpan obj)
         {
-            if (_texture is null)
+            if (_texture is null || _shader is null)
             {
                 return;
             }
