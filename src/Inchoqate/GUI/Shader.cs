@@ -11,7 +11,7 @@ using Miscellaneous.Logging;
 
 namespace Inchoqate.GUI
 {
-    internal class Shader : IDisposable
+    public class Shader : IDisposable
     {
         private readonly ILogger _logger = FileLoggerFactory.CreateLogger<Shader>();
 
