@@ -24,6 +24,7 @@ using Inchoqate.GUI.Titlebar;
 using System.Collections.ObjectModel;
 using Inchoqate.GUI.Main.Editor.FlowChart;
 using Inchoqate.GUI.Main.Editor.Panel;
+using Inchoqate.GUI.Main.Editor;
 
 namespace Inchoqate.GUI
 {
@@ -42,7 +43,7 @@ namespace Inchoqate.GUI
         }
 
 
-        private PanelEditor? _panelEditor;
+        private IEditor? _editor;
 
 
         public MainWindow()
@@ -77,18 +78,16 @@ namespace Inchoqate.GUI
 
         private void Seperator_Dragging(object sender, MouseEventArgs e)
         {
-            if (_panelEditor is null)
+            if (_editor is PanelEditor panelEditor)
             {
-                return;
-            }
+                var nextPosition = e.GetPosition(this);
 
-            var nextPosition = e.GetPosition(this);
-
-            if (Seperator_IsDragging)
-            {
-                var mouseDelta = nextPosition - Mouse_Position;
-                if (_panelEditor.Width >= mouseDelta.X)
-                    _panelEditor.Width -= mouseDelta.X;
+                if (Seperator_IsDragging)
+                {
+                    var mouseDelta = nextPosition - Mouse_Position;
+                    if (panelEditor.Width >= mouseDelta.X)
+                        panelEditor.Width -= mouseDelta.X;
+                }
             }
         }
 
@@ -112,14 +111,32 @@ namespace Inchoqate.GUI
 
         public void OpenFlowChartEditor()
         {
-            var window = new FlowChartWindow();
+            // Make sure only one editor can be open at the time.
+            _editor?.Dispose();
+
+            // Create new editor.
+            var window = new FlowChartWindow { };
             window.Show();
+            _editor = window.E_FlowChartEditor;
+            _editor.Disposing += delegate
+            {
+                window.Close();
+            };
         }
 
         public void OpenPanelEditor()
         {
-            _panelEditor = new PanelEditor { Width = 300 };
-            E_PanelEditorBorder.Child = _panelEditor;
+            // Make sure only one editor can be open at the time.
+            _editor?.Dispose();
+
+            // Create new editor.
+            var panelEditor = new PanelEditor { Width = 300 };
+            E_PanelEditorBorder.Child = panelEditor;
+            _editor = panelEditor;
+            _editor.Disposing += delegate
+            {
+                E_PanelEditorBorder.Child = null;
+            };
         }
 
         public void UserGetImageSource()

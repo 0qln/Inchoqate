@@ -15,8 +15,10 @@ using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.Main.Editor.Panel
 {
+    // TODO: Panel editor as input|node of flow chart editor?
+
     /// <summary>
-    /// The Panel Editor is a linear, squential pipeline of simple edits.
+    /// The Panel Editor is a linear, squential pipeline of simple, singlepass edits or shaders.
     /// 
     ///                    Side Panel
     /// +-----------------+---------+
@@ -29,11 +31,63 @@ namespace Inchoqate.GUI.Main.Editor.Panel
     /// +-----------------+---------+
     /// 
     /// </summary>
-    public partial class PanelEditor : UserControl
+    public partial class PanelEditor : UserControl, IEditor
     {
+        Texture IEditor.Source
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        Texture IEditor.Result
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
         public PanelEditor()
         {
             InitializeComponent();
         }
+
+
+        #region Disposing stuff
+
+        private bool _disposedValue;
+
+        public event EventHandler? Disposing;
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Disposing?.Invoke(this, EventArgs.Empty);
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
     }
 }

@@ -35,11 +35,6 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     /// </summary>
     public partial class FlowChartEditor : Page, IEditor
     {
-        public FlowChartEditor()
-        {
-            InitializeComponent();
-        }
-
         Texture IEditor.Source
         {
             get
@@ -61,10 +56,18 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             }
         }
 
+
+        public FlowChartEditor()
+        {
+            InitializeComponent();
+        }
+
+
         // TODO: Lazy hotreload.
         // TODO: Compile non-multipass editnodes into a single shader.
         // TODO: output pipeline
         public void Compile() { }
+
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
@@ -78,5 +81,35 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             Canvas.SetTop(E_OutputNode, E_MainCanvas.ActualHeight - 50 - E_OutputNode.ActualHeight);
             Canvas.SetLeft(E_OutputNode, E_MainCanvas.ActualWidth - 50 - E_OutputNode.ActualWidth);
         }
+
+
+        #region Disposing stuff
+
+        private bool _disposedValue;
+
+        public event EventHandler? Disposing;
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Disposing?.Invoke(this, EventArgs.Empty);
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
     }
 }
