@@ -190,7 +190,7 @@ namespace Inchoqate.GUI.Main
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
 
             Shader1 = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/NoRed.frag"));
-            Shader2 = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/NoGreen.frag"));
+            Shader2 = new Shader(BuildFiles.Get("Shaders/Identity.vert"), BuildFiles.Get("Shaders/NoGreen.frag"));
         }
 
         private void OpenTkControl_OnRender(TimeSpan obj)
@@ -201,7 +201,7 @@ namespace Inchoqate.GUI.Main
             }
 
             // Pass 1
-            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _framebuffer.Handle);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, _framebuffer.Handle);
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
@@ -211,7 +211,7 @@ namespace Inchoqate.GUI.Main
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Pass 2
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, OpenTkControl.Framebuffer);
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
