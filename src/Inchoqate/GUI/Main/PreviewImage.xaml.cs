@@ -17,9 +17,12 @@ using OpenTK.Graphics.OpenGL4;
 using Microsoft.Extensions.Logging;
 using Miscellaneous.Logging;
 using System.Windows.Media.TextFormatting;
+using GUI;
 
 namespace Inchoqate.GUI.Main
 {
+    // TODO: implement IDisposable.
+
     /// <summary>
     /// Interaction logic for PreviewImage.xaml
     /// </summary>
@@ -117,7 +120,12 @@ namespace Inchoqate.GUI.Main
                 // Set up texture.
                 _texture = value;
                 _texture.Use(TextureUnit.Texture0);
-                SetupFramebuffer(_texture.Width, _texture.Height);
+                _framebuffer = new FrameBuffer((int)E_Border.ActualWidth, (int)E_Border.ActualHeight, out var success);
+                if (!success)
+                {
+                    _framebuffer.Dispose();
+                    // TODO: handle error
+                }
 
                 // Force a new rendering.
                 OpenTkControl.InvalidateVisual();
@@ -126,28 +134,7 @@ namespace Inchoqate.GUI.Main
         }
 
 
-        private (int Handle, Texture IntermediateTexture) _framebuffer;
-
-        private void SetupFramebuffer(int width, int height)
-        {
-            _framebuffer.Handle = GL.GenFramebuffer();
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, _framebuffer.Handle);
-
-            _framebuffer.IntermediateTexture = new Texture(width, height);
-
-            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _framebuffer.IntermediateTexture.Handle, 0);
-
-            if (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != FramebufferErrorCode.FramebufferComplete)
-            {
-                // TODO: log error and don't throw.
-                throw new Exception("Framebuffer not complete");
-            }
-
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
-            // TODO: delete frame buffer
-            // e.g. glDeleteFramebuffers(1, &fbo);  
-        }
+        private FrameBuffer? _framebuffer;
 
 
         private readonly float[] _vertices =
@@ -189,13 +176,24 @@ namespace Inchoqate.GUI.Main
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
 
-            Shader1 = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/NoRed.frag"));
-            Shader2 = new Shader(BuildFiles.Get("Shaders/Identity.vert"), BuildFiles.Get("Shaders/NoGreen.frag"));
+            Shader1 = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/NoRed.frag"), out var success1);
+            if (!success1)
+            {
+                Shader1.Dispose();
+                // TODO: handle error
+            }
+
+            Shader2 = new Shader(BuildFiles.Get("Shaders/Identity.vert"), BuildFiles.Get("Shaders/NoGreen.frag"), out var success2);
+            if (!success2)
+            {
+                Shader2.Dispose();
+                // TODO: handle error
+            }
         }
 
         private void OpenTkControl_OnRender(TimeSpan obj)
         {
-            if (_texture is null || _shader1 is null || _shader2 is null)
+            if (_texture is null || _framebuffer is null || _shader1 is null || _shader2 is null)
             {
                 return;
             }
@@ -215,7 +213,7 @@ namespace Inchoqate.GUI.Main
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            _framebuffer.IntermediateTexture.Use(TextureUnit.Texture0);
+            _framebuffer.Data.Use(TextureUnit.Texture0);
             _shader2.Use();
             GL.BindVertexArray(_vertexArrayObject);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
