@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -35,13 +34,13 @@ namespace Inchoqate.GUI.Main
 
         private int _vertexArrayObject;
 
-        private Shader? _shader;
+        private Shader? _shader1;
 
-        public Shader? Shader
+        public Shader? Shader1
         {
             get
             {
-                return _shader;
+                return _shader1;
             }
             set
             {
@@ -50,21 +49,53 @@ namespace Inchoqate.GUI.Main
                     return;
                 }
 
-                _shader = value;
-                _shader.Use();
-
-                int aPositionLoc = GL.GetAttribLocation(_shader.Handle, "aPosition");
-                GL.EnableVertexAttribArray(aPositionLoc);
-                GL.VertexAttribPointer(aPositionLoc, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-
-                int aTexCoordLoc = GL.GetAttribLocation(_shader.Handle, "aTexCoord");
-                GL.EnableVertexAttribArray(aTexCoordLoc);
-                GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+                // Set up shader
+                _shader1 = value;
+                _shader1.Use();
+                SetupVertexAttribs(_shader1);
 
                 // Force a new rendering
                 OpenTkControl.InvalidateVisual();
                 UpdateTextureRenderSize(ActualWidth, ActualHeight);
             }
+        }
+
+        private Shader? _shader2;
+
+        public Shader? Shader2
+        {
+            get
+            {
+                return _shader1;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    return;
+                }
+
+                // Set up shader
+                _shader2 = value;
+                _shader2.Use();
+                SetupVertexAttribs(_shader2);
+
+                // Force a new rendering
+                OpenTkControl.InvalidateVisual();
+                UpdateTextureRenderSize(ActualWidth, ActualHeight);
+            }
+        }
+
+
+        private void SetupVertexAttribs(Shader shader)
+        {
+            int aPositionLoc = GL.GetAttribLocation(shader.Handle, "aPosition");
+            GL.EnableVertexAttribArray(aPositionLoc);
+            GL.VertexAttribPointer(aPositionLoc, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+
+            int aTexCoordLoc = GL.GetAttribLocation(shader.Handle, "aTexCoord");
+            GL.EnableVertexAttribArray(aTexCoordLoc);
+            GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
         }
 
 
@@ -83,13 +114,39 @@ namespace Inchoqate.GUI.Main
                     return;
                 }
 
+                // Set up texture.
                 _texture = value;
                 _texture.Use(TextureUnit.Texture0);
+                SetupFramebuffer(_texture.Width, _texture.Height);
 
-                // Force a new rendering
+                // Force a new rendering.
                 OpenTkControl.InvalidateVisual();
                 UpdateTextureRenderSize(ActualWidth, ActualHeight);
             }
+        }
+
+
+        private (int Handle, Texture IntermediateTexture) _framebuffer;
+
+        private void SetupFramebuffer(int width, int height)
+        {
+            _framebuffer.Handle = GL.GenFramebuffer();
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, _framebuffer.Handle);
+
+            _framebuffer.IntermediateTexture = new Texture(width, height);
+
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _framebuffer.IntermediateTexture.Handle, 0);
+
+            if (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != FramebufferErrorCode.FramebufferComplete)
+            {
+                // TODO: log error and don't throw.
+                throw new Exception("Framebuffer not complete");
+            }
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            // TODO: delete frame buffer
+            // e.g. glDeleteFramebuffers(1, &fbo);  
         }
 
 
@@ -132,23 +189,35 @@ namespace Inchoqate.GUI.Main
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
 
-            Shader = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/Grayscale.frag"));
+            Shader1 = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/NoRed.frag"));
+            Shader2 = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/NoGreen.frag"));
         }
 
         private void OpenTkControl_OnRender(TimeSpan obj)
         {
-            if (_texture is null || _shader is null)
+            if (_texture is null || _shader1 is null || _shader2 is null)
             {
                 return;
             }
 
+            // Pass 1
+            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _framebuffer.Handle);
+            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            GL.BindVertexArray(_vertexArrayObject);
-
             _texture.Use(TextureUnit.Texture0);
-            _shader.Use();
+            _shader1.Use();
+            GL.BindVertexArray(_vertexArrayObject);
+            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
 
+            // Pass 2
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            _framebuffer.IntermediateTexture.Use(TextureUnit.Texture0);
+            _shader2.Use();
+            GL.BindVertexArray(_vertexArrayObject);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
         }
 

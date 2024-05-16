@@ -22,10 +22,12 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         /// </summary>
         public abstract bool RequiresBreak { get; }
 
+        
         /// <summary>
         /// Each node produces one output, which can be the input to multiple nodes.
         /// </summary>
         public abstract List<NodeModel>? Next { get; }
+
 
         /// <summary>
         /// The inputs to this node.
