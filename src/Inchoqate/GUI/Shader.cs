@@ -1,10 +1,4 @@
-﻿using Inchoqate.GUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using Miscellaneous.Logging;
@@ -13,12 +7,12 @@ namespace Inchoqate.GUI
 {
     public class Shader : IDisposable
     {
-        private readonly ILogger _logger = FileLoggerFactory.CreateLogger<Shader>();
+        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<Shader>();
 
         public readonly int Handle;
 
 
-        public Shader(string vertexPath, string fragmentPath)
+        public Shader(string vertexPath, string fragmentPath, out bool success)
         {
             string VertexShaderSource = File.ReadAllText(vertexPath);
             int VertexShader = GL.CreateShader(ShaderType.VertexShader);
@@ -32,14 +26,24 @@ namespace Inchoqate.GUI
             GL.GetShader(VertexShader, ShaderParameter.CompileStatus, out int successVertexShader);
             if (successVertexShader == 0)
             {
-                _logger.LogError(GL.GetShaderInfoLog(VertexShader));
+                _logger.LogError(
+                    "OpenGL error while generating shader: Code:{error} | Info:{info}", 
+                    GL.GetError(),
+                    GL.GetShaderInfoLog(VertexShader));
+                success = false;
+                goto clean_up;
             }
 
             GL.CompileShader(FragmentShader);
             GL.GetShader(FragmentShader, ShaderParameter.CompileStatus, out int successFragmentShader);
             if (successFragmentShader == 0)
             {
-                _logger.LogError(GL.GetShaderInfoLog(FragmentShader));
+                _logger.LogError(
+                    "OpenGL error while generating shader: Code:{error} | Info:{info}",
+                    GL.GetError(),
+                    GL.GetShaderInfoLog(successFragmentShader));
+                success = false;
+                goto clean_up;
             }
 
             Handle = GL.CreateProgram();
@@ -52,10 +56,17 @@ namespace Inchoqate.GUI
             GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int successProgram);
             if (successProgram == 0)
             {
-                _logger.LogError(GL.GetProgramInfoLog(Handle));
+                _logger.LogError(
+                    "OpenGL error while generating shader: Code:{error} | Info:{info}",
+                    GL.GetError(),
+                    GL.GetShaderInfoLog(Handle));
+                success = false;
+                goto clean_up;
             }
 
-            // Clean up
+            success = true;
+
+            clean_up:
             GL.DetachShader(Handle, VertexShader);
             GL.DetachShader(Handle, FragmentShader);
             GL.DeleteShader(FragmentShader);
@@ -73,6 +84,16 @@ namespace Inchoqate.GUI
 
         private bool disposedValue = false;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing">
+        /// Wether this opject is being disposed right now or not. 
+        /// If that is not the case the only other option should be that the GC is 
+        /// finalizing the object right now, in which case, it is only safe to 
+        /// dispose of unmanaged resources, because the managed ones have already 
+        /// been taken care of by the GC.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
