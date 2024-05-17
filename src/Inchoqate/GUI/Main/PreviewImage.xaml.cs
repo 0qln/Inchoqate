@@ -123,21 +123,12 @@ namespace Inchoqate.GUI.Main
                     return;
                 }
 
-                // TODO: do we need to recreate the framebuffer here?
-
                 // Dispose old data.
                 _texture?.Dispose();
-                _framebuffer?.Dispose();
 
                 // Set up texture.
                 _texture = value;
                 _texture.Use(TextureUnit.Texture0);
-                _framebuffer = new FrameBuffer((int)E_Border.ActualWidth, (int)E_Border.ActualHeight, out var success);
-                if (!success)
-                {
-                    _framebuffer.Dispose();
-                    // TODO: handle error
-                }
 
                 // Force a new rendering.
                 OpenTkControl.InvalidateVisual();
@@ -240,6 +231,8 @@ namespace Inchoqate.GUI.Main
                 return;
             }
 
+            // Calculate new width/height
+
             double aspectRatio = (double)_texture.Height / _texture.Width;
             double boundsRatio = boundsY / boundsX;
 
@@ -253,6 +246,16 @@ namespace Inchoqate.GUI.Main
             else if (boundsRatio < aspectRatio)
             {
                 OpenTkControl.Width = boundsY / aspectRatio;
+            }
+
+            // Update frame buffer.
+            // TODO: Make this more resource efficient.
+            _framebuffer?.Dispose();
+            _framebuffer = new FrameBuffer((int)OpenTkControl.Width, (int)OpenTkControl.Height, out var success);
+            if (!success)
+            {
+                _framebuffer.Dispose();
+                // TODO: handle error
             }
         }
 
