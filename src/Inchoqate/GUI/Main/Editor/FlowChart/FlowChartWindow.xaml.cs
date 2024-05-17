@@ -1,4 +1,5 @@
-﻿using Inchoqate.GUI.Titlebar;
+﻿using GUI.Main.Editor.FlowChart;
+using Inchoqate.GUI.Titlebar;
 using Microsoft.Extensions.Logging;
 using Miscellaneous.Logging;
 using System;
@@ -25,31 +26,35 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         private readonly ILogger<MainWindow> _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
 
-        #region AddGrayscale Command
-
         public static readonly DependencyProperty AddGrayscaleNodeProperty = DependencyProperty.Register(
             "DP_AddGrayscaleNode", typeof(ICommand), typeof(FlowChartWindow));
 
+        // Example of how to make a shortcut
         public static readonly RoutedCommand AddGrayscaleNodeCommand = new(
             "RC_AddGrayscaleNode", typeof(FlowChartWindow), [new KeyGesture(Key.N, ModifierKeys.Control)]);
 
-        public void AddGrayscaleNode()
-        {
-            var newNode = new N_GrayScale();
-            E_FlowChartEditor.E_MainCanvas.Children.Add(newNode);
-            newNode.SetNext(E_FlowChartEditor.E_OutputNode);
-        }
 
-        #endregion
+        public static readonly DependencyProperty AddNoRedChannelNodeProperty = DependencyProperty.Register(
+            "DP_AddNoRedChannelNode", typeof(ICommand), typeof(FlowChartWindow));
 
 
         public FlowChartWindow()
         {
             InitializeComponent();
 
-            SetValue(AddGrayscaleNodeProperty, new ActionButtonCommand(AddGrayscaleNode));
+            SetValue(AddGrayscaleNodeProperty, new ActionButtonCommand(AddNode<N_GrayScale>));
+            SetValue(AddNoRedChannelNodeProperty, new ActionButtonCommand(AddNode<N_NoRedChannel>));
 
             _logger.LogInformation("Flowchart window initiated.");
+        }
+
+
+        public void AddNode<TNode>()
+            where TNode : NodeModel, new()
+        {
+            var newNode = new TNode();
+            E_FlowChartEditor.E_MainCanvas.Children.Add(newNode);
+            newNode.SetNext(E_FlowChartEditor.E_OutputNode);
         }
     }
 }

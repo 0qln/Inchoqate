@@ -49,9 +49,9 @@
                                             <tb:ActionButtonOptionCollection>
                                                 <tb:ActionButtonAction Title="Grayscale" 
                                                                        Shortcut="{x:Reference CB_AddGrayscaleNode}"
-                                                                       Command="{Binding DP_AddGrayscaleNode}">
-                                                </tb:ActionButtonAction>
-                                                <tb:ActionButtonAction Title="Empty"/>
+                                                                       Command="{Binding DP_AddGrayscaleNode}"/>
+                                                <tb:ActionButtonAction Title="No Red Channel" 
+                                                                       Command="{Binding DP_AddNoRedChannelNode}"/>
                                             </tb:ActionButtonOptionCollection>
                                         </tb:ActionButton.Options>
                                     </tb:ActionButton>
