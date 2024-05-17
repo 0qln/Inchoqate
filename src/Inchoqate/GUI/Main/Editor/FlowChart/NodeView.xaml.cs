@@ -1,5 +1,8 @@
-﻿using Inchoqate.GUI.Titlebar;
+﻿using Inchoqate.GUI.Main.Editor.Panel;
+using Inchoqate.GUI.Titlebar;
+using Microsoft.Extensions.Logging;
 using Miscellaneous;
+using Miscellaneous.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,47 +31,118 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     }
 
 
-    /// <summary>
-    /// Makes a connection from the output of a node to the input of another node.
-    /// </summary>
-    public class NodeConnectionAdorner : Adorner
+    public enum AdapterType
     {
-        public NodeConnectionAdorner(NodeView adornedElement)
-            : base(adornedElement)
+        Input,
+        Output
+    }
+
+
+    public class NodeAdapterAdorner(NodeView adornedElement, AdapterType type) : Adorner(adornedElement)
+    {
+        private readonly NodeView _thisNode = adornedElement;
+
+        public readonly List<Point> Points = [];
+
+        public AdapterType Type = type;
+
+
+        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(
+            "Color", typeof(Brush), typeof(NodeAdapterAdorner), new(Brushes.White));
+
+        public Brush Color
         {
+            get => (Brush)GetValue(ColorProperty); 
+            set => SetValue(ColorProperty, value);
         }
 
-        // TODO: Bind colors to color theme
+
+        public static readonly DependencyProperty RadiusProperty = DependencyProperty.Register(
+            "Radius", typeof(double), typeof(NodeAdapterAdorner), new(5.0));
+
+        public double Radius
+        {
+            get => (double)GetValue(RadiusProperty);
+            set => SetValue(RadiusProperty, value);
+        }
+
+
+        public static readonly DependencyProperty OffTopProperty = DependencyProperty.Register(
+            "OffTop", typeof(double), typeof(NodeAdapterAdorner), new(5.0));
+
+        public double OffTop
+        {
+            get => (double)GetValue(OffTopProperty);
+            set => SetValue(OffTopProperty, value);
+        }
+
+
+        public static readonly DependencyProperty OffBottomProperty = DependencyProperty.Register(
+            "OffBottom", typeof(double), typeof(NodeAdapterAdorner), new(5.0));
+
+        public double OffBottom
+        {
+            get => (double)GetValue(OffBottomProperty);
+            set => SetValue(OffBottomProperty, value);
+        }
+
+
         protected override void OnRender(DrawingContext drawingContext)
         {
-            NodeView @this = (NodeView)AdornedElement;
+            double x = Type == AdapterType.Input ? 0.0 : _thisNode.ActualWidth;
+            double yMin = OffBottom;
+            double yMax = _thisNode.ActualHeight - OffBottom - OffTop;
+            Pen pen = new(Color, 0.0);
 
-            static double yMin(NodeView node) => node.Margin.Top;
-            static double yMax(NodeView node) => node.ActualHeight - node.Margin.Bottom - yMin(node);
-            static double yPos(NodeView node, int i, int iMax) => Utils.Lerp(yMin(node), yMax(node), (i + 0.5) / iMax);
-
-            // Adapters
-            var brush = Brushes.White;
-            var pen = new Pen(brush, 0);
-            var r = 5.0;
-
-            // Connectors
-            var brushCon = Brushes.Transparent;
-            var penCon = new Pen(Brushes.Gray, 1);
-
-            // Draw outputs
-            var count = @this.Outputs.Count;
+            Points.Clear();
+            var count = Type == AdapterType.Input ? _thisNode.Inputs.Count : _thisNode.Outputs.Count;
             for (int i = 0; i < count; i++)
             {
-                var xFrom = (double)@this.ActualWidth;
-                var yFrom = yPos(@this, i, count);
-                var next = @this.Outputs[i] as NodeView;
-                var xTo = Canvas.GetLeft(next) - Canvas.GetLeft(@this);
-                var yTo = Canvas.GetTop(next) - Canvas.GetTop(@this) + yPos(next!, next!.Inputs.IndexOf(@this), next!.Inputs.Count);
-                var path = Geometry.Parse($"M {xFrom},{yFrom} C {xTo},{yFrom} {xFrom},{yTo} {xTo},{yTo}");
-                drawingContext.DrawGeometry(brushCon, penCon, path);
-                drawingContext.DrawEllipse(brush, pen, new Point(xFrom, yFrom), r, r);
-                drawingContext.DrawEllipse(brush, pen, new Point(xTo, yTo), r, r);
+                double t = (i + 0.5) / count;
+                double y = Utils.Lerp(yMin, yMax, t);
+                Points.Add(new Point(x, y));
+                drawingContext.DrawEllipse(Color, pen, Points[i], Radius, Radius);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Draws a connection from the output of a node to the input of another node.
+    /// </summary>
+    public class NodeConnectionAdorner(NodeView fromNode, NodeView toNode) : Adorner(fromNode)
+    {
+        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<NodeConnectionAdorner>();
+
+        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(
+            "Color", typeof(Brush), typeof(NodeConnectionAdorner), new PropertyMetadata(Brushes.Gray));
+
+        public Brush Color
+        {
+            get => (Brush)GetValue(ColorProperty);
+            set => SetValue(ColorProperty, value);
+        }
+
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {            
+            Pen penCon = new(Color, 1);
+            
+
+            if (fromNode.OutputAdapters is null || toNode.InputAdapters is null)
+            {
+                _logger.LogWarning(
+                    "Tried to render a connection adorner before " +
+                    "one of the inputs/outputs adorners were created.");
+                return;
+            }
+
+            for (int i = 0, j = 0; i < fromNode.OutputAdapters!.Points.Count && j < toNode.InputAdapters!.Points.Count; i++, j++)
+            {
+                Point from  = fromNode.OutputAdapters!.Points[i];
+                Point to    = Point.Add(toNode.InputAdapters!.Points[j], toNode.CanvasPosition - fromNode.CanvasPosition);
+                var path = Geometry.Parse($"M {from.X},{from.Y} C {to.X},{from.Y} {from.X},{to.Y} {to.X},{to.Y}");
+                drawingContext.DrawGeometry(Brushes.Transparent, penCon, path);
             }
         }
     }
@@ -79,6 +153,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     /// </summary>
     public partial class NodeView : UserControl
     {
+        public bool SelectionMode { get; private set; }
+
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
             "Title", typeof(string), typeof(NodeView));
 
@@ -132,9 +208,23 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         public event EventHandler? Dragged;
 
 
-        private Point _dragBegin;
+        private NodeAdapterAdorner? _inputsAdorner, _outputsAdorner;
+        private List<NodeConnectionAdorner> _connectionAdorners = [];
 
-        private Adorner? _adorner;
+        public NodeAdapterAdorner? InputAdapters => _inputsAdorner;
+        public NodeAdapterAdorner? OutputAdapters => _outputsAdorner;
+
+        public Point CanvasPosition
+        {
+            get
+            {
+                return new Point
+                {
+                    X = Canvas.GetLeft(this),
+                    Y = Canvas.GetTop(this)
+                };
+            }
+        }
 
 
         public NodeView()
@@ -153,13 +243,17 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         private void Node_Loaded(object sender, RoutedEventArgs e)
         {
             AdornerLayer.GetAdornerLayer(this).Add(
-                _adorner = new NodeConnectionAdorner(this)
+                _inputsAdorner = new(this, AdapterType.Input)
                 {
-                    Margin = new Thickness
-                    {
-                        Top = 15,
-                        Bottom = 15
-                    }
+                    OffTop = 15,
+                    OffBottom = 15
+                }
+            );
+            AdornerLayer.GetAdornerLayer(this).Add(
+                _outputsAdorner = new(this, AdapterType.Output)
+                {
+                    OffTop = 15,
+                    OffBottom = 15
                 }
             );
         }
@@ -167,19 +261,13 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         public virtual void SetNext(NodeView next)
         {
-            this.Outputs.Add(next);
             next.Inputs.Add(this);
-            next.Dragged += delegate
-            {
-                this._adorner?.InvalidateVisual();
-                next._adorner?.InvalidateVisual();
-            };
-            this.Dragged += delegate
-            {
-                this._adorner?.InvalidateVisual();
-                next._adorner?.InvalidateVisual();
-            };
-            this._adorner?.InvalidateVisual();
+            this.Outputs.Add(next);
+
+            NodeConnectionAdorner connection = new(this, next);
+            _connectionAdorners.Add(connection);
+            AdornerLayer.GetAdornerLayer(this).Add(connection);
+            next.Dragged += (_, _) => connection.InvalidateVisual();
         }
 
 
@@ -199,6 +287,12 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         private void Thumb_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
 
+        }
+
+        private void MenuItem_AddOutput_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = true;
+            this._inputsAdorner?.InvalidateVisual();
         }
     }
 }

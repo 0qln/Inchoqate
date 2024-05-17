@@ -55,6 +55,18 @@
                                             </tb:ActionButtonOptionCollection>
                                         </tb:ActionButton.Options>
                                     </tb:ActionButton>
+                                    <tb:ActionButton Title="Presets"
+                                                     OptionsPosition="Right"
+                                                     IndicatorVisibility="Visible"
+                                                     ButtonPadding="5,0"
+                                                     ClickMode="Hover">
+                                        <tb:ActionButton.Options>
+                                            <tb:ActionButtonOptionCollection>
+                                                <!--TODO: A preset as combination of nodes-->
+                                                <tb:ActionButtonAction Title="Bloom"/>
+                                            </tb:ActionButtonOptionCollection>
+                                        </tb:ActionButton.Options>
+                                    </tb:ActionButton>
                                 </tb:ActionButtonOptionCollection>
                             </tb:ActionButton.Options>
                         </tb:ActionButton>

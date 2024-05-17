@@ -54,7 +54,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         {
             var newNode = new TNode();
             E_FlowChartEditor.E_MainCanvas.Children.Add(newNode);
-            newNode.SetNext(E_FlowChartEditor.E_OutputNode);
+            //newNode.SetNext(E_FlowChartEditor.E_OutputNode);
         }
     }
 }

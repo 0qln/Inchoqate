@@ -14,6 +14,12 @@
             BorderThickness="1"
             CornerRadius="10">
 
+        <Border.ContextMenu>
+            <ContextMenu StaysOpen="true">
+                <MenuItem Header="Add output" Click="MenuItem_AddOutput_Click"/>
+            </ContextMenu>
+        </Border.ContextMenu>
+
         <Grid>
 
             <Grid.RowDefinitions>

@@ -220,3 +220,5 @@
 [Information] [5/15/2024 8:37:47 PM] [Logging] File logger initiated.
 [Information] [5/15/2024 8:37:48 PM] [Inchoqate.GUI.Texture] Created texture: C:\Users\User\AppData\Local\Microsoft\VisualStudio\17.0_6e97f623\Designer\Cache\1-444491269x64DA\Files/Sample-Images/img0/1920x1080.bmp
 [Information] [5/15/2024 10:16:51 PM] [Logging] File logger initiated.
+[Information] [5/17/2024 3:12:00 PM] [Logging] File logger initiated.
+[Information] [5/17/2024 8:09:44 PM] [Logging] File logger initiated.

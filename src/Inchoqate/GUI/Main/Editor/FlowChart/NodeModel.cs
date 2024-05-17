@@ -35,6 +35,9 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         public abstract List<NodeModel>? Prev { get; }
 
 
+        
+
+
         public virtual void SetNext(NodeModel next)
         {
             // Update Model.
