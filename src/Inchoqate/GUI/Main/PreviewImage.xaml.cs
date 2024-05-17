@@ -18,24 +18,23 @@ using Microsoft.Extensions.Logging;
 using Miscellaneous.Logging;
 using System.Windows.Media.TextFormatting;
 using GUI;
+using System.Reflection.Metadata;
 
 namespace Inchoqate.GUI.Main
 {
-    // TODO: implement IDisposable.
-
     /// <summary>
     /// Interaction logic for PreviewImage.xaml
     /// </summary>
-    public partial class PreviewImage : UserControl
+    public partial class PreviewImage : UserControl, IDisposable
     {
         private readonly ILogger<PreviewImage> _logger = FileLoggerFactory.CreateLogger<PreviewImage>();
 
 
-        private int _elementBufferObject;
+        private readonly Buffer<uint> _elementBufferObject;
 
-        private int _vertexBufferObject;
+        private readonly Buffer<float> _vertexBufferObject;
 
-        private int _vertexArrayObject;
+        private readonly VertexArray _vertexArrayObject;
 
         private Shader? _shader1;
 
@@ -51,6 +50,9 @@ namespace Inchoqate.GUI.Main
                 {
                     return;
                 }
+
+                // Dispose old shader
+                _shader1?.Dispose();
 
                 // Set up shader
                 _shader1 = value;
@@ -78,6 +80,9 @@ namespace Inchoqate.GUI.Main
                     return;
                 }
 
+                // Dispose old shader
+                _shader2?.Dispose();
+
                 // Set up shader
                 _shader2 = value;
                 _shader2.Use();
@@ -90,6 +95,7 @@ namespace Inchoqate.GUI.Main
         }
 
 
+        // TODO: check if shader has the required attributes.
         private void SetupVertexAttribs(Shader shader)
         {
             int aPositionLoc = GL.GetAttribLocation(shader.Handle, "aPosition");
@@ -117,6 +123,12 @@ namespace Inchoqate.GUI.Main
                     return;
                 }
 
+                // TODO: do we need to recreate the framebuffer here?
+
+                // Dispose old data.
+                _texture?.Dispose();
+                _framebuffer?.Dispose();
+
                 // Set up texture.
                 _texture = value;
                 _texture.Use(TextureUnit.Texture0);
@@ -138,43 +150,40 @@ namespace Inchoqate.GUI.Main
 
 
         private readonly float[] _vertices =
-        {
+        [
             // Position         Texture coordinates
              1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // top right
              1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom right
             -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
             -1.0f,  1.0f, 0.0f, 0.0f, 1.0f  // top left
-        };
+        ];
 
         private readonly uint[] _indices =
-        {
+        [
             0, 1, 3,
             1, 2, 3
-        };
+        ];
 
 
         public PreviewImage()
         {
             InitializeComponent();
 
-            var settings = new GLWpfControlSettings
+            OpenTkControl.Start(new GLWpfControlSettings
             {
                 RenderContinuously = false,
-            };
-            OpenTkControl.Start(settings);
+            });
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            _vertexArrayObject = GL.GenVertexArray();
-            GL.BindVertexArray(_vertexArrayObject);
+            _vertexArrayObject = new VertexArray();
+            _vertexArrayObject.Use();
 
-            _vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
+            _vertexBufferObject = new Buffer<float>(BufferTarget.ArrayBuffer, _vertices, BufferUsageHint.StaticDraw);
+            _vertexBufferObject.Use();
 
-            _elementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
+            _elementBufferObject = new Buffer<uint>(BufferTarget.ElementArrayBuffer, _indices, BufferUsageHint.StaticDraw);
+            _elementBufferObject.Use();
 
             Shader1 = new Shader(BuildFiles.Get("Shaders/ShaderBase.vert"), BuildFiles.Get("Shaders/NoRed.frag"), out var success1);
             if (!success1)
@@ -205,7 +214,7 @@ namespace Inchoqate.GUI.Main
 
             _texture.Use(TextureUnit.Texture0);
             _shader1.Use();
-            GL.BindVertexArray(_vertexArrayObject);
+            _vertexArrayObject.Use();
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Pass 2
@@ -215,7 +224,7 @@ namespace Inchoqate.GUI.Main
 
             _framebuffer.Data.Use(TextureUnit.Texture0);
             _shader2.Use();
-            GL.BindVertexArray(_vertexArrayObject);
+            _vertexArrayObject.Use();
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
         }
 
@@ -246,5 +255,46 @@ namespace Inchoqate.GUI.Main
                 OpenTkControl.Width = boundsY / aspectRatio;
             }
         }
+
+
+        #region Clean up
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                _elementBufferObject.Dispose();
+                _vertexBufferObject.Dispose();
+                _vertexArrayObject.Dispose();
+                _texture?.Dispose();
+                _framebuffer?.Dispose();
+                _shader1?.Dispose();
+                _shader2?.Dispose();
+
+                disposedValue = true;
+            }
+        }
+
+        ~PreviewImage()
+        {
+            // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
+            // The OpenGL resources have to be released from a thread with an active OpenGL Context.
+            // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
+            // is not possible.
+            if (disposedValue == false)
+            {
+                _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
     }
 }
