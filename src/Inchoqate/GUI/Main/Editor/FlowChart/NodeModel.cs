@@ -45,7 +45,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             next.Prev?.Add(this);
 
             // Update view.
-            base.SetNext(next);
+            base.AddNext(next);
         }
     }
 }

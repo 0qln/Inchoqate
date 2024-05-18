@@ -46,6 +46,7 @@
                 <Thumb DragStarted="Thumb_DragStarted"
                        DragDelta="Thumb_DragDelta"
                        DragCompleted="Thumb_DragCompleted"
+                       PreviewMouseDown="Thumb_PreviewMouseDown"
                        Cursor="Hand"
                        Width="{Binding Path=ActualWidth, ElementName=E_ThumbContainer}"
                        Height="{Binding Path=ActualHeight, ElementName=E_ThumbContainer}"

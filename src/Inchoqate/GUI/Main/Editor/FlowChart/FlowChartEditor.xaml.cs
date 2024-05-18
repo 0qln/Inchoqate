@@ -57,6 +57,9 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         }
 
 
+        public bool SelectionMode { get; set; }
+
+
         public FlowChartEditor()
         {
             InitializeComponent();
