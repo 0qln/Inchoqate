@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -456,9 +457,48 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     //}
 
 
+    public class ObservablePointPair : INotifyPropertyChanged
+    {
+        private Point _p1, _p2;
+
+        public Point Value1
+        {
+            get => _p1;
+            set
+            {
+                if (_p1 != value)
+                {
+                    _p1 = value;
+                    OnPropertyChanged(nameof(Value1));
+                }
+            }
+        }
+
+        public Point Value2
+        {
+            get => _p2;
+            set
+            {
+                if (_p2 != value)
+                {
+                    _p2 = value;
+                    OnPropertyChanged(nameof(Value1));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+
     public class ConnectionsAdorner(Canvas adorned) : Adorner(adorned)
     {
-        public static readonly DependencyProperty InfoColorProperty = 
+        public static readonly DependencyProperty InfoColorProperty =
             DependencyProperty.Register(
                 "InfoColor",
                 typeof(Brush),
@@ -492,15 +532,15 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         public static readonly DependencyProperty OutputAdaptersProperty =
             DependencyProperty.Register(
                 "OutputAdapters",
-                typeof(ObservableCollection<Tuple<Point, >>),
+                typeof(ObservableItemCollection<ObservablePointPair>),
                 typeof(ConnectionsAdorner),
                 new FrameworkPropertyMetadata(
                     null,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public ObservableCollection<NodeViewAdapter> OutputAdapters
+        public ObservableItemCollection<ObservablePointPair> OutputAdapters
         {
-            get => (ObservableCollection<NodeViewAdapter>)GetValue(OutputAdaptersProperty);
+            get => (ObservableItemCollection<ObservablePointPair>)GetValue(OutputAdaptersProperty);
             set => SetValue(OutputAdaptersProperty, value);
         }
 
@@ -509,9 +549,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         {
             foreach (var source in OutputAdapters)
             {
-                // search for the fitting adapter
-                Point lDest = source.Node.PickAdapter(source.Location);
-                Point lSource = source.Location;
+                Point lSource = source.Value1;
+                Point lDest = source.Value2;
 
                 Pen pen = new(InfoColor, 1);
                 var path = Geometry.Parse($"" +
@@ -522,6 +561,69 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         }
     }
 
+
+    //public class ConnectionAdorner(Canvas adorned) : Adorner(adorned)
+    //{
+    //    public static readonly DependencyProperty InfoColorProperty =
+    //        DependencyProperty.Register(
+    //            "InfoColor",
+    //            typeof(Brush),
+    //            typeof(ConnectionAdorner),
+    //            new FrameworkPropertyMetadata(
+    //                Brushes.Gray,
+    //                FrameworkPropertyMetadataOptions.AffectsRender));
+
+    //    public Brush InfoColor
+    //    {
+    //        get => (Brush)GetValue(InfoColorProperty);
+    //        set => SetValue(InfoColorProperty, value);
+    //    }
+
+
+    //    public static readonly DependencyProperty ErrorColorProperty =
+    //        DependencyProperty.Register(
+    //            "ErrorColor",
+    //            typeof(Brush),
+    //            typeof(ConnectionAdorner),
+    //            new FrameworkPropertyMetadata(
+    //                Brushes.Red,
+    //                FrameworkPropertyMetadataOptions.AffectsRender));
+
+    //    public Brush ErrorColor
+    //    {
+    //        get => (Brush)GetValue(ErrorColorProperty);
+    //        set => SetValue(ErrorColorProperty, value);
+    //    }
+
+
+    //    public static readonly DependencyProperty SourceDestinationPairProperty =
+    //        DependencyProperty.Register(
+    //            "SourceDestinationPair",
+    //            typeof(ObservablePointPair),
+    //            typeof(ConnectionAdorner),
+    //            new FrameworkPropertyMetadata(
+    //                default,
+    //                FrameworkPropertyMetadataOptions.AffectsRender));
+
+    //    public ObservablePointPair SourceDestinationPair
+    //    {
+    //        get => (ObservablePointPair)GetValue(SourceDestinationPairProperty);
+    //        set => SetValue(SourceDestinationPairProperty, value);
+    //    }
+
+
+    //    protected override void OnRender(DrawingContext drawingContext)
+    //    {
+    //        Point lSource = SourceDestinationPair.Value1;
+    //        Point lDest = SourceDestinationPair.Value2;
+
+    //        Pen pen = new(InfoColor, 1);
+    //        var path = Geometry.Parse($"" +
+    //            $"M {lSource.X},{lSource.Y} " +
+    //            $"C {lDest.X},{lSource.Y} {lSource.X},{lDest.Y} {lDest.X},{lDest.Y}");
+    //        drawingContext.DrawGeometry(Brushes.Transparent, pen, path);
+    //    }
+    //}
 
     ///// <summary>
     ///// Draws a connection from the output of a node to the cursor.
@@ -623,7 +725,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
 
         public static readonly DependencyProperty InputsProperty = DependencyProperty.Register(
-            "Inputs", typeof(NodeCollection), typeof(NodeView));
+            "Inputs", typeof(NodeCollection), typeof(NodeView), new FrameworkPropertyMetadata(
+                null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public NodeCollection Inputs
         {
@@ -633,7 +736,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
 
         public static readonly DependencyProperty FixedInputsProperty = DependencyProperty.Register(
-            "FixedInputs", typeof(bool), typeof(NodeView), new(true));
+            "FixedInputs", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(
+                true, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public bool FixedInputs
         {
@@ -643,7 +747,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
 
         public static readonly DependencyProperty OutputsProperty = DependencyProperty.Register(
-            "Outputs", typeof(NodeCollection), typeof(NodeView));
+            "Outputs", typeof(NodeCollection), typeof(NodeView), new FrameworkPropertyMetadata(
+                null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public NodeCollection Outputs
         {
@@ -653,12 +758,33 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
 
         public static readonly DependencyProperty FixedOutputsProperty = DependencyProperty.Register(
-            "FixedOutputs", typeof(bool), typeof(NodeView), new(false));
+            "FixedOutputs", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(
+                false, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public bool FixedOutputs
         {
             get => (bool)GetValue(FixedOutputsProperty);
             set => SetValue(FixedOutputsProperty, value);
+        }
+
+
+        public static readonly DependencyProperty XProperty = DependencyProperty.Register(
+            "X", typeof(double), typeof(NodeView));
+
+        public double X
+        {
+            get => (double)GetValue(XProperty);
+            set => SetValue(XProperty, value);
+        }
+
+
+        public static readonly DependencyProperty YProperty = DependencyProperty.Register(
+            "Y", typeof(double), typeof(NodeView));
+
+        public double Y
+        {
+            get => (double)GetValue(YProperty);
+            set => SetValue(YProperty, value);
         }
 
 
@@ -675,7 +801,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         public event EventHandler? Dragged;
 
 
-        public IEnumerable<Tuple<Point, NodeView>> OutputAdapters
+        public IEnumerable<(Point Location, NodeView Node)> OutputAdapters
         {
             get
             {
@@ -690,7 +816,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 {
                     double t = (i + 0.5) / count;
                     double y = Utils.Lerp(yMin, yMax, t);
-                    yield return Tuple.Create(Point.Add(CanvasPosition, new(x, y)), Outputs[i]);
+                    yield return (Point.Add(CanvasPosition, new(x, y)), Outputs[i]);
                 }
             }
         }
@@ -734,6 +860,14 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         }
 
 
+        //public static readonly DependencyProperty CanvasPositionProperty =
+        //    DependencyProperty.Register(
+        //        "CanvasPosition",
+        //        typeof(Point),
+        //        typeof(NodeView),
+        //        new FrameworkPropertyMetadata(
+        //            FrameworkPropertyMetadataOptions.AffectsRender));
+
         public Point CanvasPosition
         {
             get
@@ -754,11 +888,74 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             Outputs = [];
             Inputs = [];
 
+            //this.SetBinding(
+            //    ConnectionPointsProperty,
+            //    new Binding("Outputs")
+            //    {
+            //        Source = this,
+            //        Converter = new ConnectionPointsGenerator(this)
+            //    });
+
             Loaded += Node_Loaded;
 
-            Canvas.SetLeft(this, 10);
-            Canvas.SetTop(this, 10);
+            SetBinding(Canvas.LeftProperty, new Binding("X") { Source = this, Mode = BindingMode.TwoWay, });
+            SetBinding(Canvas.TopProperty, new Binding("Y") { Source = this, Mode = BindingMode.TwoWay });
+            X = 10;
+            Y = 10;
         }
+
+
+        //[ValueConversion(typeof(NodeCollection), typeof(ObservableItemCollection<ObservablePointPair>))]
+        //public class ConnectionPointsGenerator(NodeView source) : IValueConverter
+        //{
+        //    object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //    {
+        //        ObservableItemCollection<ObservablePointPair> result = [];
+        //        var outputAdapters = source.OutputAdapters;
+        //        var outputsNodes = (NodeCollection)value;
+        //        foreach (var adapter in outputAdapters)
+        //        {
+        //            result.Add(new ObservablePointPair
+        //            {
+        //                Value1 = adapter.Location,
+        //                Value2 = adapter.Node.PickAdapter(adapter.Location)
+        //            });
+        //        }
+        //        return result;
+        //    }
+
+        //    object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+        //}
+
+        public class ConnectionPointsGenerator(NodeView source) : IMultiValueConverter
+        {
+            object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+            {
+                ObservableItemCollection<ObservablePointPair> result = [];
+                var outputAdapters = source.OutputAdapters;
+                foreach (var adapter in outputAdapters)
+                {
+                    result.Add(new ObservablePointPair
+                    {
+                        Value1 = adapter.Location,
+                        Value2 = adapter.Node.PickAdapter(adapter.Location)
+                    });
+                }
+                return result;
+            }
+
+            object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+        private ConnectionsAdorner? _connections;
+
 
         private void Node_Loaded(object sender, RoutedEventArgs e)
         {
@@ -786,8 +983,127 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             //#endif
             //                }
             //            );
+
+            mbinding = new MultiBinding
+            {
+                Converter = new ConnectionPointsGenerator(this),
+            };
+
+            mbinding.Bindings.Add(new Binding("Outputs") { Source = this, });
+            mbinding.Bindings.Add(new Binding("Y") { Source = this, });
+            mbinding.Bindings.Add(new Binding("X") { Source = this, });
+
             AdornerLayer.GetAdornerLayer(this).Add(
-                new ConnectionsAdorner((Canvas)Parent, this));
+                _connections = new ConnectionsAdorner((Canvas)Parent));
+            _connections.SetBinding(
+                ConnectionsAdorner.OutputAdaptersProperty, 
+                mbinding
+            );
+        }
+
+        private MultiBinding? mbinding;
+
+        // debugging
+        class NoopConverter : IValueConverter
+        {
+            object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return value;
+            }
+
+            object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+        //[ValueConversion(typeof(NodeCollection), typeof(ObservableItemCollection<ObservablePointPair>))]
+        //class OutputAdaptersConverter : IValueConverter
+        //{
+        //    object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //    {
+        //        var outputs = (NodeCollection)value;
+        //        var node = (NodeView)parameter;
+        //        var result = new ObservableItemCollection<ObservablePointPair>();
+
+        //        // Hyper parameters
+        //        double topOffset = 15, bottomOffset = 15;
+
+        //        double x =  node.ActualWidth + Canvas.GetLeft(node);
+        //        double yMin = topOffset;
+        //        double yMax = node.ActualHeight - bottomOffset;
+        //        int count = outputs.Count;
+        //        for (int i = 0; i < count; i++)
+        //        {
+        //            double t = (i + 0.5) / count;
+        //            double y = Utils.Lerp(yMin, yMax, t) + Canvas.GetTop(node);
+        //            Point point = new (x, y);
+        //            result.Add(
+        //                new ObservablePointPair 
+        //                {
+        //                    Value1 = point, 
+        //                    Value2 = outputs[i].PickAdapter(point) 
+        //                }
+        //            );
+        //        }
+        //        return result;
+        //    }
+
+        //    object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        //    { throw new NotImplementedException(); }
+        //}
+
+
+
+        //[ValueConversion(typeof(NodeCollection), typeof(ObservablePointPair))]
+        //class OutputAdaptersConverter : IValueConverter
+        //{
+        //    object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //    {
+        //        var outputs = (NodeCollection)value;
+        //        var node = (NodeView)parameter;
+        //        var result = new ObservablePointPair();
+
+        //        // Hyper parameters
+        //        double topOffset = 15, bottomOffset = 15;
+
+        //        double x = node.ActualWidth + Canvas.GetLeft(node);
+        //        double yMin = topOffset;
+        //        double yMax = node.ActualHeight - bottomOffset;
+        //        int count = outputs.Count;
+        //        for (int i = 0; i < count; i++)
+        //        {
+        //            double t = (i + 0.5) / count;
+        //            double y = Utils.Lerp(yMin, yMax, t) + Canvas.GetTop(node);
+        //            Point point = new(x, y);
+        //            result.Add(new ObservablePointPair
+        //                {
+        //                    Value1 = point,
+        //                    Value2 = outputs[i].PickAdapter(point)
+        //                });
+        //        }
+        //        return result;
+        //    }
+
+        //    object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        //    { throw new NotImplementedException(); }
+        //}
+
+
+
+        public static readonly DependencyProperty ConnectionPointsProperty = DependencyProperty.Register(
+            "ConnectionPoints", 
+            typeof(ObservableItemCollection<ObservablePointPair>), 
+            typeof(NodeView),
+            new FrameworkPropertyMetadata(
+                null,
+                FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public ObservableItemCollection<ObservablePointPair> ConnectionPoints
+        {
+            get => (ObservableItemCollection<ObservablePointPair>)GetValue(ConnectionPointsProperty);
+            private set => SetValue(ConnectionPointsProperty, value);
         }
 
 
@@ -795,6 +1111,27 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         {
             next.Inputs.Add(this);
             this.Outputs.Add(next);
+
+            if (mbinding is null)
+            {
+                Loaded += delegate
+                {
+                    mbinding?.Bindings.Add(new Binding("X") { Source = next });
+                    mbinding?.Bindings.Add(new Binding("Y") { Source = next });
+                };
+            }
+            else
+            {
+                mbinding?.Bindings.Add(new Binding("X") { Source = next });
+                mbinding?.Bindings.Add(new Binding("Y") { Source = next });
+            }
+        }
+
+
+        public virtual void RemoveNext(NodeView next)
+        {
+            next.Inputs.Remove(this);
+            this.Outputs.Remove(next);
 
 
         }
@@ -806,9 +1143,12 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            Canvas.SetTop(this, Canvas.GetTop(this) + e.VerticalChange);
-            Canvas.SetLeft(this, Canvas.GetLeft(this) + e.HorizontalChange);
-            
+            //Canvas.SetTop(this, Canvas.GetTop(this) + e.VerticalChange);
+            //Canvas.SetLeft(this, Canvas.GetLeft(this) + e.HorizontalChange);
+
+            X += e.HorizontalChange;
+            Y += e.VerticalChange;
+
             Dragged?.Invoke(this, EventArgs.Empty);
         }
 
