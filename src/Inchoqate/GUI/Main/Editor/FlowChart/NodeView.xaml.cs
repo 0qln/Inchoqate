@@ -562,68 +562,68 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     }
 
 
-    //public class ConnectionAdorner(Canvas adorned) : Adorner(adorned)
-    //{
-    //    public static readonly DependencyProperty InfoColorProperty =
-    //        DependencyProperty.Register(
-    //            "InfoColor",
-    //            typeof(Brush),
-    //            typeof(ConnectionAdorner),
-    //            new FrameworkPropertyMetadata(
-    //                Brushes.Gray,
-    //                FrameworkPropertyMetadataOptions.AffectsRender));
+    public class ConnectionAdorner(Canvas adorned) : Adorner(adorned)
+    {
+        public static readonly DependencyProperty InfoColorProperty =
+            DependencyProperty.Register(
+                "InfoColor",
+                typeof(Brush),
+                typeof(ConnectionAdorner),
+                new FrameworkPropertyMetadata(
+                    Brushes.Gray,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
 
-    //    public Brush InfoColor
-    //    {
-    //        get => (Brush)GetValue(InfoColorProperty);
-    //        set => SetValue(InfoColorProperty, value);
-    //    }
-
-
-    //    public static readonly DependencyProperty ErrorColorProperty =
-    //        DependencyProperty.Register(
-    //            "ErrorColor",
-    //            typeof(Brush),
-    //            typeof(ConnectionAdorner),
-    //            new FrameworkPropertyMetadata(
-    //                Brushes.Red,
-    //                FrameworkPropertyMetadataOptions.AffectsRender));
-
-    //    public Brush ErrorColor
-    //    {
-    //        get => (Brush)GetValue(ErrorColorProperty);
-    //        set => SetValue(ErrorColorProperty, value);
-    //    }
+        public Brush InfoColor
+        {
+            get => (Brush)GetValue(InfoColorProperty);
+            set => SetValue(InfoColorProperty, value);
+        }
 
 
-    //    public static readonly DependencyProperty SourceDestinationPairProperty =
-    //        DependencyProperty.Register(
-    //            "SourceDestinationPair",
-    //            typeof(ObservablePointPair),
-    //            typeof(ConnectionAdorner),
-    //            new FrameworkPropertyMetadata(
-    //                default,
-    //                FrameworkPropertyMetadataOptions.AffectsRender));
+        public static readonly DependencyProperty ErrorColorProperty =
+            DependencyProperty.Register(
+                "ErrorColor",
+                typeof(Brush),
+                typeof(ConnectionAdorner),
+                new FrameworkPropertyMetadata(
+                    Brushes.Red,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
 
-    //    public ObservablePointPair SourceDestinationPair
-    //    {
-    //        get => (ObservablePointPair)GetValue(SourceDestinationPairProperty);
-    //        set => SetValue(SourceDestinationPairProperty, value);
-    //    }
+        public Brush ErrorColor
+        {
+            get => (Brush)GetValue(ErrorColorProperty);
+            set => SetValue(ErrorColorProperty, value);
+        }
 
 
-    //    protected override void OnRender(DrawingContext drawingContext)
-    //    {
-    //        Point lSource = SourceDestinationPair.Value1;
-    //        Point lDest = SourceDestinationPair.Value2;
+        public static readonly DependencyProperty SourceDestinationPairProperty =
+            DependencyProperty.Register(
+                "SourceDestinationPair",
+                typeof(ObservablePointPair),
+                typeof(ConnectionAdorner),
+                new FrameworkPropertyMetadata(
+                    default,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
 
-    //        Pen pen = new(InfoColor, 1);
-    //        var path = Geometry.Parse($"" +
-    //            $"M {lSource.X},{lSource.Y} " +
-    //            $"C {lDest.X},{lSource.Y} {lSource.X},{lDest.Y} {lDest.X},{lDest.Y}");
-    //        drawingContext.DrawGeometry(Brushes.Transparent, pen, path);
-    //    }
-    //}
+        public ObservablePointPair SourceDestinationPair
+        {
+            get => (ObservablePointPair)GetValue(SourceDestinationPairProperty);
+            set => SetValue(SourceDestinationPairProperty, value);
+        }
+
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            Point lSource = SourceDestinationPair.Value1;
+            Point lDest = SourceDestinationPair.Value2;
+
+            Pen pen = new(InfoColor, 1);
+            var path = Geometry.Parse($"" +
+                $"M {lSource.X},{lSource.Y} " +
+                $"C {lDest.X},{lSource.Y} {lSource.X},{lDest.Y} {lDest.X},{lDest.Y}");
+            drawingContext.DrawGeometry(Brushes.Transparent, pen, path);
+        }
+    }
 
     ///// <summary>
     ///// Draws a connection from the output of a node to the cursor.
@@ -816,7 +816,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 {
                     double t = (i + 0.5) / count;
                     double y = Utils.Lerp(yMin, yMax, t);
-                    yield return (Point.Add(CanvasPosition, new(x, y)), Outputs[i]);
+                    yield return (Point.Add(new(this.X, this.Y), new(x, y)), Outputs[i]);
                 }
             }
         }
@@ -839,7 +839,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 {
                     double t = (i + 0.5) / count;
                     double y = Utils.Lerp(yMin, yMax, t);
-                    yield return Point.Add(CanvasPosition, new(x, y));
+                    yield return Point.Add(new(this.X, this.Y), new(x, y));
                 }
             }
         }
@@ -860,27 +860,6 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         }
 
 
-        //public static readonly DependencyProperty CanvasPositionProperty =
-        //    DependencyProperty.Register(
-        //        "CanvasPosition",
-        //        typeof(Point),
-        //        typeof(NodeView),
-        //        new FrameworkPropertyMetadata(
-        //            FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public Point CanvasPosition
-        {
-            get
-            {
-                return new Point
-                {
-                    X = Canvas.GetLeft(this),
-                    Y = Canvas.GetTop(this)
-                };
-            }
-        }
-
-
         public NodeView()
         {
             InitializeComponent();
@@ -898,8 +877,22 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
             Loaded += Node_Loaded;
 
-            SetBinding(Canvas.LeftProperty, new Binding("X") { Source = this, Mode = BindingMode.TwoWay, });
-            SetBinding(Canvas.TopProperty, new Binding("Y") { Source = this, Mode = BindingMode.TwoWay });
+            SetBinding(
+                Canvas.LeftProperty, 
+                new Binding("X") 
+                { 
+                    Source = this, 
+                    Mode = BindingMode.TwoWay, 
+                }
+            );
+            SetBinding(
+                Canvas.TopProperty, 
+                new Binding("Y") 
+                { 
+                    Source = this, 
+                    Mode = BindingMode.TwoWay 
+                }
+            );
             X = 10;
             Y = 10;
         }
@@ -953,8 +946,31 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             }
         }
 
+        public class SingleConnectionPointsGenerator(NodeView source, Func<int> nextNodeIndex) : IMultiValueConverter
+        {
+            object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+            {
+                var outputAdapters = source.OutputAdapters;
+                var adapter = outputAdapters.ElementAt(nextNodeIndex.Invoke());
+                var result = new ObservablePointPair
+                {
+                    Value1 = adapter.Location,
+                    Value2 = adapter.Node.PickAdapter(adapter.Location)
+                };
+                return result;
+            }
 
-        private ConnectionsAdorner? _connections;
+            object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+
+
+        //private ConnectionsAdorner? _connections;
+        private List<ConnectionAdorner> _connections = [];
 
 
         private void Node_Loaded(object sender, RoutedEventArgs e)
@@ -984,24 +1000,24 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             //                }
             //            );
 
-            mbinding = new MultiBinding
-            {
-                Converter = new ConnectionPointsGenerator(this),
-            };
+            //mbinding = new MultiBinding
+            //{
+            //    Converter = new ConnectionPointsGenerator(this),
+            //};
 
-            mbinding.Bindings.Add(new Binding("Outputs") { Source = this, });
-            mbinding.Bindings.Add(new Binding("Y") { Source = this, });
-            mbinding.Bindings.Add(new Binding("X") { Source = this, });
+            //mbinding.Bindings.Add(new Binding("Outputs") { Source = this, });
+            //mbinding.Bindings.Add(new Binding("Y") { Source = this, });
+            //mbinding.Bindings.Add(new Binding("X") { Source = this, });
 
-            AdornerLayer.GetAdornerLayer(this).Add(
-                _connections = new ConnectionsAdorner((Canvas)Parent));
-            _connections.SetBinding(
-                ConnectionsAdorner.OutputAdaptersProperty, 
-                mbinding
-            );
+            //AdornerLayer.GetAdornerLayer(this).Add(_connections = new ConnectionsAdorner((Canvas)Parent));
+            
+            //_connections.SetBinding(
+            //    ConnectionsAdorner.OutputAdaptersProperty, 
+            //    mbinding
+            //);
         }
 
-        private MultiBinding? mbinding;
+        //private MultiBinding? mbinding;
 
         // debugging
         class NoopConverter : IValueConverter
@@ -1112,19 +1128,42 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             next.Inputs.Add(this);
             this.Outputs.Add(next);
 
-            if (mbinding is null)
+            var connection = new ConnectionAdorner((Canvas)Parent);
+            _connections.Add(connection);
+
+            var mbinding = new MultiBinding
             {
-                Loaded += delegate
-                {
-                    mbinding?.Bindings.Add(new Binding("X") { Source = next });
-                    mbinding?.Bindings.Add(new Binding("Y") { Source = next });
-                };
-            }
-            else
-            {
-                mbinding?.Bindings.Add(new Binding("X") { Source = next });
-                mbinding?.Bindings.Add(new Binding("Y") { Source = next });
-            }
+                Converter = new SingleConnectionPointsGenerator(
+                    this, () => _connections.IndexOf(connection)),
+            };
+
+            mbinding.Bindings.Add(new Binding("Outputs") { Source = this, });
+            mbinding.Bindings.Add(new Binding("Inputs") { Source = next });
+            mbinding.Bindings.Add(new Binding("Y") { Source = this, });
+            mbinding.Bindings.Add(new Binding("X") { Source = this, });
+            mbinding.Bindings.Add(new Binding("Y") { Source = next, });
+            mbinding.Bindings.Add(new Binding("X") { Source = next, });
+
+            AdornerLayer.GetAdornerLayer(this).Add(connection);
+
+            connection.SetBinding(
+                ConnectionAdorner.SourceDestinationPairProperty,
+                mbinding
+            );
+
+            //if (mbinding is null)
+            //{
+            //    Loaded += delegate
+            //    {
+            //        mbinding?.Bindings.Add(new Binding("X") { Source = next });
+            //        mbinding?.Bindings.Add(new Binding("Y") { Source = next });
+            //    };
+            //}
+            //else
+            //{
+            //    mbinding?.Bindings.Add(new Binding("X") { Source = next });
+            //    mbinding?.Bindings.Add(new Binding("Y") { Source = next });
+            //}
         }
 
 
