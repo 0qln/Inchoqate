@@ -26,9 +26,9 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     /// |                           |
     /// |          +---Flow chart editor---+
     /// |          |                       |                
-    /// +----------|    In-----+           |
+    /// +----------|    In----Node         |
     ///            |           |           |
-    ///            | Preset1--->-----Out   |
+    ///            |   Text1--->-----Out   |
     ///            |                       |
     ///            +-----------------------+
     /// 
@@ -74,6 +74,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            // Initiate default input/output nodes.
+
             E_InputNode.SetNext(E_OutputNode);
 
             Canvas.SetTop(E_InputNode, 50);
@@ -81,8 +83,8 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
 
             // `Canvas.SetRight`/`Canvas.SetBottom` introduces glitches with the connection
             // adorner for some reason. Can't bother to figure out why...
-            Canvas.SetTop(E_OutputNode, E_MainCanvas.ActualHeight - 50 - E_OutputNode.ActualHeight);
-            Canvas.SetLeft(E_OutputNode, E_MainCanvas.ActualWidth - 50 - E_OutputNode.ActualWidth);
+            Canvas.SetTop(E_OutputNode, ActualHeight - 50 - E_OutputNode.ActualHeight);
+            Canvas.SetLeft(E_OutputNode, ActualWidth - 50 - E_OutputNode.ActualWidth);
         }
 
 

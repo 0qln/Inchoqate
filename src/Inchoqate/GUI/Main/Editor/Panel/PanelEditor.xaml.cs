@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,11 @@ using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.Main.Editor.Panel
 {
+    public class NodeCollection : ObservableCollection<NodeViewModel>
+    {
+    }
+
+
     // TODO: Panel editor as input|node of flow chart editor?
 
     /// <summary>
@@ -52,6 +58,22 @@ namespace Inchoqate.GUI.Main.Editor.Panel
             {
                 throw new NotImplementedException();
             }
+        }
+
+
+        public static readonly DependencyProperty NodesProperty =
+            DependencyProperty.Register(
+                "Nodes",
+                typeof(NodeCollection),
+                typeof(PanelEditor),
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public NodeCollection Nodes
+        {
+            get => (NodeCollection)GetValue(NodesProperty);
+            set => SetValue(NodesProperty, value);
         }
 
 

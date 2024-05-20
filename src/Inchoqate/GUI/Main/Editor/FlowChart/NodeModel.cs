@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public abstract class NodeModel : NodeView
+    public abstract class NodeModel : NodeViewModel
     {
         /// <summary>
         /// Wether this node requires a break in the compute chain.

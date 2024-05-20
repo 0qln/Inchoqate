@@ -9,13 +9,24 @@
       Background="{DynamicResource Background_1}" Loaded="Page_Loaded">
 
     <AdornerDecorator>
-        <Canvas x:Name="E_MainCanvas">
-
+        <ItemsControl x:Name="E_MainContainer">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="local:NodeViewModel">
+                    <Setter Property="Width" Value="250"/>
+                    <Setter Property="Height" Value="150"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            
             <local:N_DefaultInput x:Name="E_InputNode"/>
 
             <local:N_DefaultOutput x:Name="E_OutputNode"/>
 
-        </Canvas>
+        </ItemsControl>
     </AdornerDecorator>
 
 </Page>

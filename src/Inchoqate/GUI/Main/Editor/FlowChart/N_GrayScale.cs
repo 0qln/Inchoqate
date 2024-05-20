@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public class N_GrayScale : NodeModel
+    public class N_GrayScale : NodeModel/*, ISinglePass*/
     {
         public override bool RequiresBreak => false;
 
