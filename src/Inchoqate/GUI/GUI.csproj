@@ -9,18 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.3" />
-    <PackageReference Include="StbImageSharp" Version="2.27.14" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Miscellaneous\Miscellaneous.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Utillities">
-      <HintPath>..\Miscellaneous\Libraries\Utillities.dll</HintPath>
-    </Reference>
+    <Folder Include="Model\" />
+    <Folder Include="ViewModel\" />
+    <Folder Include="View\" />
   </ItemGroup>
 
 </Project>
