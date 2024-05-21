@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public class N_GrayScale : NodeModel/*, ISinglePass*/
+    public class N_GrayScale : NodeModel, ISinglePassNode
     {
         public override bool RequiresBreak => false;
 
@@ -30,22 +30,22 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 return _inputs;
             }
         }
-
+         
 
         public static readonly DependencyProperty FilterOpacityProperty = DependencyProperty.Register(
             "FilterOpacity", typeof(double), typeof(N_GrayScale));
 
         public double FilterOpacity
         {
-            get => (double)GetValue(FilterOpacityProperty);
-            set => SetValue(FilterOpacityProperty, value);
+            get => (double)ViewModel.GetValue(FilterOpacityProperty);
+            set => ViewModel.SetValue(FilterOpacityProperty, value);
         }
 
 
         public N_GrayScale()
         {
-            base.Title = "Grayscale";
-            base.Options =
+            ViewModel.Title = "Grayscale";
+            ViewModel.Options =
             [
                 new Slider(),
                 new Button() { Content="Button" }

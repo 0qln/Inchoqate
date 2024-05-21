@@ -4,28 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    internal class N_DefaultInput : NodeModel
+    internal class N_DefaultOutput : NodeModel
     {
         public override bool RequiresBreak => false;
 
 
-        private readonly List<NodeModel> _outputs = [];
-        
-        public override List<NodeModel> Next
-        {
-            get
-            {
-                return _outputs;
-            }
-        }
-
-        
-        public override List<NodeModel>? Prev
+        public override List<NodeModel>? Next
         {
             get
             {
@@ -33,13 +20,30 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             }
         }
 
-
-        public N_DefaultInput()
+        
+        private readonly List<NodeModel> _inputs = [];
+        
+        public override List<NodeModel> Prev
         {
-            base.Title = "Image";
+            get
+            {
+                return _inputs;
+            }
+        }
+
+
+        public N_DefaultOutput()
+        {
+            ViewModel.Title = "Result";
             base.Options =
             [
             ];
+        }
+
+
+        public override void AddNext(NodeModel next)
+        {
+            throw new InvalidOperationException();
         }
     }
 }

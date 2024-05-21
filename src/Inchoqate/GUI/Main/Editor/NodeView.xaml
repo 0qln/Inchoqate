@@ -30,8 +30,8 @@
             <Border Grid.Row="0">
                 <TextBlock Text="{Binding Path=Title, ElementName=E_This}"
                            Foreground="{DynamicResource Text_1}"
-                           Margin="10, 5">
-                    Title
+                           Margin="10, 5"
+                           d:Text="Title">
                 </TextBlock>
             </Border>
 

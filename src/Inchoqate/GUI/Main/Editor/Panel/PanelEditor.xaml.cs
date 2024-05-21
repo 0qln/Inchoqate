@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GUI.Main.Editor;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -80,6 +81,13 @@ namespace Inchoqate.GUI.Main.Editor.Panel
         public PanelEditor()
         {
             InitializeComponent();
+        }
+
+
+        public void AddNode<TNode>() 
+            where TNode : NodeViewModel, ISinglePassNode
+        {
+
         }
 
 

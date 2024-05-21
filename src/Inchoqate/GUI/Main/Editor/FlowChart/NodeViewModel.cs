@@ -35,11 +35,6 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     }
 
 
-    public class NodeCollection : ObservableCollection<NodeViewModel>
-    {
-    }
-
-
     public enum AdapterType
     {
         Input,
@@ -389,43 +384,26 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
     }
 
 
+    public class NodeCollection : Editor.NodeCollection<NodeViewModel> { }
+
+
     /// <summary>
     /// Interaction logic for FlowChartNode.xaml
     /// </summary>
-    public partial class NodeViewModel : NodeView
+    public partial class NodeViewModel : NodeViewModelBase
     {
         private static readonly ILogger<NodeViewModel> _logger = FileLoggerFactory.CreateLogger<NodeViewModel>();
 
 
         // Contains the node that is selecting
         private static NodeViewModel? _selectionMode = null;
-
-
-        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
-            "Title", typeof(string), typeof(NodeViewModel));
-
-        public string Title
-        {
-            get => (string)GetValue(TitleProperty);
-            set => SetValue(TitleProperty, value);
-        }
-
-
-        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(
-            "Options", typeof(NodeOptionCollection), typeof(NodeViewModel));
-
-        public NodeOptionCollection Options
-        {
-            get => (NodeOptionCollection)GetValue(OptionsProperty);
-            set => SetValue(OptionsProperty, value);
-        }
-
-
+        
+        
         public static readonly DependencyProperty InputsProperty = DependencyProperty.Register(
             "Inputs", typeof(NodeCollection), typeof(NodeViewModel), new FrameworkPropertyMetadata(
                 null, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public NodeCollection Inputs
+        public override NodeCollection Inputs
         {
             get => (NodeCollection)GetValue(InputsProperty);
             set => SetValue(InputsProperty, value);
@@ -447,7 +425,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
             "Outputs", typeof(NodeCollection), typeof(NodeViewModel), new FrameworkPropertyMetadata(
                 null, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public NodeCollection Outputs
+        public override NodeCollection Outputs
         {
             get => (NodeCollection)GetValue(OutputsProperty);
             set => SetValue(OutputsProperty, value);
@@ -514,6 +492,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
                 double yMax = ActualHeight - bottomOffset;
                 Debug.Assert(yMin <= yMax);
 
+                // TODO: Handle situation, where outputs contains a 
                 List<NodeViewModel> outputs = Outputs.ToList();
                 outputs.Sort((n1, n2) => n1.Y.CompareTo(n2.Y));
 
@@ -704,7 +683,21 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         }
 
 
-        public virtual void AddNext(NodeViewModel next)
+        public override void AddNext(INodeViewModel next)
+        {
+            if (next is NodeViewModel nextVM)
+            {
+                AddNext(nextVM);
+            }
+            else
+            {
+                _logger.LogWarning(
+                    "Attempted to add a non FLowChart-NodeViewModel as next node of " +
+                    "a FLowChart-NodeViewModel.");
+            }
+        }
+
+        public void AddNext(NodeViewModel next)
         {
             next.Inputs.Add(this);
             this.Outputs.Add(next);

@@ -1,4 +1,5 @@
-﻿using Inchoqate.GUI.Main.Editor.FlowChart;
+﻿using GUI.Main.Editor;
+using Inchoqate.GUI.Main.Editor.FlowChart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,22 @@ using System.Threading.Tasks;
 
 namespace Inchoqate.GUI.Main.Editor.FlowChart
 {
-    public abstract class NodeModel : NodeViewModel
+    public abstract class NodeViewModelBase : NodeView, INodeViewModel
     {
+        public abstract NodeCollection Outputs { get; set; }
+        public abstract NodeCollection Inputs { get; set; }
+
+        public abstract void AddNext(INodeViewModel next);
+    }
+
+
+    public abstract class NodeModel
+    {
+        // Using Composition instead of Inheritance allows for greater
+        // flexibility and reusability of the Node View.
+        public required NodeViewModelBase ViewModel { get; init; }
+
+
         /// <summary>
         /// Wether this node requires a break in the compute chain.
         /// e.g. 
@@ -35,17 +50,14 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         public abstract List<NodeModel>? Prev { get; }
 
 
-        
-
-
-        public virtual void SetNext(NodeModel next)
+        public virtual void AddNext(NodeModel next)
         {
-            // Update Model.
+            // Update model.
             this.Next?.Add(next);
             next.Prev?.Add(this);
 
-            // Update view.
-            base.AddNext(next);
+            // Update view model.
+            ViewModel.AddNext(next.ViewModel);
         }
     }
 }

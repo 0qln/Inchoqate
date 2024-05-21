@@ -76,7 +76,7 @@ namespace Inchoqate.GUI.Main.Editor.FlowChart
         {
             // Initiate default input/output nodes.
 
-            E_InputNode.SetNext(E_OutputNode);
+            E_InputNode.AddNext(E_OutputNode);
 
             Canvas.SetTop(E_InputNode, 50);
             Canvas.SetLeft(E_InputNode, 50);
