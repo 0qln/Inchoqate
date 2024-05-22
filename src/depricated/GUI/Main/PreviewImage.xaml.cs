@@ -27,7 +27,7 @@ namespace Inchoqate.GUI.Main
     /// </summary>
     public partial class PreviewImage : UserControl, IDisposable
     {
-        private readonly ILogger<PreviewImage> _logger = FileLoggerFactory.CreateLogger<PreviewImage>();
+        private readonly ILogger _logger = FileLoggerFactory.CreateLogger<PreviewImage>();
 
 
         private readonly Buffer<uint> _elementBufferObject;

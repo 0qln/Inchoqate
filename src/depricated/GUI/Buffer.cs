@@ -5,8 +5,6 @@ using System.Runtime.InteropServices;
 
 namespace Inchoqate.GUI
 {
-    // TODO: documentation
-
     public class Buffer<T> : IDisposable
         where T : struct
     {
