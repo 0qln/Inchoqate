@@ -2,13 +2,76 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Inchoqate.GUI"
-             xmlns:win="clr-namespace:Inchoqate.GUI.Windows">
-    
-    <Application.Resources>         
+             xmlns:win="clr-namespace:Inchoqate.GUI.Windows"
+             xmlns:view="clr-namespace:Inchoqate.GUI.View"
+             xmlns:pages="clr-namespace:Inchoqate.GUI.Pages">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary x:Name="ThemeDictionary">
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="Themes/Dark.xaml"/>
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--<Style x:Key="BorderlessWindowStyle" TargetType="{x:Type win:BorderlessWindowBase}">
+                --><!-- 
+                This can be removed to enable smooth window resizing animations, 
+                but then the window resizing glitch fix will also sieze to work. 
+                --><!--
+                <Setter Property="WindowStyle" Value="None"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="AllowsTransparency" Value="True"/>
+                --><!--
+                --><!--
+                <Setter Property="CornerRadius" Value="15"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="TitlebarHeight" Value="30"/>
+                <Setter Property="WindowChrome.WindowChrome">
+                    <Setter.Value>
+                        <WindowChrome x:Name="WindowChrome"
+                                      CornerRadius="{Binding Path=CornerRadius, RelativeSource={RelativeSource AncestorType={x:Type win:BorderlessWindowBase}}}" 
+                                      CaptionHeight="{Binding Path=TitlebarHeight, RelativeSource={RelativeSource AncestorType={x:Type win:BorderlessWindowBase}}}"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type win:BorderlessWindowBase}">
+                            <Border x:Name="WindowContainer" 
+                                    Loaded="WindowContainer_Loaded"
+                                    SizeChanged="WindowContainer_SizeChanged"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    BorderBrush="Black">
+                                <ContentPresenter Content="{TemplateBinding Content}" 
+                                                  ClipToBounds="True" 
+                                                  VerticalAlignment="Stretch" 
+                                                  HorizontalAlignment="Stretch"/>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsActive" Value="True">
+                                    <Trigger.Setters>
+                                        <Setter Property="BorderBrush" TargetName="WindowContainer" Value="White"/>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>-->
+
+        </ResourceDictionary>
     </Application.Resources>
     
     <Application.MainWindow>
-        <win:MainWindow Visibility="Visible"/>
+        <view:BorderlessWindowView Visibility="Visible">
+            <view:BorderlessWindowView.ContentPage >
+                <pages:ImagePreviewPage/>
+            </view:BorderlessWindowView.ContentPage>
+        </view:BorderlessWindowView>
     </Application.MainWindow>
     
 </Application>

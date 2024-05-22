@@ -15,9 +15,9 @@ using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.View
 {
-    public partial class WindowTitlebar : UserControl
+    public partial class WindowTitlebarView : UserControl
     {
-        public WindowTitlebar()
+        public WindowTitlebarView()
         {
             InitializeComponent();
         }
