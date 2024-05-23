@@ -1,14 +1,6 @@
 ﻿using MvvmHelpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.TextFormatting;
 using System.Windows.Media;
 using Inchoqate.GUI.Model;
-using System.Reflection.Metadata;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 
@@ -18,7 +10,7 @@ namespace Inchoqate.GUI.ViewModel
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<PreviewImageViewModel>();
 
-
+        private ShaderModel? _shader;
         private TextureModel? _texture;
         private Stretch _stretch;
 

@@ -44,6 +44,17 @@ namespace Inchoqate.GUI.Model
         }
 
 
+        public void Use(FramebufferTarget target, ClearBufferMask? clear = ClearBufferMask.ColorBufferBit)
+        {
+            GL.BindFramebuffer(target, Handle);
+            if (clear is not null)
+            {
+                GL.ClearColor(0, 0, 0, 0);
+                GL.Clear((ClearBufferMask)clear);
+            }
+        }
+
+
         #region Clean up
 
         private bool disposedValue;

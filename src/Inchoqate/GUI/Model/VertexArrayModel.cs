@@ -10,10 +10,20 @@ namespace Inchoqate.GUI.Model
 
         public readonly int Handle;
 
+        private readonly BufferModel<uint> _elementBufferObject;
+        private readonly BufferModel<float> _vertexBufferObject;
 
-        public VertexArrayModel()
+
+        public VertexArrayModel(uint[] indices, float[] vertices, BufferUsageHint usage)
         {
             Handle = GL.GenVertexArray();
+            this.Use();
+
+            _vertexBufferObject = new BufferModel<float>(BufferTarget.ArrayBuffer, vertices, usage);
+            _vertexBufferObject.Use();
+
+            _elementBufferObject = new BufferModel<uint>(BufferTarget.ElementArrayBuffer, indices, usage);
+            _elementBufferObject.Use();
         }
 
 
@@ -32,6 +42,8 @@ namespace Inchoqate.GUI.Model
             if (!disposedValue)
             {
                 GL.DeleteVertexArray(Handle);
+                _elementBufferObject.Dispose();
+                _vertexBufferObject?.Dispose();
 
                 disposedValue = true;
             }
