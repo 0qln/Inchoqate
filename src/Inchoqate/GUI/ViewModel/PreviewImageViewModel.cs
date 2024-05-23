@@ -36,8 +36,8 @@ namespace Inchoqate.GUI.ViewModel
 
         private string? imageSource;
         private Stretch stretch;
-        private Size renderSize = Size.Empty;
-        private Size sourceSize = Size.Empty;
+        private Size renderSize;
+        private Size sourceSize;
 
         public string? ImageSource
         {
@@ -77,8 +77,8 @@ namespace Inchoqate.GUI.ViewModel
             _vertexArray.Use();
 
             _shader = new ShaderModel(
-                "./Base.vert",
-                "./Base.frag",
+                "./GUI/Shaders/Base.vert",
+                "./GUI/Shaders/Base.frag",
                 out bool success);
 
             if (!success)
@@ -92,12 +92,12 @@ namespace Inchoqate.GUI.ViewModel
 
         public void RenderToImage(GLWpfControl image)
         {
-            var fb = _hardwareEditQueue.Apply();
+            //var fb = _hardwareEditQueue.Apply();
 
-            if (fb is null)
-            {
-                return;
-            }
+            //if (fb is null)
+            //{
+            //    return;
+            //}
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, image.Framebuffer);
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);

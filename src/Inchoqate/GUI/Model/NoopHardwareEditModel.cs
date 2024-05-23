@@ -14,8 +14,8 @@ namespace Inchoqate.GUI.Model
             //    out bool success);
 
             _shaderModel = new ShaderModel(
-                "./Base.vert",
-                "./Base.frag",
+                "./GUI/Shaders/Base.vert",
+                "./GUI/Shaders/Base.frag",
                 out bool success);
 
             if (!success)
