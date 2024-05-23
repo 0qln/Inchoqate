@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.Model
 {
-    public interface IHardwareEdit
+    public interface IHardwareEdit : IDisposable
     {
         void Apply(
             TextureModel source,

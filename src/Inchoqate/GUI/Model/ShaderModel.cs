@@ -12,6 +12,11 @@ namespace Inchoqate.GUI.Model
         public readonly int Handle;
 
 
+        public ShaderModel(Uri vertexPath, Uri fragmentPath, out bool success)
+            : this(vertexPath.LocalPath, fragmentPath.LocalPath, out success)
+        {
+        } 
+
         public ShaderModel(string vertexPath, string fragmentPath, out bool success)
         {
             string VertexShaderSource = File.ReadAllText(vertexPath);
@@ -64,6 +69,18 @@ namespace Inchoqate.GUI.Model
                 goto clean_up;
             }
 
+            // TODO: handle the case where the shader does
+            // not have the required attributes.
+            Use();
+
+            int aPositionLoc = GL.GetAttribLocation(Handle, "aPosition");
+            GL.EnableVertexAttribArray(aPositionLoc);
+            GL.VertexAttribPointer(aPositionLoc, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+
+            int aTexCoordLoc = GL.GetAttribLocation(Handle, "aTexCoord");
+            GL.EnableVertexAttribArray(aTexCoordLoc);
+            GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
             success = true;
 
         clean_up:
@@ -73,7 +90,7 @@ namespace Inchoqate.GUI.Model
             GL.DeleteShader(VertexShader);
         }
 
-
+        
         public void Use()
         {
             GL.UseProgram(Handle);

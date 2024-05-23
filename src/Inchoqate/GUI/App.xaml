@@ -67,11 +67,7 @@
     </Application.Resources>
     
     <Application.MainWindow>
-        <view:BorderlessWindowView Visibility="Visible">
-            <view:BorderlessWindowView.ContentPage >
-                <pages:ImagePreviewPage/>
-            </view:BorderlessWindowView.ContentPage>
-        </view:BorderlessWindowView>
+        <win:MainWindow Visibility="Visible"/>
     </Application.MainWindow>
     
 </Application>

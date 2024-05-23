@@ -16,6 +16,10 @@ namespace Inchoqate.GUI.Windows
         public MainWindow()
         {
             InitializeComponent();
+
+            //Image.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
+            //Image.Source = new BitmapImage(new Uri(@"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg"));
+
         }
     }
 }

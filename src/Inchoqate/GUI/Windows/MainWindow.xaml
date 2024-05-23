@@ -7,7 +7,16 @@
         xmlns:view="clr-namespace:Inchoqate.GUI.View"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Background="Tomato">
+
+        
+        <!--<Image x:Name="Image"
+               Stretch="UniformToFill"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"/>-->
+
+        <view:PreviewImageView x:Name="Image"
+                               Stretch="UniformToFill"/>
 
     </Grid>
 </local:BorderlessWindowBase>

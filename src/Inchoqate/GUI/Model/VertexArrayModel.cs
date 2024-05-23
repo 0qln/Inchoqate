@@ -9,6 +9,7 @@ namespace Inchoqate.GUI.Model
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<VertexArrayModel>();
 
         public readonly int Handle;
+        public readonly int IndexCount;
 
         private readonly BufferModel<uint> _elementBufferObject;
         private readonly BufferModel<float> _vertexBufferObject;
@@ -24,6 +25,8 @@ namespace Inchoqate.GUI.Model
 
             _elementBufferObject = new BufferModel<uint>(BufferTarget.ElementArrayBuffer, indices, usage);
             _elementBufferObject.Use();
+
+            IndexCount = indices.Length;
         }
 
 
