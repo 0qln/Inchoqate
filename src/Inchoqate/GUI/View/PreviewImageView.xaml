@@ -12,12 +12,17 @@
     HorizontalAlignment="Center"
     VerticalAlignment="Center">
 
-    <gl:GLWpfControl 
-        x:Name="GLImage"
-        Render="OpenTK_OnRender"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Width="{Binding Path=ActualWidth, ElementName=This}"
-        Height="{Binding Path=ActualHeight, ElementName=This}"/>
+    <Viewbox
+        x:Name="Viewbox"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top">
+        
+        <gl:GLWpfControl 
+            x:Name="GLImage"
+            Render="OpenTK_OnRender"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"/>
+        
+    </Viewbox>
     
 </UserControl>

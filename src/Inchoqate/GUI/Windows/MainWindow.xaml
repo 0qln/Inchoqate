@@ -1,4 +1,5 @@
-﻿<local:BorderlessWindowBase x:Class="Inchoqate.GUI.Windows.MainWindow"
+﻿<local:BorderlessWindowBase 
+        x:Class="Inchoqate.GUI.Windows.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,17 +7,33 @@
         xmlns:local="clr-namespace:Inchoqate.GUI.Windows"
         xmlns:view="clr-namespace:Inchoqate.GUI.View"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" 
+        Height="450" 
+        Width="800">
     <Grid Background="Tomato">
 
-        
-        <!--<Image x:Name="Image"
-               Stretch="UniformToFill"
-               VerticalAlignment="Center"
-               HorizontalAlignment="Center"/>-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <view:PreviewImageView x:Name="Image"
-                               Stretch="UniformToFill"/>
+        <view:ZoomProvider 
+            ClipToBounds="True">
+
+            <view:PreviewImageView 
+                x:Name="PreviewImage"
+                Grid.Column="0"
+                VerticalAlignment="Stretch"
+                Width="600"
+                Margin="5"/>
+            
+        </view:ZoomProvider>
+
+        <Thumb 
+            x:Name="SliderThumb"
+            Grid.Column="1"
+            DragDelta="SliderThumb_DragDelta"/>
 
     </Grid>
 </local:BorderlessWindowBase>

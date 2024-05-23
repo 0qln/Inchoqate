@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
 
 namespace Inchoqate.GUI.Windows
 {
@@ -17,9 +18,16 @@ namespace Inchoqate.GUI.Windows
         {
             InitializeComponent();
 
-            //Image.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
-            //Image.Source = new BitmapImage(new Uri(@"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg"));
+            PreviewImage.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
 
+        }
+
+        private void SliderThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            if (e.HorizontalChange != 0)
+            {
+                PreviewImage.Width += e.HorizontalChange;
+            }
         }
     }
 }

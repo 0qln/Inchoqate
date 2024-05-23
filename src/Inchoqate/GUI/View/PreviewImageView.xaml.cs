@@ -22,7 +22,7 @@ namespace Inchoqate.GUI.View
                 typeof(PreviewImageView),
                 new FrameworkPropertyMetadata(
                     Stretch.Uniform,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    FrameworkPropertyMetadataOptions.AffectsArrange,
                     OnStretchPropertyChanged));
 
         public static readonly DependencyProperty ImageSourceProperty =
@@ -65,6 +65,9 @@ namespace Inchoqate.GUI.View
         }
 
 
+        private readonly PreviewImageViewModel _viewModel;
+
+
         public PreviewImageView()
         {
             InitializeComponent();
@@ -74,48 +77,54 @@ namespace Inchoqate.GUI.View
                 RenderContinuously = false,
             });
 
-            var viewModel = new PreviewImageViewModel();
-            DataContext = viewModel;
+            DataContext = _viewModel = new PreviewImageViewModel();
         }
 
 
-        protected override Size MeasureOverride(Size availableSize)
+        private Size GetDesiredImageSize(Size bounds)
         {
-            var viewModel = DataContext as PreviewImageViewModel;
-
-            if (viewModel is null || viewModel.SourceSize == Size.Empty)
+            if (_viewModel is null || _viewModel.SourceSize == default)
             {
-                return new Size();
+                return default;
             }
 
-            double aspectRatio = (double)viewModel.SourceSize.Height / viewModel.SourceSize.Width;
-            double boundsRatio = availableSize.Height / availableSize.Width;
-
-            // TODO: test case Stretch.UniformToFill
-
-            var result = Stretch switch
+            if (double.IsInfinity(bounds.Width) || double.IsInfinity(bounds.Height))
             {
-                Stretch.None => new Size(viewModel.SourceSize.Width, viewModel.SourceSize.Height),
-                Stretch.Fill => availableSize,
-                Stretch.Uniform => boundsRatio > aspectRatio 
-                    ? new (availableSize.Width, availableSize.Width * aspectRatio)
-                    : new (availableSize.Height / aspectRatio, availableSize.Height),
+                return _viewModel.SourceSize;
+            }
+
+            double aspectRatio = (double)_viewModel.SourceSize.Height / _viewModel.SourceSize.Width;
+            double boundsRatio = bounds.Height / bounds.Width;
+
+            return Stretch switch
+            {
+                Stretch.None => new Size(_viewModel.SourceSize.Width, _viewModel.SourceSize.Height),
+                Stretch.Fill => bounds,
+                Stretch.Uniform => boundsRatio > aspectRatio
+                    ? new(bounds.Width, bounds.Width * aspectRatio)
+                    : new(bounds.Height / aspectRatio, bounds.Height),
                 Stretch.UniformToFill => boundsRatio > aspectRatio
-                    ? new (availableSize.Height / aspectRatio, availableSize.Height)
-                    : new (availableSize.Width, availableSize.Width * aspectRatio),
+                    ? new(bounds.Height / aspectRatio, bounds.Height)
+                    : new(bounds.Width, bounds.Width * aspectRatio),
                 _ => throw new ArgumentException(nameof(Stretch)),
             };
+        }
 
-            viewModel.RenderSize = result;
 
-            return result;
+        protected override Size ArrangeOverride(Size arrangeBounds)
+        {
+            var size = GetDesiredImageSize(arrangeBounds);
+            GLImage.Width = size.Width;
+            GLImage.Height = size.Height;
+            Viewbox.Width = arrangeBounds.Width;
+            Viewbox.Height = arrangeBounds.Height;
+            return base.ArrangeOverride(size);
         }
 
 
         private void OpenTK_OnRender(TimeSpan delta)
         {
-            var viewModel = DataContext as PreviewImageViewModel;
-            viewModel?.RenderToImage(GLImage);
+            _viewModel?.RenderToImage(GLImage);
         }
     }
 }
