@@ -12,16 +12,31 @@
     HorizontalAlignment="Center"
     VerticalAlignment="Center">
 
+
     <Viewbox
         x:Name="Viewbox"
         HorizontalAlignment="Left"
-        VerticalAlignment="Top">
-        
-        <gl:GLWpfControl 
-            x:Name="GLImage"
-            Render="OpenTK_OnRender"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"/>
+        VerticalAlignment="Top"
+        MouseWheel="Viewbox_MouseWheel">
+
+        <Grid x:Name="Grid">
+            
+            <gl:GLWpfControl 
+                x:Name="GLImage"
+                Render="OpenTK_OnRender"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"/>
+
+            <Thumb
+                x:Name="Thumb"
+                Opacity="0"
+                DragDelta="Thumb_DragDelta"
+                DragStarted="Thumb_DragStarted"
+                DragCompleted="Thumb_DragCompleted"
+                MouseRightButtonDown="Thumb_MouseRightButtonDown"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"/>
+        </Grid>
         
     </Viewbox>
     

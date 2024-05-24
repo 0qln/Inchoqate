@@ -18,7 +18,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <view:ZoomProvider 
+        <Border 
             ClipToBounds="True">
 
             <view:PreviewImageView 
@@ -28,7 +28,7 @@
                 Width="600"
                 Margin="5"/>
             
-        </view:ZoomProvider>
+        </Border>
 
         <Thumb 
             x:Name="SliderThumb"

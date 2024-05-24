@@ -1,4 +1,6 @@
-﻿using Inchoqate.GUI.ViewModel;
+﻿using System.Windows.Input;
+using System.Windows.Controls.Primitives;
+using Inchoqate.GUI.ViewModel;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using System.Windows;
@@ -116,8 +118,12 @@ namespace Inchoqate.GUI.View
             var size = GetDesiredImageSize(arrangeBounds);
             GLImage.Width = size.Width;
             GLImage.Height = size.Height;
-            Viewbox.Width = arrangeBounds.Width;
-            Viewbox.Height = arrangeBounds.Height;
+            Thumb.Width = size.Width;
+            Thumb.Height = size.Height;
+            Grid.Width = size.Width;
+            Grid.Height = size.Height;
+            Viewbox.Width = size.Width;
+            Viewbox.Height = size.Height;
             return base.ArrangeOverride(size);
         }
 
@@ -125,6 +131,36 @@ namespace Inchoqate.GUI.View
         private void OpenTK_OnRender(TimeSpan delta)
         {
             _viewModel?.RenderToImage(GLImage);
+        }
+
+        private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            _viewModel?.MouseWheel(sender, e);
+            GLImage.InvalidateVisual();
+        }
+
+        private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            _viewModel?.DragDelta(sender, e);
+            GLImage.InvalidateVisual();
+        }
+
+        private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            _viewModel?.DragStarted(sender, e);
+            GLImage.InvalidateVisual();
+        }
+
+        private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            _viewModel?.DragCompleted(sender, e);
+            GLImage.InvalidateVisual();
+        }
+
+        private void Thumb_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _viewModel?.ResetZoom();
+            GLImage.InvalidateVisual();
         }
     }
 }
