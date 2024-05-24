@@ -1,8 +1,10 @@
 ﻿using System.IO;
+using System.Windows.Media;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
+using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace Inchoqate.GUI.Model
 {
@@ -12,9 +14,10 @@ namespace Inchoqate.GUI.Model
 
         public readonly int Handle;
         public readonly int Width, Height;
+        public readonly Color BorderColor;
 
 
-        public TextureModel(string path)
+        public TextureModel(string path, Color borderColor = default)
         {
             Handle = GL.GenTexture();
 
@@ -29,11 +32,20 @@ namespace Inchoqate.GUI.Model
             Height = image.Height;
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+
+            if (borderColor == default)
+                borderColor = Color.FromRgb(255, 99, 71);
+
+            float r = (float)borderColor.R / 255.0f;
+            float g = (float)borderColor.G / 255.0f;
+            float b = (float)borderColor.B / 255.0f;
+            float a = (float)borderColor.A / 255.0f;
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, [r, g, b, a]);
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 

@@ -22,11 +22,11 @@ namespace Inchoqate.GUI.ViewModel
 
         private float[] _vertices =
         [
-            // Position         Texture coordinates
-             1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // top right
-             1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom right
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
-            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f  // top left
+            // Position             Texture coordinates
+             1.0f,  1.0f, 0.0f,     1.0f, 1.0f, // top right
+             1.0f, -1.0f, 0.0f,     1.0f, 0.0f, // bottom right
+            -1.0f, -1.0f, 0.0f,     0.0f, 0.0f, // bottom left
+            -1.0f,  1.0f, 0.0f,     0.0f, 1.0f  // top left
         ];
 
         private readonly uint[] _indices =
@@ -177,6 +177,8 @@ namespace Inchoqate.GUI.ViewModel
             _panXStart += _panXDelta;
             _panYStart += _panYDelta;
             _panXDelta = _panYDelta = 0;
+
+            Reload();
         }
 
         public void DragStarted(object sender, DragStartedEventArgs e)
@@ -199,13 +201,18 @@ namespace Inchoqate.GUI.ViewModel
             float panX = _panXDelta + _panXStart;
             float panY = _panYDelta + _panYStart;
 
+            float left      = 0.0f + _zoom - panX;
+            float right     = 1.0f - _zoom - panX;
+            float top       = 1.0f - _zoom + panY;
+            float bottom    = 0.0f + _zoom + panY;
+
             _vertices =
             [
                 // Position             Texture coordinates
-                 1.0f,  1.0f, 0.0f,     1.0f - _zoom - panX, 1.0f - _zoom + panY, // top right
-                 1.0f, -1.0f, 0.0f,     1.0f - _zoom - panX, 0.0f + _zoom + panY, // bottom right
-                -1.0f, -1.0f, 0.0f,     0.0f + _zoom - panX, 0.0f + _zoom + panY, // bottom left
-                -1.0f,  1.0f, 0.0f,     0.0f + _zoom - panX, 1.0f - _zoom + panY  // top left
+                 1.0f,  1.0f, 0.0f,     right,  top,    // top right
+                 1.0f, -1.0f, 0.0f,     right,  bottom, // bottom right
+                -1.0f, -1.0f, 0.0f,     left,   bottom, // bottom left
+                -1.0f,  1.0f, 0.0f,     left,   top     // top left
             ];
 
             _vertexArray?.Dispose();
