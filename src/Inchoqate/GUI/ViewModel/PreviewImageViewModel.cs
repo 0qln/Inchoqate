@@ -71,6 +71,27 @@ namespace Inchoqate.GUI.ViewModel
             }
         }
 
+        private float _zoom; // [0;0.5)
+        private float _panXDelta;
+        private float _panYDelta;
+        private float _panXStart;
+        private float _panYStart;
+        // heigher ~ slower, lower ~ quicker
+        private float panSensitivity = 5.0f;
+        private float zoomSensitivity = 50.0f;
+
+        public float PanSensitivity
+        {
+            get => panSensitivity;
+            set => SetProperty(ref panSensitivity, value);
+        }
+
+        public float ZoomSensitivity
+        {
+            get => zoomSensitivity;
+            set => SetProperty(ref zoomSensitivity, value);
+        }
+
 
         public PreviewImageViewModel()
         {
@@ -115,13 +136,6 @@ namespace Inchoqate.GUI.ViewModel
             GL.DrawElements(PrimitiveType.Triangles, _vertexArray.IndexCount, DrawElementsType.UnsignedInt, 0);
         }
 
-        private float zoom;
-        private float panXDelta;
-        private float panYDelta;
-        private float panXStart;
-        private float panYStart;
-        private float panSensetivity = 10.0f;
-        private float zoomSensetivity = 50.0f;
 
         public void MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
@@ -142,14 +156,14 @@ namespace Inchoqate.GUI.ViewModel
                 relativeYScaled = (float)(relative.Y / frameworkElement.ActualHeight) * 2 - 1;
             }
 
-            float newZoom = zoom + (zoomDelta / zoomSensetivity);
+            float newZoom = _zoom + (zoomDelta / zoomSensitivity);
             newZoom = Math.Clamp(newZoom, 0, 0.5f);
             if (newZoom == 0.5f) return;
 
-            panXStart = (panXStart + relativeXScaled * zoom) - (relativeXScaled * newZoom);
-            panYStart = (panYStart + relativeYScaled * zoom) - (relativeYScaled * newZoom);
+            _panXStart = (_panXStart + relativeXScaled * _zoom) - (relativeXScaled * newZoom);
+            _panYStart = (_panYStart + relativeYScaled * _zoom) - (relativeYScaled * newZoom);
 
-            zoom = newZoom;
+            _zoom = newZoom;
 
             Reload();
         }
@@ -161,10 +175,10 @@ namespace Inchoqate.GUI.ViewModel
                 var relativeXScaled = (float)(e.HorizontalChange / frameworkElement.ActualWidth);
                 var relativeYScaled = (float)(e.VerticalChange / frameworkElement.ActualHeight);
 
-                if (zoom != 0)
+                if (_zoom != 0)
                 {
-                    panXDelta = relativeXScaled / zoom / panSensetivity;
-                    panYDelta = relativeYScaled / zoom / panSensetivity;
+                    _panXDelta = relativeXScaled / (_zoom + 0.5f) / panSensitivity;
+                    _panYDelta = relativeYScaled / (_zoom + 0.5f) / panSensitivity;
                 }
             }
 
@@ -173,9 +187,9 @@ namespace Inchoqate.GUI.ViewModel
 
         public void DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            panXStart += panXDelta;
-            panYStart += panYDelta;
-            panXDelta = panYDelta = 0;
+            _panXStart += _panXDelta;
+            _panYStart += _panYDelta;
+            _panXDelta = _panYDelta = 0;
         }
 
         public void DragStarted(object sender, DragStartedEventArgs e)
@@ -184,27 +198,27 @@ namespace Inchoqate.GUI.ViewModel
 
         public void ResetZoom()
         {
-            zoom = 0;
-            panXDelta = 0;
-            panYDelta = 0;
-            panXStart = 0;
-            panYStart = 0;
+            _zoom = 0;
+            _panXDelta = 0;
+            _panYDelta = 0;
+            _panXStart = 0;
+            _panYStart = 0;
 
             Reload();
         }
 
         public void Reload()
         {
-            float panX = panXDelta + panXStart;
-            float panY = panYDelta + panYStart;
+            float panX = _panXDelta + _panXStart;
+            float panY = _panYDelta + _panYStart;
 
             _vertices =
             [
                 // Position             Texture coordinates
-                 1.0f,  1.0f, 0.0f,     1.0f - zoom - panX, 1.0f - zoom + panY, // top right
-                 1.0f, -1.0f, 0.0f,     1.0f - zoom - panX, 0.0f + zoom + panY, // bottom right
-                -1.0f, -1.0f, 0.0f,     0.0f + zoom - panX, 0.0f + zoom + panY, // bottom left
-                -1.0f,  1.0f, 0.0f,     0.0f + zoom - panX, 1.0f - zoom + panY  // top left
+                 1.0f,  1.0f, 0.0f,     1.0f - _zoom - panX, 1.0f - _zoom + panY, // top right
+                 1.0f, -1.0f, 0.0f,     1.0f - _zoom - panX, 0.0f + _zoom + panY, // bottom right
+                -1.0f, -1.0f, 0.0f,     0.0f + _zoom - panX, 0.0f + _zoom + panY, // bottom left
+                -1.0f,  1.0f, 0.0f,     0.0f + _zoom - panX, 1.0f - _zoom + panY  // top left
             ];
 
             _vertexArray?.Dispose();
