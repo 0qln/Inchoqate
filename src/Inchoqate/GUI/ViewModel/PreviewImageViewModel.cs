@@ -76,8 +76,7 @@ namespace Inchoqate.GUI.ViewModel
         private float _panYDelta;
         private float _panXStart;
         private float _panYStart;
-        // heigher ~ slower, lower ~ quicker
-        private float panSensitivity = 5.0f;
+        private float panSensitivity = 1.0f;
         private float zoomSensitivity = 50.0f;
 
         public float PanSensitivity
@@ -175,11 +174,8 @@ namespace Inchoqate.GUI.ViewModel
                 var relativeXScaled = (float)(e.HorizontalChange / frameworkElement.ActualWidth);
                 var relativeYScaled = (float)(e.VerticalChange / frameworkElement.ActualHeight);
 
-                if (_zoom != 0)
-                {
-                    _panXDelta = relativeXScaled / (_zoom + 0.5f) / panSensitivity;
-                    _panYDelta = relativeYScaled / (_zoom + 0.5f) / panSensitivity;
-                }
+                _panXDelta = relativeXScaled * (1 - _zoom * 2) * panSensitivity;
+                _panYDelta = relativeYScaled * (1 - _zoom * 2) * panSensitivity;
             }
 
             Reload();
