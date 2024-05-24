@@ -101,9 +101,9 @@ namespace Inchoqate.GUI.ViewModel
             _vertexArray = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
             _vertexArray.Use();
 
-            _shader = new ShaderModel(
-                "./GUI/Shaders/Base.vert",
-                "./GUI/Shaders/Base.frag",
+            _shader = ShaderModel.FromUri(
+                new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
+                new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
                 out bool success);
 
             if (!success)
@@ -222,9 +222,9 @@ namespace Inchoqate.GUI.ViewModel
 
             _shader?.Dispose();
 
-            _shader = new ShaderModel(
-                "./GUI/Shaders/Base.vert",
-                "./GUI/Shaders/Base.frag",
+            _shader = ShaderModel.FromUri(
+                new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
+                new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
                 out bool success);
         }
 

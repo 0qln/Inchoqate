@@ -9,6 +9,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Controls.Primitives;
+using System.Windows.Resources;
+using System.IO;
 
 namespace Inchoqate.GUI.Windows
 {
@@ -19,7 +21,6 @@ namespace Inchoqate.GUI.Windows
             InitializeComponent();
 
             PreviewImage.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
-
         }
 
         private void SliderThumb_DragDelta(object sender, DragDeltaEventArgs e)

@@ -13,9 +13,9 @@ namespace Inchoqate.GUI.Model
             //    new Uri("pack://application:,,,/Shaders/Base.frag", UriKind.Relative),
             //    out bool success);
 
-            _shaderModel = new ShaderModel(
-                "./GUI/Shaders/Base.vert",
-                "./GUI/Shaders/Base.frag",
+            _shaderModel = ShaderModel.FromUri(
+                new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
+                new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
                 out bool success);
 
             if (!success)

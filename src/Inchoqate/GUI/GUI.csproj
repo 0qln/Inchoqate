@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="image.jpg" />
     <None Remove="Shaders\Base.frag" />
     <None Remove="Shaders\Base.vert" />
   </ItemGroup>
@@ -27,10 +28,10 @@
 
   <ItemGroup>
     <Resource Include="Shaders\Base.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Shaders\Base.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 

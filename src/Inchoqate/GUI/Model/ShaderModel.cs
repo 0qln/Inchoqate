@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using System.IO;
 using Inchoqate.Logging;
+using System;
+using System.Windows;
 
 namespace Inchoqate.GUI.Model
 {
@@ -12,20 +14,39 @@ namespace Inchoqate.GUI.Model
         public readonly int Handle;
 
 
-        public ShaderModel(Uri vertexPath, Uri fragmentPath, out bool success)
-            : this(vertexPath.LocalPath, fragmentPath.LocalPath, out success)
+        public static ShaderModel FromSource(string vertexSource, string fragmentSource, out bool success)
         {
-        } 
+            return new(vertexSource, fragmentSource, out success);
+        }
 
-        public ShaderModel(string vertexPath, string fragmentPath, out bool success)
+        public static ShaderModel FromPath(string vertexPath, string fragmentPath, out bool success)
         {
-            string VertexShaderSource = File.ReadAllText(vertexPath);
+            var vertexSource = File.ReadAllText(vertexPath);
+            var fragmentSource = File.ReadAllText(fragmentPath);
+
+            return ShaderModel.FromSource(vertexSource, fragmentSource, out success);
+        }
+
+        public static ShaderModel FromUri(Uri vertexPath, Uri fragmentPath, out bool success)
+        {
+            var vertexResource = Application.GetResourceStream(vertexPath);
+            using var vertexReader = new StreamReader(vertexResource.Stream);
+            var vertexSource = vertexReader.ReadToEnd();
+
+            var fragmentResource = Application.GetResourceStream(fragmentPath);
+            using var fragmentReader = new StreamReader(fragmentResource.Stream);
+            var fragmentSource = fragmentReader.ReadToEnd();
+
+            return ShaderModel.FromSource(vertexSource, fragmentSource, out success);
+        }
+
+        public ShaderModel(string vertexSource, string fragmentSource, out bool success)
+        {
             int VertexShader = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(VertexShader, VertexShaderSource);
+            GL.ShaderSource(VertexShader, vertexSource);
 
-            string FragmentShaderSource = File.ReadAllText(fragmentPath);
             int FragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(FragmentShader, FragmentShaderSource);
+            GL.ShaderSource(FragmentShader, fragmentSource);
 
             GL.CompileShader(VertexShader);
             GL.GetShader(VertexShader, ShaderParameter.CompileStatus, out int successVertexShader);
