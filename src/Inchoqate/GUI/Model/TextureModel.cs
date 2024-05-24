@@ -14,6 +14,8 @@ namespace Inchoqate.GUI.Model
 
         public readonly int Handle;
         public readonly int Width, Height;
+
+        // TODO: expose a setter
         public readonly Color BorderColor;
 
 
