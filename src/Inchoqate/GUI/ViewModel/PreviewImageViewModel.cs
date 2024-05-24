@@ -77,7 +77,7 @@ namespace Inchoqate.GUI.ViewModel
         private float _panXStart;
         private float _panYStart;
         private float panSensitivity = 1.0f;
-        private float zoomSensitivity = 50.0f;
+        private float zoomLevels = 40.0f;
 
         public float PanSensitivity
         {
@@ -85,10 +85,10 @@ namespace Inchoqate.GUI.ViewModel
             set => SetProperty(ref panSensitivity, value);
         }
 
-        public float ZoomSensitivity
+        public float ZoomLevels
         {
-            get => zoomSensitivity;
-            set => SetProperty(ref zoomSensitivity, value);
+            get => zoomLevels;
+            set => SetProperty(ref zoomLevels, value);
         }
 
 
@@ -138,15 +138,7 @@ namespace Inchoqate.GUI.ViewModel
 
         public void MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            static float transform(float x, float r, float s, float a = 1.0f)
-            {
-                var result = -r / (x + r) + a;
-                return s * result;
-            }
-
             float zoomDelta = (float)e.Delta > 0 ? .5f : -.5f;
-
-
             Point relative = e.GetPosition((IInputElement)sender);
             float relativeXScaled = 0, relativeYScaled = 0;
             if (sender is FrameworkElement frameworkElement)
@@ -155,13 +147,12 @@ namespace Inchoqate.GUI.ViewModel
                 relativeYScaled = (float)(relative.Y / frameworkElement.ActualHeight) * 2 - 1;
             }
 
-            float newZoom = _zoom + (zoomDelta / zoomSensitivity);
+            float newZoom = _zoom + (zoomDelta / zoomLevels);
             newZoom = Math.Clamp(newZoom, 0, 0.5f);
             if (newZoom == 0.5f) return;
 
             _panXStart = (_panXStart + relativeXScaled * _zoom) - (relativeXScaled * newZoom);
             _panYStart = (_panYStart + relativeYScaled * _zoom) - (relativeYScaled * newZoom);
-
             _zoom = newZoom;
 
             Reload();
