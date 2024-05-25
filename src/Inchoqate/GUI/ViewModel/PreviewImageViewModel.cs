@@ -243,13 +243,18 @@ namespace Inchoqate.GUI.ViewModel
                 wNorm = (float)(BoundsSize.Width / RenderSize.Width),
                 hNorm = (float)(BoundsSize.Height / RenderSize.Height);
 
+            // center the image
+            float 
+                xOff = -(float)(BoundsSize.Width - RenderSize.Width) / (float)(RenderSize.Width * 2),
+                yOff = -(float)(BoundsSize.Height - RenderSize.Height) / (float)(RenderSize.Height * 2);
+
             _vertices =
             [
                 // Position             Texture coordinates
-                 1.0f,  1.0f, 0.0f,     wNorm * right, hNorm * top,    // top right
-                 1.0f, -1.0f, 0.0f,     wNorm * right, hNorm * bottom, // bottom right
-                -1.0f, -1.0f, 0.0f,     wNorm * left,  hNorm * bottom, // bottom left
-                -1.0f,  1.0f, 0.0f,     wNorm * left,  hNorm * top,    // top left
+                 1.0f,  1.0f, 0.0f,     xOff + wNorm * right, yOff + hNorm * top,    // top right
+                 1.0f, -1.0f, 0.0f,     xOff + wNorm * right, yOff + hNorm * bottom, // bottom right
+                -1.0f, -1.0f, 0.0f,     xOff + wNorm * left,  yOff + hNorm * bottom, // bottom left
+                -1.0f,  1.0f, 0.0f,     xOff + wNorm * left,  yOff + hNorm * top,    // top left
             ];
 
             _vertexArray.UpdateVertices(_vertices);
