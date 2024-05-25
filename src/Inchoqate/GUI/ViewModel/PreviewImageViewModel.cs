@@ -39,6 +39,7 @@ namespace Inchoqate.GUI.ViewModel
         private string? imageSource;
         private Size renderSize;
         private Size sourceSize;
+        private Size boundsSize;
 
         public string? ImageSource
         {
@@ -68,6 +69,15 @@ namespace Inchoqate.GUI.ViewModel
             {
                 SetProperty(ref renderSize, value);
                 _editQueue.RenderSize = value;
+            }
+        }
+
+        public Size BoundsSize
+        {
+            get => boundsSize;
+            set
+            {
+                SetProperty(ref boundsSize, value);
             }
         }
 
@@ -170,7 +180,7 @@ namespace Inchoqate.GUI.ViewModel
             }
 
             float newZoom = zoom + (zoomDelta / zoomLevels);
-            newZoom = Math.Clamp(newZoom, 0, 0.5f);
+            newZoom = Math.Clamp(newZoom, 0, 0.45f);
             if (newZoom == 0.5f) return;
 
             _panXStart = (_panXStart + relativeXScaled * zoom) - (relativeXScaled * newZoom);
@@ -228,13 +238,17 @@ namespace Inchoqate.GUI.ViewModel
             float top       = 1.0f - zoom + panY;
             float bottom    = 0.0f + zoom + panY;
 
+            float
+                wNorm = (float)(BoundsSize.Width / RenderSize.Width),
+                hNorm = (float)(BoundsSize.Height / RenderSize.Height);
+
             _vertices =
             [
                 // Position             Texture coordinates
-                 1.0f,  1.0f, 0.0f,     right,  top,    // top right
-                 1.0f, -1.0f, 0.0f,     right,  bottom, // bottom right
-                -1.0f, -1.0f, 0.0f,     left,   bottom, // bottom left
-                -1.0f,  1.0f, 0.0f,     left,   top     // top left
+                 1.0f,  1.0f, 0.0f,     wNorm * right, hNorm * top,    // top right
+                 1.0f, -1.0f, 0.0f,     wNorm * right, hNorm * bottom, // bottom right
+                -1.0f, -1.0f, 0.0f,     wNorm * left,  hNorm * bottom, // bottom left
+                -1.0f,  1.0f, 0.0f,     wNorm * left,  hNorm * top,    // top left
             ];
 
             _vertexArray.UpdateVertices(_vertices);
