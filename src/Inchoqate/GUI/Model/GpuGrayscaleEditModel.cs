@@ -2,12 +2,15 @@
 
 namespace Inchoqate.GUI.Model
 {
-    public class GpuGrayscaleEditModel : IGPUEdit
+    public sealed class GpuGrayscaleEditModel : IGPUEdit
     {
-        private readonly static ShaderModel _shader;
+        private readonly ShaderModel _shader;
+        private readonly VertexArrayModel _vao;
 
-        static GpuGrayscaleEditModel()
+        public GpuGrayscaleEditModel(VertexArrayModel vertexArray)
         {
+            vertexArray.Use();
+
             _shader = ShaderModel.FromUri(
                 new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
                 new Uri("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
@@ -17,15 +20,17 @@ namespace Inchoqate.GUI.Model
             {
                 // TODO: handle error
             }
+
+            _vao = vertexArray;
         }
 
-        void IGPUEdit.Apply(TextureModel source, FrameBufferModel destination, VertexArrayModel vertexArray)
+        void IGPUEdit.Apply(TextureModel source, FrameBufferModel destination)
         {
             destination.Use(FramebufferTarget.Framebuffer);
             source.Use(TextureUnit.Texture0);
             _shader.Use();
-            vertexArray.Use();
-            GL.DrawElements(PrimitiveType.Triangles, vertexArray.IndexCount, DrawElementsType.UnsignedInt, 0);
+            _vao.Use();
+            GL.DrawElements(PrimitiveType.Triangles, _vao.IndexCount, DrawElementsType.UnsignedInt, 0);
         }
 
         void IDisposable.Dispose()

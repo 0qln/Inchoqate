@@ -55,7 +55,7 @@ namespace Inchoqate.GUI.Model
         }
 
 
-        public TextureModel(int width, int height)
+        public TextureModel(int width, int height, Color borderColor = default)
         {
             Handle = GL.GenTexture();
             Width = width;
@@ -63,12 +63,23 @@ namespace Inchoqate.GUI.Model
 
             GL.BindTexture(TextureTarget.Texture2D, Handle);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+            
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+            if (borderColor == default)
+                borderColor = Color.FromRgb(255, 99, 71);
+
+            float r = (float)borderColor.R / 255.0f;
+            float g = (float)borderColor.G / 255.0f;
+            float b = (float)borderColor.B / 255.0f;
+            float a = (float)borderColor.A / 255.0f;
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, [r, g, b, a]);
+
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
             _logger.LogInformation("Created empty texture with dimensions: {width}x{height}", width, height);
         }

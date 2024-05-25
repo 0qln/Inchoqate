@@ -1,6 +1,7 @@
 ﻿using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using System.Windows;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.Model
 {
@@ -14,9 +15,6 @@ namespace Inchoqate.GUI.Model
 
         // no dispose
         private TextureModel? _sourceTexture;
-        private readonly VertexArrayModel _vertexArrayObject;
-        private Size _renderSize;
-
 
         public TextureModel? SourceTexture
         {
@@ -27,6 +25,7 @@ namespace Inchoqate.GUI.Model
             }
         }
 
+        private Size _renderSize;
 
         /// <summary>
         /// The size in which the final output is rendered.
@@ -60,9 +59,8 @@ namespace Inchoqate.GUI.Model
         /// <summary>
         /// </summary>
         /// <param name="vertexArray">This will not be disposed by this object.</param>
-        public GpuEditQueueModel(VertexArrayModel vertexArray)
+        public GpuEditQueueModel()
         {
-            _vertexArrayObject = vertexArray;
         }
 
 
@@ -79,22 +77,20 @@ namespace Inchoqate.GUI.Model
                 IGPUEdit identity = new GpuIdentityEditModel();
                 identity.Apply(
                     source: _sourceTexture,
-                    destination: _framebuffer1!,
-                    _vertexArrayObject);
+                    destination: _framebuffer1!);
                 return _framebuffer1;
             }
 
             // Initial pass: fill framebuffer 1 with source texture.
             Edits.First().Apply(
                 source: _sourceTexture,
-                destination: _framebuffer1!,
-                _vertexArrayObject);
+                destination: _framebuffer1!);
 
             // Subsequent passes: switch between framebuffers.
             FrameBufferModel source = _framebuffer1!, destination = _framebuffer2!;
             foreach (var edit in Edits[1..])
             {
-                edit.Apply(source.Data, destination, _vertexArrayObject);
+                edit.Apply(source.Data, destination);
                 (source, destination) = (destination, source);
             }
 

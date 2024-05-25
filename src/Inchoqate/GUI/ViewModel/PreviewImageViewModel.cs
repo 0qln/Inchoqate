@@ -1,5 +1,4 @@
 ﻿using MvvmHelpers;
-using System.Windows.Media;
 using Inchoqate.GUI.Model;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
@@ -7,7 +6,6 @@ using OpenTK.Graphics.OpenGL4;
 using System.Windows;
 using OpenTK.Wpf;
 using System.Windows.Controls.Primitives;
-using System.Windows.Markup;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -143,10 +141,6 @@ namespace Inchoqate.GUI.ViewModel
             _vertexArray = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
             _vertexArray.Use();
 
-            _vertexArray?.Dispose();
-            _vertexArray = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
-            _vertexArray.Use();
-
             _shader = ShaderModel.FromUri(
                 new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
                 new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
@@ -157,8 +151,8 @@ namespace Inchoqate.GUI.ViewModel
                 // TODO: handle error
             }
 
-            _editQueue = new GpuEditQueueModel(_vertexArray);
-            _editQueue.Edits.Add(new GpuGrayscaleEditModel());
+            _editQueue = new GpuEditQueueModel();
+            //_editQueue.Edits.Add(new GpuGrayscaleEditModel());
         }
 
 
@@ -175,11 +169,9 @@ namespace Inchoqate.GUI.ViewModel
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            // TODO: passing through the empty edit queue fucks up the image quality.
-            // it also fucks up the panning sensetivity yay
+            // TODO: passing through the edit queue fucks up the image quality.
 
-            //fb.Data.Use(TextureUnit.Texture0);
-            _texture?.Use(TextureUnit.Texture0);
+            fb.Data.Use(TextureUnit.Texture0);
             _shader.Use();
             _vertexArray.Use();
             GL.DrawElements(PrimitiveType.Triangles, _vertexArray.IndexCount, DrawElementsType.UnsignedInt, 0);

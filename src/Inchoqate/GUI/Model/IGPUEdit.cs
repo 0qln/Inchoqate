@@ -5,9 +5,6 @@ namespace Inchoqate.GUI.Model
 {
     public interface IGPUEdit : IDisposable
     {
-        void Apply(
-            TextureModel source,
-            FrameBufferModel destination,
-            VertexArrayModel vertexArray);
+        void Apply(TextureModel source, FrameBufferModel destination);
     }
 }
