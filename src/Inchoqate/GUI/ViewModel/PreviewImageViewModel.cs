@@ -71,13 +71,13 @@ namespace Inchoqate.GUI.ViewModel
             }
         }
 
-        private float _zoom; // [0;0.5)
         private float _panXDelta;
         private float _panYDelta;
         private float _panXStart;
         private float _panYStart;
         private float panSensitivity = 1.0f;
         private float zoomLevels = 40.0f;
+        private float zoom;
 
         public float PanSensitivity
         {
@@ -89,6 +89,24 @@ namespace Inchoqate.GUI.ViewModel
         {
             get => zoomLevels;
             set => SetProperty(ref zoomLevels, value);
+        }
+
+        /// <summary>
+        /// Range: [0;0.5)
+        /// </summary>
+        public float Zoom
+        {
+            get => zoom;
+            set
+            {
+                if (value < 0 || value >= 0.5)
+                {
+                    throw new ArgumentException(nameof(value));
+                }
+
+                SetProperty(ref zoom, value);
+                Reload();
+            }
         }
 
 
@@ -147,13 +165,13 @@ namespace Inchoqate.GUI.ViewModel
                 relativeYScaled = (float)(relative.Y / frameworkElement.ActualHeight) * 2 - 1;
             }
 
-            float newZoom = _zoom + (zoomDelta / zoomLevels);
+            float newZoom = zoom + (zoomDelta / zoomLevels);
             newZoom = Math.Clamp(newZoom, 0, 0.5f);
             if (newZoom == 0.5f) return;
 
-            _panXStart = (_panXStart + relativeXScaled * _zoom) - (relativeXScaled * newZoom);
-            _panYStart = (_panYStart + relativeYScaled * _zoom) - (relativeYScaled * newZoom);
-            _zoom = newZoom;
+            _panXStart = (_panXStart + relativeXScaled * zoom) - (relativeXScaled * newZoom);
+            _panYStart = (_panYStart + relativeYScaled * zoom) - (relativeYScaled * newZoom);
+            zoom = newZoom;
 
             Reload();
         }
@@ -165,8 +183,8 @@ namespace Inchoqate.GUI.ViewModel
                 var relativeXScaled = (float)(e.HorizontalChange / frameworkElement.ActualWidth);
                 var relativeYScaled = (float)(e.VerticalChange / frameworkElement.ActualHeight);
 
-                _panXDelta = relativeXScaled * (1 - _zoom * 2) * panSensitivity;
-                _panYDelta = relativeYScaled * (1 - _zoom * 2) * panSensitivity;
+                _panXDelta = relativeXScaled * (1 - zoom * 2) * panSensitivity;
+                _panYDelta = relativeYScaled * (1 - zoom * 2) * panSensitivity;
             }
 
             Reload();
@@ -187,7 +205,7 @@ namespace Inchoqate.GUI.ViewModel
 
         public void ResetZoom()
         {
-            _zoom = 0;
+            zoom = 0;
             _panXDelta = 0;
             _panYDelta = 0;
             _panXStart = 0;
@@ -201,10 +219,10 @@ namespace Inchoqate.GUI.ViewModel
             float panX = _panXDelta + _panXStart;
             float panY = _panYDelta + _panYStart;
 
-            float left      = 0.0f + _zoom - panX;
-            float right     = 1.0f - _zoom - panX;
-            float top       = 1.0f - _zoom + panY;
-            float bottom    = 0.0f + _zoom + panY;
+            float left      = 0.0f + zoom - panX;
+            float right     = 1.0f - zoom - panX;
+            float top       = 1.0f - zoom + panY;
+            float bottom    = 0.0f + zoom + panY;
 
             _vertices =
             [
