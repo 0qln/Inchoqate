@@ -2,20 +2,15 @@
 
 namespace Inchoqate.GUI.Model
 {
-    internal class NoopHardwareEditModel : IHardwareEdit
+    public class GpuGrayscaleEditModel : IGPUEdit
     {
-        private readonly static ShaderModel _shaderModel;
+        private readonly static ShaderModel _shader;
 
-        static NoopHardwareEditModel()
+        static GpuGrayscaleEditModel()
         {
-            //_shaderModel = new ShaderModel(
-            //    new Uri("pack://application:,,,/Shaders/Base.vert", UriKind.Relative),
-            //    new Uri("pack://application:,,,/Shaders/Base.frag", UriKind.Relative),
-            //    out bool success);
-
-            _shaderModel = ShaderModel.FromUri(
+            _shader = ShaderModel.FromUri(
                 new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
-                new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
+                new Uri("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
                 out bool success);
 
             if (!success)
@@ -24,11 +19,11 @@ namespace Inchoqate.GUI.Model
             }
         }
 
-        void IHardwareEdit.Apply(TextureModel source, FrameBufferModel destination, VertexArrayModel vertexArray)
+        void IGPUEdit.Apply(TextureModel source, FrameBufferModel destination, VertexArrayModel vertexArray)
         {
             destination.Use(FramebufferTarget.Framebuffer);
             source.Use(TextureUnit.Texture0);
-            _shaderModel.Use();
+            _shader.Use();
             vertexArray.Use();
             GL.DrawElements(PrimitiveType.Triangles, vertexArray.IndexCount, DrawElementsType.UnsignedInt, 0);
         }

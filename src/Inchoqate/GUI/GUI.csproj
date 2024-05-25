@@ -12,6 +12,7 @@
     <None Remove="image.jpg" />
     <None Remove="Shaders\Base.frag" />
     <None Remove="Shaders\Base.vert" />
+    <None Remove="Shaders\Grayscale.frag" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +34,7 @@
     <Resource Include="Shaders\Base.vert">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Shaders\Grayscale.frag" />
   </ItemGroup>
 
 </Project>

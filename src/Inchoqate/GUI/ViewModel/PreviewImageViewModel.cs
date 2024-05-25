@@ -17,7 +17,7 @@ namespace Inchoqate.GUI.ViewModel
 
         private readonly ShaderModel _shader;
         private readonly VertexArrayModel _vertexArray;
-        private readonly HardwareEditQueueModel _hardwareEditQueue; // TODO: replace this 
+        private readonly GpuEditQueueModel _editQueue; // TODO: replace this 
         private TextureModel? _texture;
 
         private float[] _vertices =
@@ -50,7 +50,7 @@ namespace Inchoqate.GUI.ViewModel
                 SetProperty(ref imageSource, value);
                 _texture?.Dispose();
                 _texture = new TextureModel(imageSource);
-                _hardwareEditQueue.SourceTexture = _texture;
+                _editQueue.SourceTexture = _texture;
                 SourceSize = new Size(_texture.Width, _texture.Height);
             }
         }
@@ -67,7 +67,7 @@ namespace Inchoqate.GUI.ViewModel
             set
             {
                 SetProperty(ref renderSize, value);
-                _hardwareEditQueue.RenderSize = value;
+                _editQueue.RenderSize = value;
             }
         }
 
@@ -129,25 +129,29 @@ namespace Inchoqate.GUI.ViewModel
                 // TODO: handle error
             }
 
-            _hardwareEditQueue = new HardwareEditQueueModel(_vertexArray);
+            _editQueue = new GpuEditQueueModel(_vertexArray);
+            _editQueue.Edits.Add(new GpuGrayscaleEditModel());
         }
 
 
         public void RenderToImage(GLWpfControl image)
         {
-            //var fb = _hardwareEditQueue.Apply();
+            var fb = _editQueue.Apply();
 
-            //if (fb is null)
-            //{
-            //    return;
-            //}
+            if (fb is null)
+            {
+                return;
+            }
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, image.Framebuffer);
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
+            // TODO: passing through the empty edit queue fucks up the image quality.
+            // it also fucks up the panning sensetivity yay
+
             //fb.Data.Use(TextureUnit.Texture0);
-            _texture.Use(TextureUnit.Texture0);
+            _texture?.Use(TextureUnit.Texture0);
             _shader.Use();
             _vertexArray.Use();
             GL.DrawElements(PrimitiveType.Triangles, _vertexArray.IndexCount, DrawElementsType.UnsignedInt, 0);
@@ -244,7 +248,7 @@ namespace Inchoqate.GUI.ViewModel
         {
             if (!disposedValue)
             {
-                _hardwareEditQueue.Dispose();
+                _editQueue.Dispose();
                 _vertexArray.Dispose();
                 _shader.Dispose();
                 _texture?.Dispose();

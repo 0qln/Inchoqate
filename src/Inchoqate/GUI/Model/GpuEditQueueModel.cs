@@ -4,20 +4,17 @@ using System.Windows;
 
 namespace Inchoqate.GUI.Model
 {
-    /// <summary>
-    /// </summary>
-    /// <param name="vertexArray">This will not be disposed by this object.</param>
-    public class HardwareEditQueueModel(VertexArrayModel vertexArray) : IDisposable, IRenderQueue
+    public class GpuEditQueueModel : IDisposable, IRenderQueue
     {
-        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<HardwareEditQueueModel>();
+        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<GpuEditQueueModel>();
 
         // dispose
         private FrameBufferModel? _framebuffer1, _framebuffer2;
-        public readonly List<IHardwareEdit> Edits = [];
+        public readonly List<IGPUEdit> Edits = [];
 
         // no dispose
         private TextureModel? _sourceTexture;
-        private readonly VertexArrayModel _vertexArrayObject = vertexArray;
+        private readonly VertexArrayModel _vertexArrayObject;
         private Size _renderSize;
 
 
@@ -60,6 +57,15 @@ namespace Inchoqate.GUI.Model
         }
 
 
+        /// <summary>
+        /// </summary>
+        /// <param name="vertexArray">This will not be disposed by this object.</param>
+        public GpuEditQueueModel(VertexArrayModel vertexArray)
+        {
+            _vertexArrayObject = vertexArray;
+        }
+
+
         public FrameBufferModel? Apply()
         {
             if (_sourceTexture is null)
@@ -70,7 +76,7 @@ namespace Inchoqate.GUI.Model
             // If there are no edits given, return identity.
             if (Edits.Count == 0)
             {
-                IHardwareEdit identity = new NoopHardwareEditModel();
+                IGPUEdit identity = new GpuIdentityEditModel();
                 identity.Apply(
                     source: _sourceTexture,
                     destination: _framebuffer1!,
@@ -117,7 +123,7 @@ namespace Inchoqate.GUI.Model
             }
         }
 
-        ~HardwareEditQueueModel()
+        ~GpuEditQueueModel()
         {
             // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
             // The OpenGL resources have to be released from a thread with an active OpenGL Context.

@@ -124,6 +124,7 @@ namespace Inchoqate.GUI.View
             Grid.Height = size.Height;
             Viewbox.Width = size.Width;
             Viewbox.Height = size.Height;
+            _viewModel.RenderSize = size;
             return base.ArrangeOverride(size);
         }
 
