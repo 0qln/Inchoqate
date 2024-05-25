@@ -78,6 +78,7 @@ namespace Inchoqate.GUI.ViewModel
             set
             {
                 SetProperty(ref boundsSize, value);
+                Reload();
             }
         }
 
