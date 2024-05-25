@@ -40,6 +40,7 @@ namespace Inchoqate.GUI.ViewModel
         private Size renderSize;
         private Size boundsSize;
         private Size sourceSize;
+        private Size boundsSize;
 
         public string? ImageSource
         {
@@ -191,8 +192,9 @@ namespace Inchoqate.GUI.ViewModel
                 targetYScaled = lerpRange((float)(target.Y / frameworkElement.ActualHeight));
             }
 
-            float newZoom = zoomLevel + zoomDelta;
-            newZoom = Math.Clamp(newZoom, zoomMin, zoomMax);
+            float newZoom = zoom + (zoomDelta / zoomLevels);
+            newZoom = Math.Clamp(newZoom, 0, 0.45f);
+            if (newZoom == 0.5f) return;
 
             zoomLevel = newZoom;
 
@@ -248,15 +250,17 @@ namespace Inchoqate.GUI.ViewModel
         float zoomX => wNorm * MathF.Pow(2, zoomLevel) / 10;
         float zoomY => hNorm * MathF.Pow(2, zoomLevel) / 10;
 
-        public void Reload()
-        {
+            float
+                wNorm = (float)(BoundsSize.Width / RenderSize.Width),
+                hNorm = (float)(BoundsSize.Height / RenderSize.Height);
+
             _vertices =
             [
-                // Position                 Texture coordinates
-                right, top,     0.0f,       1,  1,    // top right
-                right, bottom,  0.0f,       1,  0,    // bottom right
-                left,  bottom,  0.0f,       0,  0,    // bottom left
-                left,  top,     0.0f,       0,  1,    // top left
+                // Position             Texture coordinates
+                 1.0f,  1.0f, 0.0f,     wNorm * right, hNorm * top,    // top right
+                 1.0f, -1.0f, 0.0f,     wNorm * right, hNorm * bottom, // bottom right
+                -1.0f, -1.0f, 0.0f,     wNorm * left,  hNorm * bottom, // bottom left
+                -1.0f,  1.0f, 0.0f,     wNorm * left,  hNorm * top,    // top left
             ];
 
             _logger.LogInformation(
