@@ -38,6 +38,7 @@ namespace Inchoqate.GUI.ViewModel
 
         private string? imageSource;
         private Size renderSize;
+        private Size boundsSize;
         private Size sourceSize;
         private Size boundsSize;
 
@@ -87,8 +88,18 @@ namespace Inchoqate.GUI.ViewModel
         private float _panXStart;
         private float _panYStart;
         private float panSensitivity = 1.0f;
-        private float zoomLevels = 40.0f;
-        private float zoom;
+        private float zoomLevels = 30;
+        private float zoomSensitivity = 1;
+        private float zoomMin => 0;
+        private float zoomMax => (float)Math.Min(SourceSize.Height, SourceSize.Width);
+        private float zoomStep => zoomMax / zoomLevels* zoomSensitivity;
+        private float zoomNorm => zoomLevel / zoomMax;
+        private float zoomLevel;
+        // lerp from range [0; 1] to [-1; 1]
+        static private float lerpRange(float value) => value * 2.0f - 1.0f;
+        // lerp from range [-1; 1] to [0; 1]
+        static private float lerpInverse(float value) => value / 2.0f + 0.5f;
+
 
         public float PanSensitivity
         {
@@ -102,23 +113,23 @@ namespace Inchoqate.GUI.ViewModel
             set => SetProperty(ref zoomLevels, value);
         }
 
-        /// <summary>
-        /// Range: [0;0.5)
-        /// </summary>
-        public float Zoom
-        {
-            get => zoom;
-            set
-            {
-                if (value < 0 || value >= 0.5)
-                {
-                    throw new ArgumentException(nameof(value));
-                }
+        ///// <summary>
+        ///// Range: [0;0.5)
+        ///// </summary>
+        //public float Zoom
+        //{
+        //    get => zoom;
+        //    set
+        //    {
+        //        if (value < 0 || value >= 0.5)
+        //        {
+        //            throw new ArgumentException(nameof(value));
+        //        }
 
-                SetProperty(ref zoom, value);
-                Reload();
-            }
-        }
+        //        SetProperty(ref zoom, value);
+        //        Reload();
+        //    }
+        //}
 
 
         public PreviewImageViewModel()
@@ -171,36 +182,32 @@ namespace Inchoqate.GUI.ViewModel
 
         public void MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            float zoomDelta = (float)e.Delta > 0 ? .5f : -.5f;
-            Point relative = e.GetPosition((IInputElement)sender);
-            float relativeXScaled = 0, relativeYScaled = 0;
+            float zoomDelta = (float)e.Delta > 0 ? zoomStep : -zoomStep;
+
+            Point target = e.GetPosition((IInputElement)sender);
+            float targetXScaled = 0, targetYScaled = 0;
             if (sender is FrameworkElement frameworkElement)
             {
-                relativeXScaled = (float)(relative.X / frameworkElement.ActualWidth) * 2 - 1;
-                relativeYScaled = (float)(relative.Y / frameworkElement.ActualHeight) * 2 - 1;
+                targetXScaled = lerpRange((float)(target.X / frameworkElement.ActualWidth));
+                targetYScaled = lerpRange((float)(target.Y / frameworkElement.ActualHeight));
             }
 
             float newZoom = zoom + (zoomDelta / zoomLevels);
             newZoom = Math.Clamp(newZoom, 0, 0.45f);
             if (newZoom == 0.5f) return;
 
-            _panXStart = (_panXStart + relativeXScaled * zoom) - (relativeXScaled * newZoom);
-            _panYStart = (_panYStart + relativeYScaled * zoom) - (relativeYScaled * newZoom);
-            zoom = newZoom;
+            zoomLevel = newZoom;
 
             Reload();
         }
 
         public void DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (sender is FrameworkElement frameworkElement)
-            {
-                var relativeXScaled = (float)(e.HorizontalChange / frameworkElement.ActualWidth);
-                var relativeYScaled = (float)(e.VerticalChange / frameworkElement.ActualHeight);
+            var relativeXScaled = (float)(e.HorizontalChange / BoundsSize.Width);
+            var relativeYScaled = (float)(e.VerticalChange / BoundsSize.Height);
 
-                _panXDelta = relativeXScaled * (1 - zoom * 2) * panSensitivity;
-                _panYDelta = relativeYScaled * (1 - zoom * 2) * panSensitivity;
-            }
+            _panXDelta = relativeXScaled * panSensitivity;
+            _panYDelta = relativeYScaled * panSensitivity;
 
             Reload();
         }
@@ -220,7 +227,7 @@ namespace Inchoqate.GUI.ViewModel
 
         public void ResetZoom()
         {
-            zoom = 0;
+            zoomLevel = 0;
             _panXDelta = 0;
             _panYDelta = 0;
             _panXStart = 0;
@@ -229,15 +236,19 @@ namespace Inchoqate.GUI.ViewModel
             Reload();
         }
 
-        public void Reload()
-        {
-            float panX = _panXDelta + _panXStart;
-            float panY = _panYDelta + _panYStart;
+        float left    => -wNorm + panX - zoomX;
+        float right   =>  wNorm + panX + zoomX;
+        float top     =>  hNorm - panY + zoomY;
+        float bottom  => -hNorm - panY - zoomY;
 
-            float left      = 0.0f + zoom - panX;
-            float right     = 1.0f - zoom - panX;
-            float top       = 1.0f - zoom + panY;
-            float bottom    = 0.0f + zoom + panY;
+        float wNorm => (float)(RenderSize.Width / BoundsSize.Width);
+        float hNorm => (float) (RenderSize.Height / BoundsSize.Height);
+
+        float panX => lerpRange(_panXDelta + _panXStart) + 1;
+        float panY => lerpRange(_panYDelta + _panYStart) + 1;
+
+        float zoomX => wNorm * MathF.Pow(2, zoomLevel) / 10;
+        float zoomY => hNorm * MathF.Pow(2, zoomLevel) / 10;
 
             float
                 wNorm = (float)(BoundsSize.Width / RenderSize.Width),
@@ -251,6 +262,13 @@ namespace Inchoqate.GUI.ViewModel
                 -1.0f, -1.0f, 0.0f,     wNorm * left,  hNorm * bottom, // bottom left
                 -1.0f,  1.0f, 0.0f,     wNorm * left,  hNorm * top,    // top left
             ];
+
+            _logger.LogInformation(
+                $"Reload: " +
+                    $"\n\ttr: {top} | {right} " +
+                    $"\n\tbr: {bottom} | {right} " +
+                    $"\n\tbl: {bottom} | {left} " +
+                    $"\n\ttl: {top} | {left}");
 
             _vertexArray.UpdateVertices(_vertices);
         }
