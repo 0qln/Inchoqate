@@ -13,15 +13,36 @@ namespace Inchoqate.GUI.Model
         public readonly int Handle;
 
         public readonly BufferTarget Target;
+        public readonly int Size;
+
 
 
         public BufferModel(BufferTarget bufferTarget, T[] values, BufferUsageHint usage)
         {
             Target = bufferTarget;
+            Size = values.Length * Marshal.SizeOf<T>();
 
             Handle = GL.GenBuffer();
             GL.BindBuffer(bufferTarget, Handle);
-            GL.BufferData(bufferTarget, values.Length * Marshal.SizeOf<T>(), values, usage);
+            GL.BufferData(bufferTarget, Size, values, usage);
+        }
+
+
+        /// <summary>
+        /// Update the buffers data.
+        /// </summary>
+        /// <param name="data">The new data.</param>
+        /// <param name="offset">Offset of the data measured in bytes.</param>
+        /// <exception cref="ArgumentException"></exception>
+        public void Update(T[] data, int offset = 0)
+        {
+            if (data.Length * Marshal.SizeOf<T>() + offset > Size)
+            {
+                throw new ArgumentException(nameof(data.Length));
+            }
+
+            Use();
+            GL.BufferSubData(Target, offset, Size, data);
         }
 
 

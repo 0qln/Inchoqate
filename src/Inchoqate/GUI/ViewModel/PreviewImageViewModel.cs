@@ -15,8 +15,8 @@ namespace Inchoqate.GUI.ViewModel
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<PreviewImageViewModel>();
 
-        private ShaderModel _shader;
-        private VertexArrayModel _vertexArray;
+        private readonly ShaderModel _shader;
+        private readonly VertexArrayModel _vertexArray;
         private readonly HardwareEditQueueModel _hardwareEditQueue; // TODO: replace this 
         private TextureModel? _texture;
 
@@ -215,17 +215,7 @@ namespace Inchoqate.GUI.ViewModel
                 -1.0f,  1.0f, 0.0f,     left,   top     // top left
             ];
 
-            _vertexArray?.Dispose();
-
-            _vertexArray = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
-            _vertexArray.Use();
-
-            _shader?.Dispose();
-
-            _shader = ShaderModel.FromUri(
-                new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
-                new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
-                out bool success);
+            _vertexArray.UpdateVertices(_vertices);
         }
 
         #region Clean up

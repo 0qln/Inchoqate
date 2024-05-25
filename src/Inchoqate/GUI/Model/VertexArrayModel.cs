@@ -30,6 +30,17 @@ namespace Inchoqate.GUI.Model
         }
 
 
+        public void UpdateVertices(float[] vertices)
+        {
+            _vertexBufferObject.Update(vertices);
+        }
+
+        public void UpdateIndices(uint[] indices)
+        {
+            _elementBufferObject.Update(indices);
+        }
+
+
         public void Use()
         {
             GL.BindVertexArray(Handle);
@@ -46,7 +57,7 @@ namespace Inchoqate.GUI.Model
             {
                 GL.DeleteVertexArray(Handle);
                 _elementBufferObject.Dispose();
-                _vertexBufferObject?.Dispose();
+                _vertexBufferObject.Dispose();
 
                 disposedValue = true;
             }
