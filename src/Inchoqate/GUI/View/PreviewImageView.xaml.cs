@@ -116,9 +116,6 @@ namespace Inchoqate.GUI.View
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
             var size = GetDesiredImageSize(arrangeBounds);
-            _viewModel.RenderSize = size;
-            size = arrangeBounds;
-            _viewModel.BoundsSize = size;
             GLImage.Width = size.Width;
             GLImage.Height = size.Height;
             Thumb.Width = size.Width;
@@ -127,6 +124,7 @@ namespace Inchoqate.GUI.View
             Grid.Height = size.Height;
             Viewbox.Width = size.Width;
             Viewbox.Height = size.Height;
+            _viewModel.RenderSize = size;
             return base.ArrangeOverride(size);
         }
 

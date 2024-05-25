@@ -38,7 +38,6 @@ namespace Inchoqate.GUI.ViewModel
 
         private string? imageSource;
         private Size renderSize;
-        private Size boundsSize;
         private Size sourceSize;
 
         public string? ImageSource
@@ -69,16 +68,6 @@ namespace Inchoqate.GUI.ViewModel
             {
                 SetProperty(ref renderSize, value);
                 _editQueue.RenderSize = value;
-            }
-        }
-
-        public Size BoundsSize
-        {
-            get => boundsSize;
-            set
-            {
-                SetProperty(ref boundsSize, value);
-                Reload();
             }
         }
 
@@ -234,26 +223,18 @@ namespace Inchoqate.GUI.ViewModel
             float panX = _panXDelta + _panXStart;
             float panY = _panYDelta + _panYStart;
 
-            panX = panX * 2 - 1;
-            panY = panY * 2 - 1;
-
-            float 
-                left    = 0.0f + zoom - panX,
-                right   = 1.0f - zoom - panX,
-                top     = 1.0f - zoom + panY,
-                bottom  = 0.0f + zoom + panY;
-
-            float 
-                wNorm = (float)(RenderSize.Width  / BoundsSize.Width), 
-                hNorm = (float)(RenderSize.Height / BoundsSize.Height);
+            float left      = 0.0f + zoom - panX;
+            float right     = 1.0f - zoom - panX;
+            float top       = 1.0f - zoom + panY;
+            float bottom    = 0.0f + zoom + panY;
 
             _vertices =
             [
                 // Position             Texture coordinates
-                 wNorm + panX,  hNorm - panY,   0.0f,   1,  1,    // top right
-                 wNorm + panX, -hNorm - panY,   0.0f,   1,  0,    // bottom right
-                -wNorm + panX, -hNorm - panY,   0.0f,   0,  0,    // bottom left
-                -wNorm + panX,  hNorm - panY,   0.0f,   0,  1,    // top left
+                 1.0f,  1.0f, 0.0f,     right,  top,    // top right
+                 1.0f, -1.0f, 0.0f,     right,  bottom, // bottom right
+                -1.0f, -1.0f, 0.0f,     left,   bottom, // bottom left
+                -1.0f,  1.0f, 0.0f,     left,   top     // top left
             ];
 
             _vertexArray.UpdateVertices(_vertices);
