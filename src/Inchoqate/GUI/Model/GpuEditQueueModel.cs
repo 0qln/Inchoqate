@@ -9,11 +9,8 @@ namespace Inchoqate.GUI.Model
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<GpuEditQueueModel>();
 
-        // dispose
-        private FrameBufferModel? _framebuffer1, _framebuffer2;
         public readonly List<IGPUEdit> Edits = [];
-
-        // no dispose
+        private FrameBufferModel? _framebuffer1, _framebuffer2;
         private TextureModel? _sourceTexture;
 
         public TextureModel? SourceTexture
@@ -21,6 +18,7 @@ namespace Inchoqate.GUI.Model
             get => _sourceTexture;
             set
             {
+                _sourceTexture?.Dispose();
                 _sourceTexture = value;
             }
         }
@@ -56,14 +54,6 @@ namespace Inchoqate.GUI.Model
         }
 
 
-        /// <summary>
-        /// </summary>
-        /// <param name="vertexArray">This will not be disposed by this object.</param>
-        public GpuEditQueueModel()
-        {
-        }
-
-
         public FrameBufferModel? Apply()
         {
             if (_sourceTexture is null)
@@ -75,16 +65,12 @@ namespace Inchoqate.GUI.Model
             if (Edits.Count == 0)
             {
                 IGPUEdit identity = new GpuIdentityEditModel();
-                identity.Apply(
-                    source: _sourceTexture,
-                    destination: _framebuffer1!);
+                identity.Apply(_sourceTexture, _framebuffer1!);
                 return _framebuffer1;
             }
 
             // Initial pass: fill framebuffer 1 with source texture.
-            Edits.First().Apply(
-                source: _sourceTexture,
-                destination: _framebuffer1!);
+            Edits.First().Apply(_sourceTexture, _framebuffer1!);
 
             // Subsequent passes: switch between framebuffers.
             FrameBufferModel source = _framebuffer1!, destination = _framebuffer2!;
@@ -109,6 +95,7 @@ namespace Inchoqate.GUI.Model
             {
                 _framebuffer1?.Dispose();
                 _framebuffer1?.Dispose();
+                _sourceTexture?.Dispose();
 
                 foreach (var edit in Edits)
                 {

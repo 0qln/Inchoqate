@@ -15,7 +15,7 @@ namespace Inchoqate.GUI.ViewModel
 
         private readonly ShaderModel _shader;
         private readonly VertexArrayModel _vertexArray;
-        private readonly GpuEditQueueModel _editQueue; // TODO: replace this 
+        private readonly GpuEditQueueModel _editQueue; // TODO: replace this with the graph system
         private TextureModel? _texture;
 
         private float[] _vertices =
@@ -48,16 +48,21 @@ namespace Inchoqate.GUI.ViewModel
 
                 SetProperty(ref imageSource, value);
                 _texture?.Dispose();
-                _texture = new TextureModel(imageSource);
-                _editQueue.SourceTexture = _texture;
-                SourceSize = new Size(_texture.Width, _texture.Height);
+                _texture = new(imageSource);
+                TextureModel texture = new(imageSource);
+                SourceSize = new Size(texture.Width, texture.Height);
+                _editQueue.SourceTexture = texture;
             }
         }
 
         public Size SourceSize
         {
             get => sourceSize;
-            private set => SetProperty(ref sourceSize, value);
+            private set
+            {
+                SetProperty(ref sourceSize, value);
+                _editQueue.RenderSize = value;
+            }
         }
 
         public Size RenderSize
@@ -66,7 +71,7 @@ namespace Inchoqate.GUI.ViewModel
             set
             {
                 SetProperty(ref renderSize, value);
-                _editQueue.RenderSize = value;
+                Reload();
             }
         }
 
@@ -171,6 +176,7 @@ namespace Inchoqate.GUI.ViewModel
 
             // TODO: passing through the edit queue fucks up the image quality.
 
+            _texture?.Use(TextureUnit.Texture0);
             fb.Data.Use(TextureUnit.Texture0);
             _shader.Use();
             _vertexArray.Use();
@@ -279,7 +285,6 @@ namespace Inchoqate.GUI.ViewModel
                 _editQueue.Dispose();
                 _vertexArray.Dispose();
                 _shader.Dispose();
-                _texture?.Dispose();
 
                 disposedValue = true;
             }
