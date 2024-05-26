@@ -185,8 +185,8 @@ namespace Inchoqate.GUI.ViewModel
             float relativeXScaled = 0, relativeYScaled = 0;
             if (sender is FrameworkElement frameworkElement)
             {
-                relativeXScaled = (float)(relative.X / frameworkElement.ActualWidth) * 2 - 1;
-                relativeYScaled = (float)(relative.Y / frameworkElement.ActualHeight) * 2 - 1;
+                relativeXScaled = (float)(relative.X / BoundsSize.Width) * 2 - 1;
+                relativeYScaled = (float)(relative.Y / BoundsSize.Height) * 2 - 1;
             }
 
             float newZoom = _zoomValue + (zoomDelta / zoomLevels);
@@ -203,8 +203,8 @@ namespace Inchoqate.GUI.ViewModel
         {
             if (sender is FrameworkElement frameworkElement)
             {
-                var relativeXScaled = (float)(e.HorizontalChange / frameworkElement.ActualWidth);
-                var relativeYScaled = (float)(e.VerticalChange / frameworkElement.ActualHeight);
+                var relativeXScaled = (float)(e.HorizontalChange / BoundsSize.Width);
+                var relativeYScaled = (float)(e.VerticalChange / BoundsSize.Height);
 
                 _panXDelta = relativeXScaled * (1 - _zoomValue * 2) * panSensitivity;
                 _panYDelta = relativeYScaled * (1 - _zoomValue * 2) * panSensitivity;
@@ -239,6 +239,10 @@ namespace Inchoqate.GUI.ViewModel
 
         public void Reload()
         {
+            float
+                wNorm = (float)(BoundsSize.Width / RenderSize.Width),
+                hNorm = (float)(BoundsSize.Height / RenderSize.Height);
+
             float panX = _panXDelta + _panXStart;
             float panY = _panYDelta + _panYStart;
 
@@ -246,10 +250,6 @@ namespace Inchoqate.GUI.ViewModel
             float right     = 1 - _zoomValue - panX;
             float top       = 1 - _zoomValue + panY;
             float bottom    = 0 + _zoomValue + panY;
-
-            float
-                wNorm = (float)(BoundsSize.Width / RenderSize.Width),
-                hNorm = (float)(BoundsSize.Height / RenderSize.Height);
 
             // center the image
             //float 
