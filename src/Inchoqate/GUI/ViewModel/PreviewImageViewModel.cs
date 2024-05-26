@@ -52,6 +52,8 @@ namespace Inchoqate.GUI.ViewModel
                 TextureModel texture = new(imageSource);
                 SourceSize = new Size(texture.Width, texture.Height);
                 _editQueue.SourceTexture = texture;
+
+                fbM = new(texture.Width, texture.Height, out _);
             }
         }
 
@@ -82,6 +84,7 @@ namespace Inchoqate.GUI.ViewModel
             {
                 SetProperty(ref boundsSize, value);
                 Reload();
+                //fbM = new((int)BoundsSize.Width, (int)BoundsSize.Height, out _);
             }
         }
 
@@ -143,6 +146,16 @@ namespace Inchoqate.GUI.ViewModel
 
         public PreviewImageViewModel()
         {
+            //dgb
+            vao = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
+            vao.Use();
+
+            sh2 = ShaderModel.FromUri(
+                new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
+                new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
+                out _);
+
+            //core
             _vertexArray = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
             _vertexArray.Use();
 
@@ -157,8 +170,13 @@ namespace Inchoqate.GUI.ViewModel
             }
 
             _editQueue = new GpuEditQueueModel();
-            //_editQueue.Edits.Add(new GpuGrayscaleEditModel());
+            _editQueue.Edits.Add(new GpuGrayscaleEditModel());
         }
+
+
+        FrameBufferModel fbM;
+        VertexArrayModel vao;
+        ShaderModel sh2;
 
 
         public void RenderToImage(GLWpfControl image)
@@ -174,9 +192,6 @@ namespace Inchoqate.GUI.ViewModel
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            // TODO: passing through the edit queue fucks up the image quality.
-
-            _texture?.Use(TextureUnit.Texture0);
             fb.Data.Use(TextureUnit.Texture0);
             _shader.Use();
             _vertexArray.Use();
@@ -258,9 +273,14 @@ namespace Inchoqate.GUI.ViewModel
                 hNorm = (float)(BoundsSize.Height / RenderSize.Height);
 
             // center the image
+            //float 
+            //    xOff = -(float)(BoundsSize.Width - RenderSize.Width) / (float)(RenderSize.Width * 2),
+            //    yOff = -(float)(BoundsSize.Height - RenderSize.Height) / (float)(RenderSize.Height * 2);
+
+            // align top
             float 
-                xOff = -(float)(BoundsSize.Width - RenderSize.Width) / (float)(RenderSize.Width * 2),
-                yOff = -(float)(BoundsSize.Height - RenderSize.Height) / (float)(RenderSize.Height * 2);
+                xOff = 0, 
+                yOff = (float)(RenderSize.Height - BoundsSize.Height) / (float)(RenderSize.Height);
 
             _vertices =
             [

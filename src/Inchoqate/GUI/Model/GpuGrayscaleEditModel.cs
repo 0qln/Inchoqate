@@ -1,15 +1,37 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.Model
 {
-    public sealed class GpuGrayscaleEditModel : IGPUEdit
+    public class GpuGrayscaleEditModel : IGPUEdit
     {
+        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<GpuGrayscaleEditModel>();
+
+        private static readonly float[] _vertices =
+        [
+            // Position             Texture coordinates
+             1.0f,  1.0f, 0.0f,     1.0f, 1.0f, // top right
+             1.0f, -1.0f, 0.0f,     1.0f, 0.0f, // bottom right
+            -1.0f, -1.0f, 0.0f,     0.0f, 0.0f, // bottom left
+            -1.0f,  1.0f, 0.0f,     0.0f, 1.0f  // top left
+        ];
+
+        private static readonly uint[] _indices =
+        [
+            0, 1, 3,
+            1, 2, 3
+        ];
+
+
         private readonly ShaderModel _shader;
         private readonly VertexArrayModel _vao;
 
-        public GpuGrayscaleEditModel(VertexArrayModel vertexArray)
+
+        public GpuGrayscaleEditModel(BufferUsageHint usage = BufferUsageHint.StaticDraw)
         {
-            vertexArray.Use();
+            _vao = new VertexArrayModel(_indices, _vertices, usage);
+            _vao.Use();
 
             _shader = ShaderModel.FromUri(
                 new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
@@ -20,8 +42,6 @@ namespace Inchoqate.GUI.Model
             {
                 // TODO: handle error
             }
-
-            _vao = vertexArray;
         }
 
         void IGPUEdit.Apply(TextureModel source, FrameBufferModel destination)
@@ -33,9 +53,40 @@ namespace Inchoqate.GUI.Model
             GL.DrawElements(PrimitiveType.Triangles, _vao.IndexCount, DrawElementsType.UnsignedInt, 0);
         }
 
-        void IDisposable.Dispose()
+
+        #region Clean up
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
         {
-            // static shader will live during the programs runtime.
+            if (!disposedValue)
+            {
+                _shader.Dispose();
+                _vao.Dispose();
+
+                disposedValue = true;
+            }
         }
+
+        ~GpuGrayscaleEditModel()
+        {
+            // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
+            // The OpenGL resources have to be released from a thread with an active OpenGL Context.
+            // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
+            // is not possible.
+            if (disposedValue == false)
+            {
+                _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
     }
 }

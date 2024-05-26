@@ -1,11 +1,13 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
+using OpenTK.Graphics.OpenGL4;
+using System.Reflection.Metadata;
 
 namespace Inchoqate.GUI.Model
 {
-    public sealed class GpuIdentityEditModel : IGPUEdit
+    public class GpuIdentityEditModel : IGPUEdit
     {
-        private readonly ShaderModel _shader;
-        private readonly VertexArrayModel _vao;
+        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<GpuIdentityEditModel>();
 
         private static readonly float[] _vertices =
         [
@@ -21,6 +23,11 @@ namespace Inchoqate.GUI.Model
             0, 1, 3,
             1, 2, 3
         ];
+
+
+        private readonly ShaderModel _shader;
+        private readonly VertexArrayModel _vao;
+
 
         public GpuIdentityEditModel(BufferUsageHint usage = BufferUsageHint.StaticDraw)
         {
@@ -38,6 +45,7 @@ namespace Inchoqate.GUI.Model
             }
         }
 
+
         void IGPUEdit.Apply(TextureModel source, FrameBufferModel destination)
         {
             destination.Use(FramebufferTarget.Framebuffer);
@@ -47,9 +55,40 @@ namespace Inchoqate.GUI.Model
             GL.DrawElements(PrimitiveType.Triangles, _vao.IndexCount, DrawElementsType.UnsignedInt, 0);
         }
 
-        void IDisposable.Dispose()
+
+        #region Clean up
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
         {
-            // TODO
+            if (!disposedValue)
+            {
+                _shader.Dispose();
+                _vao.Dispose();
+
+                disposedValue = true;
+            }
         }
+
+        ~GpuIdentityEditModel()
+        {
+            // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
+            // The OpenGL resources have to be released from a thread with an active OpenGL Context.
+            // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
+            // is not possible.
+            if (disposedValue == false)
+            {
+                _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
     }
 }

@@ -49,7 +49,7 @@ namespace Inchoqate.GUI.Model
             GL.BindFramebuffer(target, Handle);
             if (clear is not null)
             {
-                GL.ClearColor(0, 0, 0, 0);
+                GL.ClearColor(0, 1, 0, 0);
                 GL.Clear((ClearBufferMask)clear);
             }
         }
