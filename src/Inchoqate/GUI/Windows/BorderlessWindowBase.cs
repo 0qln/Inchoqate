@@ -9,43 +9,40 @@ using System.Windows;
 
 namespace Inchoqate.GUI.Windows
 {
-
-    // TODO
-
-    public abstract class BorderlessWindowBase : Window
+    public class BorderlessWindowBase : Window
     {
-        //private readonly ILogger _logger = FileLoggerFactory.CreateLogger<BorderlessWindowBase>();
+        private readonly ILogger _logger = FileLoggerFactory.CreateLogger<BorderlessWindowBase>();
 
 
-        //public static readonly DependencyProperty CornerRadiusProperty = 
-        //    DependencyProperty.Register(
-        //        "CornerRadius", 
-        //        typeof(CornerRadius), 
-        //        typeof(BorderlessWindowBase));
+        public static readonly DependencyProperty CornerRadiusProperty =
+            DependencyProperty.Register(
+                "CornerRadius",
+                typeof(CornerRadius),
+                typeof(BorderlessWindowBase));
 
-        //public static readonly DependencyProperty TitlebarHeightProperty =
-        //    DependencyProperty.Register(
-        //        "TitlebarHeight",
-        //        typeof(double),
-        //        typeof(BorderlessWindowBase));
-
-
-        //public CornerRadius CornerRadius
-        //{
-        //    get => (CornerRadius)GetValue(CornerRadiusProperty);
-        //    set => SetValue(CornerRadiusProperty, value);
-        //}
-
-        //public double TitlebarHeight
-        //{
-        //    get => (double)GetValue(TitlebarHeightProperty);
-        //    set => SetValue(TitlebarHeightProperty, value);
-        //}
+        public static readonly DependencyProperty TitlebarHeightProperty =
+            DependencyProperty.Register(
+                "TitlebarHeight",
+                typeof(double),
+                typeof(BorderlessWindowBase));
 
 
-        //public BorderlessWindowBase()
-        //{
-        //    DataContext = this;
-        //}
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        public double TitlebarHeight
+        {
+            get => (double)GetValue(TitlebarHeightProperty);
+            set => SetValue(TitlebarHeightProperty, value);
+        }
+
+
+        public BorderlessWindowBase()
+        {
+            Style = (Style)Application.Current.Resources["BorderlessWindowBaseStyle"];
+        }
     }
 }

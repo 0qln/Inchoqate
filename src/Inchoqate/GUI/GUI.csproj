@@ -31,10 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Shaders\Base.frag">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

@@ -9,10 +9,18 @@ namespace Inchoqate.GUI
     /// </summary>
     public partial class App : Application
     {
-        private void WindowContainer_Loaded(object sender, RoutedEventArgs e)
+        public ResourceDictionary ThemeDictionary
         {
-
+            // TODO: Could probably get this via its name with some query logic.
+            get { return Resources.MergedDictionaries[0]; }
         }
+
+        public void ChangeTheme(Uri uri)
+        {
+            ThemeDictionary.MergedDictionaries.Clear();
+            ThemeDictionary.MergedDictionaries.Add(new ResourceDictionary() { Source = uri });
+        }
+
 
         private void WindowContainer_SizeChanged(object sender, SizeChangedEventArgs e)
         {

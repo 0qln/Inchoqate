@@ -4,7 +4,8 @@
              xmlns:local="clr-namespace:Inchoqate.GUI"
              xmlns:win="clr-namespace:Inchoqate.GUI.Windows"
              xmlns:view="clr-namespace:Inchoqate.GUI.View"
-             xmlns:pages="clr-namespace:Inchoqate.GUI.Pages">
+             xmlns:pages="clr-namespace:Inchoqate.GUI.Pages"
+             xmlns:conv="clr-namespace:Inchoqate.GUI.Converters">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -16,39 +17,45 @@
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
-            <!--<Style x:Key="BorderlessWindowStyle" TargetType="{x:Type win:BorderlessWindowBase}">
-                --><!-- 
-                This can be removed to enable smooth window resizing animations, 
-                but then the window resizing glitch fix will also sieze to work. 
-                --><!--
+            <conv:BorderToContentSizeConverter x:Key="BorderToContentSizeConverter"/>
+
+            <Style x:Key="BorderlessWindowBaseStyle" TargetType="win:BorderlessWindowBase">
                 <Setter Property="WindowStyle" Value="None"/>
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="AllowsTransparency" Value="True"/>
-                --><!--
-                --><!--
                 <Setter Property="CornerRadius" Value="15"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="TitlebarHeight" Value="30"/>
                 <Setter Property="WindowChrome.WindowChrome">
                     <Setter.Value>
-                        <WindowChrome x:Name="WindowChrome"
-                                      CornerRadius="{Binding Path=CornerRadius, RelativeSource={RelativeSource AncestorType={x:Type win:BorderlessWindowBase}}}" 
-                                      CaptionHeight="{Binding Path=TitlebarHeight, RelativeSource={RelativeSource AncestorType={x:Type win:BorderlessWindowBase}}}"/>
+                        <WindowChrome 
+                            x:Name="WindowChrome"
+                            CornerRadius="{Binding Path=CornerRadius, RelativeSource={RelativeSource AncestorType={x:Type win:BorderlessWindowBase}}}" 
+                            CaptionHeight="{Binding Path=TitlebarHeight, RelativeSource={RelativeSource AncestorType={x:Type win:BorderlessWindowBase}}}"/>
                     </Setter.Value>
                 </Setter>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type win:BorderlessWindowBase}">
-                            <Border x:Name="WindowContainer" 
-                                    Loaded="WindowContainer_Loaded"
-                                    SizeChanged="WindowContainer_SizeChanged"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    BorderBrush="Black">
-                                <ContentPresenter Content="{TemplateBinding Content}" 
-                                                  ClipToBounds="True" 
-                                                  VerticalAlignment="Stretch" 
-                                                  HorizontalAlignment="Stretch"/>
+                            <Border 
+                                x:Name="WindowContainer" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                BorderBrush="Black">
+                                <ContentPresenter 
+                                    Content="{TemplateBinding Content}" 
+                                    ClipToBounds="True" 
+                                    VerticalAlignment="Stretch" 
+                                    HorizontalAlignment="Stretch">
+                                    <ContentPresenter.Clip>
+                                        <MultiBinding Converter="{StaticResource BorderToContentSizeConverter}">
+                                            <Binding Path="ActualWidth" ElementName="WindowContainer"/>
+                                            <Binding Path="ActualHeight" ElementName="WindowContainer"/>
+                                            <Binding Path="CornerRadius" ElementName="WindowContainer"/>
+                                            <Binding Path="BorderThickness" ElementName="WindowContainer"/>
+                                        </MultiBinding>
+                                    </ContentPresenter.Clip>
+                                </ContentPresenter>
                             </Border>
 
                             <ControlTemplate.Triggers>
@@ -61,7 +68,7 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-            </Style>-->
+            </Style>
 
         </ResourceDictionary>
     </Application.Resources>
