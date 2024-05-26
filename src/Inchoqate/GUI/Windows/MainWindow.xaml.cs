@@ -27,7 +27,7 @@ namespace Inchoqate.GUI.Windows
         {
             if (e.HorizontalChange != 0)
             {
-                PreviewImage.Width += e.HorizontalChange;
+                Sidebar.Width = Math.Clamp(Sidebar.Width - e.HorizontalChange, 0, ActualWidth - SliderThumb.ActualWidth);
             }
         }
     }
