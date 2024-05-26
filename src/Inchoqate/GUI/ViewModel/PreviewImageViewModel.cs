@@ -155,6 +155,7 @@ namespace Inchoqate.GUI.ViewModel
 
             _editQueue = new GpuEditQueueModel();
             _editQueue.Edits.Add(new GpuGrayscaleEditModel());
+            _editQueue.Edits.Add(new GpuNoGreenEditModel());
         }
 
 
