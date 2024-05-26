@@ -13,6 +13,13 @@
     <None Remove="Shaders\Base.frag" />
     <None Remove="Shaders\Base.vert" />
     <None Remove="Shaders\Grayscale.frag" />
+    <None Remove="Shaders\NoGreen.frag" />
+    <None Remove="Shaders\NoRed.frag" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Shaders\NoGreen.frag" />
+    <Resource Include="Shaders\NoRed.frag" />
   </ItemGroup>
 
   <ItemGroup>
