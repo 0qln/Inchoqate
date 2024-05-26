@@ -37,6 +37,8 @@ namespace Inchoqate.GUI.Model
 
                 _renderSize = value;
 
+                // TODO: if the new size is smaller, don't dispose and just use a subset of the buffer.
+
                 _framebuffer1?.Dispose();
                 _framebuffer1 = new FrameBufferModel((int)value.Width, (int)value.Height, out bool success1);
                 if (!success1)

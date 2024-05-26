@@ -115,6 +115,7 @@ namespace Inchoqate.GUI.View
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
+            // TODO: clean this up.
             _viewModel.RenderSize = GetDesiredImageSize(arrangeBounds);
             //_viewModel.BoundsSize = arrangeBounds;
             //_viewModel.RenderSize = _viewModel.SourceSize;
