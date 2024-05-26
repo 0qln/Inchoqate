@@ -16,7 +16,6 @@ namespace Inchoqate.GUI.ViewModel
         private readonly ShaderModel _shader;
         private readonly VertexArrayModel _vertexArray;
         private readonly GpuEditQueueModel _editQueue; // TODO: replace this with the graph system
-        private TextureModel? _texture;
 
         private float[] _vertices =
         [
@@ -47,13 +46,9 @@ namespace Inchoqate.GUI.ViewModel
                 if (value is null) return;
 
                 SetProperty(ref imageSource, value);
-                _texture?.Dispose();
-                _texture = new(imageSource);
                 TextureModel texture = new(imageSource);
                 SourceSize = new Size(texture.Width, texture.Height);
                 _editQueue.SourceTexture = texture;
-
-                fbM = new(texture.Width, texture.Height, out _);
             }
         }
 
@@ -84,7 +79,6 @@ namespace Inchoqate.GUI.ViewModel
             {
                 SetProperty(ref boundsSize, value);
                 Reload();
-                //fbM = new((int)BoundsSize.Width, (int)BoundsSize.Height, out _);
             }
         }
 
@@ -146,16 +140,6 @@ namespace Inchoqate.GUI.ViewModel
 
         public PreviewImageViewModel()
         {
-            //dgb
-            vao = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
-            vao.Use();
-
-            sh2 = ShaderModel.FromUri(
-                new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
-                new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
-                out _);
-
-            //core
             _vertexArray = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
             _vertexArray.Use();
 
@@ -172,11 +156,6 @@ namespace Inchoqate.GUI.ViewModel
             _editQueue = new GpuEditQueueModel();
             _editQueue.Edits.Add(new GpuGrayscaleEditModel());
         }
-
-
-        FrameBufferModel fbM;
-        VertexArrayModel vao;
-        ShaderModel sh2;
 
 
         public void RenderToImage(GLWpfControl image)
