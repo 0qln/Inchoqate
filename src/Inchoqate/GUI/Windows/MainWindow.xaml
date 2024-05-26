@@ -10,7 +10,7 @@
         Title="MainWindow" 
         Height="450" 
         Width="800">
-    <Grid Background="Tomato">
+    <Grid Background="{DynamicResource Background_Idle_1}">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -26,7 +26,8 @@
                 Grid.Column="0"
                 VerticalAlignment="Stretch"
                 HorizontalAlignment="Stretch"
-                Margin="5"/>
+                Margin="5"
+                Background="{DynamicResource Background_Idle_1}"/>
             
         </Border>
 

@@ -66,6 +66,26 @@ namespace Inchoqate.GUI.View
             }
         }
 
+        private static void OnBackgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is PreviewImageView control && control.DataContext is PreviewImageViewModel viewModel)
+            {
+                viewModel.Background = (SolidColorBrush)e.NewValue;
+            }
+        }
+
+
+        static PreviewImageView()
+        {
+            BackgroundProperty.OverrideMetadata(
+                typeof(PreviewImageView), 
+                new FrameworkPropertyMetadata(
+                    new SolidColorBrush(default),
+                    FrameworkPropertyMetadataOptions.AffectsRender | 
+                    FrameworkPropertyMetadataOptions.SubPropertiesDoNotAffectRender,
+                    OnBackgroundPropertyChanged));
+        }
+
 
         private readonly PreviewImageViewModel _viewModel;
 

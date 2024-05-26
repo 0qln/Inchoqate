@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Windows;
 using OpenTK.Graphics.OpenGL4;
+using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
 {
@@ -23,6 +24,22 @@ namespace Inchoqate.GUI.Model
             }
         }
 
+        private Color _background;
+
+        public Color Background
+        {
+            get
+            {
+                return _background;
+            }
+            set
+            {
+                if (value == _background) return;
+                _background = value;
+                Reload();
+            }
+        }
+
         private Size _renderSize;
 
         /// <summary>
@@ -34,24 +51,28 @@ namespace Inchoqate.GUI.Model
             set
             {
                 if (value == _renderSize) return;
-
                 _renderSize = value;
+                Reload();
+            }
+        }
 
-                // TODO: if the new size is smaller, don't dispose and just use a subset of the buffer.
 
-                _framebuffer1?.Dispose();
-                _framebuffer1 = new FrameBufferModel((int)value.Width, (int)value.Height, out bool success1);
-                if (!success1)
-                {
-                    // TODO: handle error
-                }
+        public void Reload()
+        {
+            // TODO: if the new size is smaller, don't dispose and just use a subset of the buffer.
 
-                _framebuffer2?.Dispose();
-                _framebuffer2 = new FrameBufferModel((int)value.Width, (int)value.Height, out bool success2);
-                if (!success2)
-                {
-                    // TODO: handle error
-                }
+            _framebuffer1?.Dispose();
+            _framebuffer1 = new FrameBufferModel((int)_renderSize.Width, (int)_renderSize.Height, out bool success1, Background);
+            if (!success1)
+            {
+                // TODO: handle error
+            }
+
+            _framebuffer2?.Dispose();
+            _framebuffer2 = new FrameBufferModel((int)_renderSize.Width, (int)_renderSize.Height, out bool success2, Background);
+            if (!success2)
+            {
+                // TODO: handle error
             }
         }
 

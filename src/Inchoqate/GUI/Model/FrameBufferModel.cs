@@ -1,6 +1,7 @@
 ﻿using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
+using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
 {
@@ -12,12 +13,12 @@ namespace Inchoqate.GUI.Model
         public readonly TextureModel Data;
 
 
-        public FrameBufferModel(int width, int height, out bool success)
+        public FrameBufferModel(int width, int height, out bool success, Color borderColor = default)
         {
             Handle = GL.GenFramebuffer();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
 
-            Data = new TextureModel(width, height);
+            Data = new TextureModel(width, height, borderColor);
 
             GL.FramebufferTexture2D(
                 FramebufferTarget.Framebuffer,

@@ -6,6 +6,7 @@ using OpenTK.Graphics.OpenGL4;
 using System.Windows;
 using OpenTK.Wpf;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -33,6 +34,18 @@ namespace Inchoqate.GUI.ViewModel
         ];
 
 
+        private SolidColorBrush background = new(default);
+
+        public SolidColorBrush Background
+        {
+            get => background;
+            set
+            {
+                SetProperty(ref background, value);
+                _editQueue.Background = background.Color;
+            }
+        }
+
         private string? imageSource;
         private Size renderSize;
         private Size sourceSize;
@@ -47,8 +60,8 @@ namespace Inchoqate.GUI.ViewModel
 
                 SetProperty(ref imageSource, value);
                 TextureModel texture = new(imageSource);
-                SourceSize = new Size(texture.Width, texture.Height);
                 _editQueue.SourceTexture = texture;
+                SourceSize = new(texture.Width, texture.Height);
             }
         }
 
