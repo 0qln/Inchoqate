@@ -44,7 +44,7 @@ namespace Inchoqate.GUI.Model
                     // TODO: handle error
                 }
 
-                _framebuffer1?.Dispose();
+                _framebuffer2?.Dispose();
                 _framebuffer2 = new FrameBufferModel((int)value.Width, (int)value.Height, out bool success2);
                 if (!success2)
                 {
@@ -56,7 +56,7 @@ namespace Inchoqate.GUI.Model
 
         public FrameBufferModel? Apply()
         {
-            if (_sourceTexture is null)
+            if (_sourceTexture is null || _framebuffer1 is null || _framebuffer2 is null)
             {
                 return null;
             }
@@ -69,15 +69,16 @@ namespace Inchoqate.GUI.Model
                 return _framebuffer1;
             }
 
-            // Initial pass: fill framebuffer 1 with source texture.
-            Edits.First().Apply(_sourceTexture, _framebuffer1!);
+            FrameBufferModel source = _framebuffer1, destination = _framebuffer2;
+
+            // Initial pass: load source texture.
+            Edits.First().Apply(_sourceTexture, destination);
 
             // Subsequent passes: switch between framebuffers.
-            FrameBufferModel source = _framebuffer1!, destination = _framebuffer2!;
             foreach (var edit in Edits[1..])
             {
-                edit.Apply(source.Data, destination);
                 (source, destination) = (destination, source);
+                edit.Apply(source.Data, destination);
             }
 
             // Return result.
