@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Inchoqate.GUI.Model
 {
-    public interface IRenderQueue
+    public interface IGpuRenderQueue
     {
         /// <summary>
         /// Returns a reference to the final result of the render queue.
