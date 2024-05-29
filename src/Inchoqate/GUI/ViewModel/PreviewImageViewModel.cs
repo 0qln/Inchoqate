@@ -14,7 +14,7 @@ namespace Inchoqate.GUI.ViewModel
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<PreviewImageViewModel>();
 
-        private readonly ShaderModel _shader;
+        private readonly ShaderModel? _shader;
         private readonly VertexArrayModel _vertexArray;
         private readonly GpuEditQueueModel _editQueue; // TODO: replace this with the graph system
 
@@ -156,6 +156,18 @@ namespace Inchoqate.GUI.ViewModel
             _vertexArray = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
             _vertexArray.Use();
 
+            //if (Uri.TryCreate("/Shaders/Base.vert", UriKind.RelativeOrAbsolute, out var vert) && 
+            //    Uri.TryCreate("/Shaders/Base.frag", UriKind.RelativeOrAbsolute, out var frag))
+            //{
+            //    _shader = ShaderModel.FromUri(vert, frag, out bool success);
+
+            //    if (!success)
+            //    {
+            //        // TODO: handle error
+            //    }
+
+            //}
+
             _shader = ShaderModel.FromUri(
                 new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
                 new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
@@ -174,6 +186,11 @@ namespace Inchoqate.GUI.ViewModel
 
         public void RenderToImage(GLWpfControl image)
         {
+            if (_shader is null)
+            {
+                return;
+            }
+
             var fb = _editQueue.Apply();
 
             if (fb is null)
@@ -297,7 +314,7 @@ namespace Inchoqate.GUI.ViewModel
             {
                 _editQueue.Dispose();
                 _vertexArray.Dispose();
-                _shader.Dispose();
+                _shader?.Dispose();
 
                 disposedValue = true;
             }
