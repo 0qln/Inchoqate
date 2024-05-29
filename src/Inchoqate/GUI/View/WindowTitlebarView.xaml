@@ -5,8 +5,120 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inchoqate.GUI.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             Height="30" Width="800"
+             x:Name="ControlRoot">
+
+    <UserControl.Resources>
+        <Style x:Key="ApplicationButtonStyle" TargetType="Button">
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border TextBlock.Foreground="{DynamicResource Text_1}"
+                                x:Name="Border"
+                                Background="{DynamicResource Background_1}">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource Background_1_Focused}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid
+        Width="{Binding Width, ElementName=ControlRoot}"
+        Height="{Binding Height, ElementName=ControlRoot}"
+        Background="{DynamicResource Background_Idle_1}">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
+            <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
+            <ColumnDefinition x:Name="ActionButtonsColumn" Width="Auto"/>
+            <ColumnDefinition x:Name="MiscellaneousColumn" Width="*"/>
+            <ColumnDefinition x:Name="ApplicationButtonsColumn" Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Image 
+            x:Name="IconControl"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Source="{Binding Icon, ElementName=ControlRoot}"/>
+
+        <TextBlock 
+            x:Name="TitleControl"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Text="{Binding Title, ElementName=ControlRoot}"
+            FontStyle="Italic"
+            Foreground="{DynamicResource Text_1}"
+            Margin="10, 0, 10, 0"/>
+
+
+        <StackPanel x:Name="ActionButtonStack"
+                    Grid.Column="2"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    PreviewMouseUp="ActionButtonStack_PreviewMouseUp">
+
+            <ItemsControl ItemsSource="{Binding ActionButtons, ElementName=ControlRoot}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="local:TitlebarActionButtonMenuView">
+                        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+                        <Setter Property="Margin" Value="5,0"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+
+        </StackPanel>
+
+        <StackPanel x:Name="ApplicationButtonsStack"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Orientation="Horizontal"
+                    Grid.Column="4">
+
+            <Button 
+                x:Name="MinimizeButton"
+                Width="{Binding Height, ElementName=ControlRoot}"
+                Height="{Binding Height, ElementName=ControlRoot}"
+                Style="{StaticResource ApplicationButtonStyle}"
+                Content="―"
+                Click="MinimizeButton_Click"/>
+            <Button 
+                x:Name="WindowedButton"
+                Width="{Binding Height, ElementName=ControlRoot}"
+                Height="{Binding Height, ElementName=ControlRoot}"
+                Style="{StaticResource ApplicationButtonStyle}"
+                Content="▢"
+                Click="WindowedButton_Click"/>
+            <Button 
+                x:Name="CloseButton"
+                Width="{Binding Height, ElementName=ControlRoot}"
+                Height="{Binding Height, ElementName=ControlRoot}"
+                Style="{StaticResource ApplicationButtonStyle}"
+                Content="✕"
+                Click="CloseButton_Click"/>
+
+        </StackPanel>
+
     </Grid>
+    
 </UserControl>

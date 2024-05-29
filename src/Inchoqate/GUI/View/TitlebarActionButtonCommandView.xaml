@@ -1,0 +1,116 @@
+﻿<local:TitlebarActionButtonOptionView 
+    x:Class="Inchoqate.GUI.View.TitlebarActionButtonCommandView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:Inchoqate.GUI.View"
+    mc:Ignorable="d" 
+    d:DesignHeight="20" d:DesignWidth="180"
+    WindowChrome.IsHitTestVisibleInChrome="True"
+    x:Name="ControlRoot">
+
+    <local:TitlebarActionButtonOptionView.Resources>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Foreground" Value="{DynamicResource Text_1}"/>
+            <Setter Property="Background" Value="{DynamicResource Popup_Idle_1}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border TextBlock.Foreground="{TemplateBinding Foreground}"
+                                x:Name="Border"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Background="{DynamicResource Popup_Idle_1}">
+
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource Popup_Focused_1}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </local:TitlebarActionButtonOptionView.Resources>
+
+
+    <Button
+        x:Name="Button"
+        VerticalAlignment="Center"
+        VerticalContentAlignment="Center"
+        Height="{Binding Height, ElementName=ControlRoot}"
+        Command="{Binding Command, ElementName=ControlRoot}"
+        Style="{StaticResource ButtonStyle}">
+
+        <Grid
+            VerticalAlignment="Center"
+            Height="{Binding Height, ElementName=ControlRoot}">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="Col_Icon" Width="Auto"/>
+                <ColumnDefinition x:Name="Col_Title" Width="Auto"/>
+                <ColumnDefinition x:Name="Col_Shortcut" Width="Auto"/>
+                <ColumnDefinition x:Name="Col_Indicator" Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Image 
+                x:Name="IconControl"
+                Grid.Column="0"
+                Margin="5, 0, 5, 0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Source="{Binding Icon, ElementName=ControlRoot}"/>
+
+            <TextBlock 
+                x:Name="TitleControl"
+                Grid.Column="1"
+                Margin="5, 0, 5, 0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Foreground="{DynamicResource Text_1}"
+                LineHeight="{Binding Height, ElementName=ControlRoot}"
+                LineStackingStrategy="BlockLineHeight">
+                    <Run Text="{Binding Title, ElementName=ControlRoot}"
+                         BaselineAlignment="Center"/>
+            </TextBlock>
+
+            <!--TODO: Set font of this to 'Consolas'. 
+                Issue: the 'Consolas' font seems to be offset by a single 
+                       pixel upwards wrt. the default font.-->
+            <TextBlock 
+                x:Name="ShortcutControl"
+                Grid.Column="2"
+                Margin="5, 0, 5, 0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Foreground="{DynamicResource Text_2}"
+                LineHeight="{Binding Height, ElementName=ControlRoot}"
+                LineStackingStrategy="BlockLineHeight">
+                    <Run Text="{Binding Shortcut, ElementName=ControlRoot,
+                                        Converter={StaticResource CommandBindingToStringConverter}}"
+                         BaselineAlignment="Center"/>
+            </TextBlock>
+
+            <TextBlock 
+                x:Name="IndicatorControl"
+                Grid.Column="3"
+                Margin="5, 0, 5, 0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Foreground="{DynamicResource Text_1}"
+                FontFamily="Consolas"
+                Visibility="{Binding IndicatorVisibility, ElementName=ControlRoot}"
+                Text=">"/>
+
+        </Grid>
+        
+    </Button>
+</local:TitlebarActionButtonOptionView>
