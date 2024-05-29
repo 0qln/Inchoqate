@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
 {
-    public class GpuEditQueueModel : IDisposable, IRenderQueue
+    public class GpuEditQueueModel : IDisposable, IGpuRenderQueue
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<GpuEditQueueModel>();
 
