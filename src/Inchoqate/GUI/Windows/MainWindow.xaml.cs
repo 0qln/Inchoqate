@@ -21,6 +21,11 @@ namespace Inchoqate.GUI.Windows
             InitializeComponent();
 
             PreviewImage.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
+
+            Closed += delegate
+            {
+                Application.Current.Shutdown();
+            };
         }
 
         private void SliderThumb_DragDelta(object sender, DragDeltaEventArgs e)
