@@ -16,6 +16,16 @@ namespace Inchoqate.GUI.Windows
 {
     public partial class MainWindow : BorderlessWindowBase
     {
+        private FlowchartEditorWindow? _editorWindow;
+
+
+        public static readonly RoutedCommand OpenFlowchartEditorCommand =
+            new RoutedCommand(
+                "OpenFlowchartEditor",
+                typeof(MainWindow),
+                [new KeyGesture(Key.E, ModifierKeys.Control)]);
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -34,6 +44,21 @@ namespace Inchoqate.GUI.Windows
             {
                 Sidebar.Width = Math.Clamp(Sidebar.Width - e.HorizontalChange, 0, ActualWidth - SliderThumb.ActualWidth);
             }
+        }
+
+        private void OpenFlowchartEditorCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_editorWindow is not null)
+            {
+                return;
+            }
+
+            _editorWindow = new FlowchartEditorWindow();
+            _editorWindow.Show();
+            _editorWindow.Closed += delegate
+            {
+                _editorWindow = null;
+            };
         }
     }
 }
