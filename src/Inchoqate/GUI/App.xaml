@@ -18,14 +18,13 @@
             </ResourceDictionary.MergedDictionaries>
 
             <conv:BorderToContentSizeConverter x:Key="BorderToContentSizeConverter"/>
+            <conv:CommandBindingToStringConverter x:Key="CommandBindingToStringConverter"/>
 
             <Style x:Key="BorderlessWindowBaseStyle" TargetType="win:BorderlessWindowBase">
                 <Setter Property="WindowStyle" Value="None"/>
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="AllowsTransparency" Value="True"/>
-                <Setter Property="CornerRadius" Value="15"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="TitlebarHeight" Value="30"/>
                 <Setter Property="WindowChrome.WindowChrome">
                     <Setter.Value>
                         <WindowChrome 

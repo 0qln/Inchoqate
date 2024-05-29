@@ -18,13 +18,19 @@ namespace Inchoqate.GUI.Windows
             DependencyProperty.Register(
                 "CornerRadius",
                 typeof(CornerRadius),
-                typeof(BorderlessWindowBase));
+                typeof(BorderlessWindowBase),
+                new FrameworkPropertyMetadata(
+                    new CornerRadius(15),
+                    FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty TitlebarHeightProperty =
             DependencyProperty.Register(
                 "TitlebarHeight",
                 typeof(double),
-                typeof(BorderlessWindowBase));
+                typeof(BorderlessWindowBase),
+                new FrameworkPropertyMetadata(
+                    30.0,
+                    FrameworkPropertyMetadataOptions.AffectsArrange));
 
 
         public CornerRadius CornerRadius

@@ -20,12 +20,6 @@ namespace Inchoqate.GUI
             ThemeDictionary.MergedDictionaries.Clear();
             ThemeDictionary.MergedDictionaries.Add(new ResourceDictionary() { Source = uri });
         }
-
-
-        private void WindowContainer_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
     }
 
 }
