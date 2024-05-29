@@ -27,17 +27,33 @@ namespace Inchoqate.GUI.Model
             return ShaderModel.FromSource(vertexSource, fragmentSource, out success);
         }
 
-        public static ShaderModel FromUri(Uri vertexPath, Uri fragmentPath, out bool success)
+        public static ShaderModel? FromUri(Uri vertexPath, Uri fragmentPath, out bool success)
         {
-            var vertexResource = Application.GetResourceStream(vertexPath);
-            using var vertexReader = new StreamReader(vertexResource.Stream);
-            var vertexSource = vertexReader.ReadToEnd();
+            // In the xaml designer, the URI cannot be resolved and throws.
+            // TODO: find a way to check if the resource can be located and remove
+            // the try-catch block.
+            try
+            {
+                var vertexResource = Application.GetResourceStream(vertexPath);
+                using var vertexReader = new StreamReader(vertexResource.Stream);
+                var vertexSource = vertexReader.ReadToEnd();
 
-            var fragmentResource = Application.GetResourceStream(fragmentPath);
-            using var fragmentReader = new StreamReader(fragmentResource.Stream);
-            var fragmentSource = fragmentReader.ReadToEnd();
+                var fragmentResource = Application.GetResourceStream(fragmentPath);
+                using var fragmentReader = new StreamReader(fragmentResource.Stream);
+                var fragmentSource = fragmentReader.ReadToEnd();
 
-            return ShaderModel.FromSource(vertexSource, fragmentSource, out success);
+                return ShaderModel.FromSource(vertexSource, fragmentSource, out success);
+            }
+            catch (IOException e)
+            {
+                _logger.LogError(e,
+                    "Application resource could not be located from one or more the given URIs: " +
+                    "{vert}, {frag}. This a know error in the xaml designer.",
+                    vertexPath.OriginalString,
+                    fragmentPath.OriginalString);
+                success = false;
+                return null;
+            }
         }
 
         public ShaderModel(string vertexSource, string fragmentSource, out bool success)
