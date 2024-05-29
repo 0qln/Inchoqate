@@ -51,7 +51,8 @@ namespace Inchoqate.GUI.View
                 new FrameworkPropertyMetadata(
                     null,
                     FrameworkPropertyMetadataOptions.AffectsArrange |
-                    FrameworkPropertyMetadataOptions.AffectsRender));
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnActionButtonsChanged));
 
 
         public ImageSource Icon
@@ -73,6 +74,15 @@ namespace Inchoqate.GUI.View
         }
 
 
+        private static void OnActionButtonsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is WindowTitlebarView view)
+            {
+                view._viewModel.ActionButtons = (ActionButtonCollection)e.NewValue;
+            }
+        }
+
+
         private readonly WindowTitlebarViewModel _viewModel;
 
 
@@ -86,7 +96,7 @@ namespace Inchoqate.GUI.View
 
         private void ActionButtonStack_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-
+            _viewModel.OnCollapseActionButtons();
         }
     }
 }

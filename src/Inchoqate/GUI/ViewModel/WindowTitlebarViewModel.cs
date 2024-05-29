@@ -1,15 +1,17 @@
-﻿
-
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+using Inchoqate.GUI.View;
 using MvvmHelpers;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel
 {
     public class WindowTitlebarViewModel : BaseViewModel
     {
         private readonly RelayCommand _minimizeCommand, _maximizeCommand, _closeCommand;
+
+        private ActionButtonCollection? _actionButtons;
 
         private Window? _window;
 
@@ -19,6 +21,12 @@ namespace Inchoqate.GUI.ViewModel
         public ICommand MinimizeCommand => _minimizeCommand;
         public ICommand MaximizeCommand => _maximizeCommand;
         public ICommand CloseCommand => _closeCommand;
+
+        public ActionButtonCollection? ActionButtons
+        {
+            get => _actionButtons;
+            set => SetProperty(ref _actionButtons, value);
+        }
 
 
         public WindowTitlebarViewModel()
@@ -79,6 +87,32 @@ namespace Inchoqate.GUI.ViewModel
                     CloseClick?.Invoke(this, EventArgs.Empty);
                     IsBusy = false;
                 }
+            }
+        }
+
+        public void OnCollapseActionButtons()
+        {
+            if (IsNotBusy)
+            {
+                if (ActionButtons is null)
+                {
+                    return;
+                }
+
+                IsBusy = true;
+                foreach (var button in ActionButtons)
+                {
+                    // TODO: this logic will not work with keyboard navigation.
+
+                    if (// In this case the button toggles itself.
+                        !button.IsMouseOver ||
+                        // In this case the button does not toggle itself and we should collapse it.
+                        button.MenuCanvas.IsMouseOver)
+                    {
+                        button.OptionsVisibility = Visibility.Collapsed;;
+                    }
+                }
+                IsBusy = false;
             }
         }
     }
