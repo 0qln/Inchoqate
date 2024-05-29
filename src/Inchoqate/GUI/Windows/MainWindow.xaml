@@ -23,7 +23,7 @@
 
         <view:WindowTitlebarView 
             x:Name="Titlebar"
-            Width="{Binding Width, ElementName=ControlRoot}"
+            Width="{Binding ActualWidth, ElementName=ControlRoot}"
             Height="{Binding TitlebarHeight, ElementName=ControlRoot}">
             <view:WindowTitlebarView.ActionButtons>
                 <view:ActionButtonCollection>
@@ -43,8 +43,8 @@
 
         <Grid 
             Background="{DynamicResource Background_Idle_1}"
-            VerticalAlignment="Stretch"
-            Width="{Binding Width, ElementName=ControlRoot}"
+            Width="{Binding ActualWidth, ElementName=ControlRoot}"
+            Height="{Binding ActualHeight,ElementName=ControlRoot}"
             Canvas.Top="{Binding Path=TitlebarHeight, ElementName=ControlRoot}">
 
             <Grid.ColumnDefinitions>
@@ -52,6 +52,12 @@
                 <ColumnDefinition Width="8"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <!--Padding to push the window contents into the view-->
+                <RowDefinition Height="{Binding Height, ElementName=Titlebar}"/>
+            </Grid.RowDefinitions>
 
             <Border 
                 ClipToBounds="True">

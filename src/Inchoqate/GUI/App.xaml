@@ -19,6 +19,8 @@
 
             <conv:BorderToContentSizeConverter x:Key="BorderToContentSizeConverter"/>
             <conv:CommandBindingToStringConverter x:Key="CommandBindingToStringConverter"/>
+            <conv:BorderlessWinCornerConverter x:Key="BorderlessWinCornerConverter"/>
+            <conv:BorderlessWinBorderThicknessConverter x:Key="BorderlessWinBorderThicknessConverter"/>
 
             <Style x:Key="BorderlessWindowBaseStyle" TargetType="win:BorderlessWindowBase">
                 <Setter Property="WindowStyle" Value="None"/>
@@ -38,9 +40,19 @@
                         <ControlTemplate TargetType="{x:Type win:BorderlessWindowBase}">
                             <Border 
                                 x:Name="WindowContainer" 
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
                                 BorderBrush="Black">
+                                <Border.CornerRadius>
+                                    <MultiBinding Converter="{StaticResource BorderlessWinCornerConverter}">
+                                        <Binding Path="WindowState" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        <Binding Path="CornerRadius" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                    </MultiBinding>
+                                </Border.CornerRadius>
+                                <Border.BorderThickness>
+                                    <MultiBinding Converter="{StaticResource BorderlessWinBorderThicknessConverter}">
+                                        <Binding Path="WindowState" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        <Binding Path="BorderThickness" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                    </MultiBinding>
+                                </Border.BorderThickness>
                                 <ContentPresenter 
                                     Content="{TemplateBinding Content}" 
                                     ClipToBounds="True" 
