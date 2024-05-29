@@ -11,12 +11,14 @@
     <UserControl.Resources>
         <Style x:Key="ApplicationButtonStyle" TargetType="Button">
             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Width" Value="{Binding Height, ElementName=ControlRoot}"/>
+            <Setter Property="Height" Value="{Binding Height, ElementName=ControlRoot}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border TextBlock.Foreground="{DynamicResource Text_1}"
                                 x:Name="Border"
-                                Background="{DynamicResource Background_1}">
+                                Background="{DynamicResource Background_Idle_1}">
 
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
@@ -26,7 +28,7 @@
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="Border"
                                         Property="Background"
-                                        Value="{DynamicResource Background_1_Focused}"/>
+                                        Value="{DynamicResource Background_Focused_1}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -97,25 +99,19 @@
 
             <Button 
                 x:Name="MinimizeButton"
-                Width="{Binding Height, ElementName=ControlRoot}"
-                Height="{Binding Height, ElementName=ControlRoot}"
                 Style="{StaticResource ApplicationButtonStyle}"
                 Content="―"
-                Click="MinimizeButton_Click"/>
+                Command="{Binding MinimizeCommand}"/>
             <Button 
                 x:Name="WindowedButton"
-                Width="{Binding Height, ElementName=ControlRoot}"
-                Height="{Binding Height, ElementName=ControlRoot}"
                 Style="{StaticResource ApplicationButtonStyle}"
                 Content="▢"
-                Click="WindowedButton_Click"/>
+                Command="{Binding MaximizeCommand}"/>
             <Button 
                 x:Name="CloseButton"
-                Width="{Binding Height, ElementName=ControlRoot}"
-                Height="{Binding Height, ElementName=ControlRoot}"
                 Style="{StaticResource ApplicationButtonStyle}"
                 Content="✕"
-                Click="CloseButton_Click"/>
+                Command="{Binding CloseCommand}"/>
 
         </StackPanel>
 

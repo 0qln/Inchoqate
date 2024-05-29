@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Inchoqate.GUI.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -72,25 +73,16 @@ namespace Inchoqate.GUI.View
         }
 
 
+        private readonly WindowTitlebarViewModel _viewModel;
+
+
         public WindowTitlebarView()
         {
             InitializeComponent();
+            DataContext = _viewModel = new WindowTitlebarViewModel();
+            Loaded += (s, e) => _viewModel.SetWindow(Window.GetWindow(this));
         }
 
-        private void WindowedButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void ActionButtonStack_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
