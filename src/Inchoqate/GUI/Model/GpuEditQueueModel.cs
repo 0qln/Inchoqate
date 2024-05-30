@@ -1,7 +1,6 @@
 ﻿using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using System.Windows;
-using OpenTK.Graphics.OpenGL4;
 using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
@@ -36,6 +35,7 @@ namespace Inchoqate.GUI.Model
             {
                 if (value == _background) return;
                 _background = value;
+                // TODO: may not need to reload here, just set the border color.
                 Reload();
             }
         }
@@ -62,18 +62,18 @@ namespace Inchoqate.GUI.Model
             // TODO: if the new size is smaller, don't dispose and just use a subset of the buffer.
 
             _framebuffer1?.Dispose();
-            _framebuffer1 = new FrameBufferModel((int)_renderSize.Width, (int)_renderSize.Height, out bool success1, Background);
+            _framebuffer1 = new FrameBufferModel((int)_renderSize.Width, (int)_renderSize.Height, out bool success1);
             if (!success1)
-            {
                 // TODO: handle error
-            }
+                return;
+            _framebuffer1.Data.BorderColor = Background;
 
             _framebuffer2?.Dispose();
-            _framebuffer2 = new FrameBufferModel((int)_renderSize.Width, (int)_renderSize.Height, out bool success2, Background);
+            _framebuffer2 = new FrameBufferModel((int)_renderSize.Width, (int)_renderSize.Height, out bool success2);
             if (!success2)
-            {
                 // TODO: handle error
-            }
+                return;
+            _framebuffer2.Data.BorderColor = Background;
         }
 
 
@@ -123,7 +123,8 @@ namespace Inchoqate.GUI.Model
 
                 foreach (var edit in Edits)
                 {
-                    edit?.Dispose();
+                    if (edit is IDisposable disposable)
+                        disposable.Dispose();
                 }
 
                 disposedValue = true;

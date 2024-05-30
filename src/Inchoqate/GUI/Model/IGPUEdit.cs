@@ -1,10 +1,6 @@
-﻿using Inchoqate.GUI.Model;
-using OpenTK.Graphics.OpenGL4;
-
-namespace Inchoqate.GUI.Model
+﻿namespace Inchoqate.GUI.Model
 {
-    public interface IGPUEdit : IDisposable
+    public interface IGPUEdit : IEdit<TextureModel, FrameBufferModel>
     {
-        void Apply(TextureModel source, FrameBufferModel destination);
     }
 }
