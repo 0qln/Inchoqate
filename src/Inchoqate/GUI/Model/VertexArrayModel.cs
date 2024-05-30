@@ -15,20 +15,46 @@ namespace Inchoqate.GUI.Model
         private readonly BufferModel<float> _vertexBufferObject;
 
 
-        public VertexArrayModel(uint[] indices, float[] vertices, BufferUsageHint usage)
+        /// <summary>
+        /// Create a new vertex array object (VAO).
+        /// </summary>
+        /// <param name="mIndx">The indices.</param>
+        /// <param name="mVert">The verteces.</param>
+        /// <param name="usage"></param>
+        public VertexArrayModel(ReadOnlyMemory<uint> mIndx, ReadOnlyMemory<float> mVert, BufferUsageHint usage)
         {
             Handle = GL.GenVertexArray();
             this.Use();
 
-            _vertexBufferObject = new BufferModel<float>(BufferTarget.ArrayBuffer, vertices, usage);
+            _vertexBufferObject = new BufferModel<float>(BufferTarget.ArrayBuffer, mVert, usage);
             _vertexBufferObject.Use();
 
-            _elementBufferObject = new BufferModel<uint>(BufferTarget.ElementArrayBuffer, indices, usage);
+            _elementBufferObject = new BufferModel<uint>(BufferTarget.ElementArrayBuffer, mIndx, usage);
             _elementBufferObject.Use();
 
-            IndexCount = indices.Length;
+            IndexCount = mIndx.Length;
         }
 
+        /// <summary>
+        /// Create a new vertex array object (VAO).
+        /// </summary>
+        /// <param name="sIndx">The indices.</param>
+        /// <param name="sVert">The verteces.</param>
+        /// <param name="usage"></param>
+        public VertexArrayModel(Span<uint> sIndx, Span<float> sVert, BufferUsageHint usage)
+        {
+            Handle = GL.GenVertexArray();
+            this.Use();
+
+            _vertexBufferObject = new BufferModel<float>(BufferTarget.ArrayBuffer, sVert, usage);
+            _vertexBufferObject.Use();
+
+            _elementBufferObject = new BufferModel<uint>(BufferTarget.ElementArrayBuffer, sIndx, usage);
+            _elementBufferObject.Use();
+
+            IndexCount = sIndx.Length;
+        }
+        
 
         public void UpdateVertices(float[] vertices)
         {

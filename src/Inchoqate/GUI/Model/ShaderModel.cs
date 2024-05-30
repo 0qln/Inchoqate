@@ -14,6 +14,9 @@ namespace Inchoqate.GUI.Model
         public readonly int Handle;
 
 
+        public delegate ShaderModel? ModelGen(out bool success);
+
+
         public static ShaderModel FromSource(string vertexSource, string fragmentSource, out bool success)
         {
             return new(vertexSource, fragmentSource, out success);

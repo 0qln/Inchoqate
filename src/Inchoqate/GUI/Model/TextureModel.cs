@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
@@ -13,77 +14,87 @@ namespace Inchoqate.GUI.Model
         private static readonly ILogger<TextureModel> _logger = FileLoggerFactory.CreateLogger<TextureModel>();
 
         public readonly int Handle;
+
         public readonly int Width, Height;
+        /// <summary>The bytes per row of the texture.</summary>
+        public int Stride => Width * PixelDepth;
+        /// <summary>Pixel depth in bytes.</summary>
+        public const int PixelDepth = 4;
+        /// <summary>The components for each pixel.</summary>
+        public const ColorComponents PixelComponents = ColorComponents.RedGreenBlueAlpha;
+        /// <summary>The pixel format.</summary>
+        public const PixelFormat GLPixelFormat = PixelFormat.Rgba;
+        /// <summary>The pixel type.</summary>
+        public const PixelType GLPixelType = PixelType.UnsignedByte;
 
-        // TODO: expose a setter
-        public readonly Color BorderColor;
+        private Color _borderColor;
+
+        public Color BorderColor
+        {
+            get => _borderColor;
+            set
+            {
+                if (_borderColor == value)
+                {
+                    return;
+                }
+
+                Use();
+                float r = (float)value.R / 255.0f;
+                float g = (float)value.G / 255.0f;
+                float b = (float)value.B / 255.0f;
+                float a = (float)value.A / 255.0f;
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, [r, g, b, a]);
+
+               _borderColor = value;
+            }
+        }
+
+        public TextureUnit Unit;
 
 
-        public TextureModel(string path, Color borderColor = default)
+        private TextureModel(TextureUnit unit = TextureUnit.Texture0)
         {
             Handle = GL.GenTexture();
+            Use(Unit = unit);
+        }
 
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
+        private void InitDefaults()
+        {
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+
+            BorderColor = Color.FromRgb(255, 99, 71);
+        }
+
+        public static TextureModel FromFile(string path, TextureUnit unit = TextureUnit.Texture0)
+        {
             StbImage.stbi_set_flip_vertically_on_load(1);
-
             using Stream stream = File.OpenRead(path);
-            ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-            Width = image.Width;
-            Height = image.Height;
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
-
-            if (borderColor == default)
-                borderColor = Color.FromRgb(255, 99, 71);
-
-            float r = (float)borderColor.R / 255.0f;
-            float g = (float)borderColor.G / 255.0f;
-            float b = (float)borderColor.B / 255.0f;
-            float a = (float)borderColor.A / 255.0f;
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, [r, g, b, a]);
-
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-            _logger.LogInformation("Created texture from file: {path}", path);
+            ImageResult image = ImageResult.FromStream(stream, PixelComponents);
+            unsafe
+            {
+                return FromData(image.Width, image.Height, image.Data, unit);
+            }
         }
 
-
-        public TextureModel(int width, int height, Color borderColor = default)
+        public static TextureModel FromData(int width, int height, byte[]? data = null, TextureUnit unit = TextureUnit.Texture0)
         {
-            Handle = GL.GenTexture();
-            Width = width;
-            Height = height;
-
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
-            
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
-
-            if (borderColor == default)
-                borderColor = Color.FromRgb(255, 99, 71);
-
-            float r = (float)borderColor.R / 255.0f;
-            float g = (float)borderColor.G / 255.0f;
-            float b = (float)borderColor.B / 255.0f;
-            float a = (float)borderColor.A / 255.0f;
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, [r, g, b, a]);
-
+            var result = new TextureModel(unit);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, GLPixelFormat, GLPixelType, data);
+            result.InitDefaults();
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-            _logger.LogInformation("Created empty texture with dimensions: {width}x{height}", width, height);
+            return result;
         }
 
+
+        public void Use()
+        {
+            Use(Unit);
+        }
 
         public void Use(TextureUnit unit)
         {
