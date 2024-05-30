@@ -30,7 +30,7 @@ namespace Inchoqate.GUI.Model
 
         public GpuGrayscaleEditModel(BufferUsageHint usage = BufferUsageHint.StaticDraw)
         {
-            _vao = new VertexArrayModel(_indices, _vertices, usage);
+            _vao = new VertexArrayModel(mIndx: _indices, _vertices, usage);
             _vao.Use();
 
             _shader = ShaderModel.FromUri(
