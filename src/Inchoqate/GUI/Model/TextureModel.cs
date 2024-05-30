@@ -15,7 +15,8 @@ namespace Inchoqate.GUI.Model
 
         public readonly int Handle;
 
-        public readonly int Width, Height;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
         /// <summary>The bytes per row of the texture.</summary>
         public int Stride => Width * PixelDepth;
         /// <summary>Pixel depth in bytes.</summary>
@@ -76,15 +77,14 @@ namespace Inchoqate.GUI.Model
             StbImage.stbi_set_flip_vertically_on_load(1);
             using Stream stream = File.OpenRead(path);
             ImageResult image = ImageResult.FromStream(stream, PixelComponents);
-            unsafe
-            {
-                return FromData(image.Width, image.Height, image.Data, unit);
-            }
+            return FromData(image.Width, image.Height, image.Data, unit);
         }
 
         public static TextureModel FromData(int width, int height, byte[]? data = null, TextureUnit unit = TextureUnit.Texture0)
         {
             var result = new TextureModel(unit);
+            result.Width = width;
+            result.Height = height;
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, GLPixelFormat, GLPixelType, data);
             result.InitDefaults();
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
