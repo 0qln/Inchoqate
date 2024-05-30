@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Inchoqate.GUI.Model
 {
-    public abstract class ShaderEditModel : IGPUEdit, IDisposable
+    public abstract class ShaderEditModel : LinearEdit<TextureModel, FrameBufferModel>, IDisposable
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<ShaderEditModel>();  
 
@@ -54,15 +54,20 @@ namespace Inchoqate.GUI.Model
         public abstract ShaderModel? GetShader(out bool success); 
 
 
-        public bool Apply(TextureModel source, FrameBufferModel destination)
+        public override bool Apply(FrameBufferModel destination, params TextureModel[] source)
         {
             if (_shader is null)
             {
                 return false;
             }
 
+            if (source.Length == 0)
+            {
+                return false;
+            }
+
             destination.Use(FramebufferTarget.Framebuffer);
-            source.Use(TextureUnit.Texture0);
+            source[0].Use(TextureUnit.Texture0);
             _shader.Use();
             _vao.Use();
             GL.DrawElements(PrimitiveType.Triangles, _vao.IndexCount, DrawElementsType.UnsignedInt, 0);

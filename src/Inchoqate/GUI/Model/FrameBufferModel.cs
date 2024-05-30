@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
 {
-    public class FrameBufferModel : IDisposable
+    public class FrameBufferModel : IDisposable, IEditDestination
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<FrameBufferModel>();
 

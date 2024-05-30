@@ -5,11 +5,11 @@ using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
 {
-    public class GpuEditQueueModel : IDisposable, IGpuRenderQueue
+    public class GpuEditQueueModel : IDisposable, IEditResult<FrameBufferModel>
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<GpuEditQueueModel>();
 
-        public readonly List<IGPUEdit> Edits = [];
+        public readonly List<LinearEdit<TextureModel, FrameBufferModel>> Edits = [];
         private FrameBufferModel? _framebuffer1, _framebuffer2;
         private TextureModel? _sourceTexture;
 
@@ -77,34 +77,37 @@ namespace Inchoqate.GUI.Model
         }
 
 
-        public FrameBufferModel? Apply()
+        public FrameBufferModel? Compute(out bool success)
         {
-            if (_sourceTexture is null || _framebuffer1 is null || _framebuffer2 is null)
+            if (_sourceTexture is null)
             {
+                success = false;
                 return null;
             }
 
             // If there are no edits given, return identity.
             if (Edits.Count == 0)
             {
-                IGPUEdit identity = new GpuIdentityEditModel();
-                identity.Apply(_sourceTexture, _framebuffer1!);
+                GpuIdentityEditModel identity = new();
+                identity.Apply(_framebuffer1!, _sourceTexture);
+                success = true;
                 return _framebuffer1;
             }
 
-            FrameBufferModel source = _framebuffer1, destination = _framebuffer2;
+            FrameBufferModel source = _framebuffer1!, destination = _framebuffer2!;
 
             // Initial pass: load source texture.
-            Edits.First().Apply(_sourceTexture, destination);
+            Edits.First().Apply(destination, _sourceTexture);
 
             // Subsequent passes: switch between framebuffers.
             foreach (var edit in Edits[1..])
             {
                 (source, destination) = (destination, source);
-                edit.Apply(source.Data, destination);
+                edit.Apply(destination, source.Data);
             }
 
             // Return result.
+            success = true;
             return destination;
         }
 

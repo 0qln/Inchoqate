@@ -191,9 +191,9 @@ namespace Inchoqate.GUI.ViewModel
                 return;
             }
 
-            var fb = _editQueue.Apply();
+            var fb = _editQueue.Compute(out bool success);
 
-            if (fb is null)
+            if (success == false || fb is null)
             {
                 return;
             }

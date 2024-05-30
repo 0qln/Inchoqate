@@ -1,10 +1,10 @@
 ﻿namespace Inchoqate.GUI.Model
 {
-    public class CpuPixelSortEditModel : ICPUEdit
+    public class CpuPixelSortEditModel : LinearEdit<PixelBufferModel, PixelBufferModel>
     {
-        public bool Apply(PixelBufferModel source, PixelBufferModel destination)
+        public override bool Apply(PixelBufferModel destination, params PixelBufferModel[] source)
         {
-            if (source != destination)
+            if (source.Length == 0 || source[0] != destination)
             {
                 // Makes the actual computation later easier.
                 // throw new ArgumentException("The source and destination parameters should be the same.");
