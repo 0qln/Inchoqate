@@ -16,15 +16,30 @@ namespace Inchoqate.GUI.Model
         public readonly int Size;
 
 
-
-        public BufferModel(BufferTarget bufferTarget, T[] values, BufferUsageHint usage)
+        public unsafe BufferModel(BufferTarget bufferTarget, ReadOnlyMemory<T> values, BufferUsageHint usage)
         {
             Target = bufferTarget;
             Size = values.Length * Marshal.SizeOf<T>();
 
             Handle = GL.GenBuffer();
             GL.BindBuffer(bufferTarget, Handle);
-            GL.BufferData(bufferTarget, Size, values, usage);
+            using (var pin = values.Pin())
+            {
+                // TODO: no idea if this will work
+                IntPtr data = (IntPtr)pin.Pointer;
+                IntPtr size = Size;
+                GL.BufferData(bufferTarget, size, data, usage);
+            }
+        }
+
+        public BufferModel(BufferTarget bufferTarget, Span<T> values, BufferUsageHint usage)
+        {
+            Target = bufferTarget;
+            Size = values.Length * Marshal.SizeOf<T>();
+
+            Handle = GL.GenBuffer();
+            GL.BindBuffer(bufferTarget, Handle);
+            GL.BufferData<T>(bufferTarget, Size, ref values[0], usage);
         }
 
 
