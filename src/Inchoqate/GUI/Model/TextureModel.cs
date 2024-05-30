@@ -70,6 +70,41 @@ namespace Inchoqate.GUI.Model
             BorderColor = Color.FromRgb(255, 99, 71);
         }
 
+        public TextureModel(string path, Color borderColor = default, TextureUnit unit = TextureUnit.Texture0)
+        {
+            StbImage.stbi_set_flip_vertically_on_load(1);
+            using Stream stream = File.OpenRead(path);
+            ImageResult image = ImageResult.FromStream(stream, PixelComponents);
+
+            Handle = GL.GenTexture();
+            Use(Unit = unit);
+
+            Width = image.Width;
+            Height = image.Height;
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+
+            if (borderColor == default)
+                borderColor = Color.FromRgb(255, 99, 71);
+
+            float r = (float)borderColor.R / 255.0f;
+            float g = (float)borderColor.G / 255.0f;
+            float b = (float)borderColor.B / 255.0f;
+            float a = (float)borderColor.A / 255.0f;
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, [r, g, b, a]);
+
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+            _logger.LogInformation("Created texture from file: {path}", path);
+        }
+
         public static TextureModel FromFile(string path, TextureUnit unit = TextureUnit.Texture0)
         {
             StbImage.stbi_set_flip_vertically_on_load(1);
