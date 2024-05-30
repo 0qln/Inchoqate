@@ -13,12 +13,13 @@ namespace Inchoqate.GUI.Model
         public readonly TextureModel Data;
 
 
-        public FrameBufferModel(int width, int height, out bool success, Color borderColor = default)
-        {
+        public FrameBufferModel(TextureModel texture, out bool success)
+        {    
             Handle = GL.GenFramebuffer();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
 
-            Data = new TextureModel(width, height, borderColor);
+            Data = texture;
+            Data.Use();
 
             GL.FramebufferTexture2D(
                 FramebufferTarget.Framebuffer,
@@ -42,6 +43,16 @@ namespace Inchoqate.GUI.Model
 
         clean_up:
             return;
+        }
+
+        public FrameBufferModel(PixelBufferModel buffer, out bool success)
+            : this(TextureModel.FromData(buffer.Width, buffer.Height, buffer.Data), out success)
+        { 
+        }
+
+        public FrameBufferModel(int width, int height, out bool success)
+            : this(TextureModel.FromData(width, height), out success)
+        {
         }
 
 
