@@ -59,7 +59,7 @@ namespace Inchoqate.GUI.ViewModel
                 if (value is null) return;
 
                 SetProperty(ref imageSource, value);
-                TextureModel texture = new(imageSource);
+                TextureModel texture = TextureModel.FromFile(imageSource);
                 _editQueue.SourceTexture = texture;
                 SourceSize = new(texture.Width, texture.Height);
             }
@@ -153,7 +153,7 @@ namespace Inchoqate.GUI.ViewModel
 
         public PreviewImageViewModel()
         {
-            _vertexArray = new VertexArrayModel(_indices, _vertices, BufferUsageHint.StaticDraw);
+            _vertexArray = new VertexArrayModel(sIndx: _indices, sVert: _vertices, BufferUsageHint.StaticDraw);
             _vertexArray.Use();
 
             //if (Uri.TryCreate("/Shaders/Base.vert", UriKind.RelativeOrAbsolute, out var vert) && 
