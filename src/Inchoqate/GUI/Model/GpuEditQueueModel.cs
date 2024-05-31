@@ -1,29 +1,27 @@
-﻿using Inchoqate.Logging;
+﻿using Inchoqate.GUI.ViewModel;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using System.Windows;
 using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
 {
-    public class GpuEditQueueModel : IDisposable, IEditResult<FrameBufferModel>
+    public class GpuEditQueueModel : IDisposable, IEditorModel<TextureModel, FrameBufferModel>
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<GpuEditQueueModel>();
 
-        public readonly List<LinearEdit<TextureModel, FrameBufferModel>> Edits = [];
+        public readonly List<EditBaseLinear> Edits = [];
         private FrameBufferModel? _framebuffer1, _framebuffer2;
         private TextureModel? _sourceTexture;
 
-        public TextureModel? SourceTexture
+        public void SetSource(TextureModel? value)
         {
-            get => _sourceTexture;
-            set
-            {
-                _sourceTexture?.Dispose();
-                _sourceTexture = value;
-            }
+            _sourceTexture?.Dispose();
+            _sourceTexture = value;
         }
 
         private Color _background;
+        private Size _renderSize;
 
         public Color Background
         {
@@ -39,8 +37,6 @@ namespace Inchoqate.GUI.Model
                 Reload();
             }
         }
-
-        private Size _renderSize;
 
         /// <summary>
         /// The size in which the final output is rendered.
@@ -88,7 +84,7 @@ namespace Inchoqate.GUI.Model
             // If there are no edits given, return identity.
             if (Edits.Count == 0)
             {
-                GpuIdentityEditModel identity = new();
+                EditImplIdentityViewModel identity = new();
                 identity.Apply(_framebuffer1!, _sourceTexture);
                 success = true;
                 return _framebuffer1;
@@ -97,13 +93,21 @@ namespace Inchoqate.GUI.Model
             FrameBufferModel source = _framebuffer1!, destination = _framebuffer2!;
 
             // Initial pass: load source texture.
-            Edits.First().Apply(destination, _sourceTexture);
+            if (!Edits.First().Apply(destination, _sourceTexture))
+            {
+                success = false;
+                return null;
+            }
 
             // Subsequent passes: switch between framebuffers.
             foreach (var edit in Edits[1..])
             {
                 (source, destination) = (destination, source);
-                edit.Apply(destination, source.Data);
+                if (!edit.Apply(destination, source.Data))
+                {
+                    success = false;
+                    return null;
+                }
             }
 
             // Return result.

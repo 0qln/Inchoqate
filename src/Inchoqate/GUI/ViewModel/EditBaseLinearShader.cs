@@ -1,18 +1,13 @@
-﻿using Inchoqate.Logging;
+﻿using Inchoqate.GUI.Model;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Inchoqate.GUI.Model
+namespace Inchoqate.GUI.ViewModel
 {
-    public abstract class ShaderEditModel : LinearEdit<TextureModel, FrameBufferModel>, IDisposable
+    public abstract class EditBaseLinearShader : EditBaseLinear
     {
-        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<ShaderEditModel>();  
+        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditBaseLinearShader>();  
 
         protected static readonly ReadOnlyMemory<float> _vertices = (float[])
         [
@@ -32,8 +27,8 @@ namespace Inchoqate.GUI.Model
         protected readonly ShaderModel? _shader;
         protected readonly VertexArrayModel _vao;
 
-
-        public ShaderEditModel(BufferUsageHint usage)
+        
+        public EditBaseLinearShader(BufferUsageHint usage = BufferUsageHint.StaticDraw)
         {
             _vao = new VertexArrayModel(_indices, _vertices, usage);
             _vao.Use();
@@ -51,23 +46,29 @@ namespace Inchoqate.GUI.Model
         /// </summary>
         /// <param name="success"></param>
         /// <returns></returns>
-        public abstract ShaderModel? GetShader(out bool success); 
+        public abstract ShaderModel? GetShader(out bool success);
 
 
-        public override bool Apply(FrameBufferModel destination, params TextureModel[] source)
+        public override bool Apply(IEditDestinationModel destination, params IEditSourceModel[] sources)
+        {
+            if (destination is FrameBufferModel fb &&
+                sources[0] is TextureModel tex)
+            {
+                return Apply(fb, tex);
+            }
+
+            return false;
+        }
+
+        public bool Apply(FrameBufferModel destination, TextureModel source)
         {
             if (_shader is null)
             {
                 return false;
             }
 
-            if (source.Length == 0)
-            {
-                return false;
-            }
-
             destination.Use(FramebufferTarget.Framebuffer);
-            source[0].Use(TextureUnit.Texture0);
+            source.Use(TextureUnit.Texture0);
             _shader.Use();
             _vao.Use();
             GL.DrawElements(PrimitiveType.Triangles, _vao.IndexCount, DrawElementsType.UnsignedInt, 0);
@@ -90,7 +91,7 @@ namespace Inchoqate.GUI.Model
             }
         }
 
-        ~ShaderEditModel()
+        ~EditBaseLinearShader()
         {
             // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
             // The OpenGL resources have to be released from a thread with an active OpenGL Context.

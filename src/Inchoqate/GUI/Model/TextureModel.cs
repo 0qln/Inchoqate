@@ -9,7 +9,7 @@ using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace Inchoqate.GUI.Model
 {
-    public class TextureModel : IDisposable, IEditSource
+    public class TextureModel : IDisposable, IEditSourceModel
     {
         private static readonly ILogger<TextureModel> _logger = FileLoggerFactory.CreateLogger<TextureModel>();
 

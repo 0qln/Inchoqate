@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Inchoqate.GUI.Model
 {
-    public interface IEditDestination
+    public interface IEditSourceModel
     {
     }
 }

@@ -9,6 +9,7 @@ using System.Windows.Media;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Wpf;
 using System.Diagnostics;
+using Inchoqate.GUI.Model;
 
 namespace Inchoqate.GUI.View
 {
@@ -70,7 +71,7 @@ namespace Inchoqate.GUI.View
         {
             if (d is PreviewImageView control && control.DataContext is PreviewImageViewModel viewModel)
             {
-                viewModel.Background = (SolidColorBrush)e.NewValue;
+                control._model.Background = ((SolidColorBrush)e.NewValue).Color;
             }
         }
 
@@ -88,6 +89,7 @@ namespace Inchoqate.GUI.View
 
 
         private readonly PreviewImageViewModel _viewModel;
+        private readonly GpuEditQueueModel _model; // todo: this should be a 
 
 
         public PreviewImageView()
@@ -99,7 +101,11 @@ namespace Inchoqate.GUI.View
                 RenderContinuously = false,
             });
 
-            DataContext = _viewModel = new PreviewImageViewModel();
+            // temp for testing
+            _model = new GpuEditQueueModel();
+            _model.Edits.Add(new EditImplGrayscaleViewModel());
+            //_model.Edits.Add(new EditImplNoGreenViewModel());
+            DataContext = _viewModel = new PreviewImageViewModel(_model);
         }
 
 

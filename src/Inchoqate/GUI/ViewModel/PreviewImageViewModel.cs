@@ -16,7 +16,18 @@ namespace Inchoqate.GUI.ViewModel
 
         private readonly ShaderModel? _shader;
         private readonly VertexArrayModel _vertexArray;
-        private readonly GpuEditQueueModel _editQueue; // TODO: replace this with the graph system
+
+        // will not be disposed
+        private IEditorModel<TextureModel, FrameBufferModel> _editor; 
+        public IEditorModel<TextureModel, FrameBufferModel> RenderEditor
+        {
+            get => _editor;
+            set
+            {
+                SetProperty(ref _editor, value);
+                Reload();
+            }
+        }
 
         private float[] _vertices =
         [
@@ -33,19 +44,6 @@ namespace Inchoqate.GUI.ViewModel
             1, 2, 3
         ];
 
-
-        private SolidColorBrush background = new(default);
-
-        public SolidColorBrush Background
-        {
-            get => background;
-            set
-            {
-                SetProperty(ref background, value);
-                _editQueue.Background = background.Color;
-            }
-        }
-
         private string? imageSource;
         private Size renderSize;
         private Size sourceSize;
@@ -60,7 +58,7 @@ namespace Inchoqate.GUI.ViewModel
 
                 SetProperty(ref imageSource, value);
                 TextureModel texture = TextureModel.FromFile(imageSource);
-                _editQueue.SourceTexture = texture;
+                _editor.SetSource(texture);
                 SourceSize = new(texture.Width, texture.Height);
             }
         }
@@ -71,7 +69,7 @@ namespace Inchoqate.GUI.ViewModel
             private set
             {
                 SetProperty(ref sourceSize, value);
-                _editQueue.RenderSize = value;
+                _editor.RenderSize = value;
             }
         }
 
@@ -151,36 +149,22 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
-        public PreviewImageViewModel()
+        public PreviewImageViewModel(IEditorModel<TextureModel, FrameBufferModel>  editor)
         {
             _vertexArray = new VertexArrayModel(sIndx: _indices, sVert: _vertices, BufferUsageHint.StaticDraw);
             _vertexArray.Use();
-
-            //if (Uri.TryCreate("/Shaders/Base.vert", UriKind.RelativeOrAbsolute, out var vert) && 
-            //    Uri.TryCreate("/Shaders/Base.frag", UriKind.RelativeOrAbsolute, out var frag))
-            //{
-            //    _shader = ShaderModel.FromUri(vert, frag, out bool success);
-
-            //    if (!success)
-            //    {
-            //        // TODO: handle error
-            //    }
-
-            //}
 
             _shader = ShaderModel.FromUri(
                 new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
                 new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
                 out bool success);
 
+            _editor = editor;
+
             if (!success)
             {
                 // TODO: handle error
             }
-
-            _editQueue = new GpuEditQueueModel();
-            _editQueue.Edits.Add(new GpuGrayscaleEditModel());
-            _editQueue.Edits.Add(new GpuNoGreenEditModel());
         }
 
 
@@ -191,7 +175,7 @@ namespace Inchoqate.GUI.ViewModel
                 return;
             }
 
-            var fb = _editQueue.Compute(out bool success);
+            var fb = _editor.Compute(out bool success);
 
             if (success == false || fb is null)
             {
@@ -282,11 +266,6 @@ namespace Inchoqate.GUI.ViewModel
             float top       = 1 - _zoomValue + panY;
             float bottom    = 0 + _zoomValue + panY;
 
-            // center the image
-            //float 
-            //    xOff = -(float)(BoundsSize.Width - RenderSize.Width) / (float)(RenderSize.Width * 2),
-            //    yOff = -(float)(BoundsSize.Height - RenderSize.Height) / (float)(RenderSize.Height * 2);
-
             // align top
             float 
                 xOff = 0, 
@@ -312,7 +291,6 @@ namespace Inchoqate.GUI.ViewModel
         {
             if (!disposedValue)
             {
-                _editQueue.Dispose();
                 _vertexArray.Dispose();
                 _shader?.Dispose();
 

@@ -2,7 +2,7 @@
 
 namespace Inchoqate.GUI.Model
 {
-    public class PixelBufferModel : IDisposable, IEditSource, IEditDestination
+    public class PixelBufferModel : IDisposable, IEditSourceModel, IEditDestinationModel
     {
         private bool disposedValue;
 
