@@ -13,6 +13,8 @@ namespace Inchoqate.GUI.Model
 
         public readonly int Handle;
 
+        private readonly Dictionary<string, int> _uniformLocations = [];
+
 
         public delegate ShaderModel? ModelGen(out bool success);
 
@@ -121,6 +123,15 @@ namespace Inchoqate.GUI.Model
             GL.EnableVertexAttribArray(aTexCoordLoc);
             GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
+            // Initiate uniform dict
+            GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
+            for (int i = 0; i < numberOfUniforms; i++)
+            {
+                var key = GL.GetActiveUniform(Handle, i, out _, out _);
+                var location = GL.GetUniformLocation(Handle, key);
+                _uniformLocations.Add(key, location);
+            }
+
             success = true;
 
         clean_up:
@@ -128,6 +139,21 @@ namespace Inchoqate.GUI.Model
             GL.DetachShader(Handle, FragmentShader);
             GL.DeleteShader(FragmentShader);
             GL.DeleteShader(VertexShader);
+        }
+
+
+        public void SetUniform<T>(string name, T value)
+            where T : struct
+        {
+            Use();
+            ((Action)(value switch
+            {
+                int     val => () => GL.Uniform1(_uniformLocations[name], val),
+                uint    val => () => GL.Uniform1(_uniformLocations[name], val),
+                float   val => () => GL.Uniform1(_uniformLocations[name], val),
+                double  val => () => GL.Uniform1(_uniformLocations[name], val),
+                _ => () => _logger.LogWarning("Tried to set invalid uniform type {t}", typeof(T))
+            }))();
         }
 
         
