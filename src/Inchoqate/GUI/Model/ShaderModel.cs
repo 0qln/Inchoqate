@@ -4,6 +4,7 @@ using System.IO;
 using Inchoqate.Logging;
 using System;
 using System.Windows;
+using OpenTK.Mathematics;
 
 namespace Inchoqate.GUI.Model
 {
@@ -142,18 +143,28 @@ namespace Inchoqate.GUI.Model
         }
 
 
-        public void SetUniform<T>(string name, T value)
+        public bool SetUniform<T>(string name, T value)
             where T : struct
         {
+            if (!_uniformLocations.ContainsKey(name))
+            {
+                _logger.LogWarning("Tried to set non existant uniform attribute \"{name}\"", name);
+                return false;
+            }
+
             Use();
+
             ((Action)(value switch
             {
                 int     val => () => GL.Uniform1(_uniformLocations[name], val),
                 uint    val => () => GL.Uniform1(_uniformLocations[name], val),
                 float   val => () => GL.Uniform1(_uniformLocations[name], val),
                 double  val => () => GL.Uniform1(_uniformLocations[name], val),
+                Vector3 val => () => GL.Uniform3(_uniformLocations[name], val),
                 _ => () => _logger.LogWarning("Tried to set invalid uniform type {t}", typeof(T))
             }))();
+
+            return true;
         }
 
         
