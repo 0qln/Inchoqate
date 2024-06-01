@@ -5,14 +5,14 @@ out vec4 outputColor;
 in vec2 texCoord;
 
 uniform sampler2D texture0;
-uniform float intensity
-uniform vec3 grayscaleWeights;;
+uniform float intensity;
+uniform vec3 weights;
 
 void main()
 {
     vec4 color = texture(texture0, texCoord);
-    float gray = dot(color.rgb, grayscaleWeights);
+    float gray = dot(color.rgb, weights);
     vec3 gray3 = vec3(gray);
     vec3 finalColor = mix(color.rgb, gray3, intensity);
-    outputColor = vec4(finalColor, color.a;
+    outputColor = vec4(finalColor, color.a);
 }

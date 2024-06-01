@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Data;
+using OpenTK.Mathematics;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -21,6 +22,8 @@ namespace Inchoqate.GUI.ViewModel
         public override ObservableCollection<Control> OptionControls => _optionControls;
 
         private double intensity;
+        private Vector3 weights;
+
         public const double IntensityMin = 0;
         public const double IntensityMax = 1;
 
@@ -30,8 +33,18 @@ namespace Inchoqate.GUI.ViewModel
             set
             {
                 var val = Math.Clamp(value, IntensityMin, IntensityMax);
-                _shader?.SetUniform("intensity", (float)value);
-                SetProperty(ref intensity, value);
+                _shader?.SetUniform("intensity", (float)val);
+                SetProperty(ref intensity, val);
+            }
+        }
+
+        public Vector3 Weights
+        {
+            get => weights;
+            set
+            {
+                _shader?.SetUniform("weights", value);
+                SetProperty(ref weights, value);
             }
         }
 
@@ -39,8 +52,9 @@ namespace Inchoqate.GUI.ViewModel
         public EditImplGrayscaleViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) 
             : base(usage)
         {
-            // should be between 0 and 1, but yields interesting results for out of range values xd
-            Intensity = -2.0;
+            Intensity = 2.0; // should be between 0 and 1, but yields interesting results for out of range values xd
+            Weights = new(0.2126f, 0.7152f, 0.0722f);
+
             _intenstityControl = new() { Minimum = 0, Maximum = 1, Value = Intensity };
             _intenstityControl.SetBinding(
                 Slider.ValueProperty, 
