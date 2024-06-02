@@ -12,12 +12,15 @@ namespace Inchoqate.GUI.Converters
     [ValueConversion(sourceType: typeof(Visibility), targetType: typeof(string))]
     public class VisibilityToIndicatorStringConverter : IValueConverter
     {
+        public const string Visible     = "⌵";
+        public const string Collapsed   = ">";
+
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (Visibility)value switch
             {
-                Visibility.Visible      => "v",
-                Visibility.Collapsed    => ">",
+                Visibility.Visible      => Visible,
+                Visibility.Collapsed    => Collapsed,
                 _ => throw new NotImplementedException()
             };
         }
@@ -26,8 +29,8 @@ namespace Inchoqate.GUI.Converters
         {
             return (string)value switch
             {
-                "v" => Visibility.Visible,
-                ">" => Visibility.Collapsed,
+                Visible => Visibility.Visible,
+                Collapsed => Visibility.Collapsed,
                 _ => throw new NotImplementedException()
             };
         }

@@ -34,10 +34,26 @@ namespace Inchoqate.GUI.View
                     FrameworkPropertyMetadataOptions.AffectsRender | 
                     FrameworkPropertyMetadataOptions.AffectsParentArrange));
 
+        public static readonly DependencyProperty ContentVisibilityProperty = 
+            DependencyProperty.Register(
+                "ContentVisibility",
+                typeof(Visibility),
+                typeof(StackEditorNodeView),
+                new FrameworkPropertyMetadata(
+                    Visibility.Visible,
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
         public EditBaseLinear ViewModel
         {
             get => (EditBaseLinear)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
+        }
+
+        public Visibility ContentVisibility
+        {
+            get => (Visibility)GetValue(ContentVisibilityProperty);
+            set => SetValue(ContentVisibilityProperty, value);
         }
 
 
@@ -50,7 +66,15 @@ namespace Inchoqate.GUI.View
 
         private void Thumb_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-
+            // TODO: only if the drag distance was 0.
+            if (Content.Visibility == Visibility.Visible)
+            {
+                ContentVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ContentVisibility = Visibility.Visible;
+            }
         }
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
