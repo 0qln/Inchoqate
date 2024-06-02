@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
@@ -7,6 +8,8 @@ namespace Inchoqate.GUI.Model
         where TResult : IEditDestinationModel
         where TSource : IEditSourceModel
     {
+        event NotifyCollectionChangedEventHandler? EditsChanged;
+
         /// <summary>
         /// Returns a reference to the final result of the render queue.
         /// Returns null if there is no source given.

@@ -25,8 +25,8 @@ namespace Inchoqate.GUI.Windows
             {
                 if (StackEditor.DataContext is StackEditorViewModel svm)
                 {
-                    svm.QueueEditor.Edits.Add(new EditImplGrayscaleViewModel());
-                    pvm.RenderEditor = svm.QueueEditor;
+                    svm.Nodes.Add(new EditImplGrayscaleViewModel());
+                    pvm.RenderEditor = svm;
                 }
             }
 

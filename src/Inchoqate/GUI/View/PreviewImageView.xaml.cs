@@ -102,6 +102,7 @@ namespace Inchoqate.GUI.View
             });
 
             DataContext = _viewModel = new PreviewImageViewModel();
+            _viewModel.EditorChanged += (s, e) => InvalidateVisual();
         }
 
 

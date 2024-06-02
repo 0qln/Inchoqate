@@ -63,6 +63,7 @@ namespace Inchoqate.GUI.ViewModel
 
             _optionControls = [
                 _intenstityControl
+                // TODO: add a control for the weights.
             ];
         }
 
