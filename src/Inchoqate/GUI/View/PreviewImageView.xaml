@@ -23,6 +23,7 @@
             
             <gl:GLWpfControl 
                 x:Name="GLImage"
+                ClipToBounds="False"
                 Render="OpenTK_OnRender"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"/>

@@ -7,6 +7,7 @@ using System.Windows;
 using OpenTK.Wpf;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Collections.Specialized;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -24,14 +25,28 @@ namespace Inchoqate.GUI.ViewModel
             get => _editor;
             set
             {
+                if (_editor == value)
+                {
+                    return;
+                }
+                if (_editor is not null)
+                    _editor.EditsChanged -= Editor_EditsChanged;
                 SetProperty(ref _editor, value);
-                if (imageSource is null) return;
-                _editor!.SetSource(TextureModel.FromFile(imageSource));
+                if (imageSource is not null)
+                    _editor!.SetSource(TextureModel.FromFile(imageSource));
                 _editor!.RenderSize = SourceSize;
                 _editor!.VoidColor = VoidColor.Color;
-                Reload();
+                _editor!.EditsChanged += Editor_EditsChanged;
+                ReloadLayout();
             }
         }
+
+        private void Editor_EditsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            EditorChanged?.Invoke(sender, e);
+        }
+
+        public event EventHandler? EditorChanged;
 
         private float[] _vertices =
         [
@@ -65,6 +80,7 @@ namespace Inchoqate.GUI.ViewModel
                 TextureModel texture = TextureModel.FromFile(imageSource);
                 _editor?.SetSource(texture);
                 SourceSize = new(texture.Width, texture.Height);
+                ReloadLayout();
             }
         }
 
@@ -84,8 +100,9 @@ namespace Inchoqate.GUI.ViewModel
             get => renderSize;
             set
             {
+                if (renderSize == value) return;
                 SetProperty(ref renderSize, value);
-                Reload();
+                ReloadLayout();
             }
         }
 
@@ -105,8 +122,9 @@ namespace Inchoqate.GUI.ViewModel
             get => boundsSize;
             set
             {
+                if (boundsSize == value) return;
                 SetProperty(ref boundsSize, value);
-                Reload();
+                ReloadLayout();
             }
         }
 
@@ -148,7 +166,7 @@ namespace Inchoqate.GUI.ViewModel
             {
                 SetProperty(ref zoomLimit, value);
                 _zoomValue = Math.Min(_zoomValue, _zoomMax * value);
-                Reload();
+                ReloadLayout();
             }
         }
 
@@ -161,7 +179,7 @@ namespace Inchoqate.GUI.ViewModel
             set
             {
                 _zoomValue = value / 2;
-                Reload();
+                ReloadLayout();
             }
         }
 
@@ -212,12 +230,8 @@ namespace Inchoqate.GUI.ViewModel
         {
             float zoomDelta = (float)e.Delta > 0 ? _zoomMax : -_zoomMax;
             Point relative = e.GetPosition((IInputElement)sender);
-            float relativeXScaled = 0, relativeYScaled = 0;
-            if (sender is FrameworkElement frameworkElement)
-            {
-                relativeXScaled = (float)(relative.X / BoundsSize.Width) * 2 - 1;
-                relativeYScaled = (float)(relative.Y / BoundsSize.Height) * 2 - 1;
-            }
+            float relativeXScaled = (float)(relative.X / BoundsSize.Width) * 2 - 1;
+            float relativeYScaled = (float)(relative.Y / BoundsSize.Height) * 2 - 1;
 
             float newZoom = _zoomValue + (zoomDelta / zoomLevels);
             newZoom = Math.Clamp(newZoom, _zoomMin, _zoomMax * zoomLimit);
@@ -226,21 +240,18 @@ namespace Inchoqate.GUI.ViewModel
             _panYStart = (_panYStart + relativeYScaled * _zoomValue) - (relativeYScaled * newZoom);
             _zoomValue = newZoom;
 
-            Reload();
+            ReloadLayout();
         }
 
         public void DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (sender is FrameworkElement frameworkElement)
-            {
-                var relativeXScaled = (float)(e.HorizontalChange / BoundsSize.Width);
-                var relativeYScaled = (float)(e.VerticalChange / BoundsSize.Height);
+            var relativeXScaled = (float)(e.HorizontalChange / BoundsSize.Width);
+            var relativeYScaled = (float)(e.VerticalChange / BoundsSize.Height);
 
-                _panXDelta = relativeXScaled * (1 - _zoomValue * 2) * panSensitivity;
-                _panYDelta = relativeYScaled * (1 - _zoomValue * 2) * panSensitivity;
-            }
+            _panXDelta = relativeXScaled * (1 - _zoomValue * 2) * panSensitivity;
+            _panYDelta = relativeYScaled * (1 - _zoomValue * 2) * panSensitivity;
 
-            Reload();
+            ReloadLayout();
         }
 
         public void DragCompleted(object sender, DragCompletedEventArgs e)
@@ -249,7 +260,7 @@ namespace Inchoqate.GUI.ViewModel
             _panYStart += _panYDelta;
             _panXDelta = _panYDelta = 0;
 
-            Reload();
+            ReloadLayout();
         }
 
         public void DragStarted(object sender, DragStartedEventArgs e)
@@ -264,10 +275,10 @@ namespace Inchoqate.GUI.ViewModel
             _panXStart = 0;
             _panYStart = 0;
 
-            Reload();
+            ReloadLayout();
         }
 
-        public void Reload()
+        public void ReloadLayout()
         {
             float
                 wNorm = (float)(BoundsSize.Width / RenderSize.Width),

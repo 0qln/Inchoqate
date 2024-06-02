@@ -102,7 +102,7 @@ namespace Inchoqate.GUI.View
             });
 
             DataContext = _viewModel = new PreviewImageViewModel();
-            _viewModel.EditorChanged += (s, e) => InvalidateVisual();
+            _viewModel.EditorChanged += (s, e) => GLImage.InvalidateVisual();
         }
 
 
@@ -138,16 +138,14 @@ namespace Inchoqate.GUI.View
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            // TODO: clean this up.
             _viewModel.RenderSize = GetDesiredImageSize(arrangeBounds);
-            //_viewModel.BoundsSize = arrangeBounds;
-            //_viewModel.RenderSize = _viewModel.SourceSize;
             _viewModel.BoundsSize = _viewModel.SourceSize;
-            //GLImage.Width = arrangeBounds.Width;
-            //GLImage.Height = arrangeBounds.Height;
-            GLImage.Width = _viewModel.SourceSize.Width;
-            GLImage.Height = _viewModel.SourceSize.Height;
-            GLImage.ClipToBounds = false;
+            if (GLImage.Width != _viewModel.SourceSize.Width || 
+                GLImage.Height != _viewModel.SourceSize.Height)
+            {
+                GLImage.Width = _viewModel.SourceSize.Width;
+                GLImage.Height = _viewModel.SourceSize.Height;
+            }
             Thumb.Width = arrangeBounds.Width;
             Thumb.Height = arrangeBounds.Height;
             Grid.Width = arrangeBounds.Width;
