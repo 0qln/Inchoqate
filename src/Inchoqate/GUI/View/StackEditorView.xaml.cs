@@ -6,15 +6,31 @@ using System.Windows.Data;
 
 namespace Inchoqate.GUI.View
 {
-    [ValueConversion(typeof(EditorNodeCollectionLinear), typeof(ObservableCollection<StackEditorNodeView>))]
+    public class StackEditorNodeCollection : ObservableCollection<StackEditorNodeView>
+    {
+        public StackEditorNodeCollection(IEnumerable<StackEditorNodeView> nodes)
+        {
+            foreach (var node in nodes)
+            {
+                node.Enviroment = this;
+                Add(node);
+            }
+        }
+    }
+
+    [ValueConversion(typeof(EditorNodeCollectionLinear), typeof(StackEditorNodeCollection))]
     public class StackEditorNodeViewWrapper : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is EditorNodeCollectionLinear viewModels)
             {
-                return new ObservableCollection<StackEditorNodeView>(
-                    viewModels.Select(vm => new StackEditorNodeView() { ViewModel = vm }));
+                var result = new StackEditorNodeCollection(
+                    viewModels.Select(vm => new StackEditorNodeView() 
+                    { 
+                        ViewModel = vm, 
+                    }));
+                return result;
             }
 
             throw new ArgumentException(

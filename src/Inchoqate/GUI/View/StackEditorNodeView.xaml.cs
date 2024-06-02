@@ -1,5 +1,6 @@
 ﻿using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel;
+using System.Windows.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,13 @@ namespace Inchoqate.GUI.View
                     FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public static readonly DependencyProperty EnviromentProperty =
+            DependencyProperty.Register(
+                "Enviroment",
+                typeof(StackEditorNodeCollection),
+                typeof(StackEditorNodeView));
+
+
         public EditBaseLinear ViewModel
         {
             get => (EditBaseLinear)GetValue(ViewModelProperty);
@@ -56,6 +64,12 @@ namespace Inchoqate.GUI.View
             set => SetValue(ContentVisibilityProperty, value);
         }
 
+        public StackEditorNodeCollection Enviroment
+        {
+            get => (StackEditorNodeCollection)GetValue(EnviromentProperty);
+            set => SetValue(EnviromentProperty, value);
+        }
+
 
         public StackEditorNodeView()
         {
@@ -64,27 +78,54 @@ namespace Inchoqate.GUI.View
             SetBinding(DataContextProperty, new Binding("ViewModel") { Source = this });
         }
 
-        private void Thumb_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+
+        private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            // TODO: only if the drag distance was 0.
-            if (Content.Visibility == Visibility.Visible)
+            if (e.VerticalChange == 0)
             {
-                ContentVisibility = Visibility.Collapsed;
-            }
-            else
-            {
-                ContentVisibility = Visibility.Visible;
+                if (Content.Visibility == Visibility.Visible)
+                {
+                    ContentVisibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ContentVisibility = Visibility.Visible;
+                }
             }
         }
 
-        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            if (Enviroment is null)
+            {
+                return;
+            }
 
+            var index = Enviroment.IndexOf(this);
+
+            if (index < Enviroment.Count - 1)
+            {
+                if (e.VerticalChange > ActualHeight)
+                {
+                    Enviroment.Remove(this);
+                    Enviroment.Insert(index + 1, this);
+                }
+            }
+
+            if (index > 0 &&
+                Enviroment[index - 1] is FrameworkElement prev)
+            {
+                if (e.VerticalChange < -prev.ActualHeight)
+                {
+                    Enviroment.Remove(this);
+                    Enviroment.Insert(index - 1, this);
+                }
+            }
         }
 
-        private void Thumb_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
         {
-
+            
         }
     }
 }

@@ -28,7 +28,7 @@
             Panel.ZIndex="1">
             <view:WindowTitlebarView.ActionButtons>
                 <view:ActionButtonCollection>
-                    <view:TitlebarActionButtonMenuView Title="Edit"
+                    <view:TitlebarActionButtonMenuView Title="Windows"
                                                        OptionsPosition="Bottom">
                         <view:TitlebarActionButtonMenuView.Options>
                             <view:TitlebarActioButtonOptionCollection>

@@ -12,15 +12,43 @@
         <local:StackEditorNodeViewWrapper x:Key="StackEditorNodeViewWrapper"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Border
+        BorderBrush="{DynamicResource Background_Idle_Contrast_2}"
+        Background="{DynamicResource Background_Idle_2}"
+        BorderThickness="1"
+        Margin="5">
+        
+        <Grid>
 
-        <ItemsControl ItemsSource="{Binding Nodes, Converter={StaticResource StackEditorNodeViewWrapper}}">
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="local:StackEditorNodeView">
-                    <Setter Property="Margin" Value="5"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-        </ItemsControl>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-    </Grid>
+            <TextBlock 
+                Margin="5"
+                Grid.Row="0"
+                Text="Stack Editor"
+                Foreground="{DynamicResource Text_1}">
+            </TextBlock>
+            
+            <ItemsControl 
+                Grid.Row="1"
+                ItemsSource="{Binding Nodes, Converter={StaticResource StackEditorNodeViewWrapper}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel 
+                            Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="local:StackEditorNodeView">
+                        <Setter Property="Margin" Value="5"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+
+        </Grid>
+
+    </Border>
 </UserControl>
