@@ -81,6 +81,10 @@
                 x:Name="Sidebar"
                 Grid.Column="2"
                 Width="100">
+
+                <view:StackEditorView
+                    x:Name="StackEditor"/>
+
             </Grid>
 
         </Grid>

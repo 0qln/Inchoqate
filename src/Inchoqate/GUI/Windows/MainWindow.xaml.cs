@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls.Primitives;
+using Inchoqate.GUI.ViewModel;
 
 namespace Inchoqate.GUI.Windows
 {
@@ -20,6 +21,14 @@ namespace Inchoqate.GUI.Windows
             InitializeComponent();
 
             PreviewImage.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
+            if (PreviewImage.DataContext is PreviewImageViewModel pvm)
+            {
+                if (StackEditor.DataContext is StackEditorViewModel svm)
+                {
+                    svm.QueueEditor.Edits.Add(new EditImplGrayscaleViewModel());
+                    pvm.RenderEditor = svm.QueueEditor;
+                }
+            }
 
             Closed += delegate
             {

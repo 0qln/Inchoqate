@@ -69,9 +69,10 @@ namespace Inchoqate.GUI.View
 
         private static void OnBackgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is PreviewImageView control && control.DataContext is PreviewImageViewModel viewModel)
+            if (d is PreviewImageView control && 
+                control.DataContext is PreviewImageViewModel viewModel)
             {
-                control._model.Background = ((SolidColorBrush)e.NewValue).Color;
+                viewModel.VoidColor = (SolidColorBrush)e.NewValue;
             }
         }
 
@@ -89,7 +90,6 @@ namespace Inchoqate.GUI.View
 
 
         private readonly PreviewImageViewModel _viewModel;
-        private readonly GpuEditQueueModel _model; // todo: this should be a 
 
 
         public PreviewImageView()
@@ -101,11 +101,7 @@ namespace Inchoqate.GUI.View
                 RenderContinuously = false,
             });
 
-            // temp for testing
-            _model = new GpuEditQueueModel();
-            _model.Edits.Add(new EditImplGrayscaleViewModel());
-            //_model.Edits.Add(new EditImplNoGreenViewModel());
-            DataContext = _viewModel = new PreviewImageViewModel(_model);
+            DataContext = _viewModel = new PreviewImageViewModel();
         }
 
 

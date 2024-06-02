@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Media;
 
 namespace Inchoqate.GUI.Model
 {
@@ -23,6 +24,11 @@ namespace Inchoqate.GUI.Model
         /// The size in which the final output is rendered.
         /// </summary>
         public Size RenderSize { get; set; }
+
+        /// <summary>
+        /// The color to use for void pixels.
+        /// </summary>
+        public Color VoidColor { get; set; }
     }
 
     public interface IRenderEditorModel : IEditorModel<TextureModel, FrameBufferModel>

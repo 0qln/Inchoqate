@@ -25,7 +25,7 @@ namespace Inchoqate.GUI.View
         public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register(
                 "ViewModel",
-                typeof(EditorNodeViewModel<EditBaseLinear>),
+                typeof(EditBaseLinear),
                 typeof(StackEditorNodeView),
                 new FrameworkPropertyMetadata(
                     null,
@@ -34,12 +34,33 @@ namespace Inchoqate.GUI.View
                     FrameworkPropertyMetadataOptions.AffectsRender | 
                     FrameworkPropertyMetadataOptions.AffectsParentArrange));
 
+        public EditBaseLinear ViewModel
+        {
+            get => (EditBaseLinear)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+
 
         public StackEditorNodeView()
         {
             InitializeComponent();
 
             SetBinding(DataContextProperty, new Binding("ViewModel") { Source = this });
+        }
+
+        private void Thumb_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+
+        }
+
+        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+
+        }
+
+        private void Thumb_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+
         }
     }
 }

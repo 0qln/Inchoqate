@@ -54,6 +54,7 @@ namespace Inchoqate.GUI.ViewModel
         {
             Intensity = 2.0; // should be between 0 and 1, but yields interesting results for out of range values xd
             Weights = new(0.2126f, 0.7152f, 0.0722f);
+            Title = "Grayscale";
 
             _intenstityControl = new() { Minimum = 0, Maximum = 1, Value = Intensity };
             _intenstityControl.SetBinding(

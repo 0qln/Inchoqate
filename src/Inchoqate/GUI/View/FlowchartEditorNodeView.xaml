@@ -47,7 +47,7 @@
 
             <ItemsControl Grid.Row="2"
                           x:Name="Content"
-                          ItemsSource="{Binding Options}"
+                          ItemsSource="{Binding OptionControls}"
                           Margin="10, 5">
 
                 <ItemsControl.ItemContainerStyle>

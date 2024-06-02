@@ -18,13 +18,17 @@ namespace Inchoqate.GUI.ViewModel
         private readonly VertexArrayModel _vertexArray;
 
         // will not be disposed
-        private IEditorModel<TextureModel, FrameBufferModel> _editor; 
-        public IEditorModel<TextureModel, FrameBufferModel> RenderEditor
+        private IEditorModel<TextureModel, FrameBufferModel>? _editor; 
+        public IEditorModel<TextureModel, FrameBufferModel>? RenderEditor
         {
             get => _editor;
             set
             {
                 SetProperty(ref _editor, value);
+                if (imageSource is null) return;
+                _editor!.SetSource(TextureModel.FromFile(imageSource));
+                _editor!.RenderSize = SourceSize;
+                _editor!.VoidColor = VoidColor.Color;
                 Reload();
             }
         }
@@ -48,6 +52,7 @@ namespace Inchoqate.GUI.ViewModel
         private Size renderSize;
         private Size sourceSize;
         private Size boundsSize;
+        private SolidColorBrush voidColor = Brushes.Aquamarine;
 
         public string? ImageSource
         {
@@ -58,7 +63,7 @@ namespace Inchoqate.GUI.ViewModel
 
                 SetProperty(ref imageSource, value);
                 TextureModel texture = TextureModel.FromFile(imageSource);
-                _editor.SetSource(texture);
+                _editor?.SetSource(texture);
                 SourceSize = new(texture.Width, texture.Height);
             }
         }
@@ -69,7 +74,8 @@ namespace Inchoqate.GUI.ViewModel
             private set
             {
                 SetProperty(ref sourceSize, value);
-                _editor.RenderSize = value;
+                if (_editor is not null)
+                    _editor.RenderSize = value;
             }
         }
 
@@ -80,6 +86,17 @@ namespace Inchoqate.GUI.ViewModel
             {
                 SetProperty(ref renderSize, value);
                 Reload();
+            }
+        }
+
+        public SolidColorBrush VoidColor
+        {
+            get => voidColor;
+            set
+            {
+                if (_editor is not null)
+                    _editor.VoidColor = value.Color;
+                SetProperty(ref voidColor, value);
             }
         }
 
@@ -149,7 +166,7 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
-        public PreviewImageViewModel(IEditorModel<TextureModel, FrameBufferModel>  editor)
+        public PreviewImageViewModel()
         {
             _vertexArray = new VertexArrayModel(sIndx: _indices, sVert: _vertices, BufferUsageHint.StaticDraw);
             _vertexArray.Use();
@@ -158,8 +175,6 @@ namespace Inchoqate.GUI.ViewModel
                 new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
                 new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
                 out bool success);
-
-            _editor = editor;
 
             if (!success)
             {
@@ -170,7 +185,7 @@ namespace Inchoqate.GUI.ViewModel
 
         public void RenderToImage(GLWpfControl image)
         {
-            if (_shader is null)
+            if (_shader is null || _editor is null)
             {
                 return;
             }

@@ -25,7 +25,7 @@ namespace Inchoqate.GUI.View
          public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register(
                 "ViewModel",
-                typeof(EditorNodeViewModel<EditBaseDynamic>),
+                typeof(EditBaseDynamic),
                 typeof(FlowchartEditorNodeView),
                 new FrameworkPropertyMetadata(
                     null,

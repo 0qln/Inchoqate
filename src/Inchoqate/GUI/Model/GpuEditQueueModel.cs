@@ -20,21 +20,23 @@ namespace Inchoqate.GUI.Model
             _sourceTexture = value;
         }
 
-        private Color _background;
+        private Color _voidColor;
         private Size _renderSize;
 
-        public Color Background
+        public Color VoidColor
         {
             get
             {
-                return _background;
+                return _voidColor;
             }
             set
             {
-                if (value == _background) return;
-                _background = value;
-                // TODO: may not need to reload here, just set the border color.
-                Reload();
+                if (value == _voidColor) return;
+                _voidColor = value;
+                if (_framebuffer1 is not null)
+                    _framebuffer1.Data.BorderColor = value;
+                if (_framebuffer2 is not null)
+                    _framebuffer2.Data.BorderColor = value;
             }
         }
 
@@ -62,14 +64,14 @@ namespace Inchoqate.GUI.Model
             if (!success1)
                 // TODO: handle error
                 return;
-            _framebuffer1.Data.BorderColor = Background;
+            _framebuffer1.Data.BorderColor = VoidColor;
 
             _framebuffer2?.Dispose();
             _framebuffer2 = new FrameBufferModel((int)_renderSize.Width, (int)_renderSize.Height, out bool success2);
             if (!success2)
                 // TODO: handle error
                 return;
-            _framebuffer2.Data.BorderColor = Background;
+            _framebuffer2.Data.BorderColor = VoidColor;
         }
 
 
