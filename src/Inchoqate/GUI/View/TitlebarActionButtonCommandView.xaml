@@ -108,7 +108,7 @@
                 Foreground="{DynamicResource Text_1}"
                 FontFamily="Consolas"
                 Visibility="{Binding IndicatorVisibility, ElementName=ControlRoot}"
-                Text=">"/>
+                Text="{Binding IndicatorContent, ElementName=ControlRoot, Converter={StaticResource VisibilityToIndicatorStringConverter}}"/>
 
         </Grid>
         

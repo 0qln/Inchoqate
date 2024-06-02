@@ -19,6 +19,7 @@
 
             <conv:BorderToContentSizeConverter x:Key="BorderToContentSizeConverter"/>
             <conv:CommandBindingToStringConverter x:Key="CommandBindingToStringConverter"/>
+            <conv:VisibilityToIndicatorStringConverter x:Key="VisibilityToIndicatorStringConverter"/>
             <conv:BorderlessWinCornerConverter x:Key="BorderlessWinCornerConverter"/>
             <conv:BorderlessWinBorderThicknessConverter x:Key="BorderlessWinBorderThicknessConverter"/>
 

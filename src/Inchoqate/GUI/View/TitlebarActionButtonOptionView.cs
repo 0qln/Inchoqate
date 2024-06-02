@@ -49,6 +49,14 @@ namespace Inchoqate.GUI.View
                     null, 
                     ContentPropertyMetadata));
 
+        public static readonly DependencyProperty IndicatorContentProperty =
+            DependencyProperty.Register(
+                "IndicatorContent",
+                typeof(Visibility),
+                typeof(TitlebarActionButtonOptionView),
+                new FrameworkPropertyMetadata(
+                    Visibility.Collapsed,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
 
         public ImageSource Icon
         {
@@ -74,6 +82,11 @@ namespace Inchoqate.GUI.View
             set => SetValue(IndicatorVisibilityProperty, value);
         }
 
+        public Visibility IndicatorContent
+        {
+            get => (Visibility)GetValue(IndicatorContentProperty);
+            set => SetValue(IndicatorContentProperty, value);
+        }
 
         public TitlebarActionButtonOptionView()
         {
