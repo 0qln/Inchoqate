@@ -24,10 +24,12 @@
         <view:WindowTitlebarView 
             x:Name="Titlebar"
             Width="{Binding ActualWidth, ElementName=ControlRoot}"
-            Height="{Binding TitlebarHeight, ElementName=ControlRoot}">
+            Height="{Binding TitlebarHeight, ElementName=ControlRoot}"
+            Panel.ZIndex="1">
             <view:WindowTitlebarView.ActionButtons>
                 <view:ActionButtonCollection>
-                    <view:TitlebarActionButtonMenuView Title="Edit">
+                    <view:TitlebarActionButtonMenuView Title="Edit"
+                                                       OptionsPosition="Bottom">
                         <view:TitlebarActionButtonMenuView.Options>
                             <view:TitlebarActioButtonOptionCollection>
                                 <view:TitlebarActionButtonCommandView 
