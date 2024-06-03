@@ -162,6 +162,8 @@ namespace Inchoqate.GUI.View
             _viewModel?.RenderToImage(GLImage);
         }
 
+        // TODO: move these down to the view model
+
         private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             _viewModel?.MouseWheel(sender, e);
