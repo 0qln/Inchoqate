@@ -25,11 +25,17 @@ namespace Inchoqate.GUI.Windows
             {
                 if (StackEditor.DataContext is StackEditorViewModel svm)
                 {
-                    svm.Nodes.Add(new EditImplGrayscaleViewModel());
-                    svm.Nodes.Add(new EditImplNoGreenViewModel());
-                    svm.Nodes.Add(new EditImplNoGreenViewModel());
-                    svm.Nodes.Add(new EditImplNoGreenViewModel());
-                    svm.Nodes.Add(new EditImplNoGreenViewModel());
+                    void Add(EditBaseLinear edit)
+                    {
+                        svm.Edits.Do(
+                            x => x.Add(edit),
+                            x => x.Remove(edit));
+                    }
+                    Add(new EditImplGrayscaleViewModel());
+                    Add(new EditImplNoGreenViewModel());
+                    Add(new EditImplNoGreenViewModel());
+                    Add(new EditImplNoGreenViewModel());
+                    Add(new EditImplNoGreenViewModel());
 
                     pvm.RenderEditor = svm;
                 }

@@ -12,12 +12,35 @@ namespace Inchoqate.GUI.ViewModel
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<StackEditorViewModel>();
 
-        private readonly EditorNodeCollectionLinear _edits = new();
-        public EditorNodeCollectionLinear Nodes
+        private EditorNodeCollectionLinear _edits = new();
+
+        public EditorNodeCollectionLinear Edits
         {
             get => _edits;
+            set
+            {
+                if (value == _edits) return;
+                _edits.CollectionChanged -= Edits_CollectionChanged;
+                _edits.ItemsPropertyChanged -= Edits_ItemsPropertyChanged;
+                SetProperty(ref _edits, value);
+                _edits.CollectionChanged += Edits_CollectionChanged;
+                _edits.ItemsPropertyChanged += Edits_ItemsPropertyChanged;
+            }
         }
-        public event NotifyCollectionChangedEventHandler? EditsChanged;
+
+        private void Edits_ItemsPropertyChanged(object? sender, EventArgs e)
+        {
+            EditsChanged?.Invoke(sender, e);
+        }
+
+        private void Edits_CollectionChanged(object? sender, NotifyEventCollectionChangedEventArgs e)
+        {
+            EditsChanged?.Invoke(sender, e.EventArgs);
+            EditsCollectionChanged?.Invoke(this, e);
+        }
+
+        public event EventHandler? EditsChanged;
+        public event NotifyEventCollectionChangedEventHandler? EditsCollectionChanged;
 
         private FrameBufferModel? _framebuffer1, _framebuffer2;
         private TextureModel? _sourceTexture;
@@ -84,7 +107,7 @@ namespace Inchoqate.GUI.ViewModel
 
         public StackEditorViewModel()
         {
-            _edits.CollectionChanged += (s, e) => EditsChanged?.Invoke(s, e);
+            _edits = Edits = new();
         }
 
 

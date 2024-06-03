@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Inchoqate.GUI.Events;
 
 namespace Inchoqate.GUI.View
 {
@@ -45,12 +46,6 @@ namespace Inchoqate.GUI.View
                     FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty EnviromentProperty =
-            DependencyProperty.Register(
-                "Enviroment",
-                typeof(StackEditorNodeCollection),
-                typeof(StackEditorNodeView));
-
 
         public EditBaseLinear ViewModel
         {
@@ -62,12 +57,6 @@ namespace Inchoqate.GUI.View
         {
             get => (Visibility)GetValue(ContentVisibilityProperty);
             set => SetValue(ContentVisibilityProperty, value);
-        }
-
-        public StackEditorNodeCollection Enviroment
-        {
-            get => (StackEditorNodeCollection)GetValue(EnviromentProperty);
-            set => SetValue(EnviromentProperty, value);
         }
 
 
@@ -94,38 +83,29 @@ namespace Inchoqate.GUI.View
             }
         }
 
+        public EditorNodeCollectionLinear Environment { get; set; }
+
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (Enviroment is null)
+            var index = Environment.IndexOf(ViewModel);
+
+            if (index < Environment.Count - 1 && e.VerticalChange >= ActualHeight + 1)
             {
-                return;
+                Environment.Do(
+                    env => env.Move(index, index + 1),
+                    env => env.Move(index + 1, index));
             }
 
-            var index = Enviroment.IndexOf(this);
-
-            if (index < Enviroment.Count - 1)
+            if (index > 0 && -e.VerticalChange >= ActualHeight + 1)
             {
-                if (e.VerticalChange > ActualHeight)
-                {
-                    Enviroment.Remove(this);
-                    Enviroment.Insert(index + 1, this);
-                }
-            }
-
-            if (index > 0 &&
-                Enviroment[index - 1] is FrameworkElement prev)
-            {
-                if (e.VerticalChange < -prev.ActualHeight)
-                {
-                    Enviroment.Remove(this);
-                    Enviroment.Insert(index - 1, this);
-                }
+                Environment.Do(
+                    env => env.Move(index, index - 1),
+                    env => env.Move(index - 1, index));
             }
         }
 
         private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
         {
-            
         }
     }
 }

@@ -8,6 +8,7 @@ using OpenTK.Wpf;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Collections.Specialized;
+using Inchoqate.GUI.Events;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -41,7 +42,7 @@ namespace Inchoqate.GUI.ViewModel
             }
         }
 
-        private void Editor_EditsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        private void Editor_EditsChanged(object? sender, EventArgs e)
         {
             EditorChanged?.Invoke(sender, e);
         }

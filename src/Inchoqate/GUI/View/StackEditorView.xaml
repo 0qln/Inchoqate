@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:Inchoqate.GUI.View"
              xmlns:vm="clr-namespace:Inchoqate.GUI.ViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="200">
+             d:DesignHeight="450" d:DesignWidth="200"
+             x:Name="ControlRoot">
 
     <UserControl.Resources>
         <local:StackEditorNodeViewWrapper x:Key="StackEditorNodeViewWrapper"/>
@@ -34,11 +35,10 @@
             
             <ItemsControl 
                 Grid.Row="1"
-                ItemsSource="{Binding Nodes, Converter={StaticResource StackEditorNodeViewWrapper}}">
+                ItemsSource="{Binding Edits, Converter={StaticResource StackEditorNodeViewWrapper}}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel 
-                            Orientation="Vertical"/>
+                        <StackPanel Orientation="Vertical"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>

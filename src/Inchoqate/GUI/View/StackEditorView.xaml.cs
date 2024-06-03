@@ -1,22 +1,34 @@
-﻿using Inchoqate.GUI.ViewModel;
+﻿using Inchoqate.GUI.Events;
+using Inchoqate.GUI.ViewModel;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace Inchoqate.GUI.View
 {
-    public class StackEditorNodeCollection : ObservableCollection<StackEditorNodeView>
+    public class StackEditorNodeCollection : ObservableCollectionBase<StackEditorNodeView>
     {
+        public StackEditorNodeCollection()
+        {
+        }
+
         public StackEditorNodeCollection(IEnumerable<StackEditorNodeView> nodes)
         {
             foreach (var node in nodes)
             {
-                node.Enviroment = this;
+                //node.Environment = this;
                 Add(node);
             }
         }
     }
+
+
+    // Creating new NodeViews each time the collection is changed will discard the 
+    // state of the view each time, which breaks thumbs and other state dependand controls.
 
     [ValueConversion(typeof(EditorNodeCollectionLinear), typeof(StackEditorNodeCollection))]
     public class StackEditorNodeViewWrapper : IValueConverter
@@ -25,12 +37,16 @@ namespace Inchoqate.GUI.View
         {
             if (value is EditorNodeCollectionLinear viewModels)
             {
-                var result = new StackEditorNodeCollection(
-                    viewModels.Select(vm => new StackEditorNodeView() 
-                    { 
-                        ViewModel = vm, 
-                    }));
-                return result;
+                var result = new StackEditorNodeCollection( viewModels.Select(
+                        vm => new StackEditorNodeView() { ViewModel = vm, Environment = viewModels }));
+                viewModels.CollectionChanged += (s, e) =>
+                {
+                    if (e.Event is InlineEvent<IMove> @event)
+                    {
+                        @event.Action(result);
+                    }
+                };
+                return result; 
             }
 
             throw new ArgumentException(
@@ -52,12 +68,12 @@ namespace Inchoqate.GUI.View
     {
         private readonly StackEditorViewModel _viewModel;
 
+        
         public StackEditorView()
         {
             InitializeComponent();
 
-            _viewModel = new();
-            DataContext = _viewModel;
+            DataContext = _viewModel = new();
         }
     }
 }
