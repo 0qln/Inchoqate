@@ -83,20 +83,26 @@ namespace Inchoqate.GUI.View
             }
         }
 
+        private Point _dragOffset;
+        private double _responsiveness = 5;
         public EditorNodeCollectionLinear Environment { get; set; }
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             var index = Environment.IndexOf(ViewModel);
 
-            if (index < Environment.Count - 1 && e.VerticalChange >= ActualHeight + 1)
+            var stackPanel = (StackPanel)VisualParent;
+
+            if (index < Environment.Count - 1 && 
+                e.VerticalChange + _dragOffset.Y + _responsiveness > stackPanel.Children[index + 1].TransformToVisual(this).Transform(new()).Y)
             {
                 Environment.Do(
                     env => env.Move(index, index + 1),
                     env => env.Move(index + 1, index));
             }
 
-            if (index > 0 && -e.VerticalChange >= ActualHeight + 1)
+            if (index > 0 && 
+                e.VerticalChange + _dragOffset.Y  - _responsiveness < stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
             {
                 Environment.Do(
                     env => env.Move(index, index - 1),
@@ -106,6 +112,7 @@ namespace Inchoqate.GUI.View
 
         private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
         {
+            _dragOffset = new(e.HorizontalOffset, e.VerticalOffset);
         }
     }
 }
