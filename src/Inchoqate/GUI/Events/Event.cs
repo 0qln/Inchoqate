@@ -1,4 +1,5 @@
-﻿using System.Resources;
+﻿using System.Collections.ObjectModel;
+using System.Resources;
 
 namespace Inchoqate.GUI.Events
 {
@@ -25,9 +26,25 @@ namespace Inchoqate.GUI.Events
         public abstract void Undo();
     }
 
-    public sealed class InlineEvent(Action action, Action inverse) : Event
+    public class InlineEvent(Action action, Action inverse) : Event
     {
-        public override void Do() => action();
-        public override void Undo() => inverse();
+        public readonly Action Action = action, Inverse = inverse;
+
+        public override void Do() => Action();
+        public override void Undo() => Inverse();
     }
+
+    public class InlineEvent<T>(T parameter, Action<T> action, Action<T> inverse) : Event
+    {
+        public readonly Action<T> Action = action, Inverse = inverse;
+
+        public override void Do() => Action(parameter);
+        public override void Undo() => Inverse(parameter);
+    }
+
+    public class InlineEventSoft(object parameter, Action<object> action, Action<object> inverse) 
+        : InlineEvent<object>(parameter, action, inverse)
+    {
+    }
+
 }
