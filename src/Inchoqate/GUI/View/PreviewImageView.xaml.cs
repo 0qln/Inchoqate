@@ -103,6 +103,7 @@ namespace Inchoqate.GUI.View
 
             DataContext = _viewModel = new PreviewImageViewModel();
             _viewModel.EditorChanged += (s, e) => GLImage.InvalidateVisual();
+            _viewModel.LayoutChanged += (s, e) => GLImage.InvalidateVisual();
         }
 
 
@@ -162,36 +163,30 @@ namespace Inchoqate.GUI.View
             _viewModel?.RenderToImage(GLImage);
         }
 
-        // TODO: move these down to the view model
 
         private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             _viewModel?.MouseWheel(sender, e);
-            GLImage.InvalidateVisual();
         }
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             _viewModel?.DragDelta(sender, e);
-            GLImage.InvalidateVisual();
         }
 
         private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
         {
             _viewModel?.DragStarted(sender, e);
-            GLImage.InvalidateVisual();
         }
 
         private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
             _viewModel?.DragCompleted(sender, e);
-            GLImage.InvalidateVisual();
         }
 
         private void Thumb_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             _viewModel?.ResetZoom();
-            GLImage.InvalidateVisual();
         }
     }
 }

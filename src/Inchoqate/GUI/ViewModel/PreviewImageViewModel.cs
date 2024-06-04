@@ -44,10 +44,13 @@ namespace Inchoqate.GUI.ViewModel
 
         private void Editor_EditsChanged(object? sender, EventArgs e)
         {
+            _editor?.Invalidate();
             EditorChanged?.Invoke(sender, e);
         }
 
         public event EventHandler? EditorChanged;
+
+        public event EventHandler? LayoutChanged;
 
         private float[] _vertices =
         [
@@ -129,6 +132,12 @@ namespace Inchoqate.GUI.ViewModel
             }
         }
 
+        public DragDeltaEventHandler DragDeltaHandler
+        {
+            get => DragDelta;
+        }
+
+
         // compute-state caching
         private float _panXDelta;
         private float _panYDelta;
@@ -209,18 +218,20 @@ namespace Inchoqate.GUI.ViewModel
                 return;
             }
 
-            var fb = _editor.Compute(out bool success);
-
-            if (success == false || fb is null)
+            if (_editor.Result is null)
             {
-                return;
+                var success = _editor.Compute();
+                if (!success || _editor.Result is null)
+                {
+                    return;
+                }
             }
-
+                 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, image.Framebuffer);
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            fb.Data.Use(TextureUnit.Texture0);
+            _editor.Result.Data.Use(TextureUnit.Texture0);
             _shader.Use();
             _vertexArray.Use();
             GL.DrawElements(PrimitiveType.Triangles, _vertexArray.IndexCount, DrawElementsType.UnsignedInt, 0);
@@ -308,6 +319,8 @@ namespace Inchoqate.GUI.ViewModel
             ];
 
             _vertexArray.UpdateVertices(_vertices);
+
+            LayoutChanged?.Invoke(this, EventArgs.Empty);
         }
 
         #region Clean up

@@ -13,12 +13,16 @@
         <local:StackEditorNodeViewWrapper x:Key="StackEditorNodeViewWrapper"/>
     </UserControl.Resources>
 
+    <UserControl.CommandBindings>
+        
+    </UserControl.CommandBindings>
+
     <Border
         BorderBrush="{DynamicResource Background_Idle_Contrast_2}"
         Background="{DynamicResource Background_Idle_2}"
         BorderThickness="1"
         Margin="5">
-        
+
         <Grid>
 
             <Grid.RowDefinitions>

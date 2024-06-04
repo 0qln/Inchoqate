@@ -8,8 +8,8 @@
     xmlns:view="clr-namespace:Inchoqate.GUI.View"
     mc:Ignorable="d"
     Title="MainWindow" 
-    Height="450" 
-    Width="800"
+    Height="850" 
+    Width="1600"
     x:Name="ControlRoot">
 
     <Window.CommandBindings>
@@ -82,7 +82,7 @@
             <Grid
                 x:Name="Sidebar"
                 Grid.Column="2"
-                Width="100">
+                Width="300">
 
                 <view:StackEditorView
                     x:Name="StackEditor"/>

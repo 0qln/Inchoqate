@@ -85,7 +85,9 @@ namespace Inchoqate.GUI.ViewModel
             }
         }
 
-        public void Reload()
+        public FrameBufferModel? Result { get; private set; }
+
+        private void Reload()
         {
             // TODO: if the new size is smaller, don't dispose and just use a subset of the buffer.
 
@@ -111,12 +113,11 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
-        public FrameBufferModel? Compute(out bool success)
+        public bool Compute()
         {
             if (_sourceTexture is null)
             {
-                success = false;
-                return null;
+                return false;
             }
 
             // If there are no edits given, return identity.
@@ -124,8 +125,8 @@ namespace Inchoqate.GUI.ViewModel
             {
                 EditImplIdentityViewModel identity = new();
                 identity.Apply(_framebuffer1!, _sourceTexture);
-                success = true;
-                return _framebuffer1;
+                Result = _framebuffer1;
+                return true;
             }
 
             FrameBufferModel source = _framebuffer1!, destination = _framebuffer2!;
@@ -134,8 +135,7 @@ namespace Inchoqate.GUI.ViewModel
             // Initial pass: load source texture.
             if (!edits.First().Apply(destination, _sourceTexture))
             {
-                success = false;
-                return null;
+                return false;
             }
 
             // Subsequent passes: switch between framebuffers.
@@ -144,15 +144,19 @@ namespace Inchoqate.GUI.ViewModel
                 (source, destination) = (destination, source);
                 if (!edit.Apply(destination, source.Data))
                 {
-                    success = false;
-                    return null;
+                    return false;
                 }
             }
 
-            // Return result.
-            success = true;
-            return destination;
+            Result = destination;
+            return true;
         }
+
+        public void Invalidate()
+        {
+            Result = null;
+        }
+
 
         #region Clean up
 
@@ -195,6 +199,6 @@ namespace Inchoqate.GUI.ViewModel
         }
 
         #endregion
-        
+
     }
 }

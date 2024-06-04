@@ -11,11 +11,21 @@ namespace Inchoqate.GUI.Model
         event EventHandler? EditsChanged;
 
         /// <summary>
-        /// Returns a reference to the final result of the render queue.
-        /// Returns null if there is no source given.
+        /// Compute the result of the render queue.
+        /// </summary>
+        /// <returns>True if the result was computed.</returns>
+        public bool Compute();
+
+        /// <summary>
+        /// Invalidate the result of the render queue.
         /// </summary>
         /// <returns></returns>
-        public TResult? Compute(out bool success);
+        public void Invalidate();
+
+        /// <summary>
+        /// The final result of the render queue.
+        /// </summary>
+        public TResult? Result { get; }
 
         /// <summary>
         /// Set the source to be used.
