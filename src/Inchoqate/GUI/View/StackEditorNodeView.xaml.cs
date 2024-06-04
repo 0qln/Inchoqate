@@ -102,7 +102,7 @@ namespace Inchoqate.GUI.View
             }
 
             if (index > 0 && 
-                e.VerticalChange + _dragOffset.Y  - _responsiveness < stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
+                e.VerticalChange + _dragOffset.Y  - _responsiveness < 0.6 * stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
             {
                 Environment.Do(
                     env => env.Move(index, index - 1),
