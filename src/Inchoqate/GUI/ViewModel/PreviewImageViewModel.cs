@@ -7,8 +7,8 @@ using System.Windows;
 using OpenTK.Wpf;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using System.Collections.Specialized;
-using Inchoqate.GUI.Events;
+using System.ComponentModel;
+using PointF = System.Drawing.PointF;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -20,8 +20,8 @@ namespace Inchoqate.GUI.ViewModel
         private readonly VertexArrayModel _vertexArray;
 
         // will not be disposed
-        private IEditorModel<TextureModel, FrameBufferModel>? _editor; 
-        public IEditorModel<TextureModel, FrameBufferModel>? RenderEditor
+        private RenderEditorViewModel? _editor; 
+        public RenderEditorViewModel? RenderEditor
         {
             get => _editor;
             set
@@ -30,27 +30,31 @@ namespace Inchoqate.GUI.ViewModel
                 {
                     return;
                 }
+                
                 if (_editor is not null)
-                    _editor.EditsChanged -= Editor_EditsChanged;
+                {
+                    _editor!.PropertyChanged -= Editor_PropertyChanged;
+                }
                 SetProperty(ref _editor, value);
-                if (imageSource is not null)
-                    _editor!.SetSource(TextureModel.FromFile(imageSource));
                 _editor!.RenderSize = SourceSize;
                 _editor!.VoidColor = VoidColor.Color;
-                _editor!.EditsChanged += Editor_EditsChanged;
+                _editor!.PropertyChanged += Editor_PropertyChanged;
+                if (imageSource is not null)
+                    _editor!.SetSource(TextureModel.FromFile(imageSource));
+
                 ReloadLayout();
             }
         }
 
-        private void Editor_EditsChanged(object? sender, EventArgs e)
+        private void Editor_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            _editor?.Invalidate();
-            EditorChanged?.Invoke(sender, e);
+            switch (e.PropertyName)
+            {
+                case nameof(_editor.Computed):
+                    OnPropertyChanged(nameof(RenderEditor));
+                    break;
+            }
         }
-
-        public event EventHandler? EditorChanged;
-
-        public event EventHandler? LayoutChanged;
 
         private float[] _vertices =
         [
@@ -130,11 +134,6 @@ namespace Inchoqate.GUI.ViewModel
                 SetProperty(ref boundsSize, value);
                 ReloadLayout();
             }
-        }
-
-        public DragDeltaEventHandler DragDeltaHandler
-        {
-            get => DragDelta;
         }
 
 
@@ -290,6 +289,21 @@ namespace Inchoqate.GUI.ViewModel
             ReloadLayout();
         }
 
+        public struct RectCorners
+        {
+            public PointF TopLeft;
+            public PointF TopRight;
+            public PointF BottomLeft;
+            public PointF BottomRight;
+        }
+
+        private RectCorners _actualLayout;
+        public RectCorners ActualLayout 
+        {
+            get => _actualLayout;
+            set => SetProperty(ref _actualLayout, value);
+        }
+
         public void ReloadLayout()
         {
             float
@@ -309,10 +323,16 @@ namespace Inchoqate.GUI.ViewModel
                 xOff = 0, 
                 yOff = (float)(RenderSize.Height - BoundsSize.Height) / (float)(RenderSize.Height);
 
+            var newLayout = new RectCorners
+            {
+                // TODO: the other corners
+                TopRight = new(xOff + wNorm * right, yOff + hNorm * top),
+            };
+
             _vertices =
             [
                 // Position     Texture coordinates
-                 1,  1, 0,      xOff + wNorm * right, yOff + hNorm * top,    // top right
+                 1,  1, 0,      newLayout.TopRight.X, newLayout.TopRight.Y,    // top right
                  1, -1, 0,      xOff + wNorm * right, yOff + hNorm * bottom, // bottom right
                 -1, -1, 0,      xOff + wNorm * left,  yOff + hNorm * bottom, // bottom left
                 -1,  1, 0,      xOff + wNorm * left,  yOff + hNorm * top,    // top left
@@ -320,7 +340,7 @@ namespace Inchoqate.GUI.ViewModel
 
             _vertexArray.UpdateVertices(_vertices);
 
-            LayoutChanged?.Invoke(this, EventArgs.Empty);
+            ActualLayout = newLayout;
         }
 
         #region Clean up

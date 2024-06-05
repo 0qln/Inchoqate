@@ -25,8 +25,7 @@ namespace Inchoqate.GUI.View
                 typeof(PreviewImageView),
                 new FrameworkPropertyMetadata(
                     Stretch.Uniform,
-                    FrameworkPropertyMetadataOptions.AffectsArrange,
-                    OnStretchPropertyChanged));
+                    FrameworkPropertyMetadataOptions.AffectsArrange));
 
         public static readonly DependencyProperty ImageSourceProperty =
             DependencyProperty.Register(
@@ -51,13 +50,6 @@ namespace Inchoqate.GUI.View
             set => SetValue(ImageSourceProperty, value);
         }
 
-
-        private static void OnStretchPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is PreviewImageView control && control.DataContext is PreviewImageViewModel viewModel)
-            {
-            }
-        }
 
         private static void OnImageSourcePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -96,14 +88,21 @@ namespace Inchoqate.GUI.View
         {
             InitializeComponent();
 
-            GLImage.Start(new GLWpfControlSettings
-            {
-                RenderContinuously = false,
-            });
+            GLImage.Start(new GLWpfControlSettings { RenderContinuously = false, });
 
             DataContext = _viewModel = new PreviewImageViewModel();
-            _viewModel.EditorChanged += (s, e) => GLImage.InvalidateVisual();
-            _viewModel.LayoutChanged += (s, e) => GLImage.InvalidateVisual();
+            _viewModel.PropertyChanged += (s, e) =>
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(_viewModel.RenderEditor):
+                        GLImage.InvalidateVisual();
+                        break;
+                    case nameof(_viewModel.ActualLayout):
+                        GLImage.InvalidateVisual();
+                        break;
+                }
+            };
         }
 
 
@@ -162,7 +161,6 @@ namespace Inchoqate.GUI.View
         {
             _viewModel?.RenderToImage(GLImage);
         }
-
 
         private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
