@@ -16,6 +16,10 @@ namespace Inchoqate.GUI.ViewModel
         {
         }
 
+        public EditImplNoGreenViewModel() : this(BufferUsageHint.StaticDraw)
+        {
+        }
+
 
         public override ShaderModel? GetShader(out bool success) => 
             ShaderModel.FromUri(

@@ -8,8 +8,6 @@ namespace Inchoqate.GUI.Model
         where TResult : IEditDestinationModel
         where TSource : IEditSourceModel
     {
-        event EventHandler? EditsChanged;
-
         /// <summary>
         /// Compute the result of the render queue.
         /// </summary>
@@ -17,10 +15,15 @@ namespace Inchoqate.GUI.Model
         public bool Compute();
 
         /// <summary>
-        /// Invalidate the result of the render queue.
+        /// Clear the result of the render queue.
         /// </summary>
         /// <returns></returns>
         public void Invalidate();
+
+        /// <summary>
+        /// Wether the result is computed or not.
+        /// </summary>
+        public bool Computed { get; }
 
         /// <summary>
         /// The final result of the render queue.
@@ -42,9 +45,5 @@ namespace Inchoqate.GUI.Model
         /// The color to use for void pixels.
         /// </summary>
         public Color VoidColor { get; set; }
-    }
-
-    public interface IRenderEditorModel : IEditorModel<TextureModel, FrameBufferModel>
-    {
     }
 }

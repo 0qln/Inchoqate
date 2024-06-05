@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Inchoqate.GUI.Events
+﻿namespace Inchoqate.GUI.Events
 {
     public class EventManager
     {
         /// <summary>
         /// Dummy event.
         /// </summary>
-        protected sealed class DummyEvent : Event
+        protected sealed partial class DummyEvent : Event
         {
             public override void Do() { }
             public override void Undo() { }
         }
 
+        /// <summary>
+        /// Used to lock the manager from changes that originate in apply/revert actions.
+        /// </summary>
+        private volatile bool _locked = false;
 
         /// <summary>
         /// The first event.
@@ -28,6 +25,11 @@ namespace Inchoqate.GUI.Events
         /// The most recent event.
         /// </summary>
         private Event _current;
+
+        /// <summary>
+        /// Get's invoked when a novelty is added.
+        /// </summary>
+        public event NotifyEventOccuredEventHandler? NoveltyAdded;
 
 
         public EventManager()
@@ -40,11 +42,15 @@ namespace Inchoqate.GUI.Events
         /// Add an event to the event stack.
         /// </summary>
         /// <param name="e"></param>
-        public void Push(Event e)
+        public void Novelty(Event e, IEventRelay? sender = null)
         {
-            _current.Next.Add(e);
+            if (_locked || _current.Next.ContainsKey(e.CreationDate))
+                return;
+
+            _current.Next.Add(e.CreationDate, e);
             e.Previous = _current;
             _current = e;
+            NoveltyAdded?.Invoke(sender, new() { Event = e });
         }
 
         /// <summary>
@@ -53,25 +59,33 @@ namespace Inchoqate.GUI.Events
         /// <exception cref="NullReferenceException"></exception>
         public void Undo()
         {
-            if (_current == _initialEvent)
-                throw new NullReferenceException("Cannot undo initial event.");
+            if (_locked || _current == _initialEvent)
+                return;
 
+            // could modify state of the application and
+            // allow for an event to be tried to push
+            _locked = true; // lock
             _current.Undo();
+            _locked = false; // unlock
             _current = _current.Previous!;
         }
 
         /// <summary>
         /// Redo the next event.
         /// </summary>
-        /// <param name="next">The index of the event to redo.</param>
-        /// <exception cref="IndexOutOfRangeException"></exception>
-        public void AdvanceAndRedo(int next = 0)
+        /// <param name="next">The index of the event to redo. Defaults to the most recent event.</param>
+        public void Redo(int next = 0)
         {
-            if (next >= _current.Next.Count) 
-                throw new IndexOutOfRangeException();
+            if (_locked || next >= _current.Next.Count)
+                return;
 
-            _current = _current.Next[next];
+            _current = _current.Next.Values[next];
+
+            // could modify state of the application and
+            // allow for an event to be tried to push
+            _locked = true; // lock
             _current.Do();
+            _locked = false; // unlock
         }
     }
 }

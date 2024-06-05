@@ -3,6 +3,7 @@ using Inchoqate.GUI.ViewModel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,18 +13,6 @@ namespace Inchoqate.GUI.View
 {
     public class StackEditorNodeCollection : ObservableCollectionBase<StackEditorNodeView>
     {
-        public StackEditorNodeCollection()
-        {
-        }
-
-        public StackEditorNodeCollection(IEnumerable<StackEditorNodeView> nodes)
-        {
-            foreach (var node in nodes)
-            {
-                //node.Environment = this;
-                Add(node);
-            }
-        }
     }
 
 
@@ -35,17 +24,32 @@ namespace Inchoqate.GUI.View
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is EditorNodeCollectionLinear viewModels)
-            {
-                var result = new StackEditorNodeCollection( viewModels.Select(
-                        vm => new StackEditorNodeView() { ViewModel = vm, Environment = viewModels }));
-                viewModels.CollectionChanged += (s, e) =>
+            if (value is EditorNodeCollectionLinear source)
+            {                
+                ObservableCollectionBase<StackEditorNodeView> result = new StackEditorNodeCollection();
+
+                // TODO: extract this into class 'EventSourceMirror'.
+                // Mirror relevant events that are applied to the source collection.
+                source.EventRelayed += (sender, e) =>
                 {
-                    if (e.Event is InlineEvent<IMove> @event)
+                    Debug.Assert(sender == source);
+
+                    switch (e.Event)
                     {
-                        @event.Action(result);
+                        case SwapItemsEvent @event:
+                            @event.Apply(result);
+                            @event.Occured += (s, e) => { @event.Apply(result); };
+                            @event.Reverted += (s, e) => { @event.Revert(result); };
+                            break;
+
+                        case AddItemEvent<EditBaseLinear> @event:
+                            @event.Apply(result, x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source });
+                            @event.Occured += (s, e) => { @event.Apply(result, x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source }); };
+                            @event.Reverted += (s, e) => { @event.Revert(result, x => result.First(y => y.ViewModel == x)); };
+                            break;
                     }
                 };
+
                 return result; 
             }
 

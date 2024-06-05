@@ -17,6 +17,14 @@
             x:Name="OpenFlowchartEditorCmdBinding"
             Command="{x:Static local:MainWindow.OpenFlowchartEditorCommand}"
             Executed="OpenFlowchartEditorCommand_Executed"/>
+        <CommandBinding 
+            x:Name="UndoCmdBinding"
+            Command="{x:Static local:MainWindow.UndoCommand}"
+            Executed="UndoCmdBinding_Executed"/>
+        <CommandBinding
+            x:Name="RedoCmdBinding"
+            Command="{x:Static local:MainWindow.RedoCommand}"
+            Executed="RedoCmdBinding_Executed"/>
     </Window.CommandBindings>
 
     <Canvas>

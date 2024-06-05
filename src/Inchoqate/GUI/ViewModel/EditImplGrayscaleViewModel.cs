@@ -49,8 +49,7 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
-        public EditImplGrayscaleViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) 
-            : base(usage)
+        public EditImplGrayscaleViewModel(BufferUsageHint usage) : base(usage)
         {
             Intensity = 2.0; // should be between 0 and 1, but yields interesting results for out of range values xd
             Weights = new(0.2126f, 0.7152f, 0.0722f);
@@ -65,6 +64,10 @@ namespace Inchoqate.GUI.ViewModel
                 _intenstityControl
                 // TODO: add a control for the weights.
             ];
+        }
+
+        public EditImplGrayscaleViewModel() : this(BufferUsageHint.StaticDraw)
+        {
         }
 
 

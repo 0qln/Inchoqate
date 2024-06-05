@@ -1,19 +1,28 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Resources;
+using System.Security.Policy;
+using System.Windows;
 
 namespace Inchoqate.GUI.Events
 {
     public abstract class Event
     {
         /// <summary>
+        /// The creation date of the event.
+        /// </summary>
+        public readonly DateTime CreationDate = DateTime.Now;
+
+        /// <summary>
         /// The previous event.
         /// </summary>
         public Event? Previous;
 
         /// <summary>
-        /// The next events.
+        /// The next events. Most recent events are first.
         /// </summary>
-        public readonly List<Event> Next = [];
+        public readonly SortedList<DateTime, Event> Next = new(
+            comparer: Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
 
         /// <summary>
         /// Do the event.
@@ -26,25 +35,59 @@ namespace Inchoqate.GUI.Events
         public abstract void Undo();
     }
 
-    public class InlineEvent(Action action, Action inverse) : Event
-    {
-        public readonly Action Action = action, Inverse = inverse;
 
-        public override void Do() => Action();
-        public override void Undo() => Inverse();
+    public abstract class Event<T>(T param) : Event
+    {
+        /// <summary>
+        /// Occurs when the event is triggered. (Do)
+        /// </summary>
+        public event NotifyEventOccuredEventHandler? Occured;
+
+        /// <summary>
+        /// Occurs when the event is reverted. (Undo)
+        /// </summary>
+        public event NotifyEventRevertedEventHandler? Reverted;
+
+        /// <summary>
+        /// The original object that the event operates on.
+        /// </summary>
+        public T Parameter { get; set; } = param;
+
+        /// <summary>
+        /// Apply the event.
+        /// </summary>
+        /// <param name="object"></param>
+        public abstract void Apply(T @object);
+
+        /// <summary>
+        /// Revert the event.
+        /// </summary>
+        /// <param name="object"></param>
+        public abstract void Revert(T @object);
+
+
+        public override void Do()
+        {
+            Apply(Parameter);
+            Occured?.Invoke(null, new() { Event = this });
+        }
+
+        public override void Undo()
+        {
+            Revert(Parameter);
+            Reverted?.Invoke(null, new() { Event = this });
+        }
     }
 
-    public class InlineEvent<T>(T parameter, Action<T> action, Action<T> inverse) : Event
+
+    [Obsolete("Use a fully defined event class instead.")]
+    public class InlineEvent<T>(T parameter, Action<T> action, Action<T> reciprocal) : Event
     {
-        public readonly Action<T> Action = action, Inverse = inverse;
+        public readonly Action<T>
+            Action = action, 
+            Reciprocal = reciprocal;
 
         public override void Do() => Action(parameter);
-        public override void Undo() => Inverse(parameter);
+        public override void Undo() => Reciprocal(parameter);
     }
-
-    public class InlineEventSoft(object parameter, Action<object> action, Action<object> inverse) 
-        : InlineEvent<object>(parameter, action, inverse)
-    {
-    }
-
 }
