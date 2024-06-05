@@ -323,24 +323,26 @@ namespace Inchoqate.GUI.ViewModel
                 xOff = 0, 
                 yOff = (float)(RenderSize.Height - BoundsSize.Height) / (float)(RenderSize.Height);
 
-            var newLayout = new RectCorners
+            var layout = new RectCorners
             {
-                // TODO: the other corners
-                TopRight = new(xOff + wNorm * right, yOff + hNorm * top),
+                TopRight    = new(xOff + wNorm * right, yOff + hNorm * top),
+                BottomRight = new(xOff + wNorm * right, yOff + hNorm * bottom),
+                BottomLeft  = new(xOff + wNorm * left,  yOff + hNorm * bottom),
+                TopLeft     = new(xOff + wNorm * left,  yOff + hNorm * top),
             };
 
             _vertices =
             [
                 // Position     Texture coordinates
-                 1,  1, 0,      newLayout.TopRight.X, newLayout.TopRight.Y,    // top right
-                 1, -1, 0,      xOff + wNorm * right, yOff + hNorm * bottom, // bottom right
-                -1, -1, 0,      xOff + wNorm * left,  yOff + hNorm * bottom, // bottom left
-                -1,  1, 0,      xOff + wNorm * left,  yOff + hNorm * top,    // top left
+                 1,  1, 0,      layout.TopRight.X,      layout.TopRight.Y,   // top right
+                 1, -1, 0,      layout.BottomRight.X,   layout.BottomRight.Y,// bottom right
+                -1, -1, 0,      layout.BottomLeft.X,    layout.BottomLeft.Y, // bottom left
+                -1,  1, 0,      layout.TopLeft.X,       layout.TopLeft.Y,    // top left
             ];
 
             _vertexArray.UpdateVertices(_vertices);
 
-            ActualLayout = newLayout;
+            ActualLayout = layout;
         }
 
         #region Clean up
