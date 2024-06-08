@@ -13,13 +13,19 @@
             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
             <Setter Property="Width" Value="{Binding Height, ElementName=ControlRoot}"/>
             <Setter Property="Height" Value="{Binding Height, ElementName=ControlRoot}"/>
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <SolidColorBrush Color="{DynamicResource Text_1}"/>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border TextBlock.Foreground="{DynamicResource Text_1}"
-                                x:Name="Border"
-                                Background="{DynamicResource Background_Idle_1}">
-
+                        <Border x:Name="Border"
+                                >
+                            <Border.Background>
+                                <SolidColorBrush Color="{DynamicResource Background_Idle_1}"/>
+                            </Border.Background>
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
                                               RecognizesAccessKey="True"/>
@@ -27,8 +33,11 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="{DynamicResource Background_Focused_1}"/>
+                                        Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{DynamicResource Background_Focused_1}"/>
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -39,8 +48,10 @@
     
     <Grid
         Width="{Binding Width, ElementName=ControlRoot}"
-        Height="{Binding Height, ElementName=ControlRoot}"
-        Background="{DynamicResource Background_Idle_1}">
+        Height="{Binding Height, ElementName=ControlRoot}">
+        <Grid.Background>
+            <SolidColorBrush Color="{DynamicResource Background_Idle_1}"/>
+        </Grid.Background>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
@@ -64,8 +75,11 @@
             HorizontalAlignment="Center"
             Text="{Binding Title, ElementName=ControlRoot}"
             FontStyle="Italic"
-            Foreground="{DynamicResource Text_1}"
-            Margin="10, 0, 10, 0"/>
+            Margin="10, 0, 10, 0">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource Text_1}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
 
 
         <StackPanel x:Name="ActionButtonStack"

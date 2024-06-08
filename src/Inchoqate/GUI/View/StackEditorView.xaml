@@ -19,10 +19,14 @@
     </UserControl.CommandBindings>
 
     <Border
-        BorderBrush="{DynamicResource Background_Idle_Contrast_2}"
-        Background="{DynamicResource Background_Idle_2}"
         BorderThickness="1"
         Margin="5">
+        <Border.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource Background_Idle_Contrast_1}"/>
+        </Border.BorderBrush>
+        <Border.Background>
+            <SolidColorBrush Color="{DynamicResource Background_Idle_1}"/>
+        </Border.Background>
 
         <Grid>
 
@@ -34,8 +38,10 @@
             <TextBlock 
                 Margin="5"
                 Grid.Row="0"
-                Text="Stack Editor"
-                Foreground="{DynamicResource Text_1}">
+                Text="Stack Editor">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource Text_1}"/>
+                </TextBlock.Foreground>
             </TextBlock>
             
             <ItemsControl 

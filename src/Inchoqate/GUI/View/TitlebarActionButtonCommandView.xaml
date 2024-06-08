@@ -13,15 +13,25 @@
     <local:TitlebarActionButtonOptionView.Resources>
         <Style x:Key="ButtonStyle" TargetType="Button">
             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
-            <Setter Property="Foreground" Value="{DynamicResource Text_1}"/>
-            <Setter Property="Background" Value="{DynamicResource Popup_Idle_1}"/>
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <SolidColorBrush Color="{DynamicResource Text_1}"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="{DynamicResource Popup_Idle_1}"/>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border TextBlock.Foreground="{TemplateBinding Foreground}"
                                 x:Name="Border"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Background="{DynamicResource Popup_Idle_1}">
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <Border.Background>
+                                <SolidColorBrush Color="{DynamicResource Popup_Idle_1}" />
+                            </Border.Background>
 
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -30,8 +40,11 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="{DynamicResource Popup_Focused_1}"/>
+                                        Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{DynamicResource Popup_Focused_1}"/>
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -75,11 +88,13 @@
                 Margin="5, 0, 5, 0"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Left"
-                Foreground="{DynamicResource Text_1}"
                 LineHeight="{Binding Height, ElementName=ControlRoot}"
                 LineStackingStrategy="BlockLineHeight">
                     <Run Text="{Binding Title, ElementName=ControlRoot}"
                          BaselineAlignment="Center"/>
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource Text_1}"/>
+                </TextBlock.Foreground>
             </TextBlock>
 
             <!--TODO: Set font of this to 'Consolas'. 
@@ -91,12 +106,14 @@
                 Margin="5, 0, 5, 0"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Left"
-                Foreground="{DynamicResource Text_2}"
                 LineHeight="{Binding Height, ElementName=ControlRoot}"
                 LineStackingStrategy="BlockLineHeight">
                     <Run Text="{Binding Shortcut, ElementName=ControlRoot,
                                         Converter={StaticResource CommandBindingToStringConverter}}"
                          BaselineAlignment="Center"/>
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource Text_2}"/>
+                </TextBlock.Foreground>
             </TextBlock>
 
             <TextBlock 
@@ -105,11 +122,12 @@
                 Margin="5, 0, 5, 0"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Left"
-                Foreground="{DynamicResource Text_1}"
                 FontFamily="Consolas"
                 Visibility="{Binding IndicatorVisibility, ElementName=ControlRoot}"
                 Text="{Binding IndicatorContent, ElementName=ControlRoot, Converter={StaticResource VisibilityToIndicatorStringConverter}}"/>
-
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource Text_1}"/>
+            </TextBlock.Foreground>
         </Grid>
         
     </Button>

@@ -7,10 +7,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="300">
 
-    <Border Background="{DynamicResource Popup_Idle_1}"
-            BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
-            BorderThickness="1"
+    <Border BorderThickness="1"
             CornerRadius="10">
+        <Border.Background>
+            <SolidColorBrush Color="{DynamicResource Popup_Idle_1}"/>
+        </Border.Background>
+        <Border.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource Popup_Idle_Contrast_1}"/>
+        </Border.BorderBrush>
 
         <Grid>
 
@@ -22,16 +26,21 @@
 
             <Border Grid.Row="0">
                 <TextBlock Text="{Binding Title}"
-                           Foreground="{DynamicResource Text_1}"
                            Margin="10, 5">
+                    <TextBlock.Foreground>
+                        <SolidColorBrush Color="{DynamicResource Text_1}"/>
+                    </TextBlock.Foreground>
                 </TextBlock>
             </Border>
 
             <Border Grid.Row="1">
-                <Border BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
-                        BorderThickness="1"
+                <Border BorderThickness="1"
                         Height="1"
-                        Margin="5, 0, 5, 0"/>
+                        Margin="5, 0, 5, 0">
+                    <Border.Background>
+                        <SolidColorBrush Color="{DynamicResource Popup_Idle_1}"/>
+                    </Border.Background>
+                </Border>
             </Border>
 
             <Canvas x:Name="ThumbContainer"

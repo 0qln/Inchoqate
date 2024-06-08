@@ -39,7 +39,6 @@
                 Visibility="{Binding OptionsVisibility, ElementName=ControlRoot}">
 
             <Border x:Name="MenuBorder"
-                    BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
                     BorderThickness="1">
                 <ItemsControl ItemsSource="{Binding Options, ElementName=ControlRoot}"
                               x:Name="MenuOptions">
@@ -54,8 +53,10 @@
                         </Style>
                     </ItemsControl.ItemContainerStyle>
                 </ItemsControl>
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource Popup_Idle_Contrast_1}"/>
+                </Border.BorderBrush>
             </Border>
-
         </Canvas>
         
         <local:TitlebarActionButtonCommandView
@@ -68,7 +69,6 @@
             Shortcut="{Binding Shortcut, ElementName=ControlRoot}"
             IndicatorVisibility="Visible"
             IndicatorContent="{Binding OptionsVisibility, ElementName=ControlRoot}"/>
-
     </Grid>
 
 </local:TitlebarActionButtonOptionView>

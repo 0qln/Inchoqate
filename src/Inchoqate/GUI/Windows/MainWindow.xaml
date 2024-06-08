@@ -52,10 +52,12 @@
         </view:WindowTitlebarView>
 
         <Grid 
-            Background="{DynamicResource Background_Idle_1}"
             Width="{Binding ActualWidth, ElementName=ControlRoot}"
             Height="{Binding ActualHeight,ElementName=ControlRoot}"
             Canvas.Top="{Binding Path=TitlebarHeight, ElementName=ControlRoot}">
+            <Grid.Background>
+                <SolidColorBrush Color="{DynamicResource Background_Idle_1}"/>
+            </Grid.Background>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -77,8 +79,11 @@
                     Grid.Column="0"
                     VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch"
-                    Margin="5"
-                    Background="{DynamicResource Background_Idle_1}"/>
+                    Margin="5">
+                    <view:PreviewImageView.Background>
+                        <SolidColorBrush Color="{DynamicResource Background_Idle_1}"/>
+                    </view:PreviewImageView.Background>
+                </view:PreviewImageView>
 
             </Border>
 
