@@ -1,0 +1,48 @@
+﻿<UserControl 
+    x:Class="Inchoqate.GUI.View.ExtSliderView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:Inchoqate.GUI.View"
+    mc:Ignorable="d" 
+    d:DesignHeight="50" d:DesignWidth="300"
+    x:Name="ControlRoot">
+
+    <UserControl.Resources>
+        <local:CountToSliderConverter x:Key="CountToControlConverter"/>
+        <local:SliderValueIndexer x:Key="SliderValueIndexer"/>
+    </UserControl.Resources>
+
+    <Grid
+        x:Name="MainGrid"
+        Width="{Binding ActualWidth, ElementName=ControlRoot}">
+
+        <ItemsControl
+            x:Name="SlidersControl"
+            ItemsSource="{Binding ValueCount, ElementName=ControlRoot, Converter={StaticResource CountToControlConverter}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="local:SliderPart">
+                    <Setter Property="Minimum" Value="{Binding Minimum, RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
+                    <Setter Property="Maximum" Value="{Binding Maximum, RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
+                    <Setter Property="ExtSlider" Value="{Binding RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
+                    <Setter Property="Value">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource SliderValueIndexer}" Mode="OneWay">
+                                <Binding Path="Values" RelativeSource="{RelativeSource AncestorType=local:ExtSliderView}"/>
+                                <Binding Path="Index" RelativeSource="{RelativeSource Mode=Self}"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter> 
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
+        
+    </Grid>
+
+</UserControl>

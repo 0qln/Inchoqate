@@ -10,7 +10,7 @@ namespace Inchoqate.GUI.ViewModel
     public class ObservableItemCollection<T> : ObservableCollectionBase<T>
         where T : INotifyPropertyChanged
     {
-        public event EventHandler? ItemsPropertyChanged;
+        public event PropertyChangedEventHandler? ItemsPropertyChanged;
 
 
         public ObservableItemCollection() : base()
