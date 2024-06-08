@@ -139,12 +139,10 @@ namespace Inchoqate.GUI.View
             var slider = (ExtSliderView)d;
             var ranges = (double[])e.NewValue;
             var values = new double[ranges.Length - 1];
-            var current = .0;
+            
+            double current = .0;
             for (int i = 0; i < ranges.Length - 1; i++)
-            {
-                current += ranges[i];
-                values[i] = current;
-            }
+                values[i] = (current += ranges[i]);
 
             if (slider.Values is null || !values.SequenceEqual(slider.Values))
                 slider.Values = values;
@@ -173,11 +171,10 @@ namespace Inchoqate.GUI.View
             var slider = (ExtSliderView)d;
             var values = (double[])e.NewValue;
             var ranges = new double[values.Length + 1];
+            
             ranges[0] = values[0] - slider.Minimum;
             for (int i = 1; i < values.Length; i++)
-            {
                 ranges[i] = values[i] - values[i - 1];
-            }
             ranges[^1] = slider.Maximum - values[^1];
 
             if (slider.Ranges is null || !ranges.SequenceEqual(slider.Ranges))
