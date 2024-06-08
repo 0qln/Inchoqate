@@ -50,30 +50,6 @@ namespace Inchoqate.GUI.View
                 FrameworkPropertyMetadataOptions.AffectsArrange |
                 FrameworkPropertyMetadataOptions.AffectsRender));
 
-        //public static readonly DependencyProperty ValuesProperty = DependencyProperty.Register(
-        //    "Values",
-        //    typeof(ObservableItemCollection<ObservableStruct<double>>),
-        //    typeof(ExtSliderView),
-        //    new FrameworkPropertyMetadata(
-        //        propertyChangedCallback: ValuespropertyChangedCallback,
-        //        coerceValueCallback: ValuespropertyCoerceValueCallback));
-
-        //public static readonly DependencyProperty ValuesProperty = DependencyProperty.Register(
-        //    "Values",
-        //    typeof(ObservableCollection<double>),
-        //    typeof(ExtSliderView),
-        //    new FrameworkPropertyMetadata(
-        //        propertyChangedCallback: ValuespropertyChangedCallback,
-        //        coerceValueCallback: ValuespropertyCoerceValueCallback));
-
-        //public static readonly DependencyProperty RangesProperty = DependencyProperty.Register(
-        //    "Ranges",
-        //    typeof(ObservableItemCollection<ObservableStruct<double>>),
-        //    typeof(ExtSliderView),
-        //    new FrameworkPropertyMetadata(
-        //        propertyChangedCallback: RangespropertyChangedCallback,
-        //        coerceValueCallback: RangespropertyCoerceValueCallback));
-
         public static readonly DependencyProperty ValuesProperty =
             DependencyProperty.RegisterAttached(
                 "Values",
@@ -83,14 +59,14 @@ namespace Inchoqate.GUI.View
                     propertyChangedCallback: ValuespropertyChangedCallback,
                     coerceValueCallback: ValuespropertyCoerceValueCallback));
 
-        //public static readonly DependencyProperty RangesProperty =
-        //    DependencyProperty.RegisterAttached(
-        //        "Ranges",
-        //        typeof(double[]),
-        //        typeof(ExtSliderView),
-        //        new FrameworkPropertyMetadata(
-        //            propertyChangedCallback: RangespropertyChangedCallback,
-        //            coerceValueCallback: RangespropertyCoerceValueCallback));
+        public static readonly DependencyProperty RangesProperty =
+            DependencyProperty.RegisterAttached(
+                "Ranges",
+                typeof(double[]),
+                typeof(ExtSliderView),
+                new FrameworkPropertyMetadata(
+                    propertyChangedCallback: RangespropertyChangedCallback,
+                    coerceValueCallback: RangespropertyCoerceValueCallback));
 
         public static readonly DependencyProperty ValueCountProperty = DependencyProperty.Register(
             "ValueCount",
@@ -125,35 +101,17 @@ namespace Inchoqate.GUI.View
             set { SetValue(MaximumProperty, value); }
         }
 
-        //public ObservableItemCollection<ObservableStruct<double>> Values
-        //{
-        //    get => (ObservableItemCollection<ObservableStruct<double>>)GetValue(ValuesProperty);
-        //    set => SetValue(ValuesProperty, value);
-        //}
-
-        //public ObservableCollection<double> Values
-        //{
-        //    get => (ObservableCollection<double>)GetValue(ValuesProperty);
-        //    set => SetValue(ValuesProperty, value);
-        //}
-
-        //public ObservableItemCollection<ObservableStruct<double>> Ranges
-        //{
-        //    get => (ObservableItemCollection<ObservableStruct<double>>)GetValue(RangesProperty);
-        //    set => SetValue(RangesProperty, value);
-        //}
-
         public double[] Values
         {
             get { return (double[])GetValue(ValuesProperty); }
             set { SetValue(ValuesProperty, value); }
         }
 
-        //public double[] Ranges
-        //{
-        //    get { return (double[])GetValue(RangesProperty); }
-        //    set { SetValue(RangesProperty, value); }
-        //}
+        public double[] Ranges
+        {
+            get { return (double[])GetValue(RangesProperty); }
+            set { SetValue(RangesProperty, value); }
+        }
 
         public int ValueCount
         {
@@ -175,45 +133,21 @@ namespace Inchoqate.GUI.View
             SetBinding(RangeCountProperty, new Binding("ValueCount") { Source = this, Converter = new OffsetConverter<int>(1), Mode = BindingMode.TwoWay });
         }
 
-        //private class ValuesToRangesConverter(double min, double max) : IValueConverter
-        //{
-        //    object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        //    {
-        //        var values = (ObservableItemCollection<ObservableStruct<double>>)value;
-        //        var ranges = new ObservableItemCollection<ObservableStruct<double>> 
-        //        {
-        //            new(values[0].Value - min)
-        //        };
-        //        for (int i = 1; i < values.Count; i++)
-        //        {
-        //            ranges.Add(new ObservableStruct<double>(values[i].Value - values[i - 1].Value));
-        //        }
-        //        ranges.Add(new(max - values[^1].Value));
-        //        Debug.Assert(ranges.Count - 1 == values.Count);
-        //        return ranges;
-        //    }
-
-        //    object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        //    {
-        //        var ranges = (ObservableItemCollection<ObservableStruct<double>>)value;
-        //        var values = new ObservableItemCollection<ObservableStruct<double>>();
-        //        double sum = 0;
-        //        for (int i = 0; i < ranges.Count - 1; i++)
-        //        {
-        //            sum += ranges[i].Value;
-        //            values.Add(new ObservableStruct<double>(sum));
-        //        }
-        //        Debug.Assert(ranges.Count - 1 == values.Count);
-        //        return values;
-        //    }
-        //}
-
 
         private static void RangespropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            //var @this = (ExtSliderView)d;
-            //IValueConverter conv = new ValuesToRangesConverter(@this.Minimum, @this.Maximum);
-            //@this.Values = (ObservableItemCollection<ObservableStruct<double>>)conv.ConvertBack(e.NewValue, typeof(ObservableItemCollection<ObservableStruct<double>>), null, null);
+            var slider = (ExtSliderView)d;
+            var ranges = (double[])e.NewValue;
+            var values = new double[ranges.Length - 1];
+            var current = .0;
+            for (int i = 0; i < ranges.Length - 1; i++)
+            {
+                current += ranges[i];
+                values[i] = current;
+            }
+
+            if (slider.Values is null || !values.SequenceEqual(slider.Values))
+                slider.Values = values;
         }
 
         private static object RangespropertyCoerceValueCallback(DependencyObject d, object baseValue)
@@ -222,11 +156,6 @@ namespace Inchoqate.GUI.View
 
             switch (baseValue)
             {
-                case ObservableItemCollection<ObservableStruct<double>> arr:
-                    if (arr.Count != extSlider.RangeCount)
-                        throw new ArgumentException("The number of ranges must be equal the range count.");
-                    break;
-
                 case double[] arr:
                     if (arr.Length != extSlider.RangeCount)
                         throw new ArgumentException("The number of ranges must be equal the range count.");
@@ -235,12 +164,24 @@ namespace Inchoqate.GUI.View
                 default:
                     throw new ArgumentException(baseValue.GetType().Name);
             }
-            
+
             return baseValue;
         }
 
         private static void ValuespropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            var slider = (ExtSliderView)d;
+            var values = (double[])e.NewValue;
+            var ranges = new double[values.Length + 1];
+            ranges[0] = values[0] - slider.Minimum;
+            for (int i = 1; i < values.Length; i++)
+            {
+                ranges[i] = values[i] - values[i - 1];
+            }
+            ranges[^1] = slider.Maximum - values[^1];
+
+            if (slider.Ranges is null || !ranges.SequenceEqual(slider.Ranges))
+                slider.Ranges = ranges;
         }
 
         private static object ValuespropertyCoerceValueCallback(DependencyObject d, object baseValue)
@@ -249,16 +190,6 @@ namespace Inchoqate.GUI.View
 
             switch (baseValue)
             {
-                case ObservableCollection<double> arr:
-                    if (arr.Count != extSlider.ValueCount)
-                        throw new ArgumentException("The number of values must be equal the value count.");
-                    break;
-
-                case ObservableItemCollection<ObservableStruct<double>> arr:
-                    if (arr.Count != extSlider.ValueCount)
-                        throw new ArgumentException("The number of values must be equal the value count.");
-                    break;
-
                 case double[] arr:
                     if (arr.Length != extSlider.ValueCount)
                         throw new ArgumentException("The number of values must be equal the value count.");
@@ -356,6 +287,7 @@ namespace Inchoqate.GUI.View
             set => SetValue(IndexProperty, value);
         }
 
+        /// <summary> The range relative to the previous slider part. </summary>
         public double Range
         {
             get => (double)GetValue(RangeProperty);
@@ -391,7 +323,7 @@ namespace Inchoqate.GUI.View
         private static void ValuepropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var @this = (SliderPart)d;
-            var arr = @this.ExtSlider.Values;
+            var arr = @this.ExtSlider.Values.ToArray();
             arr[@this.Index] = (double)e.NewValue;
             @this.ExtSlider.Values = arr;
         }

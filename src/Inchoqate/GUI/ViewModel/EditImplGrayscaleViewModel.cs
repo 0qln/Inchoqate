@@ -65,7 +65,7 @@ namespace Inchoqate.GUI.ViewModel
 
             _weightsControl = new() { RangeCount = 3, Minimum = 0, Maximum = 1 };
             _weightsControl.SetBinding(
-                ExtSliderView.ValuesProperty,
+                ExtSliderView.RangesProperty,
                 new Binding("Weights") { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });
 
             _optionControls = [
@@ -92,25 +92,13 @@ namespace Inchoqate.GUI.ViewModel
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var vec = (Vector3)value;
-            //var val1 = new ObservableStruct<double>(vec.X);
-            //var val2 = new ObservableStruct<double>(vec.Y + vec.X);
-            //return new ObservableItemCollection<ObservableStruct<double>>() { val1, val2 };
-            //return new ObservableCollection<double> { (double)vec.X, (double)vec.Y + (double)vec.X };
-            //return new ObservableItemCollection<ObservableStruct<double>>(((float[])[vec.X, vec.Y, vec.Z]).Select(x => new ObservableStruct<double>(x)));
-            return new double[] { vec.X, vec.Y + vec.X };
+            return new double[] { vec.X, vec.Y, vec.Z };
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            //var arr = (ObservableItemCollection<ObservableStruct<double>>)value;
-            //var arr = (ObservableCollection<double>)value;
             var arr = (double[])value;
-            //return new Vector3(0, (float)arr[0].Value, (float)arr[1].Value - (float)arr[0].Value);
-            var x = arr[0];
-            var y = arr[1] - arr[0];
-            var z = 1 - y - x;
-            return new Vector3((float)x, (float)y, (float)z);
-            //return new Vector3((float)arr[0].Value, (float)arr[1].Value, (float)arr[2].Value);
+            return new Vector3((float)arr[0], (float)arr[1], (float)arr[2]);
         }
     }
 }
