@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="300"
              x:Name="ControlRoot">
+
         <Border Background="{DynamicResource Popup_Idle_1}"
             BorderBrush="{DynamicResource Popup_Idle_Contrast_1}"
             BorderThickness="1">
@@ -67,8 +68,43 @@
                           Margin="10, 5">
 
                 <ItemsControl.ItemContainerStyle>
-                    <Style>
-                        <Setter Property="Control.Margin" Value="0, 5"/>
+                    <Style TargetType="ContentControl">
+                        <!--<Setter Property="Control.Margin" Value="0, 5"/>-->
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ContentControl">
+                                    <Grid>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock 
+                                            x:Name="NameControl"
+                                            Grid.Row="0"
+                                            Foreground="{DynamicResource Text_1}"
+                                            Margin="0, 0, 0, 5"
+                                            Text="{TemplateBinding Name}"/>
+                                        <ContentPresenter 
+                                            x:Name="ContentPresenter"
+                                            Grid.Row="1"
+                                            Content="{TemplateBinding Content}"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"/>
+                                        <Rectangle 
+                                            x:Name="Seperator"
+                                            Margin="0, 5"
+                                            Grid.Row="2"
+                                            Height="1"
+                                            HorizontalAlignment="Stretch"
+                                            Fill="{DynamicResource Background_Idle_Contrast_3}"/>
+
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </ItemsControl.ItemContainerStyle>
 

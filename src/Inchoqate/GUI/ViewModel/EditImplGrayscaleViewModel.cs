@@ -20,9 +20,9 @@ namespace Inchoqate.GUI.ViewModel
     {
         private readonly Slider _intenstityControl;
         private readonly ExtSliderView _weightsControl;
-        private readonly ObservableCollection<Control> _optionControls;
+        private readonly ObservableCollection<ContentControl> _optionControls;
 
-        public override ObservableCollection<Control> OptionControls => _optionControls;
+        public override ObservableCollection<ContentControl> OptionControls => _optionControls;
 
         private double intensity;
         private Vector3 weights;
@@ -61,16 +61,16 @@ namespace Inchoqate.GUI.ViewModel
             _intenstityControl = new() { Minimum = 0, Maximum = 1, Value = Intensity };
             _intenstityControl.SetBinding(
                 Slider.ValueProperty, 
-                new Binding("Intensity") { Source = this, Mode=BindingMode.TwoWay });
+                new Binding(nameof(Intensity)) { Source = this, Mode=BindingMode.TwoWay });
 
             _weightsControl = new() { RangeCount = 3, Minimum = 0, Maximum = 1 };
             _weightsControl.SetBinding(
                 ExtSliderView.RangesProperty,
-                new Binding("Weights") { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });
+                new Binding(nameof(Weights)) { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });
 
             _optionControls = [
-                _intenstityControl,
-                _weightsControl 
+                new() { Content = _intenstityControl, Name = nameof(Intensity) },
+                new() { Content = _weightsControl, Name = nameof(Weights) }
             ];
         }
 

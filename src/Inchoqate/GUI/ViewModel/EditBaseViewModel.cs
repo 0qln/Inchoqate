@@ -7,7 +7,7 @@ namespace Inchoqate.GUI.ViewModel
 {
     public abstract class EditBaseViewModel : BaseViewModel, IEditModel
     {
-        public abstract ObservableCollection<Control> OptionControls { get; }
+        public abstract ObservableCollection<ContentControl> OptionControls { get; }
 
         public abstract int ExpectedInputCount { get; }
 

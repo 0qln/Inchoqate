@@ -13,9 +13,9 @@ namespace Inchoqate.GUI.ViewModel
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditImplPixelsortViewModel>();
 
         private readonly Slider _intenstityControl;
-        private readonly ObservableCollection<Control> _optionControls;
+        private readonly ObservableCollection<ContentControl> _optionControls;
 
-        public override ObservableCollection<Control> OptionControls => _optionControls;
+        public override ObservableCollection<ContentControl> OptionControls => _optionControls;
 
         private double angle = 0;
 
@@ -37,7 +37,7 @@ namespace Inchoqate.GUI.ViewModel
                 new Binding("Angle") { Source = this, Mode=BindingMode.TwoWay });
 
             _optionControls = [
-                _intenstityControl
+                new() { Content = _intenstityControl }
             ];
         }
 

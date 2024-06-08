@@ -7,9 +7,9 @@ namespace Inchoqate.GUI.ViewModel
 {
     public class EditImplIdentityViewModel : EditBaseLinearShader
     {
-        private readonly ObservableCollection<Control> _optionControls = [];
+        private readonly ObservableCollection<ContentControl> _optionControls = [];
 
-        public override ObservableCollection<Control> OptionControls => _optionControls;
+        public override ObservableCollection<ContentControl> OptionControls => _optionControls;
 
 
         public EditImplIdentityViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) : base(usage)
