@@ -64,7 +64,7 @@ namespace Inchoqate.GUI.ViewModel
                 ExtSliderView.ValuesProperty, 
                 new Binding(nameof(Intensity)) { Source = this, Mode=BindingMode.TwoWay, Converter = new DoubleToDoubleArrConverter() });
 
-            _weightsControl = new() { RangeCount = 3, Minimum = 0, Maximum = 1, BackgroundGradientBrushes = [Colors.Red, Colors.Green, Colors.Blue], ShowValues = [true, false]  };
+            _weightsControl = new() { RangeCount = 3, Minimum = 0, Maximum = 1, BackgroundGradientBrushes = [Colors.Red, Colors.Green, Colors.Blue], ShowRanges = [true, true, true]  };
             _weightsControl.SetBinding(
                 ExtSliderView.RangesProperty,
                 new Binding(nameof(Weights)) { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });

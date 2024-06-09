@@ -102,10 +102,10 @@ namespace Inchoqate.GUI.View
         public static readonly DependencyProperty ShowRangesProperty = 
             DependencyProperty.Register(
                 "ShowRanges",
-                typeof(bool),
+                typeof(bool[]),
                 typeof(ExtSliderView),
                 new FrameworkPropertyMetadata(
-                    false,
+                    null,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty BackgroundGradientBrushesProperty =
@@ -160,6 +160,12 @@ namespace Inchoqate.GUI.View
         {
             get { return (bool[])GetValue(ShowValuesProperty); }
             set { SetValue(ShowValuesProperty, value); }
+        }
+
+        public bool[] ShowRanges
+        {
+            get { return (bool[])GetValue(ShowRangesProperty); }
+            set { SetValue(ShowRangesProperty, value); }
         }
 
         public Color[] BackgroundGradientBrushes
@@ -329,33 +335,78 @@ namespace Inchoqate.GUI.View
     }
 
 
-    public class ShowValueAdorner : Adorner
+    public class SliderInfoAdorner : Adorner
     {
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(
                 "Value",
                 typeof(double),
-                typeof(ShowValueAdorner),
+                typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
-                    0.0, 
+                    0.0,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty MinimumProperty =
             DependencyProperty.Register(
                 "Minimum",
                 typeof(double),
-                typeof(ShowValueAdorner),
+                typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
-                    0.0, 
+                    0.0,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register(
                 "Maximum",
                 typeof(double),
-                typeof(ShowValueAdorner),
+                typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
-                    0.0, 
+                    0.0,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty ShowPrevRangeProperty =
+            DependencyProperty.Register(
+                "ShowPrevRange",
+                typeof(bool),
+                typeof(SliderInfoAdorner),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty ShowNextRangeProperty =
+            DependencyProperty.Register(
+                "ShowNextRange",
+                typeof(bool),
+                typeof(SliderInfoAdorner),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty ShowValueProperty =
+            DependencyProperty.Register(
+                "ShowValue",
+                typeof(bool),
+                typeof(SliderInfoAdorner),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty RangesProperty =
+            DependencyProperty.Register(
+                "Ranges",
+                typeof(double[]),
+                typeof(SliderInfoAdorner),
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty IndexProperty =
+            DependencyProperty.Register(
+                "Index",
+                typeof(int),
+                typeof(SliderInfoAdorner),
+                new FrameworkPropertyMetadata(
+                    -1,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
 
@@ -377,6 +428,36 @@ namespace Inchoqate.GUI.View
             set { SetValue(ValueProperty, value); }
         }
 
+        public bool ShowNextRange
+        {
+            get { return (bool)GetValue(ShowNextRangeProperty); }
+            set { SetValue(ShowNextRangeProperty, value); }
+        }
+
+        public bool ShowPrevRange
+        {
+            get { return (bool)GetValue(ShowPrevRangeProperty); }
+            set { SetValue(ShowPrevRangeProperty, value); }
+        }
+
+        public bool ShowValue
+        {
+            get { return (bool)GetValue(ShowValueProperty); }
+            set { SetValue(ShowValueProperty, value); }
+        }
+
+        public double[] Ranges
+        {
+            get { return (double[])GetValue(RangesProperty); }
+            set { SetValue(RangesProperty, value); }
+        }
+
+        public int Index
+        {
+            get { return (int)GetValue(IndexProperty); }
+            set { SetValue(IndexProperty, value); }
+        }
+
         public Brush TextColor
         {
             get => new SolidColorBrush((Color)((App)Application.Current).ThemeDictionary["Text_2"]);
@@ -388,39 +469,77 @@ namespace Inchoqate.GUI.View
         }
 
 
-        public ShowValueAdorner(SliderPart adornedElement) : base(adornedElement)
+        public SliderInfoAdorner(SliderPart adornedElement) : base(adornedElement)
         {
             SetBinding(ValueProperty, new Binding("Value") { Source = adornedElement, });
             SetBinding(MinimumProperty, new Binding("Minimum") { Source = adornedElement, });
             SetBinding(MaximumProperty, new Binding("Maximum") { Source = adornedElement, });
+            SetBinding(IndexProperty, new Binding("Index") { Source = adornedElement, });
+            SetBinding(ShowValueProperty, new Binding("ShowValue") { Source = adornedElement, });
+            SetBinding(ShowPrevRangeProperty, new Binding("ShowPrevRange") { Source = adornedElement, });
+            SetBinding(ShowNextRangeProperty, new Binding("ShowNextRange") { Source = adornedElement, });
         }
-
 
         protected override void OnRender(DrawingContext drawingContext)
         {
             if (AdornedElement is SliderPart slider)
             {
-                if (!slider.ShowValue)
-                {
-                    return;
-                }
+                // TODO: maxtextwidth, typeface, textsize as property
 
                 var track = (Track)slider.Template.FindName("PART_Track", slider);
-                var thumb = track.Thumb;
-                var range = Math.Abs(Minimum) + Math.Abs(Maximum);
-                var valNorm = (Value - Minimum) / range;
-                var thumbX = valNorm * (slider.ActualWidth - thumb.ActualWidth);
-                var text = new FormattedText(
-                    Value.ToString(),
-                    CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight,
-                    new Typeface("Consolas"),
-                    12,
-                    TextColor) {
-                    MaxTextWidth = 50
-                };
-                drawingContext.DrawRectangle(BackgroundColor, null, new Rect(thumbX, -12, text.Width, text.Height));
-                drawingContext.DrawText(text, new Point(thumbX, -12));
+                var trackSpace = Math.Abs(Minimum) + Math.Abs(Maximum);
+                double norm(double value) => (value - Minimum) / trackSpace;
+                double toScreen(double value) => value * (slider.ActualWidth - track.Thumb.ActualWidth);
+                var thumbX = toScreen(norm(Value));
+                double textSize = 12;
+                double maxTextWidth = 40;
+                var typeFace = new Typeface("Segoe UI");
+
+                void DrawText(string text, double x, double y, bool top)
+                {
+                    // TODO: use non-obsolete function.
+#pragma warning disable CS0618 // Type or member is obsolete
+                    var formattedText = new FormattedText(
+                        text,
+                        CultureInfo.CurrentCulture,
+                        FlowDirection.LeftToRight,
+                        typeFace,
+                        textSize,
+                        TextColor)
+                    {
+                        MaxTextWidth = maxTextWidth,
+                    };
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                    // transform 
+                    y += top
+                        ? -formattedText.Height + (slider.ActualHeight - track.Thumb.ActualHeight)
+                        : (slider.ActualHeight - track.Thumb.ActualHeight) + track.Thumb.ActualHeight;
+                    // draw
+                    if (top) drawingContext.DrawRectangle(BackgroundColor, null, new Rect(x, y, formattedText.Width, formattedText.Height));
+                    drawingContext.DrawText(formattedText, new Point(x, y));
+                }
+
+                if (ShowValue)
+                {
+                    DrawText(Value.ToString(), thumbX, 0, true);
+                }
+
+                if (ShowNextRange 
+                    && Index + 1 < Ranges.Length 
+                    && Index + 1 >= 0)
+                {
+                    var range = Ranges[Index + 1];
+                    DrawText(range.ToString(), thumbX + toScreen(norm(range)) / 2, 0, false);
+                }
+
+                if (ShowPrevRange
+                    && Index >= 0
+                    && Index < Ranges.Length)
+                {
+                    var range = Ranges[Index];
+                    DrawText(range.ToString(), thumbX - toScreen(norm(range)) / 2, 0, false);
+                }
             }
         }
     }
@@ -517,6 +636,24 @@ namespace Inchoqate.GUI.View
                     true,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public static readonly DependencyProperty ShowPrevRangeProperty =
+            DependencyProperty.Register(
+                "ShowPrevRange",
+                typeof(bool),
+                typeof(SliderPart),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty ShowNextRangeProperty =
+            DependencyProperty.Register(
+                "ShowNextRange",
+                typeof(bool),
+                typeof(SliderPart),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
 
         public double ValueMin
         {
@@ -536,7 +673,7 @@ namespace Inchoqate.GUI.View
             set => SetValue(IndexProperty, value);
         }
 
-        /// <summary> The range relative to the previous slider part. </summary>
+        /// <summary> The range left of the thumb. </summary>
         public double Range
         {
             get => (double)GetValue(RangeProperty);
@@ -561,6 +698,18 @@ namespace Inchoqate.GUI.View
             set => SetValue(ShowValueProperty, value);
         }
 
+        public bool ShowPrevRange
+        {
+            get => (bool)GetValue(ShowPrevRangeProperty);
+            set => SetValue(ShowPrevRangeProperty, value);
+        }
+
+        public bool ShowNextRange
+        {
+            get => (bool)GetValue(ShowNextRangeProperty);
+            set => SetValue(ShowNextRangeProperty, value);
+        }
+
 
         static SliderPart()
         {
@@ -578,15 +727,23 @@ namespace Inchoqate.GUI.View
         public SliderPart(SliderPart? previousPart)
         {
             SetBinding(RangeProperty, new Binding("Value") { Source = this, Converter = new ValueToRangeConverter(previousPart), Mode = BindingMode.TwoWay });
-
             SetBinding(TrackVisibilityProperty, new Binding("Index") { Source = this, Converter = new IndexToTrackVisibilityConverter(), Mode = BindingMode.OneWay });
-
             Loaded += LoadedHandler;
         }
 
         private void LoadedHandler(object sender, RoutedEventArgs e)
         {
-            AdornerLayer.GetAdornerLayer(this).Add(new ShowValueAdorner(this));
+            var adorner = new SliderInfoAdorner(this);
+            AdornerLayer.GetAdornerLayer(this).Add(adorner);
+            var prBinding = new MultiBinding() { Converter = new ElementAtConverter<bool>(fallbackPredicateIndex: index => index != 0) };
+            prBinding.Bindings.Add(new Binding("ShowRanges") { Source = ExtSlider });
+            prBinding.Bindings.Add(new Binding("Index") { Source = this });
+            adorner.SetBinding(SliderInfoAdorner.ShowPrevRangeProperty, prBinding);
+            var nrBinding = new MultiBinding() { Converter = new ElementAtConverter<bool>(indexTransform: index => index + 1) };
+            nrBinding.Bindings.Add(new Binding("ShowRanges") { Source = ExtSlider });
+            nrBinding.Bindings.Add(new Binding("Index") { Source = this });
+            adorner.SetBinding(SliderInfoAdorner.ShowNextRangeProperty, nrBinding);
+            adorner.SetBinding(SliderInfoAdorner.RangesProperty, new Binding("Ranges") { Source = ExtSlider });
 
             var bgBinding = new MultiBinding() { Converter = new GradientStopsConverter() };
             bgBinding.Bindings.Add(new Binding("BackgroundGradientBrushes") { Source = ExtSlider });
