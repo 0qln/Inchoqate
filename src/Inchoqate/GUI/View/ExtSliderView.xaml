@@ -12,6 +12,8 @@
     <UserControl.Resources>
         <local:CountToSliderConverter x:Key="CountToControlConverter"/>
         <local:SliderValueIndexer x:Key="SliderValueIndexer"/>
+        <local:GradientStopsConverter x:Key="ExtSliderToGradientStopsConverter"/>
+
         <Style x:Key="SliderButtonStyle" TargetType="{x:Type RepeatButton}">
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -113,27 +115,24 @@
                         Height="4"
                         Grid.Row="1"
                         BorderThickness="1"
-                        Visibility="{TemplateBinding TrackVisibility}">
+                        Visibility="{TemplateBinding TrackVisibility}"
+                        Background="{TemplateBinding Background}">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                             <LinearGradientBrush.GradientStops>
                                 <GradientStopCollection>
                                     <GradientStop Color="{DynamicResource Border_Idle_3}" Offset="0.0" />
-                                    <GradientStop Color="{DynamicResource Border_Idle_1}" Offset="1.0" />
                                 </GradientStopCollection>
                             </LinearGradientBrush.GradientStops>
                         </LinearGradientBrush>
                     </Border.BorderBrush>
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <LinearGradientBrush.GradientStops>
-                                <GradientStopCollection>
-                                    <GradientStop Color="{DynamicResource Element_Idle_3}" Offset="0.0" />
-                                    <GradientStop Color="{DynamicResource Slider_Idle_1}" Offset="1.0" />
-                                </GradientStopCollection>
-                            </LinearGradientBrush.GradientStops>
+                    <!--<Border.Background>
+                        <LinearGradientBrush 
+                            StartPoint="0,0" 
+                            EndPoint="1,0"
+                            GradientStops="{TemplateBinding ExtSlider, Converter={StaticResource ExtSliderToGradientStopsConverter}}">
                         </LinearGradientBrush>
-                    </Border.Background>
+                    </Border.Background>-->
                 </Border>
                 <Track Grid.Row="1" x:Name="PART_Track">
                     <!--<Track.DecreaseRepeatButton>

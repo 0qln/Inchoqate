@@ -13,6 +13,7 @@ using System.Windows.Data;
 using OpenTK.Mathematics;
 using System.Globalization;
 using System.Diagnostics;
+using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -63,7 +64,7 @@ namespace Inchoqate.GUI.ViewModel
                 ExtSliderView.ValuesProperty, 
                 new Binding(nameof(Intensity)) { Source = this, Mode=BindingMode.TwoWay, Converter = new DoubleToDoubleArrConverter() });
 
-            _weightsControl = new() { RangeCount = 3, Minimum = 0, Maximum = 1 };
+            _weightsControl = new() { RangeCount = 3, Minimum = 0, Maximum = 1, BackgroundGradientBrushes = [Colors.Red, Colors.Green, Colors.Blue]  };
             _weightsControl.SetBinding(
                 ExtSliderView.RangesProperty,
                 new Binding(nameof(Weights)) { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });

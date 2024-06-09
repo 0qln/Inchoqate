@@ -98,6 +98,17 @@ namespace Inchoqate.GUI.View
                     false,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public static readonly DependencyProperty BackgroundGradientBrushesProperty =
+            DependencyProperty.Register(
+                "BackgroundGradientBrushes",
+                typeof(Color[]),
+                typeof(ExtSliderView),
+                new FrameworkPropertyMetadata(
+                    new Color[] { 
+                        (Color)((App)Application.Current).ThemeDictionary["Element_Idle_3"]
+                    },
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
 
         public double Minimum
         {
@@ -139,6 +150,12 @@ namespace Inchoqate.GUI.View
         {
             get { return (bool)GetValue(ShowValuesProperty); }
             set { SetValue(ShowValuesProperty, value); }
+        }
+
+        public Color[] BackgroundGradientBrushes
+        {
+            get { return (Color[])GetValue(BackgroundGradientBrushesProperty); }
+            set { SetValue(BackgroundGradientBrushesProperty, value); }
         }
 
 
@@ -213,6 +230,55 @@ namespace Inchoqate.GUI.View
             }
 
             return baseValue;
+        }
+    }
+
+
+    public class GradientStopsConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var result = new GradientStopCollection();
+            var colors = (Color[])values[0];
+            var thumbValues = (double[])values[1];
+            var minimum = (double)values[2];
+            var maximum = (double)values[3];
+            var offsets = new double[thumbValues.Length + 1 /*ranges count*/ + 1 /*maximum*/];
+            offsets[0] = 0.0;
+            var range = Math.Abs(minimum) + Math.Abs(maximum);
+            for (int i = 1; i < colors.Length; i++)
+            {
+                var valNorm = (thumbValues[i - 1] - minimum) / range;
+                offsets[i] = valNorm;
+            }
+            offsets[^1] = 1.0;
+            if (colors.Length != offsets.Length - 1)
+            {
+                if (colors.Length == 1)
+                    return new SolidColorBrush(colors[0]);
+
+                else throw new ArgumentException("The number of colors must be equal the number of offsets.");
+            }
+            for (int i = 0; i < colors.Length; i++)
+            {
+                result.Add(new GradientStop
+                {
+                    Color = colors[i],
+                    Offset = offsets[i]
+                });
+                result.Add(new GradientStop
+                {
+                    Color = colors[i],
+                    Offset = offsets[i + 1]
+                });
+            }
+            var b = new LinearGradientBrush(result);
+            return b;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -295,8 +361,8 @@ namespace Inchoqate.GUI.View
 
                 var track = (Track)slider.Template.FindName("PART_Track", slider);
                 var thumb = track.Thumb;
-                var range = Math.Abs(Minimum - Maximum);
-                var valNorm = Value / range;
+                var range = Math.Abs(Minimum) + Math.Abs(Maximum);
+                var valNorm = (Value - Minimum) / range;
                 var thumbX = valNorm * (slider.ActualWidth - thumb.ActualWidth);
                 var text = new FormattedText(
                     Value.ToString(),
@@ -376,7 +442,10 @@ namespace Inchoqate.GUI.View
             DependencyProperty.Register(
                 "ExtSlider",
                 typeof(ExtSliderView),
-                typeof(SliderPart));
+                typeof(SliderPart),
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty TrackVisibilityProperty =
             DependencyProperty.Register(
@@ -457,13 +526,22 @@ namespace Inchoqate.GUI.View
         public SliderPart(SliderPart? previousPart)
         {
             SetBinding(RangeProperty, new Binding("Value") { Source = this, Converter = new ValueToRangeConverter(previousPart), Mode = BindingMode.TwoWay });
+
             SetBinding(TrackVisibilityProperty, new Binding("Index") { Source = this, Converter = new IndexToTrackVisibilityConverter(), Mode = BindingMode.OneWay });
+
             Loaded += LoadedHandler;
         }
 
         private void LoadedHandler(object sender, RoutedEventArgs e)
         {
             AdornerLayer.GetAdornerLayer(this).Add(new ShowValueAdorner(this));
+
+            var bgBinding = new MultiBinding() { Converter = new GradientStopsConverter() };
+            bgBinding.Bindings.Add(new Binding("BackgroundGradientBrushes") { Source = ExtSlider });
+            bgBinding.Bindings.Add(new Binding("Values") { Source = ExtSlider });
+            bgBinding.Bindings.Add(new Binding("Minimum") { Source = ExtSlider });
+            bgBinding.Bindings.Add(new Binding("Maximum") { Source = ExtSlider });
+            SetBinding(BackgroundProperty, bgBinding);
         }
 
         private static void ValuepropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
