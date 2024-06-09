@@ -25,7 +25,6 @@ namespace Inchoqate.GUI.Model
             GL.BindBuffer(bufferTarget, Handle);
             using (var pin = values.Pin())
             {
-                // TODO: no idea if this will work
                 IntPtr data = (IntPtr)pin.Pointer;
                 IntPtr size = Size;
                 GL.BufferData(bufferTarget, size, data, usage);
