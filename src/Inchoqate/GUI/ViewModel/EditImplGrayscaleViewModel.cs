@@ -58,7 +58,7 @@ namespace Inchoqate.GUI.ViewModel
             Weights = new(0.2126f, 0.7152f, 0.0722f);
             Title = "Grayscale";
 
-            _intenstityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity] };
+            _intenstityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity], ShowValues = true };
             _intenstityControl.SetBinding(
                 ExtSliderView.ValuesProperty, 
                 new Binding(nameof(Intensity)) { Source = this, Mode=BindingMode.TwoWay, Converter = new DoubleToDoubleArrConverter() });

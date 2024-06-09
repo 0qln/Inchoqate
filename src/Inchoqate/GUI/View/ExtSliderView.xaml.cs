@@ -49,6 +49,8 @@ namespace Inchoqate.GUI.View
                 FrameworkPropertyMetadataOptions.AffectsArrange |
                 FrameworkPropertyMetadataOptions.AffectsRender));
 
+        // TODO: use `DoubleCollection` ?
+
         public static readonly DependencyProperty ValuesProperty =
             DependencyProperty.RegisterAttached(
                 "Values",
@@ -87,6 +89,15 @@ namespace Inchoqate.GUI.View
                 FrameworkPropertyMetadataOptions.AffectsRender |
                 FrameworkPropertyMetadataOptions.AffectsMeasure));
 
+        public static readonly DependencyProperty ShowValuesProperty = 
+            DependencyProperty.Register(
+                "ShowValues",
+                typeof(bool),
+                typeof(ExtSliderView),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
 
         public double Minimum
         {
@@ -122,6 +133,12 @@ namespace Inchoqate.GUI.View
         {
             get { return (int)GetValue(RangeCountProperty); }
             set { SetValue(RangeCountProperty, value); }
+        }
+
+        public bool ShowValues
+        {
+            get { return (bool)GetValue(ShowValuesProperty); }
+            set { SetValue(ShowValuesProperty, value); }
         }
 
 
@@ -200,6 +217,103 @@ namespace Inchoqate.GUI.View
     }
 
 
+    public class ShowValueAdorner : Adorner
+    {
+        public static readonly DependencyProperty ValueProperty =
+            DependencyProperty.Register(
+                "Value",
+                typeof(double),
+                typeof(ShowValueAdorner),
+                new FrameworkPropertyMetadata(
+                    0.0, 
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty MinimumProperty =
+            DependencyProperty.Register(
+                "Minimum",
+                typeof(double),
+                typeof(ShowValueAdorner),
+                new FrameworkPropertyMetadata(
+                    0.0, 
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public static readonly DependencyProperty MaximumProperty =
+            DependencyProperty.Register(
+                "Maximum",
+                typeof(double),
+                typeof(ShowValueAdorner),
+                new FrameworkPropertyMetadata(
+                    0.0, 
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+
+        public double Maximum
+        {
+            get { return (double)GetValue(MaximumProperty); }
+            set { SetValue(MaximumProperty, value); }
+        }
+
+        public double Minimum
+        {
+            get { return (double)GetValue(MinimumProperty); }
+            set { SetValue(MinimumProperty, value); }
+        }
+
+        public double Value
+        {
+            get { return (double)GetValue(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
+        }
+
+        public Brush TextColor
+        {
+            get => new SolidColorBrush((Color)((App)Application.Current).ThemeDictionary["Text_2"]);
+        }
+
+        public Brush BackgroundColor
+        {
+            get => new SolidColorBrush((Color)((App)Application.Current).ThemeDictionary["Popup_Idle_1"]);
+        }
+
+
+        public ShowValueAdorner(SliderPart adornedElement) : base(adornedElement)
+        {
+            SetBinding(ValueProperty, new Binding("Value") { Source = adornedElement, });
+            SetBinding(MinimumProperty, new Binding("Minimum") { Source = adornedElement, });
+            SetBinding(MaximumProperty, new Binding("Maximum") { Source = adornedElement, });
+        }
+
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            if (AdornedElement is SliderPart slider)
+            {
+                if (!slider.ShowValue)
+                {
+                    return;
+                }
+
+                var track = (Track)slider.Template.FindName("PART_Track", slider);
+                var thumb = track.Thumb;
+                var range = Math.Abs(Minimum - Maximum);
+                var valNorm = Value / range;
+                var thumbX = valNorm * (slider.ActualWidth - thumb.ActualWidth);
+                var text = new FormattedText(
+                    Value.ToString(),
+                    CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight,
+                    new Typeface("Consolas"),
+                    12,
+                    TextColor) {
+                    MaxTextWidth = 50
+                };
+                drawingContext.DrawRectangle(BackgroundColor, null, new Rect(thumbX, -12, text.Width, text.Height));
+                drawingContext.DrawText(text, new Point(thumbX, -12));
+            }
+        }
+    }
+
+
     public class CountToSliderConverter() 
         : CountToControlsConverter<SliderPart>((_, container, index) =>
         {
@@ -273,6 +387,15 @@ namespace Inchoqate.GUI.View
                     Visibility.Collapsed,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public static readonly DependencyProperty ShowValueProperty =
+            DependencyProperty.Register(
+                "ShowValue",
+                typeof(bool),
+                typeof(SliderPart),
+                new FrameworkPropertyMetadata(
+                    true,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
 
         public double ValueMin
         {
@@ -311,6 +434,12 @@ namespace Inchoqate.GUI.View
             set => SetValue(TrackVisibilityProperty, value);
         }
 
+        public bool ShowValue
+        {
+            get => (bool)GetValue(ShowValueProperty);
+            set => SetValue(ShowValueProperty, value);
+        }
+
 
         static SliderPart()
         {
@@ -329,8 +458,13 @@ namespace Inchoqate.GUI.View
         {
             SetBinding(RangeProperty, new Binding("Value") { Source = this, Converter = new ValueToRangeConverter(previousPart), Mode = BindingMode.TwoWay });
             SetBinding(TrackVisibilityProperty, new Binding("Index") { Source = this, Converter = new IndexToTrackVisibilityConverter(), Mode = BindingMode.OneWay });
+            Loaded += LoadedHandler;
         }
 
+        private void LoadedHandler(object sender, RoutedEventArgs e)
+        {
+            AdornerLayer.GetAdornerLayer(this).Add(new ShowValueAdorner(this));
+        }
 
         private static void ValuepropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

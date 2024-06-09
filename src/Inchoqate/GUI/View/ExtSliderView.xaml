@@ -140,7 +140,8 @@
                         <RepeatButton Style="{StaticResource SliderButtonStyle}" Command="Slider.DecreaseLarge" />
                     </Track.DecreaseRepeatButton>-->
                     <Track.Thumb>
-                        <Thumb Style="{StaticResource SliderThumbStyle}" />
+                        <Thumb Style="{StaticResource SliderThumbStyle}"
+                               />
                     </Track.Thumb>
                     <!--<Track.IncreaseRepeatButton>
                         <RepeatButton Style="{StaticResource SliderButtonStyle}" Command="Slider.IncreaseLarge" />
@@ -298,31 +299,35 @@
         x:Name="MainGrid"
         Width="{Binding ActualWidth, ElementName=ControlRoot}">
 
-        <ItemsControl
-            x:Name="SlidersControl"
-            ItemsSource="{Binding ValueCount, ElementName=ControlRoot, Converter={StaticResource CountToControlConverter}}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="local:SliderPart">
-                    <Setter Property="Minimum" Value="{Binding Minimum, RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
-                    <Setter Property="Maximum" Value="{Binding Maximum, RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
-                    <Setter Property="ExtSlider" Value="{Binding RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
-                    <Setter Property="Value">
-                        <Setter.Value>
-                            <MultiBinding Converter="{StaticResource SliderValueIndexer}" Mode="OneWay">
-                                <Binding Path="Values" RelativeSource="{RelativeSource AncestorType=local:ExtSliderView}"/>
-                                <Binding Path="Index" RelativeSource="{RelativeSource Mode=Self}"/>
-                            </MultiBinding>
-                        </Setter.Value>
-                    </Setter> 
-                    <Setter Property="Template" Value="{StaticResource HorizontalSlider}"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-        </ItemsControl>
+        <AdornerDecorator>
+        
+            <ItemsControl
+                x:Name="SlidersControl"
+                ItemsSource="{Binding ValueCount, ElementName=ControlRoot, Converter={StaticResource CountToControlConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="local:SliderPart">
+                        <Setter Property="Minimum" Value="{Binding Minimum, RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
+                        <Setter Property="Maximum" Value="{Binding Maximum, RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
+                        <Setter Property="ExtSlider" Value="{Binding RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
+                        <Setter Property="Value">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource SliderValueIndexer}" Mode="OneWay">
+                                    <Binding Path="Values" RelativeSource="{RelativeSource AncestorType=local:ExtSliderView}"/>
+                                    <Binding Path="Index" RelativeSource="{RelativeSource Mode=Self}"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter> 
+                        <Setter Property="Template" Value="{StaticResource HorizontalSlider}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+            
+        </AdornerDecorator>
         
     </Grid>
 
