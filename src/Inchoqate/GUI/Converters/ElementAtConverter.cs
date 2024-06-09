@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace Inchoqate.GUI.Converters
 {
-    public class ElementAtConverter<T>(int? index = null) : IMultiValueConverter
+    public class ElementAtConverter<T>(int? index = null, T @default = default!) : IMultiValueConverter
         where T : notnull
     {
         private readonly int? _initIndex = index;
@@ -25,6 +25,7 @@ namespace Inchoqate.GUI.Converters
 
             return values[0] switch
             {
+                null => @default,
                 T[] arr => arr[index.Value],
                 ObservableCollection<T> col => col[index.Value],
                 _ => throw new NotSupportedException(),
