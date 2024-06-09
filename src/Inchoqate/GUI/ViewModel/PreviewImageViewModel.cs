@@ -41,7 +41,7 @@ namespace Inchoqate.GUI.ViewModel
         {
             switch (e.PropertyName)
             {
-                case nameof(_editor.Computed):
+                case nameof(_editor.Computed) or nameof(_editor.RenderSize):
                     OnPropertyChanged(nameof(RenderEditor));
                     break;
             }
