@@ -119,7 +119,7 @@ namespace Inchoqate.GUI.View
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
             _viewModel.DisplaySize = GetDesiredImageSize(arrangeBounds);
-            var renderSize = _viewModel.RenderEditor?.RenderSize ?? new Size(0, 0);
+            var renderSize = _viewModel.RenderEditor?.RenderSize ?? default;
             _viewModel.BoundsSize = renderSize;
             if (GLImage.Width != renderSize.Width || 
                 GLImage.Height != renderSize.Height)
