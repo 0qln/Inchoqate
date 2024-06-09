@@ -22,8 +22,7 @@ using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.View
 {
-    // TODO: squish the sliders into one lane.
-
+    // TODO: implement remaining features
     /// <summary>
     /// Extends the std Slider with the following functionality:
     ///     - Mutliple thumbs
@@ -265,6 +264,15 @@ namespace Inchoqate.GUI.View
                 typeof(ExtSliderView),
                 typeof(SliderPart));
 
+        public static readonly DependencyProperty TrackVisibilityProperty =
+            DependencyProperty.Register(
+                "TrackVisibility",
+                typeof(Visibility),
+                typeof(SliderPart),
+                new FrameworkPropertyMetadata(
+                    Visibility.Collapsed,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
 
         public double ValueMin
         {
@@ -297,6 +305,12 @@ namespace Inchoqate.GUI.View
             set => SetValue(ExtSliderProperty, value);
         }
 
+        public Visibility TrackVisibility
+        {
+            get => (Visibility)GetValue(TrackVisibilityProperty);
+            set => SetValue(TrackVisibilityProperty, value);
+        }
+
 
         static SliderPart()
         {
@@ -314,6 +328,7 @@ namespace Inchoqate.GUI.View
         public SliderPart(SliderPart? previousPart)
         {
             SetBinding(RangeProperty, new Binding("Value") { Source = this, Converter = new ValueToRangeConverter(previousPart), Mode = BindingMode.TwoWay });
+            SetBinding(TrackVisibilityProperty, new Binding("Index") { Source = this, Converter = new IndexToTrackVisibilityConverter(), Mode = BindingMode.OneWay });
         }
 
 
@@ -347,6 +362,19 @@ namespace Inchoqate.GUI.View
                 var newRange = (double)value;
                 var prevVal = previousPart?.Value ?? 0.0;
                 return newRange + prevVal;
+            }
+        }
+
+        private class IndexToTrackVisibilityConverter() : IValueConverter
+        {
+            object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return ((int)value == 0) ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
             }
         }
     }
