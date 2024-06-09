@@ -26,22 +26,13 @@ namespace Inchoqate.GUI.ViewModel
             get => _editor;
             set
             {
-                if (_editor == value)
-                {
-                    return;
-                }
+                if (_editor == value) return;
                 
                 if (_editor is not null)
-                {
                     _editor!.PropertyChanged -= Editor_PropertyChanged;
-                }
                 SetProperty(ref _editor, value);
-                _editor!.RenderSize = SourceSize;
                 _editor!.VoidColor = VoidColor.Color;
                 _editor!.PropertyChanged += Editor_PropertyChanged;
-                if (imageSource is not null)
-                    _editor!.SetSource(TextureModel.FromFile(imageSource));
-
                 ReloadLayout();
             }
         }
@@ -71,45 +62,16 @@ namespace Inchoqate.GUI.ViewModel
             1, 2, 3
         ];
 
-        private string? imageSource;
-        private Size renderSize;
-        private Size sourceSize;
+        private Size displaySize;
         private Size boundsSize;
         private SolidColorBrush voidColor = Brushes.Aquamarine;
 
-        public string? ImageSource
+        public Size DisplaySize
         {
-            get => imageSource;
+            get => displaySize;
             set
             {
-                if (value is null) return;
-
-                SetProperty(ref imageSource, value);
-                TextureModel texture = TextureModel.FromFile(imageSource);
-                _editor?.SetSource(texture);
-                SourceSize = new(texture.Width, texture.Height);
-                ReloadLayout();
-            }
-        }
-
-        public Size SourceSize
-        {
-            get => sourceSize;
-            private set
-            {
-                SetProperty(ref sourceSize, value);
-                if (_editor is not null)
-                    _editor.RenderSize = value;
-            }
-        }
-
-        public Size RenderSize
-        {
-            get => renderSize;
-            set
-            {
-                if (renderSize == value) return;
-                SetProperty(ref renderSize, value);
+                SetProperty(ref displaySize, value);
                 ReloadLayout();
             }
         }
@@ -130,7 +92,6 @@ namespace Inchoqate.GUI.ViewModel
             get => boundsSize;
             set
             {
-                if (boundsSize == value) return;
                 SetProperty(ref boundsSize, value);
                 ReloadLayout();
             }
@@ -307,8 +268,8 @@ namespace Inchoqate.GUI.ViewModel
         public void ReloadLayout()
         {
             float
-                wNorm = (float)(BoundsSize.Width / RenderSize.Width),
-                hNorm = (float)(BoundsSize.Height / RenderSize.Height);
+                wNorm = (float)(BoundsSize.Width / DisplaySize.Width),
+                hNorm = (float)(BoundsSize.Height / DisplaySize.Height);
 
             float panX = _panXDelta + _panXStart;
             float panY = _panYDelta + _panYStart;
@@ -321,7 +282,7 @@ namespace Inchoqate.GUI.ViewModel
             // align top
             float 
                 xOff = 0, 
-                yOff = (float)(RenderSize.Height - BoundsSize.Height) / (float)(RenderSize.Height);
+                yOff = (float)(DisplaySize.Height - BoundsSize.Height) / (float)(DisplaySize.Height);
 
             var layout = new RectCorners
             {

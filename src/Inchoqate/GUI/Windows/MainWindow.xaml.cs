@@ -5,6 +5,7 @@ using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.Events;
 using System.Windows.Threading;
+using System.Windows.Media.TextFormatting;
 
 namespace Inchoqate.GUI.Windows
 {
@@ -29,6 +30,11 @@ namespace Inchoqate.GUI.Windows
                 typeof(MainWindow),
                 [new KeyGesture(Key.Y, ModifierKeys.Control)]);
 
+        public static readonly RoutedCommand OpenImageCommand =
+            new("OpenImage",
+                typeof(MainWindow),
+                [new KeyGesture(Key.O, ModifierKeys.Control)]);
+
 
         public MainWindow()
         {
@@ -36,27 +42,27 @@ namespace Inchoqate.GUI.Windows
 
             Loaded += delegate
             {
-if (PreviewImage.DataContext is PreviewImageViewModel pvm)
-            {
-                if (StackEditor.DataContext is StackEditorViewModel svm)
+                if (PreviewImage.DataContext is PreviewImageViewModel pvm)
                 {
-                    //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplGrayscaleViewModel>());
-                    //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
-                    //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
-                    //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
-                    //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
+                    if (StackEditor.DataContext is StackEditorViewModel svm)
+                    {
+                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplGrayscaleViewModel>());
+                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
+                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
+                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
+                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
 
-                    svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplGrayscaleViewModel()));
-                    //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                    //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                    //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                    //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplGrayscaleViewModel()));
+                        //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
 
-                    pvm.RenderEditor = svm;
+                        pvm.RenderEditor = svm;
+                    }
                 }
-            }
             };
-            PreviewImage.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
+           //PreviewImage.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
             
 
             _activeEditor = StackEditor.DataContext as StackEditorViewModel;
@@ -123,6 +129,24 @@ if (PreviewImage.DataContext is PreviewImageViewModel pvm)
         {
             timer?.Stop();
             isEnabled = true;
+        }
+
+        private void OpenImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                // TODO
+                FileName = "Picture",
+                DefaultExt = ".png",
+                Filter = "Images |*.png"
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                _activeEditor?.SetSource(TextureModel.FromFile(dialog.FileName));
+            }
         }
     }
 }

@@ -126,6 +126,7 @@ namespace Inchoqate.GUI.ViewModel
         {
             _sourceTexture?.Dispose();
             _sourceTexture = value;
+            RenderSize = new(_sourceTexture?.Width ?? 0, _sourceTexture?.Height ?? 0);
         }
 
 

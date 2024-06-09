@@ -25,6 +25,10 @@
             x:Name="RedoCmdBinding"
             Command="{x:Static local:MainWindow.RedoCommand}"
             Executed="RedoCmdBinding_Executed"/>
+        <CommandBinding
+            x:Name="OpenImageCmdBinding"
+            Command="{x:Static local:MainWindow.OpenImageCommand}"
+            Executed="OpenImageCmdBinding_Executed"/>
     </Window.CommandBindings>
 
     <Canvas>
@@ -36,6 +40,17 @@
             Panel.ZIndex="1">
             <view:WindowTitlebarView.ActionButtons>
                 <view:ActionButtonCollection>
+                    <view:TitlebarActionButtonMenuView Title="File"
+                                                       OptionsPosition="Bottom">
+                        <view:TitlebarActionButtonMenuView.Options>
+                            <view:TitlebarActioButtonOptionCollection>
+                                <view:TitlebarActionButtonCommandView 
+                                    Title="Open Image"
+                                    Shortcut="{x:Reference OpenImageCmdBinding}"
+                                    Command="{x:Static local:MainWindow.OpenImageCommand}"/>
+                            </view:TitlebarActioButtonOptionCollection>
+                        </view:TitlebarActionButtonMenuView.Options>
+                    </view:TitlebarActionButtonMenuView>
                     <view:TitlebarActionButtonMenuView Title="Windows"
                                                        OptionsPosition="Bottom">
                         <view:TitlebarActionButtonMenuView.Options>

@@ -27,16 +27,6 @@ namespace Inchoqate.GUI.View
                     Stretch.Uniform,
                     FrameworkPropertyMetadataOptions.AffectsArrange));
 
-        public static readonly DependencyProperty ImageSourceProperty =
-            DependencyProperty.Register(
-                "ImageSource",
-                typeof(string),
-                typeof(PreviewImageView),
-                new FrameworkPropertyMetadata(
-                    "",
-                    FrameworkPropertyMetadataOptions.AffectsRender,
-                    OnImageSourcePropertyChanged));
-
 
         public Stretch Stretch
         {
@@ -44,20 +34,6 @@ namespace Inchoqate.GUI.View
             set => SetValue(StretchProperty, value);
         }
 
-        public string ImageSource
-        {
-            get => (string)GetValue(ImageSourceProperty);
-            set => SetValue(ImageSourceProperty, value);
-        }
-
-
-        private static void OnImageSourcePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is PreviewImageView control && control.DataContext is PreviewImageViewModel viewModel)
-            {
-                viewModel.ImageSource = (string)e.NewValue;
-            }
-        }
 
         private static void OnBackgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -88,7 +64,7 @@ namespace Inchoqate.GUI.View
         {
             InitializeComponent();
 
-            GLImage.Start(new GLWpfControlSettings { RenderContinuously = false, });
+            GLImage.Start(new GLWpfControlSettings { RenderContinuously = false });
 
             DataContext = _viewModel = new PreviewImageViewModel();
             _viewModel.PropertyChanged += (s, e) =>
@@ -96,7 +72,7 @@ namespace Inchoqate.GUI.View
                 switch (e.PropertyName)
                 {
                     case nameof(_viewModel.RenderEditor):
-                        GLImage.InvalidateVisual();
+                        this.InvalidateVisual();
                         break;
                     case nameof(_viewModel.ActualLayout):
                         GLImage.InvalidateVisual();
@@ -108,22 +84,26 @@ namespace Inchoqate.GUI.View
 
         private Size GetDesiredImageSize(Size bounds)
         {
-            if (_viewModel is null || _viewModel.SourceSize == default)
+            if (_viewModel is null
+                || _viewModel.RenderEditor is null
+                || _viewModel.RenderEditor.RenderSize == default)
             {
                 return default;
             }
 
+            var renderSize = _viewModel.RenderEditor.RenderSize;
+
             if (double.IsInfinity(bounds.Width) || double.IsInfinity(bounds.Height))
             {
-                return _viewModel.SourceSize;
+                return renderSize;
             }
 
-            double aspectRatio = (double)_viewModel.SourceSize.Height / _viewModel.SourceSize.Width;
+            double aspectRatio = (double)renderSize.Height / renderSize.Width;
             double boundsRatio = bounds.Height / bounds.Width;
 
             return Stretch switch
             {
-                Stretch.None => new Size(_viewModel.SourceSize.Width, _viewModel.SourceSize.Height),
+                Stretch.None => new Size(renderSize.Width, renderSize.Height),
                 Stretch.Fill => bounds,
                 Stretch.Uniform => boundsRatio > aspectRatio
                     ? new(bounds.Width, bounds.Width * aspectRatio)
@@ -138,13 +118,14 @@ namespace Inchoqate.GUI.View
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            _viewModel.RenderSize = GetDesiredImageSize(arrangeBounds);
-            _viewModel.BoundsSize = _viewModel.SourceSize;
-            if (GLImage.Width != _viewModel.SourceSize.Width || 
-                GLImage.Height != _viewModel.SourceSize.Height)
+            _viewModel.DisplaySize = GetDesiredImageSize(arrangeBounds);
+            var renderSize = _viewModel.RenderEditor?.RenderSize ?? new Size(0, 0);
+            _viewModel.BoundsSize = renderSize;
+            if (GLImage.Width != renderSize.Width || 
+                GLImage.Height != renderSize.Height)
             {
-                GLImage.Width = _viewModel.SourceSize.Width;
-                GLImage.Height = _viewModel.SourceSize.Height;
+                GLImage.Width = renderSize.Width;
+                GLImage.Height = renderSize.Height;
             }
             Thumb.Width = arrangeBounds.Width;
             Thumb.Height = arrangeBounds.Height;

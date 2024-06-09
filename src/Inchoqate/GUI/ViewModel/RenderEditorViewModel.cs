@@ -50,6 +50,10 @@ namespace Inchoqate.GUI.ViewModel
                     case nameof(Result):
                         Computed = Result is not null;
                         break;
+
+                    case nameof(RenderSize):
+                        Invalidate();
+                        break;
                 }
             };
         }
