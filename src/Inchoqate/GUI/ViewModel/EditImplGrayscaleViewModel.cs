@@ -11,9 +11,9 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Data;
 using OpenTK.Mathematics;
-using System.Globalization;
 using System.Diagnostics;
 using System.Windows.Media;
+using Inchoqate.GUI.Converters;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -62,7 +62,7 @@ namespace Inchoqate.GUI.ViewModel
             _intenstityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity], ShowValues = [true] };
             _intenstityControl.SetBinding(
                 ExtSliderView.ValuesProperty, 
-                new Binding(nameof(Intensity)) { Source = this, Mode=BindingMode.TwoWay, Converter = new DoubleToDoubleArrConverter() });
+                new Binding(nameof(Intensity)) { Source = this, Mode=BindingMode.TwoWay, Converter = new ElementToArrayConverter<double>() });
 
             _weightsControl = new() { RangeCount = 3, Minimum = 0, Maximum = 1, BackgroundGradientBrushes = [Colors.Red, Colors.Green, Colors.Blue], ShowRanges = [true, true, true]  };
             _weightsControl.SetBinding(
@@ -85,36 +85,5 @@ namespace Inchoqate.GUI.ViewModel
                 new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
                 new Uri("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
                 out success);
-    }
-
-
-    public class Vector3ToDoubleArrConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var vec = (Vector3)value;
-            return new double[] { vec.X, vec.Y, vec.Z };
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var arr = (double[])value;
-            return new Vector3((float)arr[0], (float)arr[1], (float)arr[2]);
-        }
-    }
-
-    public class DoubleToDoubleArrConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var val = (double)value;
-            return new double[] { val };
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var arr = (double[])value;
-            return arr[0];
-        }
     }
 }
