@@ -18,7 +18,7 @@ namespace Inchoqate.GUI.ViewModel
 {
     public class EditImplGrayscaleViewModel : EditBaseLinearShader
     {
-        private readonly Slider _intenstityControl;
+        private readonly ExtSliderView _intenstityControl;
         private readonly ExtSliderView _weightsControl;
         private readonly ObservableCollection<ContentControl> _optionControls;
 
@@ -58,10 +58,10 @@ namespace Inchoqate.GUI.ViewModel
             Weights = new(0.2126f, 0.7152f, 0.0722f);
             Title = "Grayscale";
 
-            _intenstityControl = new() { Minimum = 0, Maximum = 1, Value = Intensity };
+            _intenstityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity] };
             _intenstityControl.SetBinding(
-                Slider.ValueProperty, 
-                new Binding(nameof(Intensity)) { Source = this, Mode=BindingMode.TwoWay });
+                ExtSliderView.ValuesProperty, 
+                new Binding(nameof(Intensity)) { Source = this, Mode=BindingMode.TwoWay, Converter = new DoubleToDoubleArrConverter() });
 
             _weightsControl = new() { RangeCount = 3, Minimum = 0, Maximum = 1 };
             _weightsControl.SetBinding(
@@ -99,6 +99,21 @@ namespace Inchoqate.GUI.ViewModel
         {
             var arr = (double[])value;
             return new Vector3((float)arr[0], (float)arr[1], (float)arr[2]);
+        }
+    }
+
+    public class DoubleToDoubleArrConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var val = (double)value;
+            return new double[] { val };
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var arr = (double[])value;
+            return arr[0];
         }
     }
 }
