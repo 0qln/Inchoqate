@@ -13,6 +13,7 @@
         <local:CountToSliderConverter x:Key="CountToControlConverter"/>
         <local:SliderValueIndexer x:Key="SliderValueIndexer"/>
         <local:GradientStopsConverter x:Key="ExtSliderToGradientStopsConverter"/>
+        <local:SliderShowValueIndexer x:Key="SliderShowValueIndexer"/>
 
         <Style x:Key="SliderButtonStyle" TargetType="{x:Type RepeatButton}">
             <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -320,7 +321,15 @@
                                     <Binding Path="Index" RelativeSource="{RelativeSource Mode=Self}"/>
                                 </MultiBinding>
                             </Setter.Value>
-                        </Setter> 
+                        </Setter>
+                        <Setter Property="ShowValue">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource SliderShowValueIndexer}" Mode="OneWay">
+                                    <Binding Path="ShowValues" RelativeSource="{RelativeSource AncestorType=local:ExtSliderView}"/>
+                                    <Binding Path="Index" RelativeSource="{RelativeSource Mode=Self}"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
                         <Setter Property="Template" Value="{StaticResource HorizontalSlider}"/>
                     </Style>
                 </ItemsControl.ItemContainerStyle>

@@ -92,10 +92,10 @@ namespace Inchoqate.GUI.View
         public static readonly DependencyProperty ShowValuesProperty = 
             DependencyProperty.Register(
                 "ShowValues",
-                typeof(bool),
+                typeof(bool[]),
                 typeof(ExtSliderView),
                 new FrameworkPropertyMetadata(
-                    false,
+                    null,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
         // TOOD
@@ -156,9 +156,9 @@ namespace Inchoqate.GUI.View
             set { SetValue(RangeCountProperty, value); }
         }
 
-        public bool ShowValues
+        public bool[] ShowValues
         {
-            get { return (bool)GetValue(ShowValuesProperty); }
+            get { return (bool[])GetValue(ShowValuesProperty); }
             set { SetValue(ShowValuesProperty, value); }
         }
 
@@ -447,6 +447,12 @@ namespace Inchoqate.GUI.View
 
     public class SliderValueIndexer() 
         : ElementAtConverter<double>()
+    {
+    }
+
+
+    public class SliderShowValueIndexer()
+        : ElementAtConverter<bool>(@default: false)
     {
     }
 
