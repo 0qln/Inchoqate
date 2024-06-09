@@ -29,6 +29,10 @@
             x:Name="OpenImageCmdBinding"
             Command="{x:Static local:MainWindow.OpenImageCommand}"
             Executed="OpenImageCmdBinding_Executed"/>
+        <CommandBinding 
+            x:Name="SaveImageCmdBinding"
+            Command="{x:Static local:MainWindow.SaveImageCommand}"
+            Executed="SaveImageCmdBinding_Executed"/>
     </Window.CommandBindings>
 
     <Canvas>
@@ -48,6 +52,10 @@
                                     Title="Open Image"
                                     Shortcut="{x:Reference OpenImageCmdBinding}"
                                     Command="{x:Static local:MainWindow.OpenImageCommand}"/>
+                                <view:TitlebarActionButtonCommandView 
+                                    Title="Save Image"
+                                    Shortcut="{x:Reference SaveImageCmdBinding}"
+                                    Command="{x:Static local:MainWindow.SaveImageCommand}"/>
                             </view:TitlebarActioButtonOptionCollection>
                         </view:TitlebarActionButtonMenuView.Options>
                     </view:TitlebarActionButtonMenuView>

@@ -6,11 +6,16 @@ using Inchoqate.GUI.Model;
 using Inchoqate.GUI.Events;
 using System.Windows.Threading;
 using System.Windows.Media.TextFormatting;
+using Microsoft.Extensions.Logging;
+using Inchoqate.Logging;
 
 namespace Inchoqate.GUI.Windows
 {
     public partial class MainWindow : BorderlessWindowBase
     {
+        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
+
+
         private FlowchartEditorWindow? _editorWindow;
         private RenderEditorViewModel? _activeEditor;
 
@@ -34,6 +39,11 @@ namespace Inchoqate.GUI.Windows
             new("OpenImage",
                 typeof(MainWindow),
                 [new KeyGesture(Key.O, ModifierKeys.Control)]);
+
+        public static readonly RoutedCommand SaveImageCommand =
+            new("SaveImage",
+                typeof(MainWindow),
+                [new KeyGesture(Key.S, ModifierKeys.Control)]);
 
 
         public MainWindow()
@@ -146,6 +156,41 @@ namespace Inchoqate.GUI.Windows
             if (result == true)
             {
                 _activeEditor?.SetSource(TextureModel.FromFile(dialog.FileName));
+            }
+        }
+
+        private void SaveImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                // TODO
+                FileName = "Picture",
+                DefaultExt = ".png",
+                Filter = "Images |*.png"
+            };
+
+
+            if (dialog.ShowDialog() == true)
+            {
+                if (_activeEditor is null)
+                {
+                    _logger.LogInformation("No active editor to save the image.");
+                    return;
+                }
+
+                if (!_activeEditor.Computed)
+                {
+                    _activeEditor.Compute();
+                }
+                
+                if (_activeEditor.Result is null)
+                {
+                    _logger.LogError("No result to save the image after computing.");
+                    return;
+                }
+
+                var data = PixelBufferModel.FromGpu(_activeEditor.Result);
+                data.SaveToFile(dialog.FileName);
             }
         }
     }

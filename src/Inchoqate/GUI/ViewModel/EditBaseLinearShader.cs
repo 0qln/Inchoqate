@@ -68,6 +68,7 @@ namespace Inchoqate.GUI.ViewModel
             }
 
             destination.Use(FramebufferTarget.Framebuffer);
+            destination.Clear();
             source.Use(TextureUnit.Texture0);
             _shader.Use();
             _vao.Use();

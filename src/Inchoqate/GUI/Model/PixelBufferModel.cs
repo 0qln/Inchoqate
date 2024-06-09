@@ -1,4 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using StbImageSharp;
+using StbImageWriteSharp;
+using System.IO;
 
 namespace Inchoqate.GUI.Model
 {
@@ -17,11 +20,20 @@ namespace Inchoqate.GUI.Model
             Height = height;
         }
 
-        public static PixelBufferModel? FromGpu(FrameBufferModel buffer)
+        public static PixelBufferModel FromGpu(FrameBufferModel buffer)
         {
             PixelBufferModel result = new(buffer.Data.Stride * buffer.Data.Height, buffer.Data.Width, buffer.Data.Height);
+            buffer.Use(FramebufferTarget.Framebuffer);
             GL.ReadPixels(0, 0, buffer.Data.Width, buffer.Data.Height, TextureModel.GLPixelFormat, TextureModel.GLPixelType, result.Data);
             return result;
+        }
+
+        public void SaveToFile(string path)
+        {
+            StbImageWrite.stbi_flip_vertically_on_write(1);
+            using Stream stream = File.OpenWrite(path);
+            ImageWriter writer = new();
+            writer.WritePng(Data, Width, Height, StbImageWriteSharp.ColorComponents.RedGreenBlueAlpha, stream);
         }
 
 

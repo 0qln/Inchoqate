@@ -29,6 +29,7 @@
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.3" />
     <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
     <PackageReference Include="StbImageSharp" Version="2.27.14" />
+    <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
   </ItemGroup>
 
   <ItemGroup>
