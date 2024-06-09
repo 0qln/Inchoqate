@@ -16,36 +16,9 @@ namespace Inchoqate.GUI.ViewModel
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<PreviewImageViewModel>();
 
+        // Used for the final preview rendering.
         private readonly ShaderModel? _shader;
         private readonly VertexArrayModel _vertexArray;
-
-        // will not be disposed
-        private RenderEditorViewModel? _editor; 
-        public RenderEditorViewModel? RenderEditor
-        {
-            get => _editor;
-            set
-            {
-                if (_editor == value) return;
-                
-                if (_editor is not null)
-                    _editor!.PropertyChanged -= Editor_PropertyChanged;
-                SetProperty(ref _editor, value);
-                _editor!.VoidColor = VoidColor.Color;
-                _editor!.PropertyChanged += Editor_PropertyChanged;
-                ReloadLayout();
-            }
-        }
-
-        private void Editor_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(_editor.Computed) or nameof(_editor.RenderSize):
-                    OnPropertyChanged(nameof(RenderEditor));
-                    break;
-            }
-        }
 
         private float[] _vertices =
         [
@@ -62,38 +35,71 @@ namespace Inchoqate.GUI.ViewModel
             1, 2, 3
         ];
 
+        // display properties
         private Size displaySize;
         private Size boundsSize;
         private SolidColorBrush voidColor = Brushes.Aquamarine;
+        private RenderEditorViewModel? _editor; // will not be disposed
 
+        /// <summary>
+        /// The actual size in pixels of the image. Excluding the void.
+        /// </summary>
         public Size DisplaySize
         {
             get => displaySize;
-            set
-            {
-                SetProperty(ref displaySize, value);
-                ReloadLayout();
-            }
+            set => SetProperty(ref displaySize, value);
         }
 
+        /// <summary>
+        /// The color of the void around the image.
+        /// </summary>
         public SolidColorBrush VoidColor
         {
             get => voidColor;
-            set
-            {
-                if (_editor is not null)
-                    _editor.VoidColor = value.Color;
-                SetProperty(ref voidColor, value);
-            }
+            set => SetProperty(ref voidColor, value);
         }
 
+        /// <summary>
+        /// The actual size in pixels of the image. Including the void.
+        /// </summary>
         public Size BoundsSize
         {
             get => boundsSize;
+            set => SetProperty(ref boundsSize, value);
+        }
+        
+        /// <summary>
+        /// The editor applied on the image for the preview. Will not be disposed.
+        /// </summary>
+        public RenderEditorViewModel? RenderEditor
+        {
+            get => _editor;
             set
             {
-                SetProperty(ref boundsSize, value);
-                ReloadLayout();
+                if (_editor == value) return;
+                
+                if (_editor is not null)
+                {
+                    _editor.PropertyChanged -= Editor_PropertyChanged;
+                }
+
+                SetProperty(ref _editor, value);
+
+                if (_editor is not null)
+                {
+                    _editor.VoidColor = VoidColor.Color;
+                    _editor.PropertyChanged += Editor_PropertyChanged;
+                }
+            }
+        }
+
+        private void Editor_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(_editor.Computed) or nameof(_editor.RenderSize):
+                    OnPropertyChanged(nameof(RenderEditor));
+                    break;
             }
         }
 
@@ -110,47 +116,48 @@ namespace Inchoqate.GUI.ViewModel
         private const float _zoomMax = 0.5f;
 
         // hyper parameters
-        private float panSensitivity = 1.0f;
-        private float zoomLimit = 0.97f;
-        private float zoomLevels = 20.0f;
+        private float _panSensitivity = 1.0f;
+        private float _zoomLimit = 0.97f;
+        private float _zoomLevels = 20.0f;
 
+        /// <summary>
+        /// The sensitivity of the panning.
+        /// </summary>
         public float PanSensitivity
         {
-            get => panSensitivity;
-            set => SetProperty(ref panSensitivity, value);
-        }
-
-        public float ZoomLevels
-        {
-            get => zoomLevels;
-            set => SetProperty(ref zoomLevels, value);
+            get => _panSensitivity;
+            set => SetProperty(ref _panSensitivity, value);
         }
 
         /// <summary>
-        /// Percentage (Element [0;1])
+        /// The number of zoom levels. Each zoom level is one mousewheel step.
+        /// </summary>
+        public float ZoomLevels
+        {
+            get => _zoomLevels;
+            set => SetProperty(ref _zoomLevels, value);
+        }
+
+        /// <summary>
+        /// Percentage (Element [0;1]).
         /// </summary>
         public float ZoomLimit
         {
-            get => zoomLimit;
+            get => _zoomLimit;
             set
             {
-                SetProperty(ref zoomLimit, value);
-                _zoomValue = Math.Min(_zoomValue, _zoomMax * value);
-                ReloadLayout();
+                SetProperty(ref _zoomLimit, value);
+                SetProperty(ref _zoomValue, Math.Min(_zoomValue, _zoomMax * value));
             }
         }
 
         /// <summary>
-        /// Element [0;1]
+        /// Element [0;1].
         /// </summary>
         public float Zoom
         {
             get => _zoomValue * 2;
-            set
-            {
-                _zoomValue = value / 2;
-                ReloadLayout();
-            }
+            set => SetProperty(ref _zoomValue, value / 2);
         }
 
 
@@ -168,6 +175,35 @@ namespace Inchoqate.GUI.ViewModel
             {
                 // TODO: handle error
             }
+
+            PropertyChanged += (s, e) =>
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(Zoom) or nameof(ZoomLimit):
+                        ReloadLayout();
+                        break;
+
+                    case nameof(BoundsSize):
+                        ReloadLayout();
+                        break;
+
+                    case nameof(VoidColor):
+                        if (_editor is not null)
+                        {
+                            _editor.VoidColor = VoidColor.Color;
+                        }
+                        break;
+
+                    case nameof(DisplaySize):
+                        ReloadLayout();
+                        break;
+
+                    case nameof(RenderEditor):
+                        ReloadLayout();
+                        break;
+                }
+            };
         }
 
 
@@ -205,8 +241,8 @@ namespace Inchoqate.GUI.ViewModel
             float relativeXScaled = (float)(relative.X / BoundsSize.Width) * 2 - 1;
             float relativeYScaled = (float)(relative.Y / BoundsSize.Height) * 2 - 1;
 
-            float newZoom = _zoomValue + (zoomDelta / zoomLevels);
-            newZoom = Math.Clamp(newZoom, _zoomMin, _zoomMax * zoomLimit);
+            float newZoom = _zoomValue + (zoomDelta / _zoomLevels);
+            newZoom = Math.Clamp(newZoom, _zoomMin, _zoomMax * _zoomLimit);
 
             _panXStart = (_panXStart + relativeXScaled * _zoomValue) - (relativeXScaled * newZoom);
             _panYStart = (_panYStart + relativeYScaled * _zoomValue) - (relativeYScaled * newZoom);
@@ -220,8 +256,8 @@ namespace Inchoqate.GUI.ViewModel
             var relativeXScaled = (float)(e.HorizontalChange / BoundsSize.Width);
             var relativeYScaled = (float)(e.VerticalChange / BoundsSize.Height);
 
-            _panXDelta = relativeXScaled * (1 - _zoomValue * 2) * panSensitivity;
-            _panYDelta = relativeYScaled * (1 - _zoomValue * 2) * panSensitivity;
+            _panXDelta = relativeXScaled * (1 - _zoomValue * 2) * _panSensitivity;
+            _panYDelta = relativeYScaled * (1 - _zoomValue * 2) * _panSensitivity;
 
             ReloadLayout();
         }
