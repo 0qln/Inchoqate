@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using System.Windows.Media.TextFormatting;
 using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;
+using GUI.ViewModel;
 
 namespace Inchoqate.GUI.Windows
 {
@@ -19,7 +20,7 @@ namespace Inchoqate.GUI.Windows
         private FlowchartEditorWindow? _editorWindow;
         private RenderEditorViewModel? _activeEditor;
 
-        
+
         public static readonly RoutedCommand OpenFlowchartEditorCommand =
             new("OpenFlowchartEditor",
                 typeof(MainWindow),
@@ -70,21 +71,15 @@ namespace Inchoqate.GUI.Windows
                     }
                 }
             };
+
            //PreviewImage.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
             
-
             _activeEditor = StackEditor.DataContext as StackEditorViewModel;
 
             Closed += delegate
             {
                 Application.Current.Shutdown();
             };
-
-
-
-            //testing
-            timer.Tick += Timer_Tick;
-            timer.Start();
         }
 
         private void SliderThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -110,33 +105,15 @@ namespace Inchoqate.GUI.Windows
             };
         }
 
-        private readonly DispatcherTimer? timer = new() { Interval = TimeSpan.FromSeconds(0.08) };
-        private bool isEnabled = true;
 
         private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (isEnabled)
-            {
-                _activeEditor?.EventManager.Undo();
-                timer?.Start();
-                isEnabled = false;
-            }
+            _activeEditor?.EventManager.Undo();
         }
 
         private void RedoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (isEnabled)
-            {
-                _activeEditor?.EventManager.Redo();
-                timer?.Start();
-                isEnabled = false;
-            }
-        }
-
-        private void Timer_Tick(object? sender, EventArgs e)
-        {
-            timer?.Stop();
-            isEnabled = true;
+            _activeEditor?.EventManager.Redo();
         }
 
         private void OpenImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
