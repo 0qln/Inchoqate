@@ -43,6 +43,15 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
+        public override EventRelayProvider EditsProvider
+        {
+            get 
+            {
+                return new EventRelayProvider(_edits, this);
+            }
+        }
+
+
         public StackEditorViewModel()
         {
             Edits = _edits = new(relayTarget: this);
@@ -127,25 +136,6 @@ namespace Inchoqate.GUI.ViewModel
             _sourceTexture?.Dispose();
             _sourceTexture = value;
             RenderSize = new(_sourceTexture?.Width ?? 0, _sourceTexture?.Height ?? 0);
-        }
-
-        public override bool Eventuate<TParam>(Event<TParam> @event)
-        {
-            if (this is TParam param)
-            {
-                @event.Parameter = param;
-                @event.Do();
-                EventManager.Novelty(@event);
-                return true;
-            }
-
-            if (Edits is TParam)
-            {
-                return Edits.Eventuate(@event);
-            }
-
-            _logger.LogWarning("Type mismatch. Cannot apply event to this object.");
-            return false;
         }
 
 

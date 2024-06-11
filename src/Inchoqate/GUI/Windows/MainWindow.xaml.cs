@@ -60,11 +60,11 @@ namespace Inchoqate.GUI.Windows
                 {
                     if (StackEditor.DataContext is StackEditorViewModel svm)
                     {
-                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
-                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
-                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
-                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
-                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
+                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
+                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
+                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
+                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
+                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
 
                         pvm.RenderEditor = svm;
                     }
@@ -194,7 +194,7 @@ namespace Inchoqate.GUI.Windows
 
         private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
+            _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
         }
     }
 }
