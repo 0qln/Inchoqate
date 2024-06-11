@@ -116,7 +116,7 @@ namespace Inchoqate.GUI.Windows
             };
         }
 
-        private DispatcherTimer? timer = new() { Interval = TimeSpan.FromSeconds(0.08)  };
+        private readonly DispatcherTimer? timer = new() { Interval = TimeSpan.FromSeconds(0.08) };
         private bool isEnabled = true;
 
         private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)

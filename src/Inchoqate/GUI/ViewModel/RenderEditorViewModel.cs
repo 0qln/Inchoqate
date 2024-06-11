@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Inchoqate.GUI.Events;
 using Inchoqate.GUI.Model;
-using Inchoqate.Logging;
-using Microsoft.Extensions.Logging;
 using System.Windows;
 using System.Windows.Media;
 
@@ -10,8 +8,6 @@ namespace Inchoqate.GUI.ViewModel
 {
     public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>, IEventHost
     {
-        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<RenderEditorViewModel>();
-
         protected bool _computed;
         protected FrameBufferModel? _result;
         protected Size _renderSize;

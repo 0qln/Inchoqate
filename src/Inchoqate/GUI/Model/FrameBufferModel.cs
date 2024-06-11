@@ -61,8 +61,13 @@ namespace Inchoqate.GUI.Model
             GL.BindFramebuffer(target, Handle);
         }
 
-        public void Clear(ClearBufferMask? clear = ClearBufferMask.ColorBufferBit)
+        public void UseAndClear(FramebufferTarget target, ClearBufferMask? clear = ClearBufferMask.ColorBufferBit)
         {
+            if (target == FramebufferTarget.ReadFramebuffer)
+            {
+                throw new ArgumentException("Cannot clear a readonly buffer.");
+            }
+            Use(target);
             if (clear is not null)
             {
                 GL.ClearColor(0, 1, 0, 0);

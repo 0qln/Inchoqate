@@ -5,17 +5,12 @@ using System.Windows.Controls;
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public class EditImplIdentityViewModel : EditBaseLinearShader
+    public class EditImplIdentityViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) 
+        : EditBaseLinearShader(usage)
     {
         private readonly ObservableCollection<ContentControl> _optionControls = [];
 
         public override ObservableCollection<ContentControl> OptionControls => _optionControls;
-
-
-        public EditImplIdentityViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) : base(usage)
-        {
-        }
-
 
         public override ShaderModel? GetShader(out bool success) => 
             ShaderModel.FromUri(

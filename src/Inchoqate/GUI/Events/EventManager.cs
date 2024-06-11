@@ -37,7 +37,7 @@
         /// Add an event to the event stack.
         /// </summary>
         /// <param name="e"></param>
-        public void Novelty(Event e, IEventRelay? sender = null)
+        public void Novelty(Event e)
         {
             if (_locked || _current.Next.ContainsKey(e.CreationDate))
                 return;

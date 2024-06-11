@@ -16,6 +16,7 @@ namespace Inchoqate.Logging
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             _logFileWriter.Dispose();
         }
     }

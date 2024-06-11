@@ -22,7 +22,7 @@ namespace Inchoqate.GUI.ViewModel
             if (this is TParam param)
             {
                 @event.Apply(param);
-                _relayTarget.EventManager.Novelty(@event, this);
+                _relayTarget.EventManager.Novelty(@event);
                 return true;
             }
             else

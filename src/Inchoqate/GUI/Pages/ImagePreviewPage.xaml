@@ -7,23 +7,9 @@
       xmlns:local="clr-namespace:Inchoqate.GUI.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ImagePreviewPage"
-      DataContext="{RelativeSource Mode=Self}">
+      Title="ImagePreviewPage">
 
     <Grid>
-
-        <Border
-            x:Name="ImageBorder"
-            Background="Tomato">
-                
-            <gl:GLWpfControl 
-                x:Name="ImageControl"
-                Render="ImageControl_Render"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
-                
-        </Border>
-
 
     </Grid>
     

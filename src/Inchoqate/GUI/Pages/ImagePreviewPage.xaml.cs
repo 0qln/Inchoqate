@@ -19,16 +19,9 @@ namespace Inchoqate.GUI.Pages
 {
     public partial class ImagePreviewPage : Page
     {
-        private ILogger _logger = FileLoggerFactory.CreateLogger<ImagePreviewPage>();
-
         public ImagePreviewPage()
         {
             InitializeComponent();
-        }
-
-        private void ImageControl_Render(TimeSpan obj)
-        {
-
         }
     }
 }

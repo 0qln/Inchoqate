@@ -49,14 +49,11 @@ namespace Inchoqate.GUI.View
     /// </summary>
     public partial class StackEditorView : UserControl
     {
-        private readonly StackEditorViewModel _viewModel;
-
-        
         public StackEditorView()
         {
             InitializeComponent();
 
-            DataContext = _viewModel = new();
+            DataContext = new StackEditorViewModel();
         }
     }
 }
