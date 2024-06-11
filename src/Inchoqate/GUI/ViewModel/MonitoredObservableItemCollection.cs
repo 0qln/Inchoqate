@@ -21,15 +21,14 @@ namespace Inchoqate.GUI.ViewModel
         {
             if (this is TParam param)
             {
-                @event.Apply(param);
+                @event.Parameter = param;
+                @event.Do();
                 _relayTarget.EventManager.Novelty(@event);
                 return true;
             }
-            else
-            {
-                _logger.LogWarning("Type mismatch. Cannot apply event to this collection.");
-                return false;
-            }
+
+            _logger.LogWarning("Type mismatch. Cannot apply event to this collection.");
+            return false;
         }
     }
 }

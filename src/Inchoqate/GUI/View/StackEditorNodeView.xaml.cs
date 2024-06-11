@@ -86,11 +86,16 @@ namespace Inchoqate.GUI.View
         // TODO: sort this
         private Point _dragOffset;
         private double _responsiveness = 5;
-        public EditorNodeCollectionLinear BackingCollection { get; set; }
+        public EditorNodeCollectionLinear? BackingCollection { get; set; }
 
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            if (BackingCollection is null)
+            {
+                return;
+            }
+
             var index = BackingCollection.IndexOf(ViewModel);
 
             var stackPanel = (StackPanel)VisualParent;
@@ -98,13 +103,13 @@ namespace Inchoqate.GUI.View
             if (index < BackingCollection.Count - 1 && 
                 e.VerticalChange + _dragOffset.Y + _responsiveness > stackPanel.Children[index + 1].TransformToVisual(this).Transform(new()).Y)
             {
-                BackingCollection.Eventuate(new ItemMoved(BackingCollection, index, index + 1));
+                BackingCollection.Eventuate(new ItemMoved(index, index + 1));
             }   
 
             if (index > 0 && 
                 e.VerticalChange + _dragOffset.Y  - _responsiveness < 0.6 * stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
             {
-                BackingCollection.Eventuate(new ItemMoved(BackingCollection, index, index - 1));
+                BackingCollection.Eventuate(new ItemMoved(index, index - 1));
             }
         }
 

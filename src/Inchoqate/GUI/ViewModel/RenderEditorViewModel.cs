@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>, IEventHost
+    public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>, IEventHost, IEventRelay
     {
         protected bool _computed;
         protected FrameBufferModel? _result;
@@ -64,5 +64,7 @@ namespace Inchoqate.GUI.ViewModel
         public abstract bool Compute();
 
         public abstract void SetSource(TextureModel? source);
+
+        public abstract bool Eventuate<TParam>(Event<TParam> @event);
     }
 }

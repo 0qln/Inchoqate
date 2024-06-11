@@ -129,6 +129,25 @@ namespace Inchoqate.GUI.ViewModel
             RenderSize = new(_sourceTexture?.Width ?? 0, _sourceTexture?.Height ?? 0);
         }
 
+        public override bool Eventuate<TParam>(Event<TParam> @event)
+        {
+            if (this is TParam param)
+            {
+                @event.Parameter = param;
+                @event.Do();
+                EventManager.Novelty(@event);
+                return true;
+            }
+
+            if (Edits is TParam)
+            {
+                return Edits.Eventuate(@event);
+            }
+
+            _logger.LogWarning("Type mismatch. Cannot apply event to this object.");
+            return false;
+        }
+
 
         #region Clean up
 

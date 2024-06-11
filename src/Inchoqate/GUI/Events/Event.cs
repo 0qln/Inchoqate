@@ -36,24 +36,24 @@ namespace Inchoqate.GUI.Events
     }
 
 
-    public abstract class Event<T>(T param) : Event
+    public abstract class Event<T> : Event
     {
         /// <summary>
         /// The original object that the event operates on.
         /// </summary>
-        public T Parameter { get; set; } = param;
+        public T? Parameter { get; set; }
 
         /// <summary>
         /// Apply the event.
         /// </summary>
         /// <param name="object"></param>
-        public abstract void Apply(T @object);
+        public abstract void Apply(T? @object);
 
         /// <summary>
         /// Revert the event.
         /// </summary>
         /// <param name="object"></param>
-        public abstract void Revert(T @object);
+        public abstract void Revert(T? @object);
 
 
         public override void Do()

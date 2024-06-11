@@ -1,19 +1,19 @@
 ﻿using Inchoqate.GUI.ViewModel;
+using System.Collections.ObjectModel;
 
 namespace Inchoqate.GUI.Events;
 
 
-public class ItemMoved(IMoveItemsWrapper param, int from, int to)
-    : Event<IMoveItemsWrapper>(param)
+public class ItemMoved(int from, int to) : Event<IMoveItemsWrapper>
 {
-    public override void Apply(IMoveItemsWrapper @object) => @object.Move(from, to);
-    public override void Revert(IMoveItemsWrapper @object) => @object.Move(to, from);
+    public override void Apply(IMoveItemsWrapper? @object) => @object?.Move(from, to);
+    public override void Revert(IMoveItemsWrapper? @object) => @object?.Move(to, from);
 }
 
 
-public class ItemAdded<T>(ObservableCollectionBase<T> param, T item) 
-    : Event<ObservableCollectionBase<T>>(param)
+public class ItemAdded<T>(T item) : Event<Collection<T>>
 {
-    public override void Apply(ObservableCollectionBase<T> @object) => @object.Add(item);
-    public override void Revert(ObservableCollectionBase<T> @object) => @object.Remove(item);
+    public override void Apply(Collection<T>? @object) => @object?.Add(item);
+    public override void Revert(Collection<T>? @object) => @object?.Remove(item);
 }
+

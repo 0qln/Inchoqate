@@ -60,17 +60,11 @@ namespace Inchoqate.GUI.Windows
                 {
                     if (StackEditor.DataContext is StackEditorViewModel svm)
                     {
-                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplGrayscaleViewModel>());
-                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
-                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
-                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
-                        //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
-
-                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplGrayscaleViewModel()));
-                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
+                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
+                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
+                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
+                        _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
 
                         pvm.RenderEditor = svm;
                     }
@@ -200,12 +194,7 @@ namespace Inchoqate.GUI.Windows
 
         private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //if (_activeEditor?.Edits is null)
-            //{
-            //    return;
-            //}
-
-            //_activeEditor.Eventuate<AddItemEvent<EditBaseViewModel>>(new AddItemEvent<EditBaseViewModel>(_activeEditor, new EditImplGrayscaleViewModel()));
+            _activeEditor?.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
         }
     }
 }
