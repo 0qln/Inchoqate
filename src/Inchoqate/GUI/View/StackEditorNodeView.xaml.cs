@@ -98,13 +98,13 @@ namespace Inchoqate.GUI.View
             if (index < BackingCollection.Count - 1 && 
                 e.VerticalChange + _dragOffset.Y + _responsiveness > stackPanel.Children[index + 1].TransformToVisual(this).Transform(new()).Y)
             {
-                BackingCollection.Eventuate(new SwapItemsEvent(BackingCollection, index, index + 1));
+                BackingCollection.Eventuate(new ItemMoved(BackingCollection, index, index + 1));
             }   
 
             if (index > 0 && 
                 e.VerticalChange + _dragOffset.Y  - _responsiveness < 0.6 * stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
             {
-                BackingCollection.Eventuate(new SwapItemsEvent(BackingCollection, index, index - 1));
+                BackingCollection.Eventuate(new ItemMoved(BackingCollection, index, index - 1));
             }
         }
 

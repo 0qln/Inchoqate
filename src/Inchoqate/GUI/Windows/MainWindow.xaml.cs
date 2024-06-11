@@ -66,11 +66,11 @@ namespace Inchoqate.GUI.Windows
                         //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
                         //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
 
-                        svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplGrayscaleViewModel()));
-                        svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplGrayscaleViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
 
                         pvm.RenderEditor = svm;
                     }
