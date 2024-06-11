@@ -26,29 +26,10 @@ namespace Inchoqate.GUI.View
         {
             if (value is EditorNodeCollectionLinear source)
             {
-                var result = StackEditorNodeCollection.Mirror(source, x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source });
-
-                //source.Add
-
-                //source.EventRelayed += (sender, e) =>
-                //{
-                //    //switch (e.Event)
-                //    //{
-                //    //    case ItemMoved @event:
-                //    //        @event.Apply(result);
-                //    //        @event.Occured += (s, e) => { @event.Apply(result); };
-                //    //        @event.Reverted += (s, e) => { @event.Revert(result); };
-                //    //        break;
-
-                //    //    case EditModelAdded<EditBaseLinear> @event:
-                //    //        @event.Apply(result, x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source });
-                //    //        @event.Occured += (s, e) => { @event.Apply(result, x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source }); };
-                //    //        @event.Reverted += (s, e) => { @event.Revert(result, x => result.First(y => y.ViewModel == x)); };
-                //    //        break;
-                //    //}
-                //};
-
-                return result; 
+                return StackEditorNodeCollection.Mirror(
+                    source, 
+                    x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source }, 
+                    x => x.ViewModel); 
             }
 
             throw new ArgumentException(

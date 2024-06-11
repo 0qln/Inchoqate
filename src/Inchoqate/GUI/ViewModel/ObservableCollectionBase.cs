@@ -17,7 +17,7 @@ namespace Inchoqate.GUI.ViewModel
         {
         }
 
-        public static ObservableCollectionBase<T> Mirror<TOther>(ObservableCollectionBase<TOther> other, Func<TOther, T> cast)
+        public static ObservableCollectionBase<T> Mirror<TOther>(ObservableCollectionBase<TOther> other, Func<TOther, T> cast, Func<T, TOther> castBack)
         {
             // initiate
             var result = new ObservableCollectionBase<T>();
@@ -41,7 +41,7 @@ namespace Inchoqate.GUI.ViewModel
                         if (e.OldItems is null)
                             throw new ArgumentException("e.OldItems is null");
                         foreach (var item in e.OldItems)
-                            result.Remove(cast((TOther)item));
+                            result.Remove(result.First(x => castBack(x)!.Equals((TOther)item)));
                         break;
                     case NotifyCollectionChangedAction.Replace:
                         if (e.OldItems is null)
