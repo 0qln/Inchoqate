@@ -45,6 +45,10 @@ namespace Inchoqate.GUI.Windows
                 typeof(MainWindow),
                 [new KeyGesture(Key.S, ModifierKeys.Control)]);
 
+        public static readonly RoutedCommand AddNodeGrayscaleCommand =
+            new("AddNodeGrayscale",
+                typeof(MainWindow));
+
 
         public MainWindow()
         {
@@ -192,6 +196,16 @@ namespace Inchoqate.GUI.Windows
                 var data = PixelBufferModel.FromGpu(_activeEditor.Result);
                 data.SaveToFile(dialog.FileName);
             }
+        }
+
+        private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //if (_activeEditor?.Edits is null)
+            //{
+            //    return;
+            //}
+
+            //_activeEditor.Eventuate<AddItemEvent<EditBaseViewModel>>(new AddItemEvent<EditBaseViewModel>(_activeEditor, new EditImplGrayscaleViewModel()));
         }
     }
 }
