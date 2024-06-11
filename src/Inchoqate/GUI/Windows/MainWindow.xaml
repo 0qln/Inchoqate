@@ -33,6 +33,10 @@
             x:Name="SaveImageCmdBinding"
             Command="{x:Static local:MainWindow.SaveImageCommand}"
             Executed="SaveImageCmdBinding_Executed"/>
+        <CommandBinding
+                x:Name="AddNodeGrayscaleCmdBinding"
+                Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}"
+                Executed="AddNodeGrayscaleCmdBinding_Executed"/>
     </Window.CommandBindings>
 
     <Canvas>
@@ -56,6 +60,25 @@
                                     Title="Save Image"
                                     Shortcut="{x:Reference SaveImageCmdBinding}"
                                     Command="{x:Static local:MainWindow.SaveImageCommand}"/>
+                            </view:TitlebarActioButtonOptionCollection>
+                        </view:TitlebarActionButtonMenuView.Options>
+                    </view:TitlebarActionButtonMenuView>
+                    <view:TitlebarActionButtonMenuView Title="Edit"
+                                                       OptionsPosition="Bottom">
+                        <view:TitlebarActionButtonMenuView.Options>
+                            <view:TitlebarActioButtonOptionCollection>
+                                <view:TitlebarActionButtonMenuView Title="Add Node"
+                                                                   OptionsPosition="Right"
+                                                                   ClickMode="Hover">
+                                    <view:TitlebarActionButtonMenuView.Options>
+                                        <view:TitlebarActioButtonOptionCollection>
+                                            <view:TitlebarActionButtonCommandView
+                                                Title="Grayscale"
+                                                Shortcut="{x:Reference AddNodeGrayscaleCmdBinding}"
+                                                Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}"/>
+                                        </view:TitlebarActioButtonOptionCollection>
+                                    </view:TitlebarActionButtonMenuView.Options>
+                                </view:TitlebarActionButtonMenuView>
                             </view:TitlebarActioButtonOptionCollection>
                         </view:TitlebarActionButtonMenuView.Options>
                     </view:TitlebarActionButtonMenuView>

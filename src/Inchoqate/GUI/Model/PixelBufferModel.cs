@@ -5,20 +5,12 @@ using System.IO;
 
 namespace Inchoqate.GUI.Model
 {
-    public class PixelBufferModel : IDisposable, IEditSourceModel, IEditDestinationModel
+    public class PixelBufferModel(int size, int width, int height) : IDisposable, IEditSourceModel, IEditDestinationModel
     {
         private bool disposedValue;
 
-        public byte[] Data { get; private set; }
-        public readonly int Width, Height;
-
-
-        public PixelBufferModel(int size, int width, int height)
-        {
-            Data = new byte[size];
-            Width = width; 
-            Height = height;
-        }
+        public byte[] Data { get; private set; } = new byte[size];
+        public readonly int Width = width, Height = height;
 
         public static PixelBufferModel FromGpu(FrameBufferModel buffer)
         {

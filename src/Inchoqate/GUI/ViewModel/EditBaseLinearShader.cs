@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public abstract class EditBaseLinearShader : EditBaseLinear
+    public abstract class EditBaseLinearShader : EditBaseLinear, IDisposable
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditBaseLinearShader>();  
 
@@ -67,8 +67,7 @@ namespace Inchoqate.GUI.ViewModel
                 return false;
             }
 
-            destination.Use(FramebufferTarget.Framebuffer);
-            destination.Clear();
+            destination.UseAndClear(FramebufferTarget.Framebuffer);
             source.Use(TextureUnit.Texture0);
             _shader.Use();
             _vao.Use();
@@ -106,8 +105,8 @@ namespace Inchoqate.GUI.ViewModel
 
         public void Dispose()
         {
-            Dispose(disposing: true);
             GC.SuppressFinalize(this);
+            Dispose(disposing: true);
         }
 
         #endregion

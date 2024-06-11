@@ -45,6 +45,10 @@ namespace Inchoqate.GUI.Windows
                 typeof(MainWindow),
                 [new KeyGesture(Key.S, ModifierKeys.Control)]);
 
+        public static readonly RoutedCommand AddNodeGrayscaleCommand =
+            new("AddNodeGrayscale",
+                typeof(MainWindow));
+
 
         public MainWindow()
         {
@@ -62,11 +66,11 @@ namespace Inchoqate.GUI.Windows
                         //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
                         //svm.Edits.Apply(AddItemEvent<EditBaseLinear>.Builder<EditImplNoGreenViewModel>());
 
-                        svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplGrayscaleViewModel()));
-                        //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
-                        //svm.Edits?.Eventuate(new AddItemEvent<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplGrayscaleViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
+                        svm.Edits?.Eventuate(new ItemAdded<EditBaseLinear>(svm.Edits, new EditImplNoGreenViewModel()));
 
                         pvm.RenderEditor = svm;
                     }
@@ -112,7 +116,7 @@ namespace Inchoqate.GUI.Windows
             };
         }
 
-        private DispatcherTimer? timer = new() { Interval = TimeSpan.FromSeconds(0.08)  };
+        private readonly DispatcherTimer? timer = new() { Interval = TimeSpan.FromSeconds(0.08) };
         private bool isEnabled = true;
 
         private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -192,6 +196,16 @@ namespace Inchoqate.GUI.Windows
                 var data = PixelBufferModel.FromGpu(_activeEditor.Result);
                 data.SaveToFile(dialog.FileName);
             }
+        }
+
+        private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //if (_activeEditor?.Edits is null)
+            //{
+            //    return;
+            //}
+
+            //_activeEditor.Eventuate<AddItemEvent<EditBaseViewModel>>(new AddItemEvent<EditBaseViewModel>(_activeEditor, new EditImplGrayscaleViewModel()));
         }
     }
 }

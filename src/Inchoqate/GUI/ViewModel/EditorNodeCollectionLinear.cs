@@ -2,11 +2,8 @@
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public class EditorNodeCollectionLinear
-        : MonitoredObservableItemCollection<EditBaseLinear>
+    public class EditorNodeCollectionLinear(IEventHost relayTarget)
+        : MonitoredObservableItemCollection<EditBaseLinear>(relayTarget)
     {
-        public EditorNodeCollectionLinear(IEventHost relayTarget) : base(relayTarget)
-        {
-        }
     }
 }

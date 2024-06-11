@@ -5,16 +5,11 @@ using System.Windows.Controls;
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public class EditImplNoGreenViewModel : EditBaseLinearShader
+    public class EditImplNoGreenViewModel(BufferUsageHint usage) : EditBaseLinearShader(usage)
     {
         private readonly ObservableCollection<ContentControl> _optionControls = [];
 
         public override ObservableCollection<ContentControl> OptionControls => _optionControls;
-
-
-        public EditImplNoGreenViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) : base(usage)
-        {
-        }
 
         public EditImplNoGreenViewModel() : this(BufferUsageHint.StaticDraw)
         {

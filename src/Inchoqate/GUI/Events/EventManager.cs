@@ -26,11 +26,6 @@
         /// </summary>
         private Event _current;
 
-        /// <summary>
-        /// Get's invoked when a novelty is added.
-        /// </summary>
-        public event NotifyEventOccuredEventHandler? NoveltyAdded;
-
 
         public EventManager()
         {
@@ -42,7 +37,7 @@
         /// Add an event to the event stack.
         /// </summary>
         /// <param name="e"></param>
-        public void Novelty(Event e, IEventRelay? sender = null)
+        public void Novelty(Event e)
         {
             if (_locked || _current.Next.ContainsKey(e.CreationDate))
                 return;
@@ -50,7 +45,6 @@
             _current.Next.Add(e.CreationDate, e);
             e.Previous = _current;
             _current = e;
-            NoveltyAdded?.Invoke(sender, new() { Event = e });
         }
 
         /// <summary>

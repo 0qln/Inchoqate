@@ -25,32 +25,11 @@ namespace Inchoqate.GUI.View
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is EditorNodeCollectionLinear source)
-            {                
-                ObservableCollectionBase<StackEditorNodeView> result = new StackEditorNodeCollection();
-
-                // TODO: extract this into class 'EventSourceMirror'.
-                // Mirror relevant events that are applied to the source collection.
-                source.EventRelayed += (sender, e) =>
-                {
-                    Debug.Assert(sender == source);
-
-                    switch (e.Event)
-                    {
-                        case SwapItemsEvent @event:
-                            @event.Apply(result);
-                            @event.Occured += (s, e) => { @event.Apply(result); };
-                            @event.Reverted += (s, e) => { @event.Revert(result); };
-                            break;
-
-                        case AddItemEvent<EditBaseLinear> @event:
-                            @event.Apply(result, x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source });
-                            @event.Occured += (s, e) => { @event.Apply(result, x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source }); };
-                            @event.Reverted += (s, e) => { @event.Revert(result, x => result.First(y => y.ViewModel == x)); };
-                            break;
-                    }
-                };
-
-                return result; 
+            {
+                return StackEditorNodeCollection.Mirror(
+                    source, 
+                    x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source }, 
+                    x => x.ViewModel); 
             }
 
             throw new ArgumentException(
@@ -70,14 +49,11 @@ namespace Inchoqate.GUI.View
     /// </summary>
     public partial class StackEditorView : UserControl
     {
-        private readonly StackEditorViewModel _viewModel;
-
-        
         public StackEditorView()
         {
             InitializeComponent();
 
-            DataContext = _viewModel = new();
+            DataContext = new StackEditorViewModel();
         }
     }
 }

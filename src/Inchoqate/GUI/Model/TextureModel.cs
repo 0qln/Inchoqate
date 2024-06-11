@@ -82,9 +82,11 @@ namespace Inchoqate.GUI.Model
 
         public static TextureModel FromData(int width, int height, byte[]? data = null, TextureUnit unit = TextureUnit.Texture0)
         {
-            var result = new TextureModel(unit);
-            result.Width = width;
-            result.Height = height;
+            var result = new TextureModel(unit)
+            {
+                Width = width,
+                Height = height
+            };
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, GLPixelFormat, GLPixelType, data);
             result.InitDefaults();
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);

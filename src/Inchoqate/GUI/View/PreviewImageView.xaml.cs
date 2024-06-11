@@ -1,23 +1,15 @@
 ﻿using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using Inchoqate.GUI.ViewModel;
-using Inchoqate.Logging;
-using Microsoft.Extensions.Logging;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Wpf;
-using System.Diagnostics;
-using Inchoqate.GUI.Model;
 
 namespace Inchoqate.GUI.View
 {
     public partial class PreviewImageView : UserControl
     {
-        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<PreviewImageView>();
-
-
         public static readonly DependencyProperty StretchProperty =
             DependencyProperty.Register(
                 "Stretch",

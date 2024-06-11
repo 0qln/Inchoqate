@@ -23,12 +23,10 @@ namespace Inchoqate.GUI.Model
 
             Handle = GL.GenBuffer();
             GL.BindBuffer(bufferTarget, Handle);
-            using (var pin = values.Pin())
-            {
-                IntPtr data = (IntPtr)pin.Pointer;
-                IntPtr size = Size;
-                GL.BufferData(bufferTarget, size, data, usage);
-            }
+            using var pin = values.Pin();
+            IntPtr data = (IntPtr)pin.Pointer;
+            IntPtr size = Size;
+            GL.BufferData(bufferTarget, size, data, usage);
         }
 
         public BufferModel(BufferTarget bufferTarget, Span<T> values, BufferUsageHint usage)

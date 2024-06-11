@@ -39,16 +39,6 @@ namespace Inchoqate.GUI.Events
     public abstract class Event<T>(T param) : Event
     {
         /// <summary>
-        /// Occurs when the event is triggered. (Do)
-        /// </summary>
-        public event NotifyEventOccuredEventHandler? Occured;
-
-        /// <summary>
-        /// Occurs when the event is reverted. (Undo)
-        /// </summary>
-        public event NotifyEventRevertedEventHandler? Reverted;
-
-        /// <summary>
         /// The original object that the event operates on.
         /// </summary>
         public T Parameter { get; set; } = param;
@@ -69,13 +59,11 @@ namespace Inchoqate.GUI.Events
         public override void Do()
         {
             Apply(Parameter);
-            Occured?.Invoke(null, new() { Event = this });
         }
 
         public override void Undo()
         {
             Revert(Parameter);
-            Reverted?.Invoke(null, new() { Event = this });
         }
     }
 

@@ -70,7 +70,7 @@ namespace Inchoqate.GUI.Windows
             IntPtr handle = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(handle).AddHook(new HwndSourceHook(WindowProc));
 
-            _logger.LogInformation($"Fixed borderless window: {this.Title}");
+            _logger.LogInformation("Fixed borderless window: {Title}", Title);
         }
 
         private static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -92,7 +92,7 @@ namespace Inchoqate.GUI.Windows
             IntPtr monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
             if (monitor != IntPtr.Zero)
             {
-                MONITORINFO monitorInfo = new MONITORINFO();
+                MONITORINFO monitorInfo = new();
                 GetMonitorInfo(monitor, monitorInfo);
                 RECT rcWorkArea = monitorInfo.rcWork;
                 RECT rcMonitorArea = monitorInfo.rcMonitor;
@@ -104,19 +104,14 @@ namespace Inchoqate.GUI.Windows
             Marshal.StructureToPtr(mmi, lParam, true);
         }
 
+        /// <summary>Construct a point of coordinates (x,y).</summary>
         [StructLayout(LayoutKind.Sequential)]
-        private struct POINT
+        private struct POINT(int x, int y)
         {
             /// <summary>x coordinate of point.</summary>
-            public int x;
+            public int x = x;
             /// <summary>y coordinate of point.</summary>
-            public int y;
-            /// <summary>Construct a point of coordinates (x,y).</summary>
-            public POINT(int x, int y)
-            {
-                this.x = x;
-                this.y = y;
-            }
+            public int y = y;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -133,8 +128,8 @@ namespace Inchoqate.GUI.Windows
         private class MONITORINFO
         {
             public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
-            public RECT rcMonitor = new RECT();
-            public RECT rcWork = new RECT();
+            public RECT rcMonitor;
+            public RECT rcWork;
             public int dwFlags = 0;
         }
 
@@ -145,9 +140,9 @@ namespace Inchoqate.GUI.Windows
             public int top;
             public int right;
             public int bottom;
-            public static readonly RECT Empty = new RECT();
-            public int Width { get { return System.Math.Abs(right - left); } }
-            public int Height { get { return bottom - top; } }
+            public static readonly RECT Empty;
+            public readonly int Width { get { return System.Math.Abs(right - left); } }
+            public readonly int Height { get { return bottom - top; } }
             public RECT(int left, int top, int right, int bottom)
             {
                 this.left = left;
@@ -162,29 +157,34 @@ namespace Inchoqate.GUI.Windows
                 right = rcSrc.right;
                 bottom = rcSrc.bottom;
             }
-            public bool IsEmpty { get { return left >= right || top >= bottom; } }
-            public override string ToString()
+            public readonly bool IsEmpty { get { return left >= right || top >= bottom; } }
+            public override readonly string ToString()
             {
                 if (this == Empty) { return "RECT {Empty}"; }
                 return "RECT { left : " + left + " / top : " + top + " / right : " + right + " / bottom : " + bottom + " }";
             }
-            public override bool Equals(object? obj)
+            public override readonly bool Equals(object? obj)
             {
                 if (obj is not Rect) return false;
                 return this == (RECT)obj;
             }
             /// <summary>Return the HashCode for this struct (not garanteed to be unique)</summary>
-            public override int GetHashCode() => left.GetHashCode() + top.GetHashCode() + right.GetHashCode() + bottom.GetHashCode();
+            public override readonly int GetHashCode() => left.GetHashCode() + top.GetHashCode() + right.GetHashCode() + bottom.GetHashCode();
             /// <summary> Determine if 2 RECT are equal (deep compare)</summary>
             public static bool operator ==(RECT rect1, RECT rect2) { return (rect1.left == rect2.left && rect1.top == rect2.top && rect1.right == rect2.right && rect1.bottom == rect2.bottom); }
             /// <summary> Determine if 2 RECT are different(deep compare)</summary>
             public static bool operator !=(RECT rect1, RECT rect2) { return !(rect1 == rect2); }
         }
 
+#pragma warning disable SYSLIB1054 
+
         [DllImport("user32")]
         private static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
 
         [DllImport("User32")]
         private static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
+
+#pragma warning restore SYSLIB1054
+
     }
 }
