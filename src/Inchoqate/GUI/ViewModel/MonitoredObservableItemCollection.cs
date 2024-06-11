@@ -17,15 +17,12 @@ namespace Inchoqate.GUI.ViewModel
 
         private readonly IEventHost _relayTarget = relayTarget;
 
-        public event NotifyEventRelayedEventHandler? EventRelayed;
-
         public bool Eventuate<TParam>(Event<TParam> @event)
         {
             if (this is TParam param)
             {
                 @event.Apply(param);
                 _relayTarget.EventManager.Novelty(@event, this);
-                EventRelayed?.Invoke(this, new() { Event = @event, RelayTarget = _relayTarget });
                 return true;
             }
             else

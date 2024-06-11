@@ -26,11 +26,6 @@
         /// </summary>
         private Event _current;
 
-        /// <summary>
-        /// Get's invoked when a novelty is added.
-        /// </summary>
-        public event NotifyEventOccuredEventHandler? NoveltyAdded;
-
 
         public EventManager()
         {
@@ -50,7 +45,6 @@
             _current.Next.Add(e.CreationDate, e);
             e.Previous = _current;
             _current = e;
-            NoveltyAdded?.Invoke(sender, new() { Event = e });
         }
 
         /// <summary>
