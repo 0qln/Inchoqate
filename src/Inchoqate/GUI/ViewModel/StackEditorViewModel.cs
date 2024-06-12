@@ -133,9 +133,15 @@ namespace Inchoqate.GUI.ViewModel
 
         public override void SetSource(TextureModel? value)
         {
+            if (value == _sourceTexture)
+            {
+                return;
+            }
+
             _sourceTexture?.Dispose();
             _sourceTexture = value;
-            RenderSize = new(_sourceTexture?.Width ?? 0, _sourceTexture?.Height ?? 0);
+            SourceSize = new(_sourceTexture?.Width ?? 0, _sourceTexture?.Height ?? 0);
+            Invalidate();
         }
 
 

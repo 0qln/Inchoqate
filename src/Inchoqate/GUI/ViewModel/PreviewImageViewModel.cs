@@ -88,6 +88,7 @@ namespace Inchoqate.GUI.ViewModel
                 if (_editor is not null)
                 {
                     _editor.VoidColor = VoidColor.Color;
+                    _editor.RenderSize = BoundsSize;
                     _editor.PropertyChanged += Editor_PropertyChanged;
                 }
             }
@@ -97,7 +98,11 @@ namespace Inchoqate.GUI.ViewModel
         {
             switch (e.PropertyName)
             {
-                case nameof(_editor.Computed) or nameof(_editor.RenderSize):
+                case 
+                    nameof(_editor.Computed) or 
+                    nameof(_editor.RenderSize) or 
+                    nameof(_editor.SourceSize) or
+                    nameof(_editor.VoidColor):
                     OnPropertyChanged(nameof(RenderEditor));
                     break;
             }
@@ -185,14 +190,14 @@ namespace Inchoqate.GUI.ViewModel
                         break;
 
                     case nameof(BoundsSize):
+                        if (_editor is not null)
+                            _editor.RenderSize = BoundsSize;
                         ReloadLayout();
                         break;
 
                     case nameof(VoidColor):
                         if (_editor is not null)
-                        {
                             _editor.VoidColor = VoidColor.Color;
-                        }
                         break;
 
                     case nameof(DisplaySize):
@@ -247,6 +252,7 @@ namespace Inchoqate.GUI.ViewModel
             _panXStart = (_panXStart + relativeXScaled * _zoomValue) - (relativeXScaled * newZoom);
             _panYStart = (_panYStart + relativeYScaled * _zoomValue) - (relativeYScaled * newZoom);
             _zoomValue = newZoom;
+            OnPropertyChanged(nameof(Zoom));
 
             ReloadLayout();
         }
@@ -292,6 +298,11 @@ namespace Inchoqate.GUI.ViewModel
             public PointF TopRight;
             public PointF BottomLeft;
             public PointF BottomRight;
+
+            public readonly override string ToString()
+            {
+                return $"TL: {TopLeft}, TR: {TopRight}, BL: {BottomLeft}, BR: {BottomRight}";
+            }
         }
 
         private RectCorners _actualLayout;
@@ -301,11 +312,25 @@ namespace Inchoqate.GUI.ViewModel
             set => SetProperty(ref _actualLayout, value);
         }
 
+        private PointF _norm;
+        public PointF Norm
+        {
+            get => _norm;
+            private set => SetProperty(ref _norm, value);
+        }
+
         public void ReloadLayout()
         {
+            if (RenderEditor is null)
+            {
+                return;
+            }
+
             float
                 wNorm = (float)(BoundsSize.Width / DisplaySize.Width),
                 hNorm = (float)(BoundsSize.Height / DisplaySize.Height);
+
+            Norm = new(wNorm, hNorm);
 
             float panX = _panXDelta + _panXStart;
             float panY = _panYDelta + _panYStart;
@@ -316,9 +341,9 @@ namespace Inchoqate.GUI.ViewModel
             float bottom    = 0 + _zoomValue + panY;
 
             // align top
-            float 
-                xOff = 0, 
-                yOff = (float)(DisplaySize.Height - BoundsSize.Height) / (float)(DisplaySize.Height);
+            float
+                xOff = 0,
+                yOff = (float)(DisplaySize.Height - BoundsSize.Height) / (float)DisplaySize.Height;
 
             var layout = new RectCorners
             {

@@ -61,20 +61,15 @@ namespace Inchoqate.GUI.Windows
                 {
                     if (StackEditor.DataContext is StackEditorViewModel svm)
                     {
-                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
-                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
-                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
-                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
-                        _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
-
                         pvm.RenderEditor = svm;
                     }
                 }
             };
 
-           //PreviewImage.ImageSource = @"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg";
-            
             _activeEditor = StackEditor.DataContext as StackEditorViewModel;
+
+            _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
+            _activeEditor?.SetSource(TextureModel.FromFile(@"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg"));
 
             Closed += delegate
             {

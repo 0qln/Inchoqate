@@ -13,32 +13,68 @@
     VerticalAlignment="Center">
 
 
-    <Viewbox
-        x:Name="Viewbox"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Top"
-        MouseWheel="Viewbox_MouseWheel">
+    <Grid>
 
-        <Grid x:Name="Grid">
+        <StackPanel
+            x:Name="DebugPanel"
+            Background="#50000000"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Panel.ZIndex="1"
+            Visibility="Visible">
+
+            <TextBlock Foreground="White">
+                Zoom: <Run Text="{Binding Zoom}"/>
+            </TextBlock>
+            <TextBlock Foreground="White" >
+                Norm: <Run Text="{Binding Norm, Mode=OneWay}"/>
+            </TextBlock>
+            <TextBlock Foreground="White">
+                Display Size: <Run Text="{Binding DisplaySize}"/>
+            </TextBlock>
+            <TextBlock Foreground="White">
+                Render Size: <Run Text="{Binding RenderEditor.RenderSize}"/>
+            </TextBlock>
+            <TextBlock Foreground="White">
+                Source Size: <Run Text="{Binding RenderEditor.SourceSize, Mode=OneWay}"/>
+            </TextBlock>
+            <TextBlock Foreground="White">
+                Bounds Size: <Run Text="{Binding BoundsSize}"/>
+            </TextBlock>
+            <TextBlock Foreground="White">
+                Corners: <Run Text="{Binding ActualLayout, Mode=OneWay}"/>
+            </TextBlock>
             
-            <gl:GLWpfControl 
-                x:Name="GLImage"
-                ClipToBounds="False"
-                Render="OpenTK_OnRender"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"/>
+        </StackPanel>
 
-            <Thumb
-                x:Name="Thumb"
-                Opacity="0"
-                DragDelta="Thumb_DragDelta"
-                DragStarted="Thumb_DragStarted"
-                DragCompleted="Thumb_DragCompleted"
-                MouseRightButtonDown="Thumb_MouseRightButtonDown"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"/>
-        </Grid>
+        <Viewbox
+            x:Name="Viewbox"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            MouseWheel="Viewbox_MouseWheel">
+
+            <Grid x:Name="Grid">
+                
+                <gl:GLWpfControl 
+                    x:Name="GLImage"
+                    ClipToBounds="False"
+                    Render="OpenTK_OnRender"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"/>
+
+                <Thumb
+                    x:Name="Thumb"
+                    Opacity="0"
+                    DragDelta="Thumb_DragDelta"
+                    DragStarted="Thumb_DragStarted"
+                    DragCompleted="Thumb_DragCompleted"
+                    MouseRightButtonDown="Thumb_MouseRightButtonDown"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"/>
+            </Grid>
+            
+        </Viewbox>
         
-    </Viewbox>
+    </Grid>
     
 </UserControl>

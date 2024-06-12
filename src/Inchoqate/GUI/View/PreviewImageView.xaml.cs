@@ -74,28 +74,25 @@ namespace Inchoqate.GUI.View
         }
 
 
-        private Size GetDesiredImageSize(Size bounds)
+        private Size GetDesiredImageSize(Size bounds, Size sourceSize)
         {
             if (_viewModel is null
-                || _viewModel.RenderEditor is null
-                || _viewModel.RenderEditor.RenderSize == default)
+                || _viewModel.RenderEditor is null)
             {
-                return default;
+                return bounds;
             }
-
-            var renderSize = _viewModel.RenderEditor.RenderSize;
 
             if (double.IsInfinity(bounds.Width) || double.IsInfinity(bounds.Height))
             {
-                return renderSize;
+                return sourceSize;
             }
 
-            double aspectRatio = (double)renderSize.Height / renderSize.Width;
+            double aspectRatio = (double)sourceSize.Height / sourceSize.Width;
             double boundsRatio = bounds.Height / bounds.Width;
 
             return Stretch switch
             {
-                Stretch.None => new Size(renderSize.Width, renderSize.Height),
+                Stretch.None => new Size(sourceSize.Width, sourceSize.Height),
                 Stretch.Fill => bounds,
                 Stretch.Uniform => boundsRatio > aspectRatio
                     ? new(bounds.Width, bounds.Width * aspectRatio)
@@ -107,25 +104,29 @@ namespace Inchoqate.GUI.View
             };
         }
 
-
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            _viewModel.DisplaySize = GetDesiredImageSize(arrangeBounds);
-            var renderSize = _viewModel.RenderEditor?.RenderSize ?? default;
+            var sourceSize = _viewModel.RenderEditor?.SourceSize ?? default;
+            _viewModel.DisplaySize = GetDesiredImageSize(arrangeBounds, sourceSize);
+
+            // render size has to be atleast bounds size, otherwise the
+            // result will clip outside the GLImage while zooming and panning.
+            var renderSize = new Size (
+                width: Math.Max(sourceSize.Width, arrangeBounds.Width),
+                height: Math.Max(sourceSize.Height, arrangeBounds.Height));
+            if (_viewModel.RenderEditor is not null)
+                _viewModel.RenderEditor.RenderSize = renderSize;
             _viewModel.BoundsSize = renderSize;
-            if (GLImage.Width != renderSize.Width || 
-                GLImage.Height != renderSize.Height)
-            {
-                GLImage.Width = renderSize.Width;
-                GLImage.Height = renderSize.Height;
-            }
+            GLImage.Width = renderSize.Width;
+            GLImage.Height = renderSize.Height;
+
             Thumb.Width = arrangeBounds.Width;
             Thumb.Height = arrangeBounds.Height;
             Grid.Width = arrangeBounds.Width;
             Grid.Height = arrangeBounds.Height;
             Viewbox.Width = arrangeBounds.Width;
             Viewbox.Height = arrangeBounds.Height;
-            GLImage.InvalidateVisual();
+
             return base.ArrangeOverride(arrangeBounds);
         }
 

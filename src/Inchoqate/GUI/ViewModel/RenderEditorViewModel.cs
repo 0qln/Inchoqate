@@ -10,7 +10,7 @@ namespace Inchoqate.GUI.ViewModel
     {
         protected bool _computed;
         protected FrameBufferModel? _result;
-        protected Size _renderSize;
+        protected Size _renderSize, _sourceSize;
         private Color _voidColor;
 
         public Events.EventManager EventManager { get; } = new();
@@ -22,6 +22,12 @@ namespace Inchoqate.GUI.ViewModel
         {
             get => _voidColor;
             set => SetProperty(ref _voidColor, value);
+        }
+
+        public Size SourceSize
+        {
+            get => _sourceSize;
+            protected set => SetProperty(ref _sourceSize, value);
         }
 
         public Size RenderSize
