@@ -65,6 +65,7 @@ namespace Inchoqate.GUI.View
                 {
                     case nameof(_viewModel.RenderEditor):
                         this.InvalidateVisual();
+                        GLImage.InvalidateVisual();
                         break;
                     case nameof(_viewModel.ActualLayout):
                         GLImage.InvalidateVisual();
