@@ -33,6 +33,15 @@ namespace Inchoqate.GUI.Events
         /// Undo the event.
         /// </summary>
         public abstract void Undo();
+
+        /// <summary>
+        /// Convert the event to a string.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return GetType().Name;
+        }
     }
 
 

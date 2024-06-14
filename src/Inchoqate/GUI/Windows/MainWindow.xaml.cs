@@ -77,7 +77,7 @@ namespace Inchoqate.GUI.Windows
 
             _activeEditor = StackEditor.DataContext as StackEditorViewModel;
 
-            _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
+            _activeEditor?.EditsProvider.Eventuate(new LinearEditAdded(new EditImplGrayscaleViewModel()));
             _activeEditor?.SetSource(TextureModel.FromFile(@"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg"));
 
             Closed += delegate
@@ -187,12 +187,12 @@ namespace Inchoqate.GUI.Windows
 
         private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
+            _activeEditor?.EditsProvider.Eventuate(new LinearEditAdded(new EditImplGrayscaleViewModel()));
         }
 
         private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
+            _activeEditor?.EditsProvider.Eventuate(new LinearEditAdded(new EditImplNoGreenViewModel()));
         }
     }
 }

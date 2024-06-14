@@ -47,6 +47,10 @@ namespace Inchoqate.GUI.Events
             RegisteredTrees.Add(this);
         }
 
+        static EventTree()
+        {
+        }
+
 
         /// <summary>
         /// Add an event to the event stack.

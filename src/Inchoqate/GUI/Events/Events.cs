@@ -14,7 +14,7 @@ public class ItemMoved(int from, int to) : Event<IMoveItemsWrapper>
 }
 
 
-public class ItemAdded<T>(T item) : Event<Collection<T>>
+public abstract class ItemAdded<T>(T item) : Event<Collection<T>>
 {
     public T Item => item;
 
@@ -22,3 +22,7 @@ public class ItemAdded<T>(T item) : Event<Collection<T>>
     public override void Revert(Collection<T>? @object) => @object?.Remove(item);
 }
 
+
+public class LinearEditAdded(EditBaseLinear edit) : ItemAdded<EditBaseLinear>(edit)
+{
+}

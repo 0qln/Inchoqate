@@ -65,8 +65,10 @@ namespace Inchoqate.GUI.View
             if (value is null) { return result; }
             foreach (var arg in value.GetType().GetProperties())
             {
-                string argV = arg.GetValue(value)?.ToString() ?? "";
                 string argN = arg.Name;
+                if (argN == "Parameter")
+                    continue;
+                string argV = arg.GetValue(value)?.ToString() ?? "";
                 result.Add($"{argN}: {argV}");
             }
             return result;
