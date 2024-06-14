@@ -75,6 +75,14 @@
                                                        OptionsPosition="Bottom">
                         <view:TitlebarActionButtonMenuView.Options>
                             <view:TitlebarActioButtonOptionCollection>
+                                <view:TitlebarActionButtonCommandView
+                                    Title="Undo"                    
+                                    Shortcut="{x:Reference UndoCmdBinding}"
+                                    Command="{x:Static local:MainWindow.UndoCommand}"/>
+                                <view:TitlebarActionButtonCommandView
+                                    Title="Redo"
+                                    Shortcut="{x:Reference RedoCmdBinding}"
+                                    Command="{x:Static local:MainWindow.RedoCommand}"/>
                                 <view:TitlebarActionButtonMenuView Title="Add Node"
                                                                    OptionsPosition="Right"
                                                                    ClickMode="Hover">
