@@ -10,12 +10,12 @@ namespace Inchoqate.GUI.ViewModel
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="relayTarget"></param>
-    public class MonitoredObservableItemCollection<T>(IEventHost relayTarget) : ObservableItemCollection<T>, IEventRelay
+    public class MonitoredObservableItemCollection<T>(IEventTreeHost relayTarget) : ObservableItemCollection<T>, IEventRelay
         where T : INotifyPropertyChanged
     {
         private readonly ILogger _logger = FileLoggerFactory.CreateLogger<MonitoredObservableItemCollection<T>>();
 
-        private readonly IEventHost _relayTarget = relayTarget;
+        private readonly IEventTreeHost _relayTarget = relayTarget;
 
         public bool Eventuate<TParam>(Event<TParam> @event)
         {

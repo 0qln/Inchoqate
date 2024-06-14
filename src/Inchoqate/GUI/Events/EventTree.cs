@@ -1,6 +1,8 @@
-﻿namespace Inchoqate.GUI.Events
+﻿using System.Collections.ObjectModel;
+
+namespace Inchoqate.GUI.Events
 {
-    public class EventManager
+    public class EventTree
     {
         /// <summary>
         /// Dummy event.
@@ -26,10 +28,23 @@
         /// </summary>
         private Event _current;
 
+        /// <summary>
+        /// The name of the event tree.
+        /// </summary>
+        public required string Name { get; init; }
 
-        public EventManager()
+        /// <summary>
+        /// All registered event trees.
+        /// </summary>
+        public static ObservableCollection<EventTree> RegisteredTrees { get; private set; } = [];
+
+        public Event InitialEvent => _initialEvent;
+
+
+        public EventTree()
         {
             _current = _initialEvent;
+            RegisteredTrees.Add(this);
         }
 
 

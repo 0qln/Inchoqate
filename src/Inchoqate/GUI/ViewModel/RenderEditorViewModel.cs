@@ -6,17 +6,16 @@ using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>, IEventHost
+    public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>, IEventTreeHost
     {
         protected bool _computed;
         protected FrameBufferModel? _result;
         protected Size _renderSize, _sourceSize;
         private Color _voidColor;
 
-        public Events.EventManager EventManager { get; } = new();
-
         public abstract EventRelayProvider EditsProvider { get; }
 
+        public abstract EventTree EventManager { get; }
 
         public Color VoidColor
         {

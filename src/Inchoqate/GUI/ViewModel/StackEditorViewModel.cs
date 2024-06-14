@@ -52,6 +52,9 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
+        public override EventTree EventManager { get; } = new() { Name = "Stack Editor" };
+
+
         public StackEditorViewModel()
         {
             Edits = _edits = new(relayTarget: this);

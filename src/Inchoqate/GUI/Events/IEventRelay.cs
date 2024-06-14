@@ -16,7 +16,7 @@ namespace Inchoqate.GUI.Events
     }
 
 
-    public class EventRelayProvider(object? source, IEventHost host) : IEventRelay
+    public class EventRelayProvider(object? source, IEventTreeHost host) : IEventRelay
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EventRelayProvider>();
 

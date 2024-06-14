@@ -11,8 +11,10 @@ namespace Inchoqate.GUI.ViewModel
 
         public override ObservableCollection<ContentControl> OptionControls => _optionControls;
 
+
         public EditImplNoGreenViewModel() : this(BufferUsageHint.StaticDraw)
         {
+            Title = "No Green";
         }
 
 

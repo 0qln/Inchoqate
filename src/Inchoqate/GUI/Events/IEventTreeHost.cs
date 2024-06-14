@@ -1,10 +1,10 @@
 ﻿namespace Inchoqate.GUI.Events
 {
-    public interface IEventHost
+    public interface IEventTreeHost
     {
         /// <summary>
         /// The event manager of the event host.
         /// </summary>
-        public EventManager EventManager { get; }
+        public EventTree EventManager { get; }
     }
 }

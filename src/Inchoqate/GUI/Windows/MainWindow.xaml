@@ -18,6 +18,10 @@
             Command="{x:Static local:MainWindow.OpenFlowchartEditorCommand}"
             Executed="OpenFlowchartEditorCommand_Executed"/>
         <CommandBinding 
+            x:Name="OpenUndoTreeCmdBinding"
+            Command="{x:Static local:MainWindow.OpenUndoTreeCommand}"
+            Executed="OpenUndoTreeCmdBinding_Executed"/>
+        <CommandBinding 
             x:Name="UndoCmdBinding"
             Command="{x:Static local:MainWindow.UndoCommand}"
             Executed="UndoCmdBinding_Executed"/>
@@ -34,9 +38,13 @@
             Command="{x:Static local:MainWindow.SaveImageCommand}"
             Executed="SaveImageCmdBinding_Executed"/>
         <CommandBinding
-                x:Name="AddNodeGrayscaleCmdBinding"
-                Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}"
-                Executed="AddNodeGrayscaleCmdBinding_Executed"/>
+            x:Name="AddNodeGrayscaleCmdBinding"
+            Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}"
+            Executed="AddNodeGrayscaleCmdBinding_Executed"/>
+        <CommandBinding
+            x:Name="AddNodeNoGreenCmdBinding"
+            Command="{x:Static local:MainWindow.AddNodeNoGreenCommand}"
+            Executed="AddNodeNoGreenCmdBinding_Executed"/>
     </Window.CommandBindings>
 
     <Canvas>
@@ -76,6 +84,10 @@
                                                 Title="Grayscale"
                                                 Shortcut="{x:Reference AddNodeGrayscaleCmdBinding}"
                                                 Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}"/>
+                                            <view:TitlebarActionButtonCommandView
+                                                Title="No Green"
+                                                Shortcut="{x:Reference AddNodeNoGreenCmdBinding}"
+                                                Command="{x:Static local:MainWindow.AddNodeNoGreenCommand}"/>
                                         </view:TitlebarActioButtonOptionCollection>
                                     </view:TitlebarActionButtonMenuView.Options>
                                 </view:TitlebarActionButtonMenuView>
@@ -90,6 +102,9 @@
                                     Title="Open flow chart editor"
                                     Shortcut="{x:Reference OpenFlowchartEditorCmdBinding}"
                                     Command="{x:Static local:MainWindow.OpenFlowchartEditorCommand}"/>
+                                <view:TitlebarActionButtonCommandView 
+                                    Title="Open undo tree"
+                                    Command="{x:Static local:MainWindow.OpenUndoTreeCommand}"/>
                             </view:TitlebarActioButtonOptionCollection>                        
                         </view:TitlebarActionButtonMenuView.Options>
                     </view:TitlebarActionButtonMenuView>

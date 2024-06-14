@@ -18,6 +18,7 @@ namespace Inchoqate.GUI.Windows
 
 
         private FlowchartEditorWindow? _editorWindow;
+        private UndoTreeWindow? _undoTreeWindow;
         private RenderEditorViewModel? _activeEditor;
 
 
@@ -25,6 +26,10 @@ namespace Inchoqate.GUI.Windows
             new("OpenFlowchartEditor",
                 typeof(MainWindow),
                 [new KeyGesture(Key.E, ModifierKeys.Control)]);
+        
+        public static readonly RoutedCommand OpenUndoTreeCommand =
+            new("OpenUndoTree",
+                typeof(MainWindow));
 
         public static readonly RoutedCommand UndoCommand =
             new("Undo",
@@ -48,6 +53,10 @@ namespace Inchoqate.GUI.Windows
 
         public static readonly RoutedCommand AddNodeGrayscaleCommand =
             new("AddNodeGrayscale",
+                typeof(MainWindow));
+
+        public static readonly RoutedCommand AddNodeNoGreenCommand =
+            new("AddNodeNoGreen",
                 typeof(MainWindow));
 
 
@@ -85,21 +94,33 @@ namespace Inchoqate.GUI.Windows
             }
         }
 
+        private void ToggleWindow<TWindow>(ref TWindow? windowCache, Action clearWindowCache) 
+            where TWindow : Window, new()
+        {
+            if (windowCache is not null)
+            {
+                windowCache.Activate();
+            }
+            else
+            {
+                windowCache = new TWindow();
+                windowCache.Show();
+                windowCache.Closed += delegate
+                {
+                    clearWindowCache();
+                };
+            }
+        }
+ 
         private void OpenFlowchartEditorCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (_editorWindow is not null)
-            {
-                return;
-            }
-
-            _editorWindow = new FlowchartEditorWindow();
-            _editorWindow.Show();
-            _editorWindow.Closed += delegate
-            {
-                _editorWindow = null;
-            };
+            ToggleWindow(ref _editorWindow, () => _editorWindow = null);
         }
 
+        private void OpenUndoTreeCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ToggleWindow(ref _undoTreeWindow, () => _undoTreeWindow = null);
+        }
 
         private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -167,6 +188,11 @@ namespace Inchoqate.GUI.Windows
         private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplGrayscaleViewModel()));
+        }
+
+        private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            _activeEditor?.EditsProvider.Eventuate(new ItemAdded<EditBaseLinear>(new EditImplNoGreenViewModel()));
         }
     }
 }
