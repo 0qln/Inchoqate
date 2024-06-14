@@ -10,6 +10,7 @@
 
     <UserControl.Resources>
         <local:EventTreeNextNodesConverter x:Key="EventTreeConverter"/>
+        <local:EventArgsInfoConverter x:Key="EventArgsInfoConverter"/>
     </UserControl.Resources>
 
     <Grid
@@ -19,21 +20,48 @@
         <StackPanel
             Orientation="Horizontal">
 
-            <Border 
+            <StackPanel
                 Margin="10"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                x:Name="Node"
+                x:Name="EventInfo"
                 Grid.Column="0">
+                <StackPanel.Background>
+                    <SolidColorBrush Color="{DynamicResource Popup_Idle_1}"/>
+                </StackPanel.Background>
 
                 <TextBlock 
-                    Text="{Binding InitialEvent, ElementName=ControlRoot}">
+                    Margin="5"
+                    x:Name="EventTitle"
+                    Text="{Binding InitialEvent, ElementName=ControlRoot}"
+                    FontWeight="Bold">
                     <TextBlock.Foreground>
                         <SolidColorBrush Color="{DynamicResource Text_1}"/>
                     </TextBlock.Foreground>
                 </TextBlock>
+
+                <ItemsControl
+                    Margin="5"
+                    x:Name="EventArgs"
+                    ItemsSource="{Binding InitialEvent, ElementName=ControlRoot, Converter={StaticResource EventArgsInfoConverter}, Mode=OneWay}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="{Binding}">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource Text_1}"/>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
                 
-            </Border>
+            </StackPanel>
 
             <ItemsControl
                 x:Name="NextNodes"

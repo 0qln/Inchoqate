@@ -56,4 +56,25 @@ namespace Inchoqate.GUI.View
             throw new NotImplementedException();
         }
     }
+
+    public class EventArgsInfoConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var result = new ObservableCollection<string>();
+            if (value is null) { return result; }
+            foreach (var arg in value.GetType().GetProperties())
+            {
+                string argV = arg.GetValue(value)?.ToString() ?? "";
+                string argN = arg.Name;
+                result.Add($"{argN}: {argV}");
+            }
+            return result;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
