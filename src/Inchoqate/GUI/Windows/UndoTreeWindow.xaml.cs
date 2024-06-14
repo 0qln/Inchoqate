@@ -1,4 +1,4 @@
-﻿using Inchoqate.GUI.Events;
+﻿using Inchoqate.GUI.Model.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,10 +21,10 @@ namespace Inchoqate.GUI.Windows
         public static readonly DependencyProperty EventTreesProperty = 
             DependencyProperty.Register(
                 "EventTrees",
-                typeof(ObservableCollection<EventTree>),
+                typeof(ObservableCollection<EventTreeModel>),
                 typeof(UndoTreeWindow),
                 new FrameworkPropertyMetadata(
-                    EventTree.RegisteredTrees,
+                    EventTreeModel.RegisteredTrees,
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
 
@@ -32,7 +32,7 @@ namespace Inchoqate.GUI.Windows
         {
             InitializeComponent();
 
-            EventTree.RegisteredTrees.CollectionChanged += (s, e) =>
+            EventTreeModel.RegisteredTrees.CollectionChanged += (s, e) =>
             {
                 InvalidateProperty(EventTreesProperty);
             };

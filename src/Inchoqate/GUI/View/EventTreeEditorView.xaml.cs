@@ -1,4 +1,4 @@
-﻿using Inchoqate.GUI.Events;
+﻿using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.Windows;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace Inchoqate.GUI.View
         public static readonly DependencyProperty EditorTargetProperty = 
             DependencyProperty.Register(
                 "EditorTarget",
-                typeof(EventTree),
+                typeof(EventTreeModel),
                 typeof(EventTreeEditorView),
                 new FrameworkPropertyMetadata(
                     null, 
@@ -32,13 +32,13 @@ namespace Inchoqate.GUI.View
         private static void EditorTargetPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var @this = (EventTreeEditorView)d;
-            var tree = (EventTree)e.NewValue;
+            var tree = (EventTreeModel)e.NewValue;
             @this.Renderer.InitialEvent = tree.InitialEvent;
         }
 
-        public EventTree EditorTarget
+        public EventTreeModel EditorTarget
         {
-            get => (EventTree)GetValue(EditorTargetProperty);
+            get => (EventTreeModel)GetValue(EditorTargetProperty);
             set => SetValue(EditorTargetProperty, value);
         }
 

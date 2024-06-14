@@ -1,8 +1,8 @@
-﻿using Inchoqate.GUI.Events;
+﻿using Inchoqate.GUI.Model.Events;
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public class EditorNodeCollectionLinear(IEventTreeHost relayTarget)
+    public class EditorNodeCollectionLinear(EventTreeModel relayTarget)
         : MonitoredObservableItemCollection<EditBaseLinear>(relayTarget)
     {
     }

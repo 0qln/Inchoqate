@@ -1,4 +1,4 @@
-﻿using Inchoqate.GUI.Events;
+﻿using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.Model;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
@@ -43,21 +43,21 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
-        public override EventRelayProvider EditsProvider
+        public override BaseEventRelayModel EditsProvider
         {
             get 
             {
-                return new EventRelayProvider(_edits, this);
+                return new BaseEventRelayModel(_edits, EventTree);
             }
         }
 
 
-        public override EventTree EventManager { get; } = new() { Name = "Stack Editor" };
+        public override EventTreeModel EventTree { get; } = new() { Name = "Stack Editor" };
 
 
         public StackEditorViewModel()
         {
-            Edits = _edits = new(relayTarget: this);
+            Edits = _edits = new(relayTarget: EventTree);
 
             PropertyChanged += (s, e) =>
             {

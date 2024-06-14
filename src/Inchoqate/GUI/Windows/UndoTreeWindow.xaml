@@ -51,7 +51,8 @@
 
                     <ComboBox
                         x:Name="EventTreeSelection"
-                        ItemsSource="{Binding EventTrees, ElementName=ControlRoot}">
+                        ItemsSource="{Binding EventTrees, ElementName=ControlRoot}"
+                        SelectedIndex="0">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <ComboBoxItem Content="{Binding Name}"/>

@@ -1,13 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Inchoqate.GUI.Events
+namespace Inchoqate.GUI.Model.Events
 {
-    public class EventTree
+    public class EventTreeModel
     {
         /// <summary>
         /// Dummy event.
         /// </summary>
-        protected sealed partial class DummyEvent : Event
+        protected sealed partial class DummyEvent : EventModel
         {
             public override void Do() { }
             public override void Undo() { }
@@ -26,12 +26,12 @@ namespace Inchoqate.GUI.Events
         /// <summary>
         /// The first event.
         /// </summary>
-        private readonly Event _initialEvent = new DummyEvent();
+        private readonly EventModel _initialEvent = new DummyEvent();
 
         /// <summary>
         /// The most recent event.
         /// </summary>
-        private Event _current;
+        private EventModel _current;
 
         /// <summary>
         /// The name of the event tree.
@@ -41,18 +41,18 @@ namespace Inchoqate.GUI.Events
         /// <summary>
         /// All registered event trees.
         /// </summary>
-        public static ObservableCollection<EventTree> RegisteredTrees { get; private set; } = [];
+        public static ObservableCollection<EventTreeModel> RegisteredTrees { get; private set; } = [];
 
-        public Event InitialEvent => _initialEvent;
+        public EventModel InitialEvent => _initialEvent;
 
 
-        public EventTree()
+        public EventTreeModel()
         {
             _current = _initialEvent;
             RegisteredTrees.Add(this);
         }
 
-        static EventTree()
+        static EventTreeModel()
         {
         }
 
@@ -61,7 +61,7 @@ namespace Inchoqate.GUI.Events
         /// Add an event to the event stack.
         /// </summary>
         /// <param name="e"></param>
-        public void Novelty(Event e)
+        public void Novelty(EventModel e)
         {
             if (_locked || _current.Next.ContainsKey(e.CreationDate))
                 return;

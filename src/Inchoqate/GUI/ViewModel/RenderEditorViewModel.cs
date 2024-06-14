@@ -1,21 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Inchoqate.GUI.Events;
+using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.Model;
 using System.Windows;
 using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>, IEventTreeHost
+    public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>
     {
         protected bool _computed;
         protected FrameBufferModel? _result;
         protected Size _renderSize, _sourceSize;
         private Color _voidColor;
 
-        public abstract EventRelayProvider EditsProvider { get; }
+        public abstract BaseEventRelayModel EditsProvider { get; }
 
-        public abstract EventTree EventManager { get; }
+        public abstract EventTreeModel EventTree { get; }
 
         public Color VoidColor
         {

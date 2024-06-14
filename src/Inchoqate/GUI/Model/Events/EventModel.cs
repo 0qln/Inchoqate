@@ -4,7 +4,7 @@ using System.Resources;
 using System.Security.Policy;
 using System.Windows;
 
-namespace Inchoqate.GUI.Events
+namespace Inchoqate.GUI.Model.Events
 {
     public enum EventState
     {
@@ -13,7 +13,7 @@ namespace Inchoqate.GUI.Events
     }
 
 
-    public abstract class Event
+    public abstract class EventModel
     {
         /// <summary>
         /// The creation date of the event.
@@ -23,12 +23,12 @@ namespace Inchoqate.GUI.Events
         /// <summary>
         /// The previous event.
         /// </summary>
-        public Event? Previous;
+        public EventModel? Previous;
 
         /// <summary>
         /// The next events. Most recent events are first.
         /// </summary>
-        public readonly SortedList<DateTime, Event> Next = new(
+        public readonly SortedList<DateTime, EventModel> Next = new(
             comparer: Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Inchoqate.GUI.Events
     }
 
 
-    public abstract class Event<T> : Event
+    public abstract class EventModel<T> : EventModel
     {
         /// <summary>
         /// The original object that the event operates on.

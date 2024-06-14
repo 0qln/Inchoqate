@@ -1,4 +1,4 @@
-﻿using Inchoqate.GUI.Events;
+﻿using Inchoqate.GUI.Model.Events;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -18,7 +18,7 @@ namespace Inchoqate.GUI.View
         public static readonly DependencyProperty InitialEventProperty =
             DependencyProperty.Register(
                 "InitialEvent",
-                typeof(Event),
+                typeof(EventModel),
                 typeof(EventTreeRendererView),
                 new FrameworkPropertyMetadata(
                     null,
@@ -36,9 +36,9 @@ namespace Inchoqate.GUI.View
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
 
-        public Event InitialEvent
+        public EventModel InitialEvent
         {
-            get => (Event)GetValue(InitialEventProperty);
+            get => (EventModel)GetValue(InitialEventProperty);
             set => SetValue(InitialEventProperty, value);
         }
 
@@ -78,7 +78,7 @@ namespace Inchoqate.GUI.View
         {
             var result = new ObservableCollection<EventTreeRendererView>();
             if (value is null) { return result; }
-            var @event = (Event)value;
+            var @event = (EventModel)value;
             foreach (var nextEvent in @event.Next)
             {
                 result.Add(new EventTreeRendererView { InitialEvent = nextEvent.Value });

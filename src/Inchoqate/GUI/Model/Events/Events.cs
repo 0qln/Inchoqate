@@ -1,10 +1,10 @@
 ﻿using Inchoqate.GUI.ViewModel;
 using System.Collections.ObjectModel;
 
-namespace Inchoqate.GUI.Events;
+namespace Inchoqate.GUI.Model.Events;
 
 
-public class ItemMoved(int from, int to) : Event<IMoveItemsWrapper>
+public class ItemMoved(int from, int to) : EventModel<IMoveItemsWrapper>
 {
     public int From => from;
     public int To => to;
@@ -14,7 +14,7 @@ public class ItemMoved(int from, int to) : Event<IMoveItemsWrapper>
 }
 
 
-public abstract class ItemAdded<T>(T item) : Event<Collection<T>>
+public abstract class ItemAdded<T>(T item) : EventModel<Collection<T>>
 {
     public T Item => item;
 

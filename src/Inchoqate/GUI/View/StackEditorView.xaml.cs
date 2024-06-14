@@ -1,4 +1,4 @@
-﻿using Inchoqate.GUI.Events;
+﻿using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.ViewModel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;

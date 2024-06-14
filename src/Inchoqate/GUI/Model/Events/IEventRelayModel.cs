@@ -1,9 +1,9 @@
 ﻿using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace Inchoqate.GUI.Events
+namespace Inchoqate.GUI.Model.Events
 {
-    public interface IEventRelay
+    public interface IEventRelayModel
     {
         /// <summary>
         /// Applies an event to this the relay object and relays it to the event host.
@@ -12,21 +12,21 @@ namespace Inchoqate.GUI.Events
         /// <typeparam name="TParam"></typeparam>
         /// <param name="event"></param>
         /// <returns>Success</returns>
-        bool Eventuate<TParam>(Event<TParam> @event);
+        bool Eventuate<TParam>(EventModel<TParam> @event);
     }
 
 
-    public class EventRelayProvider(object? source, IEventTreeHost host) : IEventRelay
+    public class BaseEventRelayModel(object? source, EventTreeModel tree) : IEventRelayModel
     {
-        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EventRelayProvider>();
+        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<BaseEventRelayModel>();
 
-        public bool Eventuate<TParam>(Event<TParam> @event)
+        public bool Eventuate<TParam>(EventModel<TParam> @event)
         {
             if (source is TParam param)
             {
                 @event.Parameter = param;
                 @event.Do();
-                host.EventManager.Novelty(@event);
+                tree.Novelty(@event);
                 return true;
             }
 

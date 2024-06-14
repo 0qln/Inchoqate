@@ -3,7 +3,7 @@ using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
-using Inchoqate.GUI.Events;
+using Inchoqate.GUI.Model.Events;
 using System.Windows.Threading;
 using System.Windows.Media.TextFormatting;
 using Microsoft.Extensions.Logging;
@@ -124,12 +124,12 @@ namespace Inchoqate.GUI.Windows
 
         private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EventManager.Undo();
+            _activeEditor?.EventTree.Undo();
         }
 
         private void RedoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EventManager.Redo();
+            _activeEditor?.EventTree.Redo();
         }
 
         private void OpenImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)

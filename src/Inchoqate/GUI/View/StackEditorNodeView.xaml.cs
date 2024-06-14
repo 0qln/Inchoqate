@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Inchoqate.GUI.Events;
+using Inchoqate.GUI.Model.Events;
 
 namespace Inchoqate.GUI.View
 {
