@@ -6,6 +6,13 @@ using System.Windows;
 
 namespace Inchoqate.GUI.Events
 {
+    public enum EventState
+    {
+        Executed,
+        Reverted
+    }
+
+
     public abstract class Event
     {
         /// <summary>
@@ -33,6 +40,11 @@ namespace Inchoqate.GUI.Events
         /// Undo the event.
         /// </summary>
         public abstract void Undo();
+
+        /// <summary>
+        /// The state of the event.
+        /// </summary>
+        public EventState State { get; protected set; }
 
         /// <summary>
         /// Convert the event to a string.
@@ -68,23 +80,13 @@ namespace Inchoqate.GUI.Events
         public override void Do()
         {
             Apply(Parameter);
+            State = EventState.Executed;
         }
 
         public override void Undo()
         {
             Revert(Parameter);
+            State = EventState.Reverted;
         }
-    }
-
-
-    [Obsolete("Use a fully defined event class instead.")]
-    public class InlineEvent<T>(T parameter, Action<T> action, Action<T> reciprocal) : Event
-    {
-        public readonly Action<T>
-            Action = action, 
-            Reciprocal = reciprocal;
-
-        public override void Do() => Action(parameter);
-        public override void Undo() => Reciprocal(parameter);
     }
 }

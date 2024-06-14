@@ -7,17 +7,21 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="ControlRoot">
-    <Canvas
-        x:Name="MainCanvas"
-        Width="{Binding Width, ElementName=ControlRoot}"
-        Height="{Binding Height, ElementName=ControlRoot}">
+    <AdornerDecorator>
 
-        <Canvas.Background>
-            <SolidColorBrush Color="{DynamicResource Background_Idle_1}"/>
-        </Canvas.Background>
+        <Canvas
+            x:Name="MainCanvas"
+            Width="{Binding Width, ElementName=ControlRoot}"
+            Height="{Binding Height, ElementName=ControlRoot}">
 
-        <local:EventTreeRendererView 
-            x:Name="Renderer"/>
+            <Canvas.Background>
+                <SolidColorBrush Color="{DynamicResource Background_Idle_1}"/>
+            </Canvas.Background>
 
-    </Canvas>
+            <local:EventTreeRendererView 
+                x:Name="Renderer"/>
+
+        </Canvas>
+        
+    </AdornerDecorator>
 </UserControl>

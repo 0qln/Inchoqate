@@ -11,6 +11,11 @@ namespace Inchoqate.GUI.Events
         {
             public override void Do() { }
             public override void Undo() { }
+
+            public override string ToString()
+            {
+                return "Initial Event";
+            }
         }
 
         /// <summary>
