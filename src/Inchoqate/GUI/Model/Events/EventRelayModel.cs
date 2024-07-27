@@ -16,7 +16,7 @@ namespace Inchoqate.GUI.Model.Events
     }
 
 
-    public class BaseEventRelayModel(object? source, EventTreeModel tree) : IEventRelayModel
+    public class BaseEventRelayModel(object? source, IEventTree tree) : IEventRelayModel
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<BaseEventRelayModel>();
 

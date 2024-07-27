@@ -15,7 +15,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty IconProperty = 
             DependencyProperty.Register(
-                "Icon", 
+                nameof(Icon), 
                 typeof(ImageSource), 
                 typeof(TitlebarActionButtonOptionView),
                 new FrameworkPropertyMetadata(
@@ -24,7 +24,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty TitleProperty = 
             DependencyProperty.Register(
-                "Title", 
+                nameof(Title), 
                 typeof(string), 
                 typeof(TitlebarActionButtonOptionView),
                 new FrameworkPropertyMetadata(
@@ -33,7 +33,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty IndicatorVisibilityProperty = 
             DependencyProperty.Register(
-                "IndicatorVisibility", 
+                nameof(IndicatorVisibility), 
                 typeof(Visibility), 
                 typeof(TitlebarActionButtonOptionView), 
                 new FrameworkPropertyMetadata(
@@ -42,7 +42,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ShortcutProperty = 
             DependencyProperty.Register(
-                "Shortcut", 
+                nameof(Shortcut), 
                 typeof(CommandBinding), 
                 typeof(TitlebarActionButtonOptionView), 
                 new FrameworkPropertyMetadata(
@@ -51,7 +51,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty IndicatorContentProperty =
             DependencyProperty.Register(
-                "IndicatorContent",
+                nameof(IndicatorContent),
                 typeof(Visibility),
                 typeof(TitlebarActionButtonOptionView),
                 new FrameworkPropertyMetadata(

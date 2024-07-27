@@ -3,7 +3,6 @@ using Inchoqate.GUI.View;
 using MvvmHelpers;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel
 {

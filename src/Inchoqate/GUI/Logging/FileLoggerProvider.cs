@@ -1,5 +1,4 @@
-﻿using Inchoqate.Logging;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.IO;
 
 namespace Inchoqate.Logging

@@ -1,21 +1,9 @@
-﻿using Inchoqate.GUI.Model;
-using Inchoqate.GUI.ViewModel;
+﻿using Inchoqate.GUI.ViewModel;
+using Inchoqate.GUI.Model.Events;
 using System.Windows.Controls.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Inchoqate.GUI.Model.Events;
 
 namespace Inchoqate.GUI.View
 {
@@ -26,7 +14,7 @@ namespace Inchoqate.GUI.View
     {
         public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register(
-                "ViewModel",
+                nameof(ViewModel),
                 typeof(EditBaseLinear),
                 typeof(StackEditorNodeView),
                 new FrameworkPropertyMetadata(
@@ -38,7 +26,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ContentVisibilityProperty = 
             DependencyProperty.Register(
-                "ContentVisibility",
+                nameof(ContentVisibility),
                 typeof(Visibility),
                 typeof(StackEditorNodeView),
                 new FrameworkPropertyMetadata(
@@ -59,6 +47,10 @@ namespace Inchoqate.GUI.View
             set => SetValue(ContentVisibilityProperty, value);
         }
 
+        private Point _dragOffset;
+
+        public EditorNodeCollectionLinear? BackingCollection { get; set; }
+
 
         public StackEditorNodeView()
         {
@@ -70,23 +62,12 @@ namespace Inchoqate.GUI.View
 
         private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            if (e.VerticalChange == 0)
-            {
-                if (Content.Visibility == Visibility.Visible)
-                {
-                    ContentVisibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    ContentVisibility = Visibility.Visible;
-                }
-            }
+            if (e.VerticalChange != 0) return;
+
+            ContentVisibility = EditorContent.Visibility == Visibility.Visible 
+                ? Visibility.Collapsed 
+                : Visibility.Visible;
         }
-
-        // TODO: sort this
-        private Point _dragOffset;
-        public EditorNodeCollectionLinear? BackingCollection { get; set; }
-
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
@@ -102,13 +83,13 @@ namespace Inchoqate.GUI.View
             if (index < BackingCollection.Count - 1 && 
                 e.VerticalChange + _dragOffset.Y > stackPanel.Children[index + 1].TransformToVisual(this).Transform(new()).Y)
             {
-                BackingCollection.Eventuate(new ItemMoved(index, index + 1));
+                BackingCollection.Eventuate(new ItemMovedEvent(index, index + 1));
             }   
 
             if (index > 0 && 
                 e.VerticalChange + _dragOffset.Y < stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
             {
-                BackingCollection.Eventuate(new ItemMoved(index, index - 1));
+                BackingCollection.Eventuate(new ItemMovedEvent(index, index - 1));
             }
         }
 

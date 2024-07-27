@@ -1,24 +1,11 @@
 ﻿using Inchoqate.GUI.Converters;
-using Inchoqate.GUI.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.View
 {
@@ -32,7 +19,7 @@ namespace Inchoqate.GUI.View
     public partial class ExtSliderView : UserControl
     {
         public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(
-            "Minimum",
+            nameof(Minimum),
             typeof(double),
             typeof(ExtSliderView),
             new FrameworkPropertyMetadata(
@@ -41,7 +28,7 @@ namespace Inchoqate.GUI.View
                 FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(
-            "Maximum",
+            nameof(Maximum),
             typeof(double),
             typeof(ExtSliderView),
             new FrameworkPropertyMetadata(
@@ -70,7 +57,7 @@ namespace Inchoqate.GUI.View
                     coerceValueCallback: RangespropertyCoerceValueCallback));
 
         public static readonly DependencyProperty ValueCountProperty = DependencyProperty.Register(
-            "ValueCount",
+            nameof(ValueCount),
             typeof(int),
             typeof(ExtSliderView),
             new FrameworkPropertyMetadata(
@@ -80,7 +67,7 @@ namespace Inchoqate.GUI.View
                 FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         public static readonly DependencyProperty RangeCountProperty = DependencyProperty.Register(
-            "RangeCount",
+            nameof(RangeCount),
             typeof(int),
             typeof(ExtSliderView),
             new FrameworkPropertyMetadata(
@@ -91,7 +78,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ShowValuesProperty = 
             DependencyProperty.Register(
-                "ShowValues",
+                nameof(ShowValues),
                 typeof(bool[]),
                 typeof(ExtSliderView),
                 new FrameworkPropertyMetadata(
@@ -101,7 +88,7 @@ namespace Inchoqate.GUI.View
         // TOOD
         public static readonly DependencyProperty ShowRangesProperty = 
             DependencyProperty.Register(
-                "ShowRanges",
+                nameof(ShowRanges),
                 typeof(bool[]),
                 typeof(ExtSliderView),
                 new FrameworkPropertyMetadata(
@@ -110,7 +97,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty BackgroundGradientBrushesProperty =
             DependencyProperty.Register(
-                "BackgroundGradientBrushes",
+                nameof(BackgroundGradientBrushes),
                 typeof(Color[]),
                 typeof(ExtSliderView),
                 new FrameworkPropertyMetadata(
@@ -339,7 +326,7 @@ namespace Inchoqate.GUI.View
     {
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(
-                "Value",
+                nameof(Value),
                 typeof(double),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -348,7 +335,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty MinimumProperty =
             DependencyProperty.Register(
-                "Minimum",
+                nameof(Minimum),
                 typeof(double),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -357,7 +344,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register(
-                "Maximum",
+                nameof(Maximum),
                 typeof(double),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -366,7 +353,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ShowPrevRangeProperty =
             DependencyProperty.Register(
-                "ShowPrevRange",
+                nameof(ShowPrevRange),
                 typeof(bool),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -375,7 +362,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ShowNextRangeProperty =
             DependencyProperty.Register(
-                "ShowNextRange",
+                nameof(ShowNextRange),
                 typeof(bool),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -384,7 +371,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ShowValueProperty =
             DependencyProperty.Register(
-                "ShowValue",
+                nameof(ShowValue),
                 typeof(bool),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -393,7 +380,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty RangesProperty =
             DependencyProperty.Register(
-                "Ranges",
+                nameof(Ranges),
                 typeof(double[]),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -402,7 +389,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty IndexProperty =
             DependencyProperty.Register(
-                "Index",
+                nameof(Index),
                 typeof(int),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -411,7 +398,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty TextBrushProperty =
             DependencyProperty.Register(
-                "TextBrush",
+                nameof(TextBrush),
                 typeof(Brush),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -420,7 +407,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty BackgroundBrushProperty =
             DependencyProperty.Register(
-                "BackgroundBrush",
+                nameof(BackgroundBrush),
                 typeof(Brush),
                 typeof(SliderInfoAdorner),
                 new FrameworkPropertyMetadata(
@@ -601,7 +588,7 @@ namespace Inchoqate.GUI.View
     {
         public static readonly DependencyProperty ValueMinProperty = 
             DependencyProperty.Register(
-                "ValueMin",
+                nameof(ValueMin),
                 typeof(double),
                 typeof(SliderPart),
                 new FrameworkPropertyMetadata(
@@ -610,7 +597,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ValueMaxProperty = 
             DependencyProperty.Register(
-                "ValueMax",
+                nameof(ValueMax),
                 typeof(double),
                 typeof(SliderPart),
                 new FrameworkPropertyMetadata(
@@ -619,20 +606,20 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty IndexProperty = 
             DependencyProperty.Register(
-                "Index",
+                nameof(Index),
                 typeof(int),
                 typeof(SliderPart),
                 new FrameworkPropertyMetadata(-1));
 
         public static readonly DependencyProperty RangeProperty = 
             DependencyProperty.Register(
-                "Range",
+                nameof(Range),
                 typeof(double),
                 typeof(SliderPart));
 
         public static readonly DependencyProperty ExtSliderProperty =
             DependencyProperty.Register(
-                "ExtSlider",
+                nameof(ExtSlider),
                 typeof(ExtSliderView),
                 typeof(SliderPart),
                 new FrameworkPropertyMetadata(
@@ -665,7 +652,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty TrackVisibilityProperty =
             DependencyProperty.Register(
-                "TrackVisibility",
+                nameof(TrackVisibility),
                 typeof(Visibility),
                 typeof(SliderPart),
                 new FrameworkPropertyMetadata(
@@ -674,7 +661,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ShowValueProperty =
             DependencyProperty.Register(
-                "ShowValue",
+                nameof(ShowValue),
                 typeof(bool),
                 typeof(SliderPart),
                 new FrameworkPropertyMetadata(
@@ -683,7 +670,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ShowPrevRangeProperty =
             DependencyProperty.Register(
-                "ShowPrevRange",
+                nameof(ShowPrevRange),
                 typeof(bool),
                 typeof(SliderPart),
                 new FrameworkPropertyMetadata(
@@ -692,7 +679,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ShowNextRangeProperty =
             DependencyProperty.Register(
-                "ShowNextRange",
+                nameof(ShowNextRange),
                 typeof(bool),
                 typeof(SliderPart),
                 new FrameworkPropertyMetadata(

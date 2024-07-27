@@ -1,11 +1,4 @@
-﻿using Inchoqate.Logging;
-using Microsoft.Extensions.Logging;
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Platform.Windows;
-using System.Windows;
-using System.Windows.Media;
-
-namespace Inchoqate.GUI.Model
+﻿namespace Inchoqate.GUI.Model
 {
     /*
 

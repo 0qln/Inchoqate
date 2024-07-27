@@ -1,19 +1,7 @@
 ﻿using Inchoqate.GUI.Model.Events;
-using Inchoqate.GUI.Windows;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Inchoqate.GUI.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.View
 {
@@ -21,7 +9,7 @@ namespace Inchoqate.GUI.View
     {
         public static readonly DependencyProperty EditorTargetProperty = 
             DependencyProperty.Register(
-                "EditorTarget",
+                nameof(EditorTarget),
                 typeof(EventTreeModel),
                 typeof(EventTreeEditorView),
                 new FrameworkPropertyMetadata(
@@ -31,14 +19,18 @@ namespace Inchoqate.GUI.View
 
         private static void EditorTargetPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            // only now we attatch an event system as viewmodel to the
+            // editor target for realtime updates of the tree.
+            // TODO: view model has to be removed later.
             var @this = (EventTreeEditorView)d;
-            var tree = (EventTreeModel)e.NewValue;
-            @this.Renderer.InitialEvent = tree.InitialEvent;
+            var tree = (EventTreeViewModel)e.NewValue;
+            @this.Renderer.ViewModel = new EventViewModel((EventModel)tree.Initial, "Initial Event");
+            @this.Renderer.EventTree = tree;
         }
 
-        public EventTreeModel EditorTarget
+        public EventTreeModel? EditorTarget
         {
-            get => (EventTreeModel)GetValue(EditorTargetProperty);
+            get => (EventTreeModel?)GetValue(EditorTargetProperty);
             set => SetValue(EditorTargetProperty, value);
         }
 

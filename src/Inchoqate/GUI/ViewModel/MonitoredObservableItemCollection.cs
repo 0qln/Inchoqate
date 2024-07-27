@@ -10,12 +10,10 @@ namespace Inchoqate.GUI.ViewModel
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="relayTarget"></param>
-    public class MonitoredObservableItemCollection<T>(EventTreeModel relayTarget) : ObservableItemCollection<T>, IEventRelayModel
+    public class MonitoredObservableItemCollection<T>(IEventTree relayTarget) : ObservableItemCollection<T>, IEventRelayModel
         where T : INotifyPropertyChanged
     {
         private readonly ILogger _logger = FileLoggerFactory.CreateLogger<MonitoredObservableItemCollection<T>>();
-
-        private readonly EventTreeModel _relayTarget = relayTarget;
 
         public bool Eventuate<TParam>(EventModel<TParam> @event)
         {
@@ -23,11 +21,11 @@ namespace Inchoqate.GUI.ViewModel
             {
                 @event.Parameter = param;
                 @event.Do();
-                _relayTarget.Novelty(@event);
+                relayTarget.Novelty(@event);
                 return true;
             }
 
-            _logger.LogWarning("Type mismatch. Cannot apply event to this collection.");
+            _logger.LogWarning("Type mismatch. Cannot apply event to this object.");
             return false;
         }
     }

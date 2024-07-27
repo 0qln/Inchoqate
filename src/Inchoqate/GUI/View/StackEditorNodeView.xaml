@@ -75,14 +75,14 @@
             </Canvas>
 
             <ItemsControl Grid.Row="2"
-                          x:Name="Content"
+                          x:Name="EditorContent"
                           Visibility="{Binding ContentVisibility, ElementName=ControlRoot}"
                           ItemsSource="{Binding OptionControls}"
                           Margin="10, 5">
 
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentControl">
-                        <Setter Property="Control.Margin" Value="0, 5"/>
+                        <Setter Property="Margin" Value="0, 5"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ContentControl">

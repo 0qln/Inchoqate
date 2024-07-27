@@ -17,7 +17,11 @@ namespace Inchoqate.GUI.ViewModel
         {
         }
 
-        public static ObservableCollectionBase<T> Mirror<TOther>(ObservableCollectionBase<TOther> other, Func<TOther, T> cast, Func<T, TOther> castBack)
+
+        public static ObservableCollectionBase<T> Mirror<TOther>(
+            ObservableCollectionBase<TOther> other, 
+            Func<TOther, T> cast, 
+            Func<T, TOther> castBack)
         {
             // initiate
             var result = new ObservableCollectionBase<T>();
@@ -27,44 +31,87 @@ namespace Inchoqate.GUI.ViewModel
             }
 
             // set up mirror
-            other.CollectionChanged += (s, e) =>
+            other.CollectionChanged += (_, e) =>
             {
                 switch (e.Action)
                 {
                     case NotifyCollectionChangedAction.Add:
-                        if (e.NewItems is null)
-                            throw new ArgumentException("e.NewItems is null");
-                        foreach (var item in e.NewItems)
-                            result.Insert(e.NewStartingIndex, cast((TOther)item));
+                        MirrorEventAdd(cast, e, result);
                         break;
                     case NotifyCollectionChangedAction.Remove:
-                        if (e.OldItems is null)
-                            throw new ArgumentException("e.OldItems is null");
-                        foreach (var item in e.OldItems)
-                            result.Remove(result.First(x => castBack(x)!.Equals((TOther)item)));
+                        MirrorEventRemove(castBack, e, result);
                         break;
                     case NotifyCollectionChangedAction.Replace:
-                        if (e.OldItems is null)
-                            throw new ArgumentException("e.OldItems is null");
-                        if (e.NewItems is null)
-                            throw new ArgumentException("e.NewItems is null");
-                        foreach (var item in e.OldItems)
-                            result.Remove(cast((TOther)item));
-                        foreach (var item in e.NewItems)
-                            result.Insert(e.NewStartingIndex, cast((TOther)item));
+                        MirrorEventReplace(cast, e, result);
                         break;
                     case NotifyCollectionChangedAction.Move:
-                        result.Move(e.OldStartingIndex, e.NewStartingIndex);
+                        MirrorEventMove(result, e);
                         break;
                     case NotifyCollectionChangedAction.Reset:
-                        result.Clear();
-                        foreach (var item in other)
-                            result.Add(cast(item));
+                        MirrorEventReset(other, cast, result);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             };
 
             return result;
+        }
+
+        private static void MirrorEventReset<TOther>(ObservableCollectionBase<TOther> other, Func<TOther, T> cast, ObservableCollectionBase<T> result)
+        {
+            result.Clear();
+
+            foreach (var item in other)
+            {
+                result.Add(cast(item));
+            }
+        }
+
+        private static void MirrorEventMove(ObservableCollectionBase<T> result, NotifyCollectionChangedEventArgs e)
+        {
+            result.Move(e.OldStartingIndex, e.NewStartingIndex);
+        }
+
+        private static void MirrorEventReplace<TOther>(Func<TOther, T> cast, NotifyCollectionChangedEventArgs e, ObservableCollectionBase<T> result)
+        {
+            if (e.OldItems is null)
+                throw new ArgumentException("e.OldItems is null");
+
+            if (e.NewItems is null)
+                throw new ArgumentException("e.NewItems is null");
+
+            foreach (var item in e.OldItems)
+            {
+                result.Remove(cast((TOther)item));
+            }
+
+            foreach (var item in e.NewItems)
+            {
+                result.Insert(e.NewStartingIndex, cast((TOther)item));
+            }
+        }
+
+        private static void MirrorEventRemove<TOther>(Func<T, TOther> castBack, NotifyCollectionChangedEventArgs e, ObservableCollectionBase<T> result)
+        {
+            if (e.OldItems is null)
+                throw new ArgumentException("e.OldItems is null");
+
+            foreach (var item in e.OldItems)
+            {
+                result.Remove(result.First(x => castBack(x)!.Equals((TOther)item)));
+            }
+        }
+
+        private static void MirrorEventAdd<TOther>(Func<TOther, T> cast, NotifyCollectionChangedEventArgs e, ObservableCollectionBase<T> result)
+        {
+            if (e.NewItems is null)
+                throw new ArgumentException("e.NewItems is null");
+
+            foreach (var item in e.NewItems)
+            {
+                result.Insert(e.NewStartingIndex, cast((TOther)item));
+            }
         }
     }
 }

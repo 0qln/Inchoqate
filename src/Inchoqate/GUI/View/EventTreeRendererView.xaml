@@ -9,7 +9,6 @@
              x:Name="ControlRoot">
 
     <UserControl.Resources>
-        <local:EventTreeNextNodesConverter x:Key="EventTreeConverter"/>
         <local:EventArgsInfoConverter x:Key="EventArgsInfoConverter"/>
     </UserControl.Resources>
 
@@ -33,7 +32,7 @@
                 <TextBlock 
                     Margin="5"
                     x:Name="EventTitle"
-                    Text="{Binding InitialEvent, ElementName=ControlRoot}"
+                    Text="{Binding ViewModel.Title, ElementName=ControlRoot}"
                     FontWeight="Bold">
                     <TextBlock.Foreground>
                         <SolidColorBrush Color="{DynamicResource Text_1}"/>
@@ -43,7 +42,7 @@
                 <ItemsControl
                     Margin="5"
                     x:Name="EventArgs"
-                    ItemsSource="{Binding InitialEvent, ElementName=ControlRoot, Converter={StaticResource EventArgsInfoConverter}, Mode=OneWay}">
+                    ItemsSource="{Binding ViewModel, ElementName=ControlRoot, Converter={StaticResource EventArgsInfoConverter}, Mode=OneWay}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel/>
@@ -65,7 +64,7 @@
 
             <ItemsControl
                 x:Name="NextNodes"
-                ItemsSource="{Binding InitialEvent, ElementName=ControlRoot, Converter={StaticResource EventTreeConverter}, Mode=OneWay}">
+                ItemsSource="{Binding NextNodesSource, ElementName=ControlRoot, Mode=OneWay}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel/>

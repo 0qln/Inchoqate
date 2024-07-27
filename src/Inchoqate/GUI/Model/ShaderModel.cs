@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using System.IO;
 using Inchoqate.Logging;
-using System;
 using System.Windows;
 using OpenTK.Mathematics;
 

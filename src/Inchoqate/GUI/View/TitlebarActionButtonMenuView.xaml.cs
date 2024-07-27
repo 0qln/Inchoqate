@@ -1,20 +1,7 @@
-﻿using Inchoqate.GUI.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.View
 {
@@ -41,7 +28,7 @@ namespace Inchoqate.GUI.View
     {
         public static readonly DependencyProperty OptionsProperty = 
             DependencyProperty.Register(
-                "Options", 
+                nameof(Options), 
                 typeof(TitlebarActioButtonOptionCollection), 
                 typeof(TitlebarActionButtonMenuView),
                 new FrameworkPropertyMetadata(
@@ -50,7 +37,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty OptionsPositionProperty = 
             DependencyProperty.Register(
-                "OptionsPosition", 
+                nameof(OptionsPosition), 
                 typeof(ActionButtonOptionsPosition), 
                 typeof(TitlebarActionButtonMenuView),
                 new FrameworkPropertyMetadata(
@@ -59,7 +46,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty OptionsVisibilityProperty = 
             DependencyProperty.Register(
-                "OptionsVisibility", 
+                nameof(OptionsVisibility), 
                 typeof(Visibility), 
                 typeof(TitlebarActionButtonMenuView),
                 new FrameworkPropertyMetadata(
@@ -68,7 +55,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ClickModeProperty = 
             DependencyProperty.Register(
-                "ClickMode", 
+                nameof(ClickMode), 
                 typeof(ClickMode), 
                 typeof(TitlebarActionButtonMenuView), 
                 new FrameworkPropertyMetadata(
@@ -77,7 +64,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ButtonPaddingProperty = 
             DependencyProperty.Register(
-                "ButtonPadding", 
+                nameof(ButtonPadding), 
                 typeof(Thickness), 
                 typeof(TitlebarActionButtonMenuView),
                 new FrameworkPropertyMetadata(

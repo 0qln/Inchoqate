@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;

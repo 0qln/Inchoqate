@@ -1,15 +1,7 @@
-﻿using Inchoqate.GUI.Converters;
-using Inchoqate.Logging;
+﻿using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Interop;
 
 namespace Inchoqate.GUI.Windows
@@ -21,7 +13,7 @@ namespace Inchoqate.GUI.Windows
 
         public static readonly DependencyProperty CornerRadiusProperty =
             DependencyProperty.Register(
-                "CornerRadius",
+                nameof(CornerRadius),
                 typeof(CornerRadius),
                 typeof(BorderlessWindowBase),
                 new FrameworkPropertyMetadata(
@@ -30,7 +22,7 @@ namespace Inchoqate.GUI.Windows
 
         public static readonly DependencyProperty TitlebarHeightProperty =
             DependencyProperty.Register(
-                "TitlebarHeight",
+                nameof(TitlebarHeight),
                 typeof(double),
                 typeof(BorderlessWindowBase),
                 new FrameworkPropertyMetadata(

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace GUI.ViewModel
 {
@@ -26,20 +21,14 @@ namespace GUI.ViewModel
         public override bool Matches(object targetElement, InputEventArgs inputEventArgs)
         {
             var matches = base.Matches(targetElement, inputEventArgs);
+
             if (!matches)
-            {
-                Pressed = false;
-                return false;
-            }
+                return Pressed = false;
+
             if (!Pressed)
-            {
-                Pressed = true;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+                return Pressed = true;
+
+            return false;
         }
     }
 }

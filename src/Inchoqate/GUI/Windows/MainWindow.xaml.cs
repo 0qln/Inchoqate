@@ -4,18 +4,14 @@ using System.Windows.Controls.Primitives;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.Model.Events;
-using System.Windows.Threading;
-using System.Windows.Media.TextFormatting;
 using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;
-using GUI.ViewModel;
 
 namespace Inchoqate.GUI.Windows
 {
     public partial class MainWindow : BorderlessWindowBase
     {
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
-
 
         private FlowchartEditorWindow? _editorWindow;
         private UndoTreeWindow? _undoTreeWindow;
@@ -76,9 +72,8 @@ namespace Inchoqate.GUI.Windows
             };
 
             _activeEditor = StackEditor.DataContext as StackEditorViewModel;
-
-            _activeEditor?.EditsProvider.Eventuate(new LinearEditAdded(new EditImplGrayscaleViewModel()));
-            _activeEditor?.SetSource(TextureModel.FromFile(@"C:\Users\User\OneDrive\Bilder\Wallpapers\z\wallhaven-l8rloq.jpg"));
+            _activeEditor?.EditsProvider.Eventuate(new LinearEditAddedEvent(new EditImplGrayscaleViewModel()));
+            _activeEditor?.SetSource(TextureModel.FromFile(@"D:\Pictures\Wallpapers\z\wallhaven-l8rloq.jpg"));
 
             Closed += delegate
             {
@@ -94,7 +89,7 @@ namespace Inchoqate.GUI.Windows
             }
         }
 
-        private void ToggleWindow<TWindow>(ref TWindow? windowCache, Action clearWindowCache) 
+        private static void ToggleWindow<TWindow>(ref TWindow? windowCache, Action clearWindowCache) 
             where TWindow : Window, new()
         {
             if (windowCache is not null)
@@ -187,12 +182,12 @@ namespace Inchoqate.GUI.Windows
 
         private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EditsProvider.Eventuate(new LinearEditAdded(new EditImplGrayscaleViewModel()));
+            _activeEditor?.EditsProvider.Eventuate(new LinearEditAddedEvent(new EditImplGrayscaleViewModel()));
         }
 
         private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EditsProvider.Eventuate(new LinearEditAdded(new EditImplNoGreenViewModel()));
+            _activeEditor?.EditsProvider.Eventuate(new LinearEditAddedEvent(new EditImplNoGreenViewModel()));
         }
     }
 }

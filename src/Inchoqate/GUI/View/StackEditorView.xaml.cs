@@ -1,11 +1,5 @@
-﻿using Inchoqate.GUI.Model.Events;
-using Inchoqate.GUI.ViewModel;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using Inchoqate.GUI.ViewModel;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -17,27 +11,27 @@ namespace Inchoqate.GUI.View
 
 
     // Creating new NodeViews each time the collection is changed will discard the 
-    // state of the view each time, which breaks thumbs and other state dependand controls.
+    // state of the view each time, which breaks thumbs and other state dependent controls.
 
     [ValueConversion(typeof(EditorNodeCollectionLinear), typeof(StackEditorNodeCollection))]
     public class StackEditorNodeViewWrapper : IValueConverter
     {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        object IValueConverter.Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is EditorNodeCollectionLinear source)
             {
                 return StackEditorNodeCollection.Mirror(
                     source, 
-                    x => new StackEditorNodeView() { ViewModel = x, BackingCollection = source }, 
+                    x => new StackEditorNodeView { ViewModel = x, BackingCollection = source }, 
                     x => x.ViewModel); 
             }
 
             throw new ArgumentException(
-                $"Expecting a ViewModelCollection of type {typeof(EditorNodeCollectionLinear)}"
-                , nameof(value));
+                $"Expecting a ViewModelCollection of type {typeof(EditorNodeCollectionLinear)}", 
+                nameof(value));
         }
 
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        object IValueConverter.ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

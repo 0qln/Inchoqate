@@ -1,19 +1,9 @@
 ﻿using Inchoqate.GUI.ViewModel;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.View
 {
@@ -25,7 +15,7 @@ namespace Inchoqate.GUI.View
     {
         public static readonly DependencyProperty IconProperty =
             DependencyProperty.Register(
-                "Icon",
+                nameof(Icon),
                 typeof(ImageSource),
                 typeof(WindowTitlebarView),
                 new FrameworkPropertyMetadata(
@@ -35,7 +25,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(
-                "Title",
+                nameof(Title),
                 typeof(string),
                 typeof(WindowTitlebarView),
                 new FrameworkPropertyMetadata(
@@ -45,7 +35,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ActionButtonsProperty =
             DependencyProperty.Register(
-                "ActionButtons",
+                nameof(ActionButtons),
                 typeof(ActionButtonCollection),
                 typeof(WindowTitlebarView),
                 new FrameworkPropertyMetadata(

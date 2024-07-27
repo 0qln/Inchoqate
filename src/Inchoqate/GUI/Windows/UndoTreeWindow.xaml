@@ -55,7 +55,7 @@
                         SelectedIndex="0">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <ComboBoxItem Content="{Binding Name}"/>
+                                <ComboBoxItem Content="{Binding Title}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

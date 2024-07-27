@@ -1,34 +1,51 @@
-﻿using System.Collections;
-using System.Collections.ObjectModel;
-using System.Resources;
-using System.Security.Policy;
-using System.Windows;
+﻿using System.Runtime.Serialization;
 
 namespace Inchoqate.GUI.Model.Events
 {
     public enum EventState
     {
         Executed,
-        Reverted
+        Reverted,
+    }
+
+    public interface IEvent
+    {
+        public DateTime CreationDate { get; }
+
+        IEvent? Previous { get; set; }
+
+        SortedList<DateTime, IEvent> Next { get; }
+
+        EventState State { get; }
+
+        void Do();
+
+        void Undo();
     }
 
 
-    public abstract class EventModel
+    // TODO: test serialization, link the events in serialized state using GUIDs
+
+    //[Serializable]
+    public abstract class EventModel : IEvent, ISerializable
     {
         /// <summary>
         /// The creation date of the event.
         /// </summary>
-        public readonly DateTime CreationDate = DateTime.Now;
+        [ViewProperty]
+        public DateTime CreationDate { get; } = DateTime.Now;
 
         /// <summary>
         /// The previous event.
         /// </summary>
-        public EventModel? Previous;
+        //[field: NonSerialized]
+        public IEvent? Previous { get; set; }
 
         /// <summary>
         /// The next events. Most recent events are first.
         /// </summary>
-        public readonly SortedList<DateTime, EventModel> Next = new(
+        //[field: NonSerialized]
+        public SortedList<DateTime, IEvent> Next { get; } = new(
             comparer: Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
 
         /// <summary>
@@ -44,6 +61,7 @@ namespace Inchoqate.GUI.Model.Events
         /// <summary>
         /// The state of the event.
         /// </summary>
+        [ViewProperty]
         public EventState State { get; protected set; }
 
         /// <summary>
@@ -53,6 +71,11 @@ namespace Inchoqate.GUI.Model.Events
         public override string ToString()
         {
             return GetType().Name;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 

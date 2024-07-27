@@ -12,7 +12,7 @@ namespace Inchoqate.GUI.View
     {
         public static readonly DependencyProperty StretchProperty =
             DependencyProperty.Register(
-                "Stretch",
+                nameof(Stretch),
                 typeof(Stretch),
                 typeof(PreviewImageView),
                 new FrameworkPropertyMetadata(

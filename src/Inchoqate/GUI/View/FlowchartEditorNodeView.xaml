@@ -55,7 +55,7 @@
             </Canvas>
 
             <ItemsControl Grid.Row="2"
-                          x:Name="Content"
+                          x:Name="EditorContent"
                           ItemsSource="{Binding OptionControls}"
                           Margin="10, 5">
 

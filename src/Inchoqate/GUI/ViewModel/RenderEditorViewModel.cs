@@ -15,7 +15,7 @@ namespace Inchoqate.GUI.ViewModel
 
         public abstract BaseEventRelayModel EditsProvider { get; }
 
-        public abstract EventTreeModel EventTree { get; }
+        public abstract IEventTree EventTree { get; }
 
         public Color VoidColor
         {

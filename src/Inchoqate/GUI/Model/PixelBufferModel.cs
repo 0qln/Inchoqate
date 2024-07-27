@@ -1,5 +1,4 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using StbImageSharp;
 using StbImageWriteSharp;
 using System.IO;
 

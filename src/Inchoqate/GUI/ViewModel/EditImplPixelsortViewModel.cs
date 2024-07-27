@@ -1,7 +1,6 @@
 ﻿using Inchoqate.GUI.Model;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
-using OpenTK.Graphics.OpenGL4;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Data;

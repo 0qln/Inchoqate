@@ -1,38 +1,34 @@
-﻿using Inchoqate.GUI.Model.Events;
-using System;
-using System.Collections.Generic;
+﻿using Inchoqate.GUI.ViewModel;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Inchoqate.GUI.Windows
 {
     public partial class UndoTreeWindow : BorderlessWindowBase
     {
+        // TODO: make readonly
         public static readonly DependencyProperty EventTreesProperty = 
             DependencyProperty.Register(
-                "EventTrees",
-                typeof(ObservableCollection<EventTreeModel>),
+                nameof(EventTrees),
+                typeof(ObservableCollection<EventTreeViewModel>),
                 typeof(UndoTreeWindow),
                 new FrameworkPropertyMetadata(
-                    EventTreeModel.RegisteredTrees,
+                    EventTreeViewModel.RegisteredTrees,
                     FrameworkPropertyMetadataOptions.AffectsRender));
+
+
+        public ObservableCollection<EventTreeViewModel> EventTrees
+        {
+            get => (ObservableCollection<EventTreeViewModel>)GetValue(EventTreesProperty);
+            set => SetValue(EventTreesProperty, value);
+        }
 
 
         public UndoTreeWindow()
         {
             InitializeComponent();
 
-            EventTreeModel.RegisteredTrees.CollectionChanged += (s, e) =>
+            EventTreeViewModel.RegisteredTrees.CollectionChanged += (s, e) =>
             {
                 InvalidateProperty(EventTreesProperty);
             };

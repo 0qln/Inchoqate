@@ -2,10 +2,7 @@
 using Inchoqate.GUI.Model;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
-using MvvmHelpers;
 using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -43,16 +40,9 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
-        public override BaseEventRelayModel EditsProvider
-        {
-            get 
-            {
-                return new BaseEventRelayModel(_edits, EventTree);
-            }
-        }
+        public override BaseEventRelayModel EditsProvider => new(_edits, EventTree);
 
-
-        public override EventTreeModel EventTree { get; } = new() { Name = "Stack Editor" };
+        public override EventTreeViewModel EventTree { get; } = new EventTreeViewModel(new EventTreeModel(), "Stack Editor");
 
 
         public StackEditorViewModel()

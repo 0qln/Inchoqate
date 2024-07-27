@@ -1,4 +1,5 @@
 ﻿using Inchoqate.GUI.Model.Events;
+using Inchoqate.GUI.ViewModel;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -15,37 +16,118 @@ namespace Inchoqate.GUI.View
     /// </summary>
     public partial class EventTreeRendererView : UserControl
     {
-        public static readonly DependencyProperty InitialEventProperty =
+        // make readonly
+        public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register(
-                "InitialEvent",
-                typeof(EventModel),
+                nameof(ViewModel),
+                typeof(EventViewModel),
                 typeof(EventTreeRendererView),
                 new FrameworkPropertyMetadata(
                     null,
                     FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender |
-                    FrameworkPropertyMetadataOptions.AffectsMeasure));
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnEventChanged));
 
-        public static readonly DependencyProperty ConnectorBrushPrevHProperty =
-            DependencyProperty.Register(
-                "ConnectorBrushPrevH",
-                typeof(Brush),
-                typeof(EventTreeRendererView),
-                new FrameworkPropertyMetadata(
-                    new SolidColorBrush(Colors.White),
-                    FrameworkPropertyMetadataOptions.AffectsRender));
-
-
-        public EventModel InitialEvent
+        private static void OnEventChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            get => (EventModel)GetValue(InitialEventProperty);
-            set => SetValue(InitialEventProperty, value);
+            var @this = (EventTreeRendererView)d;
+            @this.UpdateNextNodes();
         }
 
-        public Brush ConnectorBrushPrevH
+        // make readonly
+        public static readonly DependencyProperty EventTreeProperty =
+            DependencyProperty.Register(
+                nameof(EventTree),
+                typeof(EventTreeViewModel),
+                typeof(EventTreeRendererView),
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnEventTreeChanged));
+
+        private static void OnEventTreeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            get => (Brush)GetValue(ConnectorBrushPrevHProperty);
-            set => SetValue(ConnectorBrushPrevHProperty, value);
+            var @this = (EventTreeRendererView)d;
+            @this.UpdateNextNodes();
+            @this.EventTree.PropertyChanged += (s, e) =>
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(@this.EventTree.Current):
+                        Debug.Assert(@this.EventTree.Current is EventViewModel);
+                        if (@this.ViewModel.EqualsInner((EventViewModel)@this.EventTree.Current.Previous))
+                        {
+                            @this.UpdateNextNodes();
+                        }
+                        break;
+                }
+            };
+        }
+
+
+        public static readonly DependencyProperty NextNodesSourceProperty = 
+            DependencyProperty.Register(
+                nameof(NextNodesSource),
+                typeof(ObservableCollectionBase<EventTreeRendererView>),
+                typeof(EventTreeRendererView),
+                new PropertyMetadata(null));
+
+
+        private void UpdateNextNodes()
+        {
+            // Lazily update next nodes
+
+            if (ViewModel is null || EventTree is null)
+                return;
+
+            NextNodesSource ??= [];
+
+            foreach (var view in NextNodesSource)
+            {
+                foreach (var viewModel in ViewModel.Next.Values)
+                {
+                    Debug.Assert(viewModel is EventViewModel);
+
+                    if (((EventViewModel)viewModel).EqualsInner(view.ViewModel)) 
+                    {
+                        NextNodesSource.Remove(view);
+                    }
+                }
+            }
+
+            foreach (var viewModel in ViewModel.Next.Values.Except(NextNodesSource.Select(x => x.ViewModel)))
+            {
+                NextNodesSource.Add(new EventTreeRendererView
+                {
+                    EventTree = EventTree,
+                    ViewModel = new EventViewModel((EventModel)viewModel, viewModel.ToString()!),
+                });
+            }
+
+            _adorner?.InvalidateVisual();
+        }
+
+
+
+        public EventViewModel ViewModel
+        {
+            get => (EventViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+
+        public EventTreeViewModel EventTree
+        {
+            get => (EventTreeViewModel)GetValue(EventTreeProperty);
+            set => SetValue(EventTreeProperty, value);
+        }
+
+        public ObservableCollectionBase<EventTreeRendererView> NextNodesSource
+        {
+            get => (ObservableCollectionBase<EventTreeRendererView>)GetValue(NextNodesSourceProperty);
+            set => SetValue(NextNodesSourceProperty, value);
         }
 
 
@@ -72,44 +154,28 @@ namespace Inchoqate.GUI.View
     }
 
 
-    public class EventTreeNextNodesConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var result = new ObservableCollection<EventTreeRendererView>();
-            if (value is null) { return result; }
-            var @event = (EventModel)value;
-            foreach (var nextEvent in @event.Next)
-            {
-                result.Add(new EventTreeRendererView { InitialEvent = nextEvent.Value });
-            }
-            return result;
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class EventArgsInfoConverter : IValueConverter
     {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        object IValueConverter.Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             var result = new ObservableCollection<string>();
             if (value is null) { return result; }
-            foreach (var arg in value.GetType().GetProperties())
+            var vm = (EventViewModel)value;
+            foreach (var arg in typeof(EventModel)
+                .GetProperties()
+                .Where(prop => prop
+                    .GetCustomAttributes(true)
+                    .OfType<ViewProperty>()
+                    .Any()))
             {
-                string argN = arg.Name;
-                if (argN == "Parameter")
-                    continue;
-                string argV = arg.GetValue(value)?.ToString() ?? "";
-                result.Add($"{argN}: {argV}");
+                 var argN = arg.Name;
+                 var argV = vm.GetModelPropertyValue(arg)?.ToString() ?? "";
+                 result.Add($"{argN}: {argV}");
             }
             return result;
         }
 
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        object IValueConverter.ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
@@ -121,7 +187,7 @@ namespace Inchoqate.GUI.View
     {
         public static readonly DependencyProperty RevertedBrushProperty =
             DependencyProperty.Register(
-                "RevertedBrush",
+                nameof(RevertedBrush),
                 typeof(Brush),
                 typeof(NodeConnectorAdorner),
                 new FrameworkPropertyMetadata(
@@ -130,7 +196,7 @@ namespace Inchoqate.GUI.View
 
         public static readonly DependencyProperty ExecutedBrushProperty =
             DependencyProperty.Register(
-                "ExecutedBrush",
+                nameof(ExecutedBrush),
                 typeof(Brush),
                 typeof(NodeConnectorAdorner),
                 new FrameworkPropertyMetadata(
@@ -153,7 +219,7 @@ namespace Inchoqate.GUI.View
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            if (adorned.InitialEvent is null)
+            if (adorned.ViewModel is null)
             {
                 return;
             }
@@ -161,23 +227,23 @@ namespace Inchoqate.GUI.View
             double adjust = 1, linewidth = 2;
             double x, y, width, height;
             var stackpanel = Utils.FindVisualChildOfType<StackPanel>(adorned.NextNodes);
-            var next = stackpanel.Children.FirstOrDefault<EventTreeRendererView>(e => e.InitialEvent.State == EventState.Executed);
+            var next = stackpanel.Children.FirstOrDefault<EventTreeRendererView>(e => e.ViewModel.State == EventState.Executed);
 
             y = adorned.EventInfo.ActualHeight / 2;
 
             // prev h
-            if (adorned.InitialEvent.Previous is not null)
+            if (adorned.ViewModel.Previous is not null)
             {
                 x = -adorned.EventInfo.Margin.Left;
                 width = adorned.EventInfo.Margin.Left;
                 drawingContext.DrawRectangle(
-                    adorned.InitialEvent.State == EventState.Executed ? ExecutedBrush : RevertedBrush,
+                    adorned.ViewModel.State == EventState.Executed ? ExecutedBrush : RevertedBrush,
                     null,
                     new Rect(x - adjust, y, width + adjust, linewidth));
             }
 
             // next h
-            if (adorned.InitialEvent.Next.Count > 0)
+            if (adorned.ViewModel.Next.Count > 0)
             {
                 x = adorned.EventInfo.ActualWidth;
                 width = adorned.EventInfo.Margin.Right;
@@ -188,7 +254,7 @@ namespace Inchoqate.GUI.View
             }
 
             // next v
-            if (adorned.InitialEvent.Next.Count > 1)
+            if (adorned.ViewModel.Next.Count > 1)
             {
                 var top = (EventTreeRendererView)stackpanel.Children[0];
                 var bottom = (EventTreeRendererView)stackpanel.Children[^1];
@@ -201,15 +267,15 @@ namespace Inchoqate.GUI.View
                 drawingContext.DrawRectangle(RevertedBrush, null, new Rect(x, y, linewidth, height));
 
                 // next executed
-                if (adorned.InitialEvent.State == EventState.Executed
+                if (adorned.ViewModel.State == EventState.Executed
                     && next is not null)
                 {
                     var diff = next.EventInfo.TransformToVisual(adorned.EventInfo).Transform(new()).Y;
                     height = Math.Abs(diff) - Math.Abs(next.EventInfo.ActualHeight - adorned.EventInfo.ActualHeight) / 2;
-                    y = diff < 0 ? diff + next.EventInfo.ActualHeight / 2 : adorned.EventInfo.ActualHeight / 2; 
+                    y = diff < 0 ? diff + next.EventInfo.ActualHeight / 2 : adorned.EventInfo.ActualHeight / 2;
                     drawingContext.DrawRectangle(ExecutedBrush, null, new Rect(x, y, linewidth, height));
                 }
-           }
+            }
         }
     }
 }
