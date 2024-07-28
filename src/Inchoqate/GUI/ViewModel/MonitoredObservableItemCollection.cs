@@ -10,12 +10,13 @@ namespace Inchoqate.GUI.ViewModel
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="relayTarget"></param>
-    public class MonitoredObservableItemCollection<T>(IEventTree relayTarget) : ObservableItemCollection<T>, IEventRelayModel
+    public class MonitoredObservableItemCollection<T>(EventTreeViewModel relayTarget) : ObservableItemCollection<T>, IEventRelayModel<EventViewModelBase>
         where T : INotifyPropertyChanged
     {
         private readonly ILogger _logger = FileLoggerFactory.CreateLogger<MonitoredObservableItemCollection<T>>();
 
-        public bool Eventuate<TParam>(EventModel<TParam> @event)
+        public bool Eventuate<TEvent, TParam>(TEvent @event) 
+            where TEvent : EventViewModelBase, IParameterInjected<TParam>
         {
             if (this is TParam param)
             {

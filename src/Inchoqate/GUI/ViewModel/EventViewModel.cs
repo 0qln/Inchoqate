@@ -1,90 +1,95 @@
-﻿using System.Reflection;
+﻿using System.Runtime.Serialization;
 using Inchoqate.GUI.Model.Events;
 using MvvmHelpers;
 
-namespace Inchoqate.GUI.ViewModel
+namespace Inchoqate.GUI.ViewModel;
+
+// [Serializable]
+public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelBase>, ISerializable
 {
-    public class EventViewModel : BaseViewModel, IEvent
+    private EventViewModelBase? _previous;
+    private EventState _state;
+
+    /// <summary>
+    /// The creation date of the event.
+    /// </summary>
+    [ViewProperty]
+    public DateTime CreationDate { get; } = DateTime.Now;
+
+    /// <summary>
+    /// The previous event.
+    /// </summary>
+    //[field: NonSerialized]
+    public EventViewModelBase? Previous
     {
-        private readonly EventModel _model;
-
-        public readonly Type ModelType;
-
-        public DateTime CreationDate
+        get => _previous;
+        set
         {
-            get
-            {
-                return _model.CreationDate;
-            }
-        }
+            if (Equals(value, _previous)) return;
+            _previous = value;
+            OnPropertyChanged();
 
-        public IEvent? Previous
+            // Implementing the idea in the comment below.
+            _previous?.OnPropertyChanged(nameof(Next));
+        }
+    }
+
+    // Although an 'ObservableSortedList' would be preferred, it is not 
+    // necessary as an update in the 'Next' property of this object can be 
+    // caught and acted upon by observing the 'Previous' property of the
+    // next object.
+    // => For ease of implementation we will just trust that the next ViewModel
+    // will notify us of changes.
+
+    //[field: NonSerialized]
+    public SortedList<DateTime, EventViewModelBase> Next { get; } = 
+        new(comparer: Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
+
+    /// <summary>
+    /// The state of the event.
+    /// </summary>
+    [ViewProperty]
+    public EventState State
+    {
+        get => _state;
+        protected set
         {
-            get => _model.Previous;
-            set
-            {
-                _model.Previous = value;
-                OnPropertyChanged();
-
-                // Implementing the idea in the comment below.
-                if (value is EventViewModel viewModel)
-                    viewModel.OnPropertyChanged(nameof(Next));
-            }
+            if (Equals(value, _state)) return;
+            _state = value;
+            OnPropertyChanged();
         }
+    }
 
-        // Although an 'ObservableSortedList' would be preferred, it is not 
-        // necessary as an update in the 'Next' property of this object can be 
-        // caught and acted upon by observing the 'Previous' property of the
-        // next object.
-        // => For ease of implementation we will just trust that the next ViewModel
-        // will notify us of changes.
-        public SortedList<DateTime, IEvent> Next
-        {
-            get => _model.Next;
-        }
 
-        public EventState State
-        {
-            get => _model.State;
-        }
+    protected EventViewModelBase(string title) 
+    {
+        Title = title;
+    }
 
-        public void Do()
-        {
-            _model.Do();
-            OnPropertyChanged(nameof(State));
-        }
 
-        public void Undo()
-        {
-            _model.Undo();
-            OnPropertyChanged(nameof(State));
-        }
+    /// <summary>
+    /// Executes the event.
+    /// </summary>
+    public void Do()
+    {
+        if (InnerDo()) State = EventState.Executed;
+    }
 
-        public EventViewModel(EventModel model, string title) 
-        {
-            Title = title;
-            _model = model;
-            ModelType = _model.GetType();
-        }
+    /// <summary>
+    /// Reverts the event.
+    /// </summary>
+    public void Undo()
+    {
+        if (InnerUndo()) State = EventState.Reverted;
+    }
 
-        public bool EqualsInner(EventViewModel other)
-        {
-            return _model.Equals(other._model);
-        }
+    protected abstract bool InnerDo();
 
-        public object? GetModelPropertyValue(PropertyInfo propertyInfo)
-        {
-            return propertyInfo.GetValue(_model);
-        }
+    protected abstract bool InnerUndo();
 
-        // /// <summary>
-        // /// Replaces the model of this object with the given one.
-        // /// </summary>
-        // /// <param name="model"></param>
-        // /// <returns></returns>
-        // public static EventViewModel UpgradeModel(ref EventModel model)
-        // {
-        //
-        // }
+
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        throw new NotImplementedException();
     }
 }

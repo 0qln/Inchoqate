@@ -5,13 +5,13 @@ using System.Windows.Controls;
 
 namespace Inchoqate.GUI.View
 {
-    public partial class EventTreeEditorView : UserControl
+    public partial class EventTreeView : UserControl
     {
-        public static readonly DependencyProperty EditorTargetProperty = 
+        public static readonly DependencyProperty ViewModelProperty = 
             DependencyProperty.Register(
-                nameof(EditorTarget),
-                typeof(EventTreeModel),
-                typeof(EventTreeEditorView),
+                nameof(ViewModel),
+                typeof(EventTreeViewModel),
+                typeof(EventTreeView),
                 new FrameworkPropertyMetadata(
                     null, 
                     FrameworkPropertyMetadataOptions.AffectsRender,
@@ -19,23 +19,23 @@ namespace Inchoqate.GUI.View
 
         private static void EditorTargetPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // only now we attatch an event system as viewmodel to the
+            // only now we attach an event system as viewmodel to the
             // editor target for realtime updates of the tree.
             // TODO: view model has to be removed later.
-            var @this = (EventTreeEditorView)d;
+            var @this = (EventTreeView)d;
             var tree = (EventTreeViewModel)e.NewValue;
-            @this.Renderer.ViewModel = new EventViewModel((EventModel)tree.Initial, "Initial Event");
-            @this.Renderer.EventTree = tree;
+            @this.Head.ViewModel = tree.Initial;
+            @this.Head.Tree = tree;
         }
 
-        public EventTreeModel? EditorTarget
+        public EventTreeViewModel? ViewModel
         {
-            get => (EventTreeModel?)GetValue(EditorTargetProperty);
-            set => SetValue(EditorTargetProperty, value);
+            get => (EventTreeViewModel?)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
         }
 
 
-        public EventTreeEditorView()
+        public EventTreeView()
         {
             InitializeComponent();
         }

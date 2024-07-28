@@ -1,50 +1,95 @@
 ﻿using Inchoqate.GUI.Model.Events;
 using MvvmHelpers;
 using System.Collections.ObjectModel;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Inchoqate.GUI.ViewModel
 {
-    public class EventTreeViewModel : BaseViewModel, IEventTree
+    /// <summary>
+    /// Provides a view model for an event tree model.
+    /// </summary>
+    public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>
     {
-        private readonly EventTreeModel _model;
+        /// <summary>
+        /// Dummy event.
+        /// </summary>
+        protected sealed class DummyEvent() : EventViewModelBase("Initial Event")
+        {
+            protected override bool InnerDo() => true;
+
+            protected override bool InnerUndo() => true;
+        }
 
         /// <summary>
         /// All registered event trees.
         /// </summary>
-        public static ObservableCollection<EventTreeViewModel> RegisteredTrees { get; private set; } = [];
+        public static ObservableCollection<EventTreeViewModel> RegisteredTrees { get; } = [];
 
-        public IEvent Initial => _model.Initial;
+        /// <summary>
+        /// Used to lock the manager from changes that originate in apply/revert actions.
+        /// </summary>
+        private volatile bool _locked = false;
+        private EventViewModelBase _current;
 
-        public IEvent Current => _model.Current;
+        public EventViewModelBase Initial { get; } = new DummyEvent();
 
-
-        public EventTreeViewModel(EventTreeModel model, string title)
+        public EventViewModelBase Current
         {
-            _model = model;
+            get => _current;
+            private set
+            {
+                if (Equals(value, _current)) return;
+                _current = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        public EventTreeViewModel(string title)
+        {
             Title = title;
+            Current = Initial;
             RegisteredTrees.Add(this);
         }
 
 
-        public bool Novelty(IEvent e)
+        public bool Novelty(EventViewModelBase e)
         {
-            var result = ((IEventTree)_model).Novelty(e);
-            if (result) OnPropertyChanged(nameof(Current));
-            return result;
-        }
+            if (_locked || !Current.Next.TryAdd(e.CreationDate, e))
+                return false;
 
-        public bool Redo(int next = 0)
-        {
-            var result = ((IEventTree)_model).Redo(next);
-            if (result) OnPropertyChanged(nameof(Current));
-            return result;
+            e.Previous = Current;
+            Current = e;
+            return true;
         }
 
         public bool Undo()
         {
-            var result = ((IEventTree)_model).Undo();
-            if (result) OnPropertyChanged(nameof(Current));
-            return result;
+            if (_locked || Current == Initial || Current.Previous is null)
+                return false;
+
+            // could modify state of the application and
+            // allow for an event to be tried to push
+            _locked = true;
+            Current.Undo();
+            _locked = false;
+            Current = Current.Previous;
+
+            return true;
+        }
+        
+        public bool Redo(int next = 0)
+        {
+            if (_locked || next >= Current.Next.Count)
+                return false;
+
+            _locked = true;
+            var e = Current.Next.Values[next];
+            e.Do();
+            _locked = false;
+            Current = e;
+
+            return true;
         }
     }
 }

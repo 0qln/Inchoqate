@@ -1,26 +1,34 @@
-﻿using Inchoqate.Logging;
+﻿using Inchoqate.GUI.ViewModel;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Inchoqate.GUI.Model.Events
 {
-    public interface IEventRelayModel
+    public interface IParameterInjected<TParam>
+    {
+        public TParam? Parameter { get; set; }
+    }
+
+
+    public interface IEventRelayModel<in TEventBase> where TEventBase : IEvent<TEventBase>
     {
         /// <summary>
         /// Applies an event to this the relay object and relays it to the event host.
         /// If the event cannot be applied, it is not relayed.
         /// </summary>
-        /// <typeparam name="TParam"></typeparam>
         /// <param name="event"></param>
         /// <returns>Success</returns>
-        bool Eventuate<TParam>(EventModel<TParam> @event);
+        bool Eventuate<TEvent, TParam>(TEvent @event)
+            where TEvent : TEventBase, IParameterInjected<TParam>;
     }
 
 
-    public class BaseEventRelayModel(object? source, IEventTree tree) : IEventRelayModel
+    public class EventRelayViewModel(object? source, EventTreeViewModel tree) : IEventRelayModel<EventViewModelBase>
     {
-        private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<BaseEventRelayModel>();
+        private readonly ILogger _logger = FileLoggerFactory.CreateLogger<EventRelayViewModel>();
 
-        public bool Eventuate<TParam>(EventModel<TParam> @event)
+        public bool Eventuate<TEvent, TParam>(TEvent @event) 
+            where TEvent : EventViewModelBase, IParameterInjected<TParam>
         {
             if (source is TParam param)
             {

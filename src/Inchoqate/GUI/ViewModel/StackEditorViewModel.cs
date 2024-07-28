@@ -40,9 +40,9 @@ namespace Inchoqate.GUI.ViewModel
         }
 
 
-        public override BaseEventRelayModel EditsProvider => new(_edits, EventTree);
+        public override EventRelayViewModel EditsProvider => new(_edits, EventTree);
 
-        public override EventTreeViewModel EventTree { get; } = new EventTreeViewModel(new EventTreeModel(), "Stack Editor");
+        public override EventTreeViewModel EventTree { get; } = new("Stack Editor");
 
 
         public StackEditorViewModel()

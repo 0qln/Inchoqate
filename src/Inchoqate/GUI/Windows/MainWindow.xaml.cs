@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.Model.Events;
+using Inchoqate.GUI.ViewModel.Events;
 using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;
 
@@ -14,7 +15,7 @@ namespace Inchoqate.GUI.Windows
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
         private FlowchartEditorWindow? _editorWindow;
-        private UndoTreeWindow? _undoTreeWindow;
+        private EventTreeWindow? _undoTreeWindow;
         private RenderEditorViewModel? _activeEditor;
 
 
@@ -72,7 +73,7 @@ namespace Inchoqate.GUI.Windows
             };
 
             _activeEditor = StackEditor.DataContext as StackEditorViewModel;
-            _activeEditor?.EditsProvider.Eventuate(new LinearEditAddedEvent(new EditImplGrayscaleViewModel()));
+            _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
             _activeEditor?.SetSource(TextureModel.FromFile(@"D:\Pictures\Wallpapers\z\wallhaven-l8rloq.jpg"));
 
             Closed += delegate
@@ -182,12 +183,12 @@ namespace Inchoqate.GUI.Windows
 
         private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EditsProvider.Eventuate(new LinearEditAddedEvent(new EditImplGrayscaleViewModel()));
+            _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
         }
 
         private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EditsProvider.Eventuate(new LinearEditAddedEvent(new EditImplNoGreenViewModel()));
+            _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplNoGreenViewModel()));
         }
     }
 }

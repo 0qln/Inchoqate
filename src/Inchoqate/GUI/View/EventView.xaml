@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Inchoqate.GUI.View.EventTreeRendererView"
+﻿<UserControl x:Class="Inchoqate.GUI.View.EventView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -63,8 +63,8 @@
             </StackPanel>
 
             <ItemsControl
-                x:Name="NextNodes"
-                ItemsSource="{Binding NextNodesSource, ElementName=ControlRoot, Mode=OneWay}">
+                x:Name="NextNodesContainer"
+                ItemsSource="{Binding NextNodes, ElementName=ControlRoot, Mode=OneWay}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel/>

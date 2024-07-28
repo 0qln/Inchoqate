@@ -4,14 +4,14 @@ using System.Windows;
 
 namespace Inchoqate.GUI.Windows
 {
-    public partial class UndoTreeWindow : BorderlessWindowBase
+    public partial class EventTreeWindow : BorderlessWindowBase
     {
         // TODO: make readonly
         public static readonly DependencyProperty EventTreesProperty = 
             DependencyProperty.Register(
                 nameof(EventTrees),
                 typeof(ObservableCollection<EventTreeViewModel>),
-                typeof(UndoTreeWindow),
+                typeof(EventTreeWindow),
                 new FrameworkPropertyMetadata(
                     EventTreeViewModel.RegisteredTrees,
                     FrameworkPropertyMetadataOptions.AffectsRender));
@@ -24,7 +24,7 @@ namespace Inchoqate.GUI.Windows
         }
 
 
-        public UndoTreeWindow()
+        public EventTreeWindow()
         {
             InitializeComponent();
 

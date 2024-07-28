@@ -13,9 +13,9 @@ namespace Inchoqate.GUI.ViewModel
         protected Size _renderSize, _sourceSize;
         private Color _voidColor;
 
-        public abstract BaseEventRelayModel EditsProvider { get; }
+        public abstract EventRelayViewModel EditsProvider { get; }
 
-        public abstract IEventTree EventTree { get; }
+        public abstract EventTreeViewModel EventTree { get; }
 
         public Color VoidColor
         {

@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.View
 {
@@ -83,13 +84,13 @@ namespace Inchoqate.GUI.View
             if (index < BackingCollection.Count - 1 && 
                 e.VerticalChange + _dragOffset.Y > stackPanel.Children[index + 1].TransformToVisual(this).Transform(new()).Y)
             {
-                BackingCollection.Eventuate(new ItemMovedEvent(index, index + 1));
+                BackingCollection.Eventuate<ItemMovedEvent, IMoveItemsWrapper>(new(index, index + 1));
             }   
 
             if (index > 0 && 
                 e.VerticalChange + _dragOffset.Y < stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
             {
-                BackingCollection.Eventuate(new ItemMovedEvent(index, index - 1));
+                BackingCollection.Eventuate<ItemMovedEvent, IMoveItemsWrapper>(new(index, index - 1));
             }
         }
 
