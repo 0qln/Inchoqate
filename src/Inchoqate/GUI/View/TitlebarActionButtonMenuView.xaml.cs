@@ -50,7 +50,7 @@ namespace Inchoqate.GUI.View
                 typeof(Visibility), 
                 typeof(TitlebarActionButtonMenuView),
                 new FrameworkPropertyMetadata(
-                    Visibility.Collapsed,
+                    Visibility.Hidden,
                     FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         public static readonly DependencyProperty ClickModeProperty = 
