@@ -92,20 +92,6 @@
                                             <view:TitlebarActionButtonCommandView
                                                 Title="No Green"
                                                 Shortcut="{x:Reference AddNodeNoGreenCmdBinding}"/>
-                                            <view:TitlebarActionButtonMenuView Title="Add Node"
-                                                                   OptionsPosition="Right"
-                                                                   ClickMode="Hover">
-                                                <view:TitlebarActionButtonMenuView.Options>
-                                                    <view:TitlebarActionButtonOptionCollection>
-                                                        <view:TitlebarActionButtonCommandView
-                                                            Title="Grayscale"
-                                                            Shortcut="{x:Reference AddNodeGrayscaleCmdBinding}"/>
-                                                        <view:TitlebarActionButtonCommandView
-                                                            Title="No Green"
-                                                            Shortcut="{x:Reference AddNodeNoGreenCmdBinding}"/>
-                                        </view:TitlebarActionButtonOptionCollection>
-                                    </view:TitlebarActionButtonMenuView.Options>
-                                </view:TitlebarActionButtonMenuView>
                                         </view:TitlebarActionButtonOptionCollection>
                                     </view:TitlebarActionButtonMenuView.Options>
                                 </view:TitlebarActionButtonMenuView>
