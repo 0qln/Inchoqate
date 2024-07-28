@@ -53,6 +53,7 @@ namespace Inchoqate.GUI.View
             {
                 switch (e.PropertyName)
                 {
+                    // TODO
                     case nameof(@this.Tree.Current) /*when @this.ViewModel == @this.Tree.Current.Previous*/:
                         @this.UpdateNextNodes();
                         break;
@@ -68,11 +69,8 @@ namespace Inchoqate.GUI.View
                 typeof(EventView),
                 new PropertyMetadata(null));
 
-        // TODO: replace with mirror
         private void UpdateNextNodes()
         {
-            // Lazily update next nodes
-
             if (ViewModel is null || Tree is null)
                 return;
 
