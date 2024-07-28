@@ -21,8 +21,8 @@
                 <view:ActionButtonCollection>
                     <view:TitlebarActionButtonMenuView Title="Edit">
                         <view:TitlebarActionButtonMenuView.Options>
-                            <view:TitlebarActioButtonOptionCollection>
-                            </view:TitlebarActioButtonOptionCollection>
+                            <view:TitlebarActionButtonOptionCollection>
+                            </view:TitlebarActionButtonOptionCollection>
                         </view:TitlebarActionButtonMenuView.Options>
                     </view:TitlebarActionButtonMenuView>
                 </view:ActionButtonCollection>

@@ -19,7 +19,7 @@ namespace Inchoqate.GUI.View
     }
 
 
-    public class TitlebarActioButtonOptionCollection : ObservableCollection<TitlebarActionButtonOptionView>
+    public class TitlebarActionButtonOptionCollection : ObservableCollection<TitlebarActionButtonOptionView>
     {
     }
 
@@ -29,10 +29,10 @@ namespace Inchoqate.GUI.View
         public static readonly DependencyProperty OptionsProperty = 
             DependencyProperty.Register(
                 nameof(Options), 
-                typeof(TitlebarActioButtonOptionCollection), 
+                typeof(TitlebarActionButtonOptionCollection), 
                 typeof(TitlebarActionButtonMenuView),
                 new FrameworkPropertyMetadata(
-                    new TitlebarActioButtonOptionCollection(),
+                    new TitlebarActionButtonOptionCollection(),
                     FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         public static readonly DependencyProperty OptionsPositionProperty = 
@@ -86,9 +86,9 @@ namespace Inchoqate.GUI.View
             set => SetValue(ClickModeProperty, value);
         }
 
-        public TitlebarActioButtonOptionCollection Options
+        public TitlebarActionButtonOptionCollection Options
         {
-            get => (TitlebarActioButtonOptionCollection)GetValue(OptionsProperty);
+            get => (TitlebarActionButtonOptionCollection)GetValue(OptionsProperty);
             set => SetValue(OptionsProperty, value);
         }
 

@@ -10,7 +10,7 @@ namespace Inchoqate.GUI.View
         private const FrameworkPropertyMetadataOptions ContentPropertyMetadata =
             // Affects the measurements of this control
             FrameworkPropertyMetadataOptions.AffectsMeasure |
-            // The action button menu aligns it's options wrt. it's contents
+            // The action button menu aligns its options wrt. its contents
             FrameworkPropertyMetadataOptions.AffectsParentMeasure;
 
         public static readonly DependencyProperty IconProperty = 
