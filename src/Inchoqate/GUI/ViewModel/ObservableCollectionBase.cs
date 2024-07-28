@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 
 namespace Inchoqate.GUI.ViewModel
 {
@@ -23,14 +24,12 @@ namespace Inchoqate.GUI.ViewModel
             Func<TOther, T> cast, 
             Func<T, TOther> castBack)
         {
-            // initiate
             var result = new ObservableCollectionBase<T>();
             foreach (var item in other)
             {
                 result.Add(cast(item));
             }
 
-            // set up mirror
             other.CollectionChanged += (_, e) =>
             {
                 switch (e.Action)
@@ -51,7 +50,7 @@ namespace Inchoqate.GUI.ViewModel
                         MirrorEventReset(other, cast, result);
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new UnreachableException();
                 }
             };
 
