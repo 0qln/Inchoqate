@@ -3,7 +3,6 @@ using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
-using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.ViewModel.Events;
 using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;
@@ -15,7 +14,9 @@ namespace Inchoqate.GUI.Windows
         private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
         private FlowchartEditorWindow? _editorWindow;
+
         private EventTreeWindow? _undoTreeWindow;
+
         private RenderEditorViewModel? _activeEditor;
 
 
@@ -31,12 +32,12 @@ namespace Inchoqate.GUI.Windows
         public static readonly RoutedCommand UndoCommand =
             new("Undo",
                 typeof(MainWindow),
-                [new KeyGesture(Key.Z, ModifierKeys.Control)]);
+                [new KeyOnceAndHoldGesture(Key.Z, ModifierKeys.Control)]);
 
         public static readonly RoutedCommand RedoCommand =
             new("Redo",
                 typeof(MainWindow),
-                [new KeyGesture(Key.Y, ModifierKeys.Control)]);
+                [new KeyOnceAndHoldGesture(Key.Y, ModifierKeys.Control)]);
 
         public static readonly RoutedCommand OpenImageCommand =
             new("OpenImage",
