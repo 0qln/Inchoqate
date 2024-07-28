@@ -53,7 +53,7 @@ namespace Inchoqate.GUI.View
             {
                 switch (e.PropertyName)
                 {
-                    case nameof(@this.Tree.Current) when @this.ViewModel == @this.Tree.Current.Previous:
+                    case nameof(@this.Tree.Current) /*when @this.ViewModel == @this.Tree.Current.Previous*/:
                         @this.UpdateNextNodes();
                         break;
                 }
@@ -78,24 +78,16 @@ namespace Inchoqate.GUI.View
 
             NextNodes ??= [];
 
-            foreach (var view in NextNodes)
-            {
-                foreach (var viewModel in ViewModel.Next.Values)
-                {
-                    if (viewModel == view.ViewModel) 
-                        NextNodes.Remove(view);
-                }
-            }
+            foreach (var viewModel in NextNodes.Select(x => x.ViewModel).Except(ViewModel.Next.Values))
+                NextNodes.Remove(NextNodes.First(x => x.ViewModel == viewModel));
 
             foreach (var viewModel in ViewModel.Next.Values.Except(NextNodes.Select(x => x.ViewModel)))
-            {
                 NextNodes.Add(new EventView
                 {
                     Tree = Tree,
                     ViewModel = viewModel,
                 });
-            }
-
+                
             _adorner?.InvalidateVisual();
         }
 
