@@ -37,7 +37,7 @@ public class KeyOnceAndHoldGesture : KeyGesture
 
     private void Initiate()
     {
-        ActivationDelay = TimeSpan.FromMilliseconds(250);
+        ActivationDelay = TimeSpan.FromMilliseconds(400);
 
         _timer.Tick += delegate
         {
@@ -50,21 +50,20 @@ public class KeyOnceAndHoldGesture : KeyGesture
     {
         var keyEventArgs = inputEventArgs as KeyEventArgs;
 
-        if (keyEventArgs is null) return false;
+        if (keyEventArgs is null) 
+            return false;
 
-        var matches = base.Matches(targetElement, inputEventArgs);
+        if (!base.Matches(targetElement, inputEventArgs)) 
+            return Active = false;
 
-        if (matches)
-        {
-            if (!_timer.IsEnabled && matches)
-            {
-                _timer.Start();
-                return true;
-            }
+        if (_timer.IsEnabled || !keyEventArgs.IsToggled)
+            return Active = false;
 
-            return Active;
-        }
+        if (Active) 
+            return true;
 
-        return Active = false;
+        _timer.Start();
+        return false;
+
     }
 }

@@ -87,9 +87,5 @@ namespace Inchoqate.GUI.View
             get => (Visibility)GetValue(IndicatorContentProperty);
             set => SetValue(IndicatorContentProperty, value);
         }
-
-        public TitlebarActionButtonOptionView()
-        {
-        }
     }
 }

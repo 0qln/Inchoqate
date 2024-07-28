@@ -29,16 +29,6 @@ namespace Inchoqate.GUI.Windows
             new("OpenUndoTree",
                 typeof(MainWindow));
 
-        public static readonly RoutedCommand UndoCommand =
-            new("Undo",
-                typeof(MainWindow),
-                [new KeyOnceAndHoldGesture(Key.Z, ModifierKeys.Control)]);
-
-        public static readonly RoutedCommand RedoCommand =
-            new("Redo",
-                typeof(MainWindow),
-                [new KeyOnceAndHoldGesture(Key.Y, ModifierKeys.Control)]);
-
         public static readonly RoutedCommand OpenImageCommand =
             new("OpenImage",
                 typeof(MainWindow),
@@ -190,6 +180,20 @@ namespace Inchoqate.GUI.Windows
         private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplNoGreenViewModel()));
+        }
+
+        private void RedoCmdBinding_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = _activeEditor is not null;
+
+            // TODO: Implement cooldowns for the command.
+        }
+
+        private void UndoCmdBinding_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = _activeEditor is not null;
+
+            // TODO: Implement cooldowns for the command.
         }
     }
 }

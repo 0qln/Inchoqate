@@ -21,14 +21,16 @@
             x:Name="OpenUndoTreeCmdBinding"
             Command="{x:Static local:MainWindow.OpenUndoTreeCommand}"
             Executed="OpenUndoTreeCmdBinding_Executed"/>
-        <CommandBinding 
+        <CommandBinding
             x:Name="UndoCmdBinding"
-            Command="{x:Static local:MainWindow.UndoCommand}"
-            Executed="UndoCmdBinding_Executed"/>
+            Command="ApplicationCommands.Undo"
+            Executed="UndoCmdBinding_Executed"
+            CanExecute="UndoCmdBinding_OnCanExecute"/>
         <CommandBinding
             x:Name="RedoCmdBinding"
-            Command="{x:Static local:MainWindow.RedoCommand}"
-            Executed="RedoCmdBinding_Executed"/>
+            Command="ApplicationCommands.Redo"
+            Executed="RedoCmdBinding_Executed"
+            CanExecute="RedoCmdBinding_OnCanExecute"/>
         <CommandBinding
             x:Name="OpenImageCmdBinding"
             Command="{x:Static local:MainWindow.OpenImageCommand}"
@@ -62,12 +64,10 @@
                             <view:TitlebarActioButtonOptionCollection>
                                 <view:TitlebarActionButtonCommandView 
                                     Title="Open Image"
-                                    Shortcut="{x:Reference OpenImageCmdBinding}"
-                                    Command="{x:Static local:MainWindow.OpenImageCommand}"/>
+                                    Shortcut="{x:Reference OpenImageCmdBinding}"/>
                                 <view:TitlebarActionButtonCommandView 
                                     Title="Save Image"
-                                    Shortcut="{x:Reference SaveImageCmdBinding}"
-                                    Command="{x:Static local:MainWindow.SaveImageCommand}"/>
+                                    Shortcut="{x:Reference SaveImageCmdBinding}"/>
                             </view:TitlebarActioButtonOptionCollection>
                         </view:TitlebarActionButtonMenuView.Options>
                     </view:TitlebarActionButtonMenuView>
@@ -77,12 +77,10 @@
                             <view:TitlebarActioButtonOptionCollection>
                                 <view:TitlebarActionButtonCommandView
                                     Title="Undo"                    
-                                    Shortcut="{x:Reference UndoCmdBinding}"
-                                    Command="{x:Static local:MainWindow.UndoCommand}"/>
+                                    Shortcut="{x:Reference UndoCmdBinding}"/>
                                 <view:TitlebarActionButtonCommandView
                                     Title="Redo"
-                                    Shortcut="{x:Reference RedoCmdBinding}"
-                                    Command="{x:Static local:MainWindow.RedoCommand}"/>
+                                    Shortcut="{x:Reference RedoCmdBinding}"/>
                                 <view:TitlebarActionButtonMenuView Title="Add Node"
                                                                    OptionsPosition="Right"
                                                                    ClickMode="Hover">
@@ -90,12 +88,10 @@
                                         <view:TitlebarActioButtonOptionCollection>
                                             <view:TitlebarActionButtonCommandView
                                                 Title="Grayscale"
-                                                Shortcut="{x:Reference AddNodeGrayscaleCmdBinding}"
-                                                Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}"/>
+                                                Shortcut="{x:Reference AddNodeGrayscaleCmdBinding}"/>
                                             <view:TitlebarActionButtonCommandView
                                                 Title="No Green"
-                                                Shortcut="{x:Reference AddNodeNoGreenCmdBinding}"
-                                                Command="{x:Static local:MainWindow.AddNodeNoGreenCommand}"/>
+                                                Shortcut="{x:Reference AddNodeNoGreenCmdBinding}"/>
                                         </view:TitlebarActioButtonOptionCollection>
                                     </view:TitlebarActionButtonMenuView.Options>
                                 </view:TitlebarActionButtonMenuView>
@@ -108,11 +104,9 @@
                             <view:TitlebarActioButtonOptionCollection>
                                 <view:TitlebarActionButtonCommandView 
                                     Title="Open flow chart editor"
-                                    Shortcut="{x:Reference OpenFlowchartEditorCmdBinding}"
-                                    Command="{x:Static local:MainWindow.OpenFlowchartEditorCommand}"/>
+                                    Shortcut="{x:Reference OpenFlowchartEditorCmdBinding}"/>
                                 <view:TitlebarActionButtonCommandView 
-                                    Title="Open undo tree"
-                                    Command="{x:Static local:MainWindow.OpenUndoTreeCommand}"/>
+                                    Title="Open undo tree"/>
                             </view:TitlebarActioButtonOptionCollection>                        
                         </view:TitlebarActionButtonMenuView.Options>
                     </view:TitlebarActionButtonMenuView>

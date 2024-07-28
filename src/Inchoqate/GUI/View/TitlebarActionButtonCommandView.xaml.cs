@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Inchoqate.GUI.View
@@ -25,6 +26,8 @@ namespace Inchoqate.GUI.View
         public TitlebarActionButtonCommandView()
         {
             InitializeComponent();
+
+            SetBinding(CommandProperty, new Binding("Shortcut.Command") { Source = this });
         }
     }
 }
