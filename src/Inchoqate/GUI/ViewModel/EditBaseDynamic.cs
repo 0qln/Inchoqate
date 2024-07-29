@@ -1,6 +1,5 @@
-﻿namespace Inchoqate.GUI.ViewModel
+﻿namespace Inchoqate.GUI.ViewModel;
+
+public abstract class EditBaseDynamic : EditBaseViewModel
 {
-    public abstract class EditBaseDynamic : EditBaseViewModel
-    {
-    }
 }

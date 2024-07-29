@@ -1,17 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Inchoqate.GUI.ViewModel
+namespace Inchoqate.GUI.ViewModel;
+
+public class ObservableStruct<T>(T value) : ObservableObject
+    where T : struct
 {
-    public class ObservableStruct<T>(T value) : ObservableObject
-        where T : struct
+    private T _value = value;
+
+    public T Value
     {
-        private T _value = value;
-
-        public T Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        get => _value;
+        set => SetProperty(ref _value, value);
     }
-
 }

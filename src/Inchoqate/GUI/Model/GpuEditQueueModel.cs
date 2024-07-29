@@ -1,7 +1,6 @@
-﻿namespace Inchoqate.GUI.Model
-{
-    //public class GpuEditQueueModel 
-    //{
+﻿namespace Inchoqate.GUI.Model;
+
+//public class GpuEditQueueModel 
+//{
         
-    //}
-}
+//}

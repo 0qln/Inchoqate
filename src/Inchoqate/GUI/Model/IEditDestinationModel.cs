@@ -1,6 +1,5 @@
-﻿namespace Inchoqate.GUI.Model
+﻿namespace Inchoqate.GUI.Model;
+
+public interface IEditDestinationModel
 {
-    public interface IEditDestinationModel
-    {
-    }
 }

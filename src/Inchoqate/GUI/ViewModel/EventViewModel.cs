@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using Inchoqate.GUI.Model.Events;
+using Inchoqate.GUI.Model;
 using MvvmHelpers;
 
 namespace Inchoqate.GUI.ViewModel;

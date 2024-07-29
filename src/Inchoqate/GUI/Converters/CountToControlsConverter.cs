@@ -3,31 +3,29 @@ using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Inchoqate.GUI.Converters
+namespace Inchoqate.GUI.Converters;
+
+public class CountToControlsConverter<T>(CountToControlsConverter<T>.ConstructorHandler constructor) : IValueConverter
+    where T : Control
 {
-    public class CountToControlsConverter<T>(CountToControlsConverter<T>.ConstructorHandler constructor) : IValueConverter
-        where T : Control
+    public delegate T ConstructorHandler(object parameter, ObservableCollection<T> collection, int index);
+
+    object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public delegate T ConstructorHandler(object parameter, ObservableCollection<T> collection, int index);
+        //ObservableCollection<T> result = new(Enumerable.Range(0, (int)value).Select(i => constructor(parameter, i)));
 
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        var result = new ObservableCollection<T>();
+
+        for (int i = 0; i < (int)value; i++)
         {
-            //ObservableCollection<T> result = new(Enumerable.Range(0, (int)value).Select(i => constructor(parameter, i)));
-
-            var result = new ObservableCollection<T>();
-
-            for (int i = 0; i < (int)value; i++)
-            {
-                result.Add(constructor(parameter, result, i));
-            }
-
-            return result;
+            result.Add(constructor(parameter, result, i));
         }
 
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        return result;
     }
 
+    object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
 }

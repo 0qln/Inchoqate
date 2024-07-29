@@ -1,4 +1,4 @@
-﻿namespace Inchoqate.GUI.Model.Events;
+﻿namespace Inchoqate.GUI.Model;
 
 public interface IEventTree<TEvent> where TEvent : IEvent<TEvent>
 {

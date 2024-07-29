@@ -1,4 +1,4 @@
-﻿using Inchoqate.GUI.Model.Events;
+﻿using Inchoqate.GUI.Model;
 
 namespace Inchoqate.GUI.ViewModel.Events;
 

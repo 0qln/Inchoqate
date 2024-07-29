@@ -1,9 +1,8 @@
-﻿using Inchoqate.GUI.Model.Events;
+﻿using Inchoqate.GUI.Model;
 
-namespace Inchoqate.GUI.ViewModel
+namespace Inchoqate.GUI.ViewModel;
+
+public class EditorNodeCollectionDynamic(EventTreeViewModel relayTarget)
+    : MonitoredObservableItemCollection<EditBaseDynamic>(relayTarget)
 {
-    public class EditorNodeCollectionDynamic(EventTreeViewModel relayTarget)
-        : MonitoredObservableItemCollection<EditBaseDynamic>(relayTarget)
-    {
-    }
 }

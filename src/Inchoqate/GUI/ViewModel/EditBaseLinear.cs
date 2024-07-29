@@ -1,7 +1,6 @@
-﻿namespace Inchoqate.GUI.ViewModel
+﻿namespace Inchoqate.GUI.ViewModel;
+
+public abstract class EditBaseLinear : EditBaseViewModel
 {
-    public abstract class EditBaseLinear : EditBaseViewModel
-    {
-        public override int ExpectedInputCount => 1;
-    }
+    public override int ExpectedInputCount => 1;
 }

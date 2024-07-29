@@ -1,12 +1,11 @@
 ﻿using System.Windows.Controls;
 
-namespace Inchoqate.GUI.Pages
+namespace Inchoqate.GUI.Pages;
+
+public partial class ImagePreviewPage : Page
 {
-    public partial class ImagePreviewPage : Page
+    public ImagePreviewPage()
     {
-        public ImagePreviewPage()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

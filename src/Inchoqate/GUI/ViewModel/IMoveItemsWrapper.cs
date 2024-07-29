@@ -1,7 +1,6 @@
-﻿namespace Inchoqate.GUI.ViewModel
+﻿namespace Inchoqate.GUI.ViewModel;
+
+public interface IMoveItemsWrapper
 {
-    public interface IMoveItemsWrapper
-    {
-        void Move(int oldIndex, int newIndex);
-    }
+    void Move(int oldIndex, int newIndex);
 }

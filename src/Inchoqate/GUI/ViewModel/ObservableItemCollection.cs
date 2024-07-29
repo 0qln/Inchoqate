@@ -1,46 +1,45 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace Inchoqate.GUI.ViewModel
+namespace Inchoqate.GUI.ViewModel;
+
+/// <summary>
+/// Represents a collection of observable items.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class ObservableItemCollection<T> : ObservableCollectionBase<T>
+    where T : INotifyPropertyChanged
 {
-    /// <summary>
-    /// Represents a collection of observable items.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ObservableItemCollection<T> : ObservableCollectionBase<T>
-        where T : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? ItemsPropertyChanged;
+
+
+    public ObservableItemCollection() : base()
     {
-        public event PropertyChangedEventHandler? ItemsPropertyChanged;
+        CollectionChanged += ObservableItemCollection_CollectionChanged;
+    }
 
 
-        public ObservableItemCollection() : base()
+    private void ObservableItemCollection_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems != null)
         {
-            CollectionChanged += ObservableItemCollection_CollectionChanged;
-        }
-
-
-        private void ObservableItemCollection_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
+            foreach (INotifyPropertyChanged item in e.NewItems)
             {
-                foreach (INotifyPropertyChanged item in e.NewItems)
-                {
-                    item.PropertyChanged += Item_PropertyChanged;
-                }
-            }
-
-            if (e.OldItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.OldItems)
-                {
-                    item.PropertyChanged -= Item_PropertyChanged;
-                }
+                item.PropertyChanged += Item_PropertyChanged;
             }
         }
 
-        private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        if (e.OldItems != null)
         {
-            ItemsPropertyChanged?.Invoke(sender, e);
+            foreach (INotifyPropertyChanged item in e.OldItems)
+            {
+                item.PropertyChanged -= Item_PropertyChanged;
+            }
         }
+    }
+
+    private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        ItemsPropertyChanged?.Invoke(sender, e);
     }
 }
