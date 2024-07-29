@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Inchoqate.GUI.Model;
-using Inchoqate.GUI.Model;
 using System.Windows;
 using System.Windows.Media;
 
@@ -9,9 +8,13 @@ namespace Inchoqate.GUI.ViewModel;
 public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>
 {
     protected bool _computed;
+
     protected FrameBufferModel? _result;
+
     protected Size _renderSize, _sourceSize;
+
     private Color _voidColor;
+
 
     public abstract EventRelayViewModel EditsProvider { get; }
 
@@ -48,7 +51,7 @@ public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<Tex
     }
 
 
-    public RenderEditorViewModel()
+    protected RenderEditorViewModel()
     {
         PropertyChanged += (s, e) =>
         {

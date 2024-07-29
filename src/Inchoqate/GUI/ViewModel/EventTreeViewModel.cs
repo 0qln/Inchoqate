@@ -48,7 +48,7 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>
     public EventTreeViewModel(string title)
     {
         Title = title;
-        Current = Initial;
+        _current = Initial;
         RegisteredTrees.Add(this);
     }
 

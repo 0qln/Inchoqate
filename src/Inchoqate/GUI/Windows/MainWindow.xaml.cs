@@ -3,7 +3,6 @@ using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
-using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel.Events;
 using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;

@@ -105,23 +105,23 @@ public partial class TitlebarActionButtonMenuView : TitlebarActionButtonOptionVi
     }
 
 
-    static void OnClickModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void OnClickModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is TitlebarActionButtonMenuView b)
+        if (d is not TitlebarActionButtonMenuView b) 
+            return;
+
+        if ((ClickMode)e.NewValue == ClickMode.Hover)
         {
-            if ((ClickMode)e.NewValue == ClickMode.Hover)
-            {
-                b.ActionButton.Button.Click -= b.Click;
-                b.ActionButton.MouseEnter += b.HoverMouseEnter;
-                b.MainGrid.MouseLeave += b.HoverMouseLeave;
-            }
-            else
-            {
-                b.ActionButton.Button.Click += b.Click;
-                b.ActionButton.MouseEnter -= b.HoverMouseEnter;
-                b.MainGrid.MouseLeave -= b.HoverMouseLeave;
-            }
-        } 
+            b.ActionButton.Button.Click -= b.Click;
+            b.ActionButton.MouseEnter += b.HoverMouseEnter;
+            b.MainGrid.MouseLeave += b.HoverMouseLeave;
+        }
+        else
+        {
+            b.ActionButton.Button.Click += b.Click;
+            b.ActionButton.MouseEnter -= b.HoverMouseEnter;
+            b.MainGrid.MouseLeave -= b.HoverMouseLeave;
+        }
     }
 
 
@@ -135,21 +135,9 @@ public partial class TitlebarActionButtonMenuView : TitlebarActionButtonOptionVi
 
     private void Click(object sender, RoutedEventArgs e)
     {
-        Toggle();
-    }
-
-
-    // TODO: clean up this structure
-    private void Toggle()
-    {
-        if (OptionsVisibility == Visibility.Visible)
-        {
-            OptionsVisibility = Visibility.Collapsed;
-        }
-        else
-        {
-            OptionsVisibility = Visibility.Visible;
-        }
+        OptionsVisibility = OptionsVisibility == Visibility.Visible
+            ? Visibility.Collapsed 
+            : Visibility.Visible;
     }
 
     private void HoverMouseLeave(object sender, MouseEventArgs e)
@@ -160,28 +148,5 @@ public partial class TitlebarActionButtonMenuView : TitlebarActionButtonOptionVi
     private void HoverMouseEnter(object sender, MouseEventArgs e)
     {
         OptionsVisibility = Visibility.Visible;
-    }
-
-
-    private class ToggleCommand(TitlebarActionButtonMenuView menu) : ICommand
-    {
-        public event EventHandler? CanExecuteChanged;
-
-        bool ICommand.CanExecute(object? parameter)
-        {
-            return true;
-        }
-
-        void ICommand.Execute(object? parameter)
-        {
-            if (menu.OptionsVisibility == Visibility.Visible)
-            {
-                menu.OptionsVisibility = Visibility.Collapsed;
-            }
-            else
-            {
-                menu.OptionsVisibility = Visibility.Visible;
-            }
-        }
     }
 }
