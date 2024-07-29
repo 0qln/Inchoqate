@@ -8,7 +8,6 @@
     xmlns:local="clr-namespace:Inchoqate.GUI.View"
     mc:Ignorable="d" 
     d:DesignHeight="450" d:DesignWidth="800"
-    x:Name="This"
     HorizontalAlignment="Center"
     VerticalAlignment="Center">
 

@@ -66,7 +66,7 @@
             Height="{Binding Height, ElementName=ControlRoot}"
             Icon="{Binding Icon, ElementName=ControlRoot}"
             Title="{Binding Title, ElementName=ControlRoot}"
-            Shortcut="{Binding Shortcut, ElementName=ControlRoot}"
+            CommandBinding="{Binding CommandBinding, ElementName=ControlRoot}"
             IndicatorVisibility="Visible"
             IndicatorContent="{Binding OptionsVisibility, ElementName=ControlRoot}"/>
     </Grid>

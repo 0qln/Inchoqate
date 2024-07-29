@@ -56,6 +56,10 @@ namespace Inchoqate.GUI.View
         {
             InitializeComponent();
 
+            // If this is left enabled, the window that contains the
+            // PreviewImage will multiply CommandBindings uncontrollably.
+            GLImage.RegisterToEventsDirectly = false;
+
             GLImage.Start(new GLWpfControlSettings { RenderContinuously = false });
 
             DataContext = _viewModel = new PreviewImageViewModel();
@@ -120,7 +124,7 @@ namespace Inchoqate.GUI.View
             _viewModel.BoundsSize = renderSize;
             GLImage.Width = renderSize.Width;
             GLImage.Height = renderSize.Height;
-
+            
             Thumb.Width = arrangeBounds.Width;
             Thumb.Height = arrangeBounds.Height;
             Grid.Width = arrangeBounds.Width;

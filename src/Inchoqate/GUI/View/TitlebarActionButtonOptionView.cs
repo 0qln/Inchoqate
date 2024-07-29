@@ -40,9 +40,9 @@ namespace Inchoqate.GUI.View
                     Visibility.Collapsed,
                     ContentPropertyMetadata));
 
-        public static readonly DependencyProperty ShortcutProperty = 
+        public static readonly DependencyProperty CommandBindingProperty = 
             DependencyProperty.Register(
-                nameof(Shortcut), 
+                nameof(CommandBinding), 
                 typeof(CommandBinding), 
                 typeof(TitlebarActionButtonOptionView), 
                 new FrameworkPropertyMetadata(
@@ -70,10 +70,10 @@ namespace Inchoqate.GUI.View
             set => SetValue(TitleProperty, value);
         }
 
-        public CommandBinding Shortcut
+        public CommandBinding CommandBinding
         {
-            get => (CommandBinding)GetValue(ShortcutProperty);
-            set => SetValue(ShortcutProperty, value);
+            get => (CommandBinding)GetValue(CommandBindingProperty);
+            set => SetValue(CommandBindingProperty, value);
         }
 
         public Visibility IndicatorVisibility

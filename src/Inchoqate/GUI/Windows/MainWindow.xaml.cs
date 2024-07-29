@@ -3,6 +3,7 @@ using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
+using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.ViewModel.Events;
 using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;
@@ -24,7 +25,7 @@ namespace Inchoqate.GUI.Windows
             new("OpenFlowchartEditor",
                 typeof(MainWindow),
                 [new KeyGesture(Key.E, ModifierKeys.Control)]);
-        
+
         public static readonly RoutedCommand OpenUndoTreeCommand =
             new("OpenUndoTree",
                 typeof(MainWindow));
@@ -67,21 +68,19 @@ namespace Inchoqate.GUI.Windows
             _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
             _activeEditor?.SetSource(TextureModel.FromFile(@"D:\Pictures\Wallpapers\z\wallhaven-l8rloq.jpg"));
 
-            Closed += delegate
-            {
-                Application.Current.Shutdown();
-            };
+            Closed += delegate { Application.Current.Shutdown(); };
         }
 
         private void SliderThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (e.HorizontalChange != 0)
             {
-                Sidebar.Width = Math.Clamp(Sidebar.Width - e.HorizontalChange, 0, ActualWidth - SliderThumb.ActualWidth);
+                Sidebar.Width = Math.Clamp(Sidebar.Width - e.HorizontalChange, 0,
+                    ActualWidth - SliderThumb.ActualWidth);
             }
         }
 
-        private static void ToggleWindow<TWindow>(ref TWindow? windowCache, Action clearWindowCache) 
+        private static void ToggleWindow<TWindow>(ref TWindow? windowCache, Action clearWindowCache)
             where TWindow : Window, new()
         {
             if (windowCache is not null)
@@ -92,13 +91,10 @@ namespace Inchoqate.GUI.Windows
             {
                 windowCache = new TWindow();
                 windowCache.Show();
-                windowCache.Closed += delegate
-                {
-                    clearWindowCache();
-                };
+                windowCache.Closed += delegate { clearWindowCache(); };
             }
         }
- 
+
         private void OpenFlowchartEditorCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             ToggleWindow(ref _editorWindow, () => _editorWindow = null);
@@ -155,7 +151,7 @@ namespace Inchoqate.GUI.Windows
                     _logger.LogInformation("No active editor to save the image.");
                     return;
                 }
-
+                
                 if (!_activeEditor.Computed)
                 {
                     _activeEditor.Compute();
@@ -166,7 +162,7 @@ namespace Inchoqate.GUI.Windows
                     _logger.LogError("No result to save the image after computing.");
                     return;
                 }
-
+                
                 var data = PixelBufferModel.FromGpu(_activeEditor.Result);
                 data.SaveToFile(dialog.FileName);
             }
@@ -174,26 +170,14 @@ namespace Inchoqate.GUI.Windows
 
         private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
+            _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(
+                new(new EditImplGrayscaleViewModel()));
         }
 
         private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplNoGreenViewModel()));
-        }
-
-        private void RedoCmdBinding_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = _activeEditor is not null;
-
-            // TODO: Implement cooldowns for the command.
-        }
-
-        private void UndoCmdBinding_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = _activeEditor is not null;
-
-            // TODO: Implement cooldowns for the command.
+            _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(
+                new(new EditImplNoGreenViewModel()));
         }
     }
 }

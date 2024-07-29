@@ -97,9 +97,10 @@
                 </TextBlock.Foreground>
             </TextBlock>
 
-            <!--TODO: Set font of this to 'Consolas'. 
-                Issue: the 'Consolas' font seems to be offset by a single 
-                       pixel upwards wrt. the default font.-->
+            <!--
+            TODO: Set font of this to 'Consolas'. 
+            Issue: the 'Consolas' font seems to be offset by a single pixel upwards wrt. the default font.
+            -->
             <TextBlock 
                 x:Name="ShortcutControl"
                 Grid.Column="2"
@@ -108,8 +109,7 @@
                 HorizontalAlignment="Left"
                 LineHeight="{Binding Height, ElementName=ControlRoot}"
                 LineStackingStrategy="BlockLineHeight">
-                    <Run Text="{Binding Shortcut, ElementName=ControlRoot,
-                                        Converter={StaticResource CommandBindingToStringConverter}}"
+                    <Run Text="{Binding CommandBinding, ElementName=ControlRoot, Converter={StaticResource CommandBindingToStringConverter}}"
                          BaselineAlignment="Center"/>
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="{DynamicResource Text_2}"/>

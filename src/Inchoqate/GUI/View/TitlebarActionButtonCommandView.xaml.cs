@@ -27,7 +27,7 @@ namespace Inchoqate.GUI.View
         {
             InitializeComponent();
 
-            SetBinding(CommandProperty, new Binding("Shortcut.Command") { Source = this });
+            SetBinding(CommandProperty, new Binding("CommandBinding.Command") { Source = this });
         }
     }
 }
