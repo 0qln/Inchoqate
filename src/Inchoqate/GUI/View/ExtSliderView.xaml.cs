@@ -101,7 +101,7 @@ public partial class ExtSliderView : UserControl
             typeof(Color[]),
             typeof(ExtSliderView),
             new FrameworkPropertyMetadata(
-                new Color[] { 
+                new [] { 
                     (Color)((App)Application.Current).ThemeDictionary["Element_Idle_3"]
                 },
                 FrameworkPropertyMetadataOptions.AffectsRender));
@@ -109,56 +109,56 @@ public partial class ExtSliderView : UserControl
 
     public double Minimum
     {
-        get { return (double)GetValue(MinimumProperty); }
-        set { SetValue(MinimumProperty, value); }
+        get => (double)GetValue(MinimumProperty);
+        set => SetValue(MinimumProperty, value);
     }
 
     public double Maximum
     {
-        get { return (double)GetValue(MaximumProperty); }
-        set { SetValue(MaximumProperty, value); }
+        get => (double)GetValue(MaximumProperty);
+        set => SetValue(MaximumProperty, value);
     }
 
     public double[] Values
     {
-        get { return (double[])GetValue(ValuesProperty); }
-        set { SetValue(ValuesProperty, value); }
+        get => (double[])GetValue(ValuesProperty);
+        set => SetValue(ValuesProperty, value);
     }
 
     public double[] Ranges
     {
-        get { return (double[])GetValue(RangesProperty); }
-        set { SetValue(RangesProperty, value); }
+        get => (double[])GetValue(RangesProperty);
+        set => SetValue(RangesProperty, value);
     }
 
     public int ValueCount
     {
-        get { return (int)GetValue(ValueCountProperty); }
-        set { SetValue(ValueCountProperty, value); }
+        get => (int)GetValue(ValueCountProperty);
+        set => SetValue(ValueCountProperty, value);
     }
 
     public int RangeCount
     {
-        get { return (int)GetValue(RangeCountProperty); }
-        set { SetValue(RangeCountProperty, value); }
+        get => (int)GetValue(RangeCountProperty);
+        set => SetValue(RangeCountProperty, value);
     }
 
     public bool[] ShowValues
     {
-        get { return (bool[])GetValue(ShowValuesProperty); }
-        set { SetValue(ShowValuesProperty, value); }
+        get => (bool[])GetValue(ShowValuesProperty);
+        set => SetValue(ShowValuesProperty, value);
     }
 
     public bool[] ShowRanges
     {
-        get { return (bool[])GetValue(ShowRangesProperty); }
-        set { SetValue(ShowRangesProperty, value); }
+        get => (bool[])GetValue(ShowRangesProperty);
+        set => SetValue(ShowRangesProperty, value);
     }
 
     public Color[] BackgroundGradientBrushes
     {
-        get { return (Color[])GetValue(BackgroundGradientBrushesProperty); }
-        set { SetValue(BackgroundGradientBrushesProperty, value); }
+        get => (Color[])GetValue(BackgroundGradientBrushesProperty);
+        set => SetValue(BackgroundGradientBrushesProperty, value);
     }
 
 
@@ -417,62 +417,62 @@ public class SliderInfoAdorner : Adorner
 
     public double Maximum
     {
-        get { return (double)GetValue(MaximumProperty); }
-        set { SetValue(MaximumProperty, value); }
+        get => (double)GetValue(MaximumProperty);
+        set => SetValue(MaximumProperty, value);
     }
 
     public double Minimum
     {
-        get { return (double)GetValue(MinimumProperty); }
-        set { SetValue(MinimumProperty, value); }
+        get => (double)GetValue(MinimumProperty);
+        set => SetValue(MinimumProperty, value);
     }
 
     public double Value
     {
-        get { return (double)GetValue(ValueProperty); }
-        set { SetValue(ValueProperty, value); }
+        get => (double)GetValue(ValueProperty);
+        set => SetValue(ValueProperty, value);
     }
 
     public bool ShowNextRange
     {
-        get { return (bool)GetValue(ShowNextRangeProperty); }
-        set { SetValue(ShowNextRangeProperty, value); }
+        get => (bool)GetValue(ShowNextRangeProperty);
+        set => SetValue(ShowNextRangeProperty, value);
     }
 
     public bool ShowPrevRange
     {
-        get { return (bool)GetValue(ShowPrevRangeProperty); }
-        set { SetValue(ShowPrevRangeProperty, value); }
+        get => (bool)GetValue(ShowPrevRangeProperty);
+        set => SetValue(ShowPrevRangeProperty, value);
     }
 
     public bool ShowValue
     {
-        get { return (bool)GetValue(ShowValueProperty); }
-        set { SetValue(ShowValueProperty, value); }
+        get => (bool)GetValue(ShowValueProperty);
+        set => SetValue(ShowValueProperty, value);
     }
 
     public double[] Ranges
     {
-        get { return (double[])GetValue(RangesProperty); }
-        set { SetValue(RangesProperty, value); }
+        get => (double[])GetValue(RangesProperty);
+        set => SetValue(RangesProperty, value);
     }
 
     public int Index
     {
-        get { return (int)GetValue(IndexProperty); }
-        set { SetValue(IndexProperty, value); }
+        get => (int)GetValue(IndexProperty);
+        set => SetValue(IndexProperty, value);
     }
 
     public Brush TextBrush
     {
-        get { return (Brush)GetValue(TextBrushProperty); }
-        set { SetValue(TextBrushProperty, value); }
+        get => (Brush)GetValue(TextBrushProperty);
+        set => SetValue(TextBrushProperty, value);
     }
 
     public Brush BackgroundBrush
     {
-        get { return (Brush)GetValue(BackgroundBrushProperty); }
-        set { SetValue(BackgroundBrushProperty, value); }
+        get => (Brush)GetValue(BackgroundBrushProperty);
+        set => SetValue(BackgroundBrushProperty, value);
     }
 
 
