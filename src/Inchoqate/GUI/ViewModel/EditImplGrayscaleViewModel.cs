@@ -17,31 +17,25 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader
 
     public override ObservableCollection<ContentControl> OptionControls { get; }
 
-    private double intensity;
-    private Vector3 weights;
+    private double _intensity;
+    private Vector3 _weights;
 
     public const double IntensityMin = 0;
     public const double IntensityMax = 1;
 
     public double Intensity
     {
-        get => intensity;
-        set
-        {
-            var val = Math.Clamp(value, IntensityMin, IntensityMax);
-            _shader?.SetUniform("intensity", (float)val);
-            SetProperty(ref intensity, val);
-        }
+        get => _intensity;
+        set => SetProperty(ref _intensity, value,
+                validateValue: (_, val) => val is >= IntensityMin and <= IntensityMax,
+                onChanged: () => _shader?.SetUniform("intensity", (float)value));
     }
 
     public Vector3 Weights
     {
-        get => weights;
-        set
-        {
-            _shader?.SetUniform("weights", value);
-            SetProperty(ref weights, value);
-        }
+        get => _weights;
+        set => SetProperty(ref _weights, value,
+                onChanged: () => _shader?.SetUniform("weights", value));
     }
 
 
