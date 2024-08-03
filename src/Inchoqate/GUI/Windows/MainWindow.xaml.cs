@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using Inchoqate.GUI.ViewModel;
@@ -6,6 +7,7 @@ using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel.Events;
 using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;
+using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.Windows;
 
@@ -61,10 +63,37 @@ public partial class MainWindow : BorderlessWindowBase
                     pvm.RenderEditor = svm;
                 }
             }
+
+            _activeEditor.EventTree.Initial = JsonConvert.DeserializeObject<EventViewModelBase>(
+                File.ReadAllText("./undo-tree.json"),
+                new JsonSerializerSettings
+                {
+                    MaxDepth = null,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+            return;
+
+            File.WriteAllText(
+                "./undo-tree.json", 
+                JsonConvert.SerializeObject(
+                    _activeEditor!.EventTree.Initial, 
+                    typeof(EventViewModelBase),
+                    Formatting.None,
+                    new JsonSerializerSettings
+                    {
+                        MaxDepth = null,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    }
+                )
+            );
         };
 
         _activeEditor = StackEditor.DataContext as StackEditorViewModel;
         _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
+        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
+        _activeEditor?.EventTree.Undo();
+        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplNoGreenViewModel()));
         _activeEditor?.SetSource(TextureModel.FromFile(@"D:\Pictures\Wallpapers\z\wallhaven-l8rloq.jpg"));
 
         Closed += delegate { Application.Current.Shutdown(); };
