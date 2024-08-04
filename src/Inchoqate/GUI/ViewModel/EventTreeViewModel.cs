@@ -53,10 +53,12 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>
     }
 
 
-    public bool Novelty(EventViewModelBase e)
+    public bool Novelty(EventViewModelBase e, bool execute = false)
     {
         if (_locked || !Current.Next.TryAdd(e.CreationDate, e))
             return false;
+
+        if (execute) e.Do();
 
         e.Previous = Current;
         Current = e;
