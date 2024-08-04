@@ -16,7 +16,7 @@ public interface IEventTree<TEvent> where TEvent : IEvent<TEvent>
     /// Add an event to the event stack.
     /// </summary>
     /// <param name="e"></param>
-    bool Novelty(TEvent e);
+    bool Novelty(TEvent e, bool execute = false);
 
     /// <summary>
     /// Redo the next event.
