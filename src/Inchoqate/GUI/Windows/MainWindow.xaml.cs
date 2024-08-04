@@ -64,7 +64,7 @@ public partial class MainWindow : BorderlessWindowBase
         };
 
         _activeEditor = StackEditor.DataContext as StackEditorViewModel;
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
+        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel(_activeEditor.EventTree)));
         _activeEditor?.SetSource(TextureModel.FromFile(@"D:\Pictures\Wallpapers\z\wallhaven-l8rloq.jpg"));
 
         Closed += delegate { Application.Current.Shutdown(); };
@@ -170,7 +170,7 @@ public partial class MainWindow : BorderlessWindowBase
     private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
         _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(
-            new(new EditImplGrayscaleViewModel()));
+            new(new EditImplGrayscaleViewModel(_activeEditor.EventTree)));
     }
 
     private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
