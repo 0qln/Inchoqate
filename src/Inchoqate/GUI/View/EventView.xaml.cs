@@ -241,7 +241,7 @@ public class NodeConnectorAdorner(EventView adorned) : Adorner(adorned.EventInfo
             x = adorned.EventInfo.ActualWidth + adorned.EventInfo.Margin.Left;
             y = -Math.Abs(top.EventInfo.TransformToVisual(adorned.EventInfo).Transform(new()).Y) + top.EventInfo.ActualHeight / 2;
             height = Math.Abs(span) - Math.Abs(top.EventInfo.ActualHeight - bottom.EventInfo.ActualHeight) / 2;
-            drawingContext.DrawRectangle(RevertedBrush, null, new Rect(x, y, linewidth, height));
+            drawingContext.DrawRectangle(RevertedBrush, null, new Rect(x, y, linewidth, Math.Abs(height)));
 
             // next executed
             if (adorned.ViewModel.State == EventState.Executed
@@ -250,7 +250,7 @@ public class NodeConnectorAdorner(EventView adorned) : Adorner(adorned.EventInfo
                 var diff = next.EventInfo.TransformToVisual(adorned.EventInfo).Transform(new()).Y;
                 height = Math.Abs(diff) - Math.Abs(next.EventInfo.ActualHeight - adorned.EventInfo.ActualHeight) / 2;
                 y = diff < 0 ? diff + next.EventInfo.ActualHeight / 2 : adorned.EventInfo.ActualHeight / 2;
-                drawingContext.DrawRectangle(ExecutedBrush, null, new Rect(x, y, linewidth, height));
+                drawingContext.DrawRectangle(RevertedBrush, null, new Rect(x, y, linewidth, Math.Abs(height)));
             }
         }
     }

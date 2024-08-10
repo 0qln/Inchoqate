@@ -14,8 +14,7 @@ public class EventRelayViewModel(object? source, EventTreeViewModel tree) : IEve
         if (source is TParam param)
         {
             @event.Parameter = param;
-            @event.Do();
-            tree.Novelty(@event);
+            tree.Novelty(@event, true);
             return true;
         }
 

@@ -7,11 +7,12 @@ using System.Windows.Data;
 using OpenTK.Mathematics;
 using System.Windows.Media;
 using Inchoqate.GUI.Converters;
+using Inchoqate.GUI.ViewModel.Events;
 using Inchoqtae.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public class EditImplGrayscaleViewModel : EditBaseLinearShader
+public class EditImplGrayscaleViewModel : EditBaseLinearShader, IEventRelayModel<IntensityChangedEvent>, IIntensityProperty, IGuidHolder
 {
     private readonly EventTreeViewModel _eventTree;
 
@@ -25,6 +26,8 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader
 
     public const double IntensityMin = 0;
     public const double IntensityMax = 1;
+
+    public Guid Id { get; } = Guid.NewGuid();
 
     public double Intensity
     {
@@ -55,13 +58,7 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader
             ExtSliderView.ValuesProperty,
             new Binding(nameof(Intensity))
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new ElementToArrayConverter<double>() });
-        _intenstityControl.ThumbDragCompleted += (s, e) => _eventTree.Novelty(new PropertyChangedEvent<double>(x =>
-                    SetProperty(ref _intensity, x,
-                        validateValue: (_, val) => val is >= IntensityMin and <= IntensityMax,
-                        onChanged: () => _shader?.SetUniform("intensity", (float)x)),
-                oldValue: _intensityChangeBegin,
-                newValue: _intensity),
-            true);
+        _intenstityControl.ThumbDragCompleted += (s, e) => Eventuate<IntensityChangedEvent, IIntensityProperty>(new(_intensityChangeBegin, _intensity));
         _intenstityControl.ThumbDragStarted += (s, e) => _intensityChangeBegin = Intensity;
 
         _weightsControl = new()
@@ -91,4 +88,11 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader
             new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new Uri("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
             out success);
+
+    public bool Eventuate<TEvent, TParam>(TEvent @event) 
+        where TEvent : IntensityChangedEvent, IParameterInjected<TParam>
+    {
+        @event.Parameter = this;
+        return _eventTree.Novelty(@event, true);
+    }
 }
