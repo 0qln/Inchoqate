@@ -1,6 +1,6 @@
 ﻿namespace Inchoqate.GUI.Model;
 
-public interface IEventTree<TEvent> where TEvent : IEvent<TEvent>
+public interface IEventTree<TEvent> where TEvent : IEvent
 {
     /// <summary>
     /// The first event.

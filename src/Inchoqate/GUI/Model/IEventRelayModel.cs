@@ -1,6 +1,6 @@
 ﻿namespace Inchoqate.GUI.Model;
 
-public interface IEventRelayModel<in TEventBase> where TEventBase : IEvent<TEventBase>
+public interface IEventRelayModel<in TEventBase> where TEventBase : IEvent
 {
     /// <summary>
     /// Applies an event to this the relay object and relays it to the event host.

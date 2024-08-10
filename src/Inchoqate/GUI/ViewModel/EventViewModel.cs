@@ -5,7 +5,7 @@ using MvvmHelpers;
 namespace Inchoqate.GUI.ViewModel;
 
 // [Serializable]
-public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelBase>, ISerializable
+public abstract class EventViewModelBase : BaseViewModel, IEvent, ISerializable
 {
     private EventViewModelBase? _previous;
     private EventState _state;
@@ -34,6 +34,8 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelB
         }
     }
 
+    public IEvent? GetPrevious() => _previous;
+
     // Although an 'ObservableSortedList' would be preferred, it is not 
     // necessary as an update in the 'Next' property of this object can be 
     // caught and acted upon by observing the 'Previous' property of the
@@ -44,6 +46,8 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelB
     //[field: NonSerialized]
     public SortedList<DateTime, EventViewModelBase> Next { get; } = 
         new(comparer: Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
+
+    public IEvent? GetNext(DateTime key) => Next[key];
 
     /// <summary>
     /// The state of the event.
