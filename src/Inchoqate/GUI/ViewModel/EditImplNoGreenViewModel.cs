@@ -1,26 +1,25 @@
-﻿using Inchoqate.GUI.Model;
-using OpenTK.Graphics.OpenGL4;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using Inchoqate.GUI.Model;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public class EditImplNoGreenViewModel(BufferUsageHint usage) : EditBaseLinearShader(usage)
+public class EditImplNoGreenViewModel : EditBaseLinearShader
 {
-    private readonly ObservableCollection<ContentControl> _optionControls = [];
-
-    public override ObservableCollection<ContentControl> OptionControls => _optionControls;
-
-
-    public EditImplNoGreenViewModel() : this(BufferUsageHint.StaticDraw)
+    public EditImplNoGreenViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) : base(usage)
     {
         Title = "No Green";
+        OptionControls = [];
     }
 
+    public override ObservableCollection<ContentControl> OptionControls { get; }
 
-    public override ShaderModel? GetShader(out bool success) => 
-        ShaderModel.FromUri(
-            new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
-            new Uri("/Shaders/NoGreen.frag", UriKind.RelativeOrAbsolute),
+    public override ShaderModel? GetShader(out bool success)
+    {
+        return ShaderModel.FromUri(
+            new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
+            new("/Shaders/NoGreen.frag", UriKind.RelativeOrAbsolute),
             out success);
+    }
 }

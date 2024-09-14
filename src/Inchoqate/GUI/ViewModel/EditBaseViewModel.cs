@@ -2,11 +2,13 @@
 using MvvmHelpers;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;
 
 public abstract class EditBaseViewModel : BaseViewModel, IEditModel
 {
+    [JsonIgnore]
     public abstract ObservableCollection<ContentControl> OptionControls { get; }
 
     public abstract int ExpectedInputCount { get; }

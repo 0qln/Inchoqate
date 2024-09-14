@@ -1,20 +1,25 @@
-﻿using Inchoqate.GUI.Model;
-using OpenTK.Graphics.OpenGL4;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using Inchoqate.GUI.Model;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public class EditImplIdentityViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) 
-    : EditBaseLinearShader(usage)
+public class EditImplIdentityViewModel : EditBaseLinearShader
 {
-    private readonly ObservableCollection<ContentControl> _optionControls = [];
+    public EditImplIdentityViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) : base(usage)
+    {
+        Title = "Identity";
+        OptionControls = [];
+    }
 
-    public override ObservableCollection<ContentControl> OptionControls => _optionControls;
+    public override ObservableCollection<ContentControl> OptionControls { get; }
 
-    public override ShaderModel? GetShader(out bool success) => 
-        ShaderModel.FromUri(
-            new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
-            new Uri("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
+    public override ShaderModel? GetShader(out bool success)
+    {
+        return ShaderModel.FromUri(
+            new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
+            new("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
             out success);
+    }
 }

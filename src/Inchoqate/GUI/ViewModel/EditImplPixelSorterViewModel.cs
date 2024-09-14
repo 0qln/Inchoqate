@@ -7,36 +7,31 @@ using System.Windows.Data;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public class EditImplPixelsortViewModel : EditBaseLinear
+public class EditImplPixelSorterViewModel : EditBaseLinear
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditImplPixelsortViewModel>();
+    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditImplPixelSorterViewModel>();
 
-    private readonly Slider _intenstityControl;
-    private readonly ObservableCollection<ContentControl> _optionControls;
+    public override ObservableCollection<ContentControl> OptionControls { get; }
 
-    public override ObservableCollection<ContentControl> OptionControls => _optionControls;
-
-    private double angle = 0;
+    private double _angle;
 
     public double Angle
     {
-        get => angle;
-        set
-        {
-            SetProperty(ref angle, value);
-        }
+        get => _angle;
+        set => SetProperty(ref _angle, value);
     }
 
 
-    public EditImplPixelsortViewModel() 
+    public EditImplPixelSorterViewModel() 
     {
-        _intenstityControl = new() { Minimum = 0, Maximum = double.Pi * 2, Value = 0 };
-        _intenstityControl.SetBinding(
+        Title = "Pixel Sorter";
+        Slider angleControl = new() { Minimum = 0, Maximum = double.Pi * 2, Value = 0 };
+        angleControl.SetBinding(
             Slider.ValueProperty, 
-            new Binding("Angle") { Source = this, Mode=BindingMode.TwoWay });
+            new Binding(nameof(Angle)) { Source = this, Mode=BindingMode.TwoWay });
 
-        _optionControls = [
-            new() { Content = _intenstityControl }
+        OptionControls = [
+            new() { Content = angleControl, Name = nameof(Angle) }
         ];
     }
 

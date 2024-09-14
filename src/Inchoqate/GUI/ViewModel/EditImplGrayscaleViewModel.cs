@@ -14,7 +14,6 @@ namespace Inchoqate.GUI.ViewModel;
 
 public class EditImplGrayscaleViewModel : EditBaseLinearShader
 {
-    [JsonIgnore]
     public override ObservableCollection<ContentControl> OptionControls { get; }
 
     private double _intensity;
@@ -46,7 +45,7 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader
     }
 
 
-    public EditImplGrayscaleViewModel(BufferUsageHint usage) : base(usage)
+    public EditImplGrayscaleViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) : base(usage)
     {
         Intensity = 2.0; // should be between 0 and 1, but yields interesting results for out of range values xd
         Weights = new(0.2126f, 0.7152f, 0.0722f);
@@ -66,10 +65,6 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader
             new() { Content = intensityControl, Name = nameof(Intensity) },
             new() { Content = weightsControl, Name = nameof(Weights) }
         ];
-    }
-
-    public EditImplGrayscaleViewModel() : this(BufferUsageHint.StaticDraw)
-    {
     }
 
 
