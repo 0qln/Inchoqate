@@ -6,20 +6,19 @@ using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel.Events;
 
-public abstract class ItemAddedEvent<T>/*(T item/*, string title#1#)*/ : EventViewModelBase/*(title)*/, IParameterInjected<ICollection<T>>
+public abstract class ItemAddedEvent<T> : EventViewModelBase, IParameterInjected<ICollection<T>>
 {
     /// <summary>
     /// The item to add.
-    /// The setter exists for the sake of serialization.
     /// </summary>
     [ViewProperty]
-    public virtual T Item { get; set; }
+    public virtual T? Item { get; init; }
 
     public virtual ICollection<T>? Parameter { get; set; }
 
     protected override bool InnerDo()
     {
-        if (Parameter is null)
+        if (Parameter is null || Item is null)
             return false;
 
         Parameter.Add(Item);
@@ -28,7 +27,7 @@ public abstract class ItemAddedEvent<T>/*(T item/*, string title#1#)*/ : EventVi
 
     protected override bool InnerUndo()
     {
-        if (Parameter is null)
+        if (Parameter is null || Item is null)
             return false;
         
         return Parameter.Remove(Item);

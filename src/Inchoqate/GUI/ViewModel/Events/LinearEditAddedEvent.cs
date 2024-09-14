@@ -3,9 +3,6 @@ using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel.Events;
 
-public class LinearEditAddedEvent : ItemAddedEvent<EditBaseLinear> /*, "Linear Edit Added"*/
+public class LinearEditAddedEvent : ItemAddedEvent<EditBaseLinear>
 {
-    /*public LinearEditAddedEvent(EditBaseLinear edit) : base(edit)
-    {
-    }*/
 }

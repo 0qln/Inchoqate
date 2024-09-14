@@ -2,19 +2,19 @@
 
 namespace Inchoqate.GUI.ViewModel.Events;
 
-public class ItemMovedEvent(int from, int to) : EventViewModelBase/*("Item moved")*/, IParameterInjected<IMoveItemsWrapper>
+public class ItemMovedEvent : EventViewModelBase, IParameterInjected<IMoveItemsWrapper>
 {
     /// <summary>
     /// The position to move the item from.
     /// </summary>
     [ViewProperty]
-    public int From => from;
+    public int From { get; init; }
 
     /// <summary>
     /// The position to move the item to.
     /// </summary>
     [ViewProperty]
-    public int To => to;
+    public int To { get; init; }
 
     /// <summary>
     /// The original object that the event operates on.
@@ -28,7 +28,7 @@ public class ItemMovedEvent(int from, int to) : EventViewModelBase/*("Item moved
         if (Parameter is null)
             return false;
 
-        Parameter.Move(from, to);
+        Parameter.Move(From, To);
         return true;
     }
 
@@ -37,7 +37,7 @@ public class ItemMovedEvent(int from, int to) : EventViewModelBase/*("Item moved
         if (Parameter is null)
             return false;
 
-        Parameter.Move(to, from);
+        Parameter.Move(To, From);
         return true;
     }
 }

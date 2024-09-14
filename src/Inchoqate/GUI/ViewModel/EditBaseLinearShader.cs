@@ -27,16 +27,17 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IDisposable
     protected readonly ShaderModel? _shader;
     protected readonly VertexArrayModel _vao;
 
-        
-    public EditBaseLinearShader(BufferUsageHint usage = BufferUsageHint.StaticDraw)
+
+    protected EditBaseLinearShader(BufferUsageHint usage = BufferUsageHint.StaticDraw)
     {
         _vao = new VertexArrayModel(_indices, _vertices, usage);
         _vao.Use();
 
-        _shader = GetShader(out bool success);
+        // TODO: fix virtual member call in constructor
+        _shader = GetShader(out var success);
         if (!success)
         {
-            _logger.LogWarning("ShaderEditModel deriviant failed to generate the shader.");
+            _logger.LogWarning("Deriving class failed to generate the shader.");
         }
     }
 
@@ -78,16 +79,16 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IDisposable
 
     #region Clean up
 
-    private bool disposedValue;
+    private bool _disposed;
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposed)
         {
             _shader?.Dispose();
             _vao.Dispose();
 
-            disposedValue = true;
+            _disposed = true;
         }
     }
 
@@ -95,9 +96,9 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IDisposable
     {
         // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
         // The OpenGL resources have to be released from a thread with an active OpenGL Context.
-        // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
+        // The GC runs on a separate thread, thus releasing unmanaged GL resources inside the finalizer
         // is not possible.
-        if (disposedValue == false)
+        if (_disposed == false)
         {
             _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }

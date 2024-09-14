@@ -1,24 +1,17 @@
 ﻿using Inchoqate.GUI.Model;
+using Inchoqate.GUI.View;
+using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;
 
 public abstract class EventViewModelBase : BaseViewModel, IEvent
 {
+    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EventViewModelBase>();
+
     private EventViewModelBase? _previous;
     private EventState _state;
-
-
-    // protected EventViewModelBase(string title)
-    // {
-    //     Title = title;
-    // }
-
-    public EventViewModelBase()
-    {
-    }
-
-    // public Guid Id { get; init; } = Guid.NewGuid();
 
     /// <summary>
     ///     The creation date of the event.
@@ -29,7 +22,6 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent
     /// <summary>
     ///     The previous event.
     /// </summary>
-    // [JsonConverter(typeof(BacklinkConverter))]
     public EventViewModelBase? Previous
     {
         get => _previous;
@@ -51,8 +43,7 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent
     // => For ease of implementation we will just trust that the next ViewModel
     // will notify us of changes.
 
-    // [JsonConverter(typeof(ForwardLinkConverter))]
-    public SortedList<DateTime, EventViewModelBase /*Guid*/> Next { get; } =
+    public SortedList<DateTime, EventViewModelBase> Next { get; } =
         new(Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
 
     /// <summary>
@@ -72,55 +63,36 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent
 
 
     /// <summary>
-    ///     Executes the event.
+    ///     Executes the event. And changes the event state.
     /// </summary>
     public void Do()
     {
-        if (InnerDo()) State = EventState.Executed;
+        if (InnerDo())
+        {
+            State = EventState.Executed;
+        }
+        else
+        {
+            _logger.LogWarning("Failed to execute event.");
+        }
     }
 
     /// <summary>
-    ///     Reverts the event.
+    ///     Reverts the event. And changes the event state.
     /// </summary>
     public void Undo()
     {
-        if (InnerUndo()) State = EventState.Reverted;
+        if (InnerUndo())
+        {
+            State = EventState.Reverted;
+        }
+        else
+        {
+            _logger.LogWarning("Failed to revert event.");
+        }
     }
 
     protected abstract bool InnerDo();
 
     protected abstract bool InnerUndo();
-    //
-    // public class BacklinkConverter : JsonConverter<EventViewModelBase>
-    // {
-    //     /// <inheritdoc />
-    //     public override void WriteJson(JsonWriter writer, EventViewModelBase? value, JsonSerializer serializer)
-    //     {
-    //         writer.WriteValue(value?.Id.ToString());
-    //     }
-    //
-    //     /// <inheritdoc />
-    //     public override EventViewModelBase? ReadJson(JsonReader reader, Type objectType, EventViewModelBase? existingValue, bool hasExistingValue, JsonSerializer serializer)
-    //     {
-    //         return null;
-    //     }
-    // }
-    //
-    // public class ForwardLinkConverter : JsonConverter<SortedList<DateTime, EventViewModelBase>>
-    // {
-    //     /// <inheritdoc />
-    //     public override void WriteJson(JsonWriter writer, SortedList<DateTime, EventViewModelBase>? value, JsonSerializer serializer)
-    //     {
-    //         writer.WriteStartArray();
-    //         foreach (var e in value ?? [])
-    //             writer.WriteValue(e.Value.Id.ToString());
-    //         writer.WriteEndArray();
-    //     }
-    //
-    //     /// <inheritdoc />
-    //     public override SortedList<DateTime, EventViewModelBase>? ReadJson(JsonReader reader, Type objectType, SortedList<DateTime, EventViewModelBase>? existingValue, bool hasExistingValue, JsonSerializer serializer)
-    //     {
-    //         return null;
-    //     }
-    // }
 }

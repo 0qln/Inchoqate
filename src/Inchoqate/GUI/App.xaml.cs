@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
 using Newtonsoft.Json;
@@ -14,44 +15,6 @@ namespace Inchoqate.GUI;
 /// </summary>
 public partial class App : Application, INotifyPropertyChanged
 {
-    private static readonly JsonSerializerSettings SerializerSettings = new()
-    {
-        MaxDepth = null,
-        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-        TypeNameHandling = TypeNameHandling.All,
-        PreserveReferencesHandling = PreserveReferencesHandling.All,
-        MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead
-        // ReferenceResolverProvider = ()  => new RefResolver()
-    };
-
-    public class RefResolver : IReferenceResolver
-    {
-        /// <inheritdoc />
-        public object ResolveReference(object context, string reference)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public string GetReference(object context, object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public bool IsReferenced(object context, object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public void AddReference(object context, string reference, object value)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
     private StackEditorViewModel? _stackEditor;
 
     public App()
@@ -75,37 +38,17 @@ public partial class App : Application, INotifyPropertyChanged
 
     public void TestSerde()
     {
+        var initial = EventSerdeModel.Deserialize<EventViewModelBase>(nameof(StackEditor));
+        StackEditor = new(new("Stack Editor", initial));
 
-        StackEditor = new();
-        
-        StackEditor.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplGrayscaleViewModel()});
-        StackEditor.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplGrayscaleViewModel()});
-        StackEditor.EventTree.Undo();
-        StackEditor.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplNoGreenViewModel()});
-        
-        File.WriteAllText(
-            "./stack-editor-event-tree.json", 
-            JsonConvert.SerializeObject(
-                StackEditor.EventTree.InitialEvent, Formatting.None, SerializerSettings
-            )
-        );
-        
-        // void FlatEvents(List<EventViewModelBase> collection, EventViewModelBase e)
-        // {
-        //     collection.Add(e);
+        // StackEditor = new();
         //
-        //     foreach (var next in e.Next)
-        //     {
-        //         FlatEvents(collection, next.Value);
-        //     }
-        // }
-
-        var events = JsonConvert.DeserializeObject<EventViewModelBase>(
-            File.ReadAllText("./stack-editor-event-tree.json"),
-            SerializerSettings
-        )!;
-        
-        StackEditor = new(new("Stack Editor", events));
+        // StackEditor.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplGrayscaleViewModel()});
+        // StackEditor.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplGrayscaleViewModel()});
+        // StackEditor.EventTree.Undo();
+        // StackEditor.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplNoGreenViewModel()});
+        //
+        // EventSerdeModel.Serialize(StackEditor.EventTree.Initial, nameof(StackEditor));
     }
 
     public void ChangeTheme(Uri uri)

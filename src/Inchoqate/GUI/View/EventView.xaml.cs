@@ -76,13 +76,11 @@ public partial class EventView : UserControl
 
         NextNodes ??= [];
 
-        // foreach (var viewModel in NextNodes.Select(x => x.ViewModel).Except(ViewModel.Next.Values.Select(x => Tree.Events[x])))
         foreach (var viewModel in NextNodes.Select(x => x.ViewModel).Except(ViewModel.Next.Values))
             NextNodes.Remove(NextNodes.First(x => x.ViewModel == viewModel));
 
         foreach (var viewModel in ViewModel.Next.Values.Except(NextNodes.Select(x => x.ViewModel)))
-            // foreach (var viewModel in ViewModel.Next.Values.Select(x => Tree.Events[x]).Except(NextNodes.Select(x => x.ViewModel)))
-            NextNodes.Add(new EventView
+            NextNodes.Add(new()
             {
                 Tree = Tree,
                 ViewModel = viewModel,
