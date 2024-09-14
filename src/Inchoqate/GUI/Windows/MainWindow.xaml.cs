@@ -9,6 +9,7 @@ using Inchoqate.Logging;
 using Inchoqate.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
+using Inchoqtae.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.Windows;
 
@@ -85,6 +86,11 @@ public partial class MainWindow : BorderlessWindowBase
                     break;
             }
         };
+
+        // Resolve merge 
+        var edit = new EditImplGrayscaleViewModel(_activeEditor.EventTree);
+        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(edit));
+        edit.Eventuate<IntensityChangedEvent, IIntensityProperty>(new(edit.Intensity, 0.1));
 
         Closed += delegate { Application.Current.Shutdown(); };
     }

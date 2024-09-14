@@ -161,6 +161,42 @@ public partial class ExtSliderView : UserControl
         set => SetValue(BackgroundGradientBrushesProperty, value);
     }
 
+    public event DragStartedEventHandler? ThumbDragStarted
+    {
+        add
+        {
+            foreach (var slider in SlidersControl.Items.Cast<SliderPart>())
+            {
+                slider.ThumbDragStarted += value;
+            }
+        }
+        remove
+        {
+            foreach (var slider in SlidersControl.Items.Cast<SliderPart>())
+            {
+                slider.ThumbDragStarted -= value;
+            }
+        }
+    }
+
+    public event DragCompletedEventHandler? ThumbDragCompleted
+    {
+        add
+        {
+            foreach (var slider in SlidersControl.Items.Cast<SliderPart>())
+            {
+                slider.ThumbDragCompleted += value;
+            }
+        }
+        remove
+        {
+            foreach (var slider in SlidersControl.Items.Cast<SliderPart>())
+            {
+                slider.ThumbDragCompleted -= value;
+            }
+        }
+    }
+
 
     public ExtSliderView()
     {
@@ -742,6 +778,10 @@ public class SliderPart : Slider
         set => SetValue(ShowNextRangeProperty, value);
     }
 
+    public event DragStartedEventHandler? ThumbDragStarted;
+
+    public event DragCompletedEventHandler? ThumbDragCompleted;
+
 
     private Adorner? _infoAdorner;
 
@@ -756,6 +796,19 @@ public class SliderPart : Slider
                 FrameworkPropertyMetadataOptions.AffectsRender,
                 propertyChangedCallback: ValuepropertyChangedCallback,
                 coerceValueCallback: ValuepropertyCoerceValueCallback));
+    }
+
+
+    protected override void OnThumbDragStarted(DragStartedEventArgs e)
+    {
+        base.OnThumbDragStarted(e);
+        ThumbDragStarted?.Invoke(this, e);
+    }
+
+    protected override void OnThumbDragCompleted(DragCompletedEventArgs e)
+    {
+        base.OnThumbDragCompleted(e);
+        ThumbDragCompleted?.Invoke(this, e);
     }
 
 

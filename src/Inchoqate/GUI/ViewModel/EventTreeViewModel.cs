@@ -59,13 +59,16 @@ public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
         return GetEnumerator();
     }
 
-    public bool Novelty(EventViewModelBase novelty)
+
+    public bool Novelty(EventViewModelBase e, bool execute = false)
     {
-        if (_locked || !Current.Next.TryAdd(novelty.CreationDate, novelty))
+        if (_locked || !Current.Next.TryAdd(novelty.CreationDate, e))
             return false;
 
-        novelty.Previous = Current;
-        Current = novelty;
+        if (execute) e.Do();
+
+        e.Previous = Current;
+        Current = e;
         return true;
     }
 

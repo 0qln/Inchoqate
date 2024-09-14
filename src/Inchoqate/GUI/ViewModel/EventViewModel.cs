@@ -36,6 +36,8 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent
         }
     }
 
+    public IEvent? GetPrevious() => _previous;
+
     // Although an 'ObservableSortedList' would be preferred, it is not 
     // necessary as an update in the 'Next' property of this object can be 
     // caught and acted upon by observing the 'Previous' property of the
@@ -43,8 +45,8 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent
     // => For ease of implementation we will just trust that the next ViewModel
     // will notify us of changes.
 
-    public SortedList<DateTime, EventViewModelBase> Next { get; } =
-        new(Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
+    public SortedList<DateTime, EventViewModelBase> Next { get; } = 
+        new(comparer: Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
 
     /// <summary>
     ///     The state of the event.

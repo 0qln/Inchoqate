@@ -7,6 +7,7 @@ public enum EventState
 }
 
 public interface IEvent
+public interface IEvent
 {
     EventState State { get; }
 
