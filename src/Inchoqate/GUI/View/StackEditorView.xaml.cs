@@ -47,8 +47,5 @@ public partial class StackEditorView : UserControl
     public StackEditorView()
     {
         InitializeComponent();
-
-        var app = (App)Application.Current;
-        SetBinding(DataContextProperty, new Binding(nameof(app.StackEditor)) { Source = app });
     }
 }

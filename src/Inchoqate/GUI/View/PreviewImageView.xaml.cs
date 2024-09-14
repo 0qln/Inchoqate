@@ -62,7 +62,7 @@ public partial class PreviewImageView : UserControl
 
         GLImage.Start(new GLWpfControlSettings { RenderContinuously = false });
 
-        DataContext = _viewModel = new PreviewImageViewModel();
+        DataContext = _viewModel = new();
         _viewModel.PropertyChanged += (s, e) =>
         {
             switch (e.PropertyName)
