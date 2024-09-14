@@ -2,7 +2,7 @@
 
 namespace Inchoqate.GUI.ViewModel.Events;
 
-public class ItemMovedEvent(int from, int to) : EventViewModelBase("Item moved"), IParameterInjected<IMoveItemsWrapper>
+public class ItemMovedEvent(int from, int to) : EventViewModelBase/*("Item moved")*/, IParameterInjected<IMoveItemsWrapper>
 {
     /// <summary>
     /// The position to move the item from.

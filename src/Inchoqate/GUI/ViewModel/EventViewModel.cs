@@ -1,25 +1,35 @@
-﻿using System.Runtime.Serialization;
-using Inchoqate.GUI.Model;
-using MvvmHelpers;
+﻿using Inchoqate.GUI.Model;
+using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;
 
-// [Serializable]
-public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelBase>, ISerializable
+public abstract class EventViewModelBase : BaseViewModel, IEvent
 {
     private EventViewModelBase? _previous;
     private EventState _state;
 
+
+    // protected EventViewModelBase(string title)
+    // {
+    //     Title = title;
+    // }
+
+    public EventViewModelBase()
+    {
+    }
+
+    // public Guid Id { get; init; } = Guid.NewGuid();
+
     /// <summary>
-    /// The creation date of the event.
+    ///     The creation date of the event.
     /// </summary>
     [ViewProperty]
     public DateTime CreationDate { get; } = DateTime.Now;
 
     /// <summary>
-    /// The previous event.
+    ///     The previous event.
     /// </summary>
-    //[field: NonSerialized]
+    // [JsonConverter(typeof(BacklinkConverter))]
     public EventViewModelBase? Previous
     {
         get => _previous;
@@ -41,12 +51,12 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelB
     // => For ease of implementation we will just trust that the next ViewModel
     // will notify us of changes.
 
-    //[field: NonSerialized]
-    public SortedList<DateTime, EventViewModelBase> Next { get; } = 
-        new(comparer: Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
+    // [JsonConverter(typeof(ForwardLinkConverter))]
+    public SortedList<DateTime, EventViewModelBase /*Guid*/> Next { get; } =
+        new(Comparer<DateTime>.Create((a, b) => b.CompareTo(a)));
 
     /// <summary>
-    /// The state of the event.
+    ///     The state of the event.
     /// </summary>
     [ViewProperty]
     public EventState State
@@ -61,14 +71,8 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelB
     }
 
 
-    protected EventViewModelBase(string title) 
-    {
-        Title = title;
-    }
-
-
     /// <summary>
-    /// Executes the event.
+    ///     Executes the event.
     /// </summary>
     public void Do()
     {
@@ -76,7 +80,7 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelB
     }
 
     /// <summary>
-    /// Reverts the event.
+    ///     Reverts the event.
     /// </summary>
     public void Undo()
     {
@@ -86,10 +90,37 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent<EventViewModelB
     protected abstract bool InnerDo();
 
     protected abstract bool InnerUndo();
-
-
-    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        throw new NotImplementedException();
-    }
+    //
+    // public class BacklinkConverter : JsonConverter<EventViewModelBase>
+    // {
+    //     /// <inheritdoc />
+    //     public override void WriteJson(JsonWriter writer, EventViewModelBase? value, JsonSerializer serializer)
+    //     {
+    //         writer.WriteValue(value?.Id.ToString());
+    //     }
+    //
+    //     /// <inheritdoc />
+    //     public override EventViewModelBase? ReadJson(JsonReader reader, Type objectType, EventViewModelBase? existingValue, bool hasExistingValue, JsonSerializer serializer)
+    //     {
+    //         return null;
+    //     }
+    // }
+    //
+    // public class ForwardLinkConverter : JsonConverter<SortedList<DateTime, EventViewModelBase>>
+    // {
+    //     /// <inheritdoc />
+    //     public override void WriteJson(JsonWriter writer, SortedList<DateTime, EventViewModelBase>? value, JsonSerializer serializer)
+    //     {
+    //         writer.WriteStartArray();
+    //         foreach (var e in value ?? [])
+    //             writer.WriteValue(e.Value.Id.ToString());
+    //         writer.WriteEndArray();
+    //     }
+    //
+    //     /// <inheritdoc />
+    //     public override SortedList<DateTime, EventViewModelBase>? ReadJson(JsonReader reader, Type objectType, SortedList<DateTime, EventViewModelBase>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+    //     {
+    //         return null;
+    //     }
+    // }
 }

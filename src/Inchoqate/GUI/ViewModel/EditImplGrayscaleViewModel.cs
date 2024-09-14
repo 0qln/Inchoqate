@@ -7,14 +7,18 @@ using System.Windows.Data;
 using OpenTK.Mathematics;
 using System.Windows.Media;
 using Inchoqate.GUI.Converters;
+using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;
 
 public class EditImplGrayscaleViewModel : EditBaseLinearShader
 {
+    [JsonIgnore]
     private readonly ExtSliderView _intenstityControl;
+    [JsonIgnore]
     private readonly ExtSliderView _weightsControl;
 
+    [JsonIgnore]
     public override ObservableCollection<ContentControl> OptionControls { get; }
 
     private double intensity;
@@ -34,6 +38,7 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader
         }
     }
 
+    [JsonConverter(typeof(Vector3JsonConverter))]
     public Vector3 Weights
     {
         get => weights;
@@ -77,4 +82,19 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader
             new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new Uri("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
             out success);
+}
+
+public class Vector3JsonConverter : JsonConverter<Vector3>
+{
+    public override void WriteJson(JsonWriter writer, Vector3 value, JsonSerializer serializer)
+    {
+        writer.WriteValue(value.ToString());
+    }
+
+    public override Vector3 ReadJson(JsonReader reader, Type objectType, Vector3 existingValue, bool hasExistingValue,
+        JsonSerializer serializer)
+    {
+        var values = reader.Value?.ToString()!.Remove(0, 1).Remove(reader.Value!.ToString()!.Length - 2).Split(", ")!;
+        return new Vector3(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]));
+    }
 }

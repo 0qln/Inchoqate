@@ -6,14 +6,8 @@ public enum EventState
     Reverted,
 }
 
-public interface IEvent<TEvent> where TEvent : IEvent<TEvent>
+public interface IEvent
 {
-    public DateTime CreationDate { get; }
-
-    TEvent? Previous { get; set; }
-
-    SortedList<DateTime, TEvent> Next { get; }
-
     EventState State { get; }
 
     void Do();

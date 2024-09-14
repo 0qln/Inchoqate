@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<TextureModel, FrameBufferModel>
+public abstract class RenderEditorViewModel : BaseViewModel, IEditorModel<TextureModel, FrameBufferModel>
 {
     protected bool _computed;
 
@@ -16,7 +16,7 @@ public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<Tex
     private Color _voidColor;
 
 
-    public abstract EventRelayViewModel EditsProvider { get; }
+    public abstract IEventRelayModel<EventViewModelBase>? Edits { get; }
 
     public abstract EventTreeViewModel EventTree { get; }
 
@@ -51,25 +51,24 @@ public abstract class RenderEditorViewModel : ObservableObject, IEditorModel<Tex
     }
 
 
-    protected RenderEditorViewModel()
+    protected override void HandlePropertyChanged(string? propertyName)
     {
-        PropertyChanged += (s, e) =>
+        switch (propertyName)
         {
-            switch (e.PropertyName)
-            {
-                case nameof(Result):
-                    Computed = Result is not null;
-                    break;
-
-                case nameof(RenderSize):
-                    Invalidate();
-                    break;
-            }
-        };
+            case nameof(Result):
+                Computed = Result is not null;
+                break;
+            case nameof(RenderSize):
+                Invalidate();
+                break;
+        }
     }
 
 
-    public abstract void Invalidate();
+    public virtual void Invalidate()
+    {
+        Result = null;
+    }
 
     public abstract bool Compute();
 

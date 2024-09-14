@@ -1,5 +1,6 @@
 ﻿using Inchoqate.GUI.ViewModel;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -22,7 +23,7 @@ public class StackEditorNodeViewWrapper : IValueConverter
         {
             return StackEditorNodeCollection.Mirror(
                 source, 
-                x => new StackEditorNodeView { ViewModel = x, BackingCollection = source }, 
+                x => new StackEditorNodeView { ViewModel = x, SelfContainer = source }, 
                 x => x.ViewModel); 
         }
 
@@ -47,6 +48,7 @@ public partial class StackEditorView : UserControl
     {
         InitializeComponent();
 
-        DataContext = new StackEditorViewModel();
+        var app = (App)Application.Current;
+        SetBinding(DataContextProperty, new Binding(nameof(app.StackEditor)) { Source = app });
     }
 }

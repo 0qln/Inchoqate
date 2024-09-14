@@ -1,25 +1,18 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows;
 using System.Windows.Controls.Primitives;
-using Inchoqate.GUI.ViewModel;
+using System.Windows.Input;
 using Inchoqate.GUI.Model;
+using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
-using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 
 namespace Inchoqate.GUI.Windows;
 
 public partial class MainWindow : BorderlessWindowBase
 {
     private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
-
-    private FlowchartEditorWindow? _editorWindow;
-
-    private EventTreeWindow? _undoTreeWindow;
-
-    private RenderEditorViewModel? _activeEditor;
 
 
     public static readonly RoutedCommand OpenFlowchartEditorCommand =
@@ -49,52 +42,35 @@ public partial class MainWindow : BorderlessWindowBase
         new("AddNodeNoGreen",
             typeof(MainWindow));
 
+    private RenderEditorViewModel? _activeEditor;
+
+    private FlowchartEditorWindow? _editorWindow;
+
+    private EventTreeWindow? _undoTreeWindow;
+
 
     public MainWindow()
     {
         InitializeComponent();
 
-        Loaded += delegate
+        var app = (App)Application.Current;
+
+        app.PropertyChanged += (_, e) =>
         {
-            if (PreviewImage.DataContext is PreviewImageViewModel pvm)
+            switch (e.PropertyName)
             {
-                if (StackEditor.DataContext is StackEditorViewModel svm)
-                {
-                    pvm.RenderEditor = svm;
-                }
+                case nameof(app.StackEditor):
+                    if (PreviewImage.DataContext is PreviewImageViewModel pvm)
+                        if (StackEditor.DataContext is StackEditorViewModel svm)
+                            pvm.RenderEditor = svm;
+
+                    _activeEditor = app.StackEditor;
+                    _activeEditor?.SetSource(TextureModel.FromFile(@"D:\Pictures\Wallpapers\z\wallhaven-l8rloq.jpg"));
+                    break;
             }
-
-            _activeEditor.EventTree.Initial = JsonConvert.DeserializeObject<EventViewModelBase>(
-                File.ReadAllText("./undo-tree.json"),
-                new JsonSerializerSettings
-                {
-                    MaxDepth = null,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
-
-            return;
-
-            File.WriteAllText(
-                "./undo-tree.json", 
-                JsonConvert.SerializeObject(
-                    _activeEditor!.EventTree.Initial, 
-                    typeof(EventViewModelBase),
-                    Formatting.None,
-                    new JsonSerializerSettings
-                    {
-                        MaxDepth = null,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                    }
-                )
-            );
         };
 
-        _activeEditor = StackEditor.DataContext as StackEditorViewModel;
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplGrayscaleViewModel()));
-        _activeEditor?.EventTree.Undo();
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(new EditImplNoGreenViewModel()));
-        _activeEditor?.SetSource(TextureModel.FromFile(@"D:\Pictures\Wallpapers\z\wallhaven-l8rloq.jpg"));
+        Loaded += delegate { };
 
         Closed += delegate { Application.Current.Shutdown(); };
     }
@@ -102,10 +78,8 @@ public partial class MainWindow : BorderlessWindowBase
     private void SliderThumb_DragDelta(object sender, DragDeltaEventArgs e)
     {
         if (e.HorizontalChange != 0)
-        {
             Sidebar.Width = Math.Clamp(Sidebar.Width - e.HorizontalChange, 0,
                 ActualWidth - SliderThumb.ActualWidth);
-        }
     }
 
     private static void ToggleWindow<TWindow>(ref TWindow? windowCache, Action clearWindowCache)
@@ -117,7 +91,7 @@ public partial class MainWindow : BorderlessWindowBase
         }
         else
         {
-            windowCache = new TWindow();
+            windowCache = new();
             windowCache.Show();
             windowCache.Closed += delegate { clearWindowCache(); };
         }
@@ -145,7 +119,7 @@ public partial class MainWindow : BorderlessWindowBase
 
     private void OpenImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        var dialog = new Microsoft.Win32.OpenFileDialog
+        var dialog = new OpenFileDialog
         {
             // TODO
             FileName = "Picture",
@@ -155,15 +129,12 @@ public partial class MainWindow : BorderlessWindowBase
 
         var result = dialog.ShowDialog();
 
-        if (result == true)
-        {
-            _activeEditor?.SetSource(TextureModel.FromFile(dialog.FileName));
-        }
+        if (result == true) _activeEditor?.SetSource(TextureModel.FromFile(dialog.FileName));
     }
 
     private void SaveImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        var dialog = new Microsoft.Win32.SaveFileDialog
+        var dialog = new SaveFileDialog
         {
             // TODO
             FileName = "Picture",
@@ -179,18 +150,15 @@ public partial class MainWindow : BorderlessWindowBase
                 _logger.LogInformation("No active editor to save the image.");
                 return;
             }
-                
-            if (!_activeEditor.Computed)
-            {
-                _activeEditor.Compute();
-            }
-                
+
+            if (!_activeEditor.Computed) _activeEditor.Compute();
+
             if (_activeEditor.Result is null)
             {
                 _logger.LogError("No result to save the image after computing.");
                 return;
             }
-                
+
             var data = PixelBufferModel.FromGpu(_activeEditor.Result);
             data.SaveToFile(dialog.FileName);
         }
@@ -198,13 +166,11 @@ public partial class MainWindow : BorderlessWindowBase
 
     private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(
-            new(new EditImplGrayscaleViewModel()));
+        _activeEditor?.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplGrayscaleViewModel()});
     }
 
     private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(
-            new(new EditImplNoGreenViewModel()));
+        _activeEditor?.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplNoGreenViewModel()});
     }
 }

@@ -1,42 +1,59 @@
-﻿using Inchoqate.GUI.Model;
-using MvvmHelpers;
+﻿using System.Collections;
 using System.Collections.ObjectModel;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using Inchoqate.GUI.Model;
+using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;
 
 /// <summary>
-/// Provides a view model for an event tree model.
+///     Provides a view model for an event tree model.
 /// </summary>
-public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>
+public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
 {
-    /// <summary>
-    /// Dummy event.
-    /// </summary>
-    protected sealed class DummyEvent() : EventViewModelBase("Initial Event")
-    {
-        protected override bool InnerDo() => true;
+    private EventViewModelBase _current;
 
-        protected override bool InnerUndo() => true;
+    /// <summary>
+    ///     Used to lock the manager from changes that originate in apply/revert actions.
+    /// </summary>
+    private volatile bool _locked;
+
+
+    public EventTreeViewModel(string title, EventViewModelBase? initial = null)
+    {
+        Title = title;
+        // Events.Add(Initial, new DummyEvent { Id = Initial });
+        Initial = initial ?? new DummyEvent();
+        _current = Initial;
+
+        if (initial is not null)
+            // fill events
+            // advance current
+            // and shit
+            foreach (var e in this)
+                Current = e;
+
+        RegisteredTrees.Add(this);
     }
 
     /// <summary>
-    /// All registered event trees.
+    ///     All registered event trees.
     /// </summary>
+    [JsonIgnore]
     public static ObservableCollection<EventTreeViewModel> RegisteredTrees { get; } = [];
 
     /// <summary>
-    /// Used to lock the manager from changes that originate in apply/revert actions.
+    ///     Setter exists for serialization.
     /// </summary>
-    private volatile bool _locked = false;
-    private EventViewModelBase _current;
+    public EventViewModelBase Initial { get; set; } /* = Guid.NewGuid();*/
 
-    public EventViewModelBase Initial { get; } = new DummyEvent();
-
+    /// <summary>
+    ///     Setter public for serialization.
+    /// </summary>
     public EventViewModelBase Current
     {
         get => _current;
-        private set
+        /*private*/
+        set
         {
             if (Equals(value, _current)) return;
             _current = value;
@@ -44,51 +61,140 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>
         }
     }
 
+    [JsonIgnore] public EventViewModelBase CurrentEvent => /*Events[*/Current /*]*/;
 
-    public EventTreeViewModel(string title)
+    [JsonIgnore] public EventViewModelBase InitialEvent => /*Events[*/Initial /*]*/;
+
+    /// <summary>
+    ///     Setter exists for serialization.
+    /// </summary>
+    public Dictionary<Guid, EventViewModelBase> Events { get; set; } = new();
+
+    /// <inheritdoc />
+    public IEnumerator<EventViewModelBase> GetEnumerator()
     {
-        Title = title;
-        _current = Initial;
-        RegisteredTrees.Add(this);
+        return new Enumerator(InitialEvent /*, this*/);
     }
 
-
-    public bool Novelty(EventViewModelBase e)
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator()
     {
-        if (_locked || !Current.Next.TryAdd(e.CreationDate, e))
+        return GetEnumerator();
+    }
+
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="EventTreeViewModel"/> class.
+    // /// Mainly used for deserialization.
+    // /// </summary>
+    // /// <param name="title"></param>
+    // /// <param name="initial"></param>
+    // public EventTreeViewModel(string title)
+    // {
+    //     Debug.Assert(initial.Previous is null);
+    //
+    //     Title = title;
+    //     Initial = initial;
+    //     _current = Initial;
+    //
+    //     // Select current as the last executed event
+    //     // and fix missing backlinks.
+    //     foreach (var e in this)
+    //     {
+    //         Current = e;
+    //     }
+    //
+    //     RegisteredTrees.Add(this);
+    // }
+
+
+    public bool Novelty(EventViewModelBase novelty)
+    {
+        if (_locked
+            || !CurrentEvent.Next.TryAdd(novelty.CreationDate, novelty /*.Id*/)
+            /*|| !Events.TryAdd(novelty.Id, novelty)*/
+           )
             return false;
 
-        e.Previous = Current;
-        Current = e;
+        novelty.Previous = CurrentEvent;
+        Current = novelty /*.Id*/;
         return true;
     }
 
     public bool Undo()
     {
-        if (_locked || Current == Initial || Current.Previous is null)
+        if (_locked || Current == Initial || CurrentEvent.Previous is null)
             return false;
 
         // could modify state of the application and
         // allow for an event to be tried to push
         _locked = true;
-        Current.Undo();
+        CurrentEvent.Undo();
         _locked = false;
-        Current = Current.Previous;
+        Current = CurrentEvent.Previous /*.Id*/;
 
         return true;
     }
-        
+
     public bool Redo(int next = 0)
     {
-        if (_locked || next >= Current.Next.Count)
+        if (_locked || next >= CurrentEvent.Next.Count)
             return false;
 
         _locked = true;
-        var e = Current.Next.Values[next];
+        var e = /*Events[*/CurrentEvent.Next.Values[next] /*]*/;
         e.Do();
         _locked = false;
-        Current = e;
+        Current = e /*.Id*/;
 
         return true;
+    }
+
+    /// <summary>
+    ///     Dummy event.
+    /// </summary>
+    protected sealed class DummyEvent() : EventViewModelBase/*("Initial Event")*/
+    {
+        protected override bool InnerDo()
+        {
+            return true;
+        }
+
+        protected override bool InnerUndo()
+        {
+            return true;
+        }
+    }
+
+    public class Enumerator(EventViewModelBase initial /*, EventTreeViewModel tree*/) : IEnumerator<EventViewModelBase>
+    {
+        /// <inheritdoc />
+        public bool MoveNext()
+        {
+            var next = Current.Next.Values
+                // .Select(x => tree.Events[x])
+                .FirstOrDefault(x => x.State == EventState.Executed);
+
+            if (next is null) return false;
+
+            Current = next;
+            return true;
+        }
+
+        /// <inheritdoc />
+        public void Reset()
+        {
+            Current = initial;
+        }
+
+        /// <inheritdoc />
+        public EventViewModelBase Current { get; private set; } = initial;
+
+        /// <inheritdoc />
+        object IEnumerator.Current => Current;
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+        }
     }
 }

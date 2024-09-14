@@ -81,8 +81,7 @@ public partial class PreviewImageView : UserControl
 
     private Size GetDesiredImageSize(Size bounds, Size sourceSize)
     {
-        if (_viewModel is null
-            || _viewModel.RenderEditor is null)
+        if (_viewModel.RenderEditor is null)
         {
             return bounds;
         }
