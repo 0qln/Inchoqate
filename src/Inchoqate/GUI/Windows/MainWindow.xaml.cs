@@ -53,23 +53,38 @@ public partial class MainWindow : BorderlessWindowBase
     {
         InitializeComponent();
 
-        _app.DataContext.Project.PropertyChanged += (_, e) =>
+        _app.DataContext.PropertyChanged += (_, e1) =>
         {
-            switch (e.PropertyName)
+            switch (e1.PropertyName)
             {
-                case nameof(ProjectViewModel.ActiveEditor):
-                    if (PreviewImage.DataContext is PreviewImageViewModel pvm)
-                        pvm.RenderEditor = _app.ActiveEditor;
+                case nameof(App.DataContext.Project):
+                    var proj = _app.DataContext.Project;
+
+                    if (proj is null)
+                    {
+                        _logger.LogError("Project is null.");
+                        return;
+                    }
+
+                    var pvm = (PreviewImageViewModel)PreviewImage.DataContext;
+                    pvm.RenderEditor = proj.Editors[proj.ActiveEditor];
+
+                    proj.PropertyChanged += (_, e2) =>
+                    {
+                        switch (e2.PropertyName)
+                        {
+                            case nameof(ProjectViewModel.ActiveEditor):
+                                pvm.RenderEditor = proj.Editors[proj.ActiveEditor];
+                                break;
+                        }
+                    };
+
+                    StackEditor.SetBinding(
+                        DataContextProperty,
+                        new Binding(nameof(ProjectViewModel.StackEditor)) { Source = proj });
                     break;
             }
         };
-
-        if (PreviewImage.DataContext is PreviewImageViewModel pvm)
-            pvm.RenderEditor = _app.ActiveEditor;
-
-        StackEditor.SetBinding(
-            DataContextProperty, 
-            new Binding(nameof(ProjectViewModel.StackEditor)) { Source = _app.DataContext.Project});
 
         Closed += delegate { Application.Current.Shutdown(); };
     }
@@ -108,16 +123,22 @@ public partial class MainWindow : BorderlessWindowBase
 
     private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _app.ActiveEditor.EventTree.Undo();
+        _app.ActiveEditor?.EventTree.Undo();
     }
 
     private void RedoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _app.ActiveEditor.EventTree.Redo();
+        _app.ActiveEditor?.EventTree.Redo();
     }
 
     private void OpenImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
         var dialog = new OpenFileDialog
         {
             // TODO
@@ -128,11 +149,17 @@ public partial class MainWindow : BorderlessWindowBase
 
         var result = dialog.ShowDialog();
 
-        if (result == true) _app.ActiveEditor.SetSource(TextureModel.FromFile(dialog.FileName));
+        if (result == true) _app.DataContext.Project.SourceImage = dialog.FileName;
     }
 
     private void SaveImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
         var dialog = new SaveFileDialog
         {
             // TODO
@@ -142,19 +169,18 @@ public partial class MainWindow : BorderlessWindowBase
         };
 
 
-        if (dialog.ShowDialog() == true)
+        if (dialog.ShowDialog() != true) return;
+
+        if (!_app.ActiveEditor!.Computed) _app.ActiveEditor.Compute();
+
+        if (_app.ActiveEditor.Result is null)
         {
-            if (!_app.ActiveEditor.Computed) _app.ActiveEditor.Compute();
-
-            if (_app.ActiveEditor.Result is null)
-            {
-                _logger.LogError("No result to save the image after computing.");
-                return;
-            }
-
-            var data = PixelBufferModel.FromGpu(_app.ActiveEditor.Result);
-            data.SaveToFile(dialog.FileName);
+            _logger.LogError("No result to save the image after computing.");
+            return;
         }
+
+        var data = PixelBufferModel.FromGpu(_app.ActiveEditor.Result);
+        data.SaveToFile(dialog.FileName);
     }
 
     private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)

@@ -1,13 +1,5 @@
-﻿using System.ComponentModel;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using Inchoqate.GUI.Model;
+﻿using System.Windows;
 using Inchoqate.GUI.ViewModel;
-using Inchoqate.GUI.ViewModel.Events;
-using Inchoqate.ViewModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace Inchoqate.GUI;
 
@@ -16,33 +8,35 @@ namespace Inchoqate.GUI;
 /// </summary>
 public partial class App : Application
 {
-    public AppViewModel DataContext { get; } = new();
-
-    public RenderEditorViewModel ActiveEditor => DataContext.Project.Editors[DataContext.Project.ActiveEditor];
-
     public App()
     {
-        // project.PropertyChanged += (_, e) =>
-        // {
-        //     switch (e.PropertyName)
-        //     {
-        //         case nameof(project.StackEditor):
-        //             if (PreviewImage.DataContext is PreviewImageViewModel pvm)
-        //                 if (StackEditor.DataContext is StackEditorViewModel svm)
-        //                     pvm.RenderEditor = svm;
-        //
-        //             _activeEditor = project.StackEditor;
-        //             break;
-        //     }
-        // };
+        Startup += delegate
+        {
+            MainWindow!.Loaded += delegate
+            {
+                // Only initiate project data if the main
+                // window and OpenGL context is loaded.
+                DataContext.Project = new();
+            };
+        };
     }
 
+    public AppViewModel DataContext { get; } = new();
+
     public ResourceDictionary ThemeDictionary => Current.Resources.MergedDictionaries.First();
+
+    public RenderEditorViewModel? ActiveEditor
+    {
+        get
+        {
+            var proj = DataContext.Project;
+            return proj?.Editors[proj.ActiveEditor];
+        }
+    }
 
     public void ChangeTheme(Uri uri)
     {
         ThemeDictionary.MergedDictionaries.Clear();
         ThemeDictionary.MergedDictionaries.Add(new() { Source = uri });
     }
-
 }

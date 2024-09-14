@@ -8,7 +8,7 @@ namespace Inchoqate.GUI.Model;
 /// </summary>
 public static class EventSerdeModel
 {
-    private static readonly JsonSerializerSettings SerializerSettings = new()
+    public static readonly JsonSerializerSettings SerializerSettings = new()
     {
         MaxDepth = null,
         ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
