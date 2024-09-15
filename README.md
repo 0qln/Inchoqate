@@ -1,2 +1,2 @@
 # Inchoqate
- WPF/OpenGL image editor
+An image editor.
