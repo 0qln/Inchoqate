@@ -10,7 +10,7 @@ public interface IEvent
 {
     EventState State { get; }
 
-    void Do();
+    bool Do();
 
-    void Undo();
+    bool Undo();
 }

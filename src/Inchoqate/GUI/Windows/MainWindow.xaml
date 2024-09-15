@@ -21,6 +21,10 @@
             x:Name="RedoCmdBinding"
             Command="ApplicationCommands.Redo"
             Executed="RedoCmdBinding_Executed"/>
+        <CommandBinding
+            x:Name="OpenStackEditorCmdBinding"
+            Command="{x:Static local:MainWindow.OpenStackEditorCommand}"
+            Executed="OpenStackEditorCommand_Executed"/>
         <CommandBinding 
             x:Name="OpenFlowchartEditorCmdBinding"
             Command="{x:Static local:MainWindow.OpenFlowchartEditorCommand}"
@@ -87,6 +91,9 @@
                                                        OptionsPosition="Bottom">
                         <view:TitlebarActionButtonMenuView.Options>
                             <view:TitlebarActionButtonOptionCollection>
+                                <view:TitlebarActionButtonCommandView
+                                    Title="Open Stack Editor"
+                                    CommandBinding="{x:Reference OpenStackEditorCmdBinding}"/>
                                 <view:TitlebarActionButtonCommandView
                                     Title="Undo"                    
                                     CommandBinding="{x:Reference UndoCmdBinding}"/>
@@ -169,6 +176,7 @@
                 DragDelta="SliderThumb_DragDelta"/>
 
             <Grid
+                Visibility="{Binding ElementName=StackEditor, Path=DataContext, Converter={StaticResource VisibleIfNotNullConverter}}"
                 x:Name="Sidebar"
                 Grid.Column="2"
                 Width="300">

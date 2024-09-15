@@ -30,7 +30,13 @@ public class EventSerdeModel
 
     static EventSerdeModel()
     {
-        Directory = _directory = "./Events/"; // TODO
+        Directory = _directory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "0qln",
+            "Inchoqate",
+            "Projects",
+            ".tmp",
+            $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}");
     }
 
     /// <summary>

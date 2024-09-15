@@ -30,7 +30,7 @@ public partial class App : Application
         get
         {
             var proj = DataContext.Project;
-            return proj?.Editors[proj.ActiveEditor];
+            return proj?.ActiveEditor is null ? default : proj?.Editors[proj.ActiveEditor];
         }
     }
 

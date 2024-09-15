@@ -16,10 +16,14 @@ public partial class MainWindow : BorderlessWindowBase
     private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
 
-    public static readonly RoutedCommand OpenFlowchartEditorCommand =
-        new("OpenFlowchartEditor",
+    public static readonly RoutedCommand OpenStackEditorCommand =
+        new("OpenStackEditor",
             typeof(MainWindow),
             [new KeyGesture(Key.E, ModifierKeys.Control)]);
+
+    public static readonly RoutedCommand OpenFlowchartEditorCommand =
+        new("OpenFlowchartEditor",
+            typeof(MainWindow));
 
     public static readonly RoutedCommand OpenUndoTreeCommand =
         new("OpenUndoTree",
@@ -131,7 +135,13 @@ public partial class MainWindow : BorderlessWindowBase
 
     private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        if (!_app.ActiveEditor?.EventTree.Undo() ?? true)
+        if (_app.ActiveEditor is null)
+            return;
+
+        if (_app.ActiveEditor.EventTree.Current.Previous is null)
+            return;
+
+        if (!_app.ActiveEditor.EventTree.Undo())
         {
             _logger.LogError("Undo failed.");
         }
@@ -139,7 +149,13 @@ public partial class MainWindow : BorderlessWindowBase
 
     private void RedoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        if (!_app.ActiveEditor?.EventTree.Redo() ?? true)
+        if (_app.ActiveEditor is null)
+            return;
+
+        if (_app.ActiveEditor.EventTree.Current.Next.Count == 0)
+            return;
+
+        if (!_app.ActiveEditor.EventTree.Redo())
         {
             _logger.LogError("Redo failed.");
         }
@@ -223,8 +239,7 @@ public partial class MainWindow : BorderlessWindowBase
 
         if (dialog.ShowDialog() != true) return;
 
-        // _app.DataContext.Project = ProjectViewModel.LoadFromFile(dialog.FolderName);
-        _app.DataContext.Project.LoadFromFile(dialog.FolderName);
+        _app.DataContext.Project = ProjectViewModel.LoadFromFile(dialog.FolderName);
     }
 
     private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -237,5 +252,17 @@ public partial class MainWindow : BorderlessWindowBase
     {
         if (_app.ActiveEditor is StackEditorViewModel stackEditor)
             stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplNoGreenViewModel() });
+    }
+
+    private void OpenStackEditorCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
+        _app.DataContext.Project.StackEditor ??= new();
+        _app.DataContext.Project.ActiveEditor = nameof(ProjectViewModel.StackEditor);
     }
 }

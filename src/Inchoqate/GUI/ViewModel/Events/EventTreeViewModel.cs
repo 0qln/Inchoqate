@@ -69,11 +69,12 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
         if (_locked || !Current.Next.TryAdd(e.CreationDate, e))
             return false;
 
-        if (execute) e.Do();
+        var result = true;
+        if (execute) result = e.Do();
 
         e.Previous = Current;
         Current = e;
-        return true;
+        return result;
     }
 
     public bool Undo()
@@ -84,11 +85,11 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
         // could modify state of the application and
         // allow for an event to be tried to push
         _locked = true;
-        Current.Undo();
+        var result = Current.Undo();
         _locked = false;
         Current = Current.Previous;
 
-        return true;
+        return result;
     }
 
     public bool Redo(int next = 0, EventViewModelBase? @event = null)
@@ -98,11 +99,11 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
 
         _locked = true;
         var e = @event ?? Current.Next.Values[next];
-        e.Do();
+        var result = e.Do();
         _locked = false;
         Current = e;
 
-        return true;
+        return result;
     }
 
     /// <summary>

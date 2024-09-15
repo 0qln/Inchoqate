@@ -58,30 +58,34 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent
     /// <summary>
     ///     Executes the event. And changes the event state.
     /// </summary>
-    public void Do()
+    public bool Do()
     {
         if (InnerDo())
         {
             State = EventState.Executed;
+            return true;
         }
         else
         {
             _logger.LogWarning("Failed to execute event.");
+            return false;
         }
     }
 
     /// <summary>
     ///     Reverts the event. And changes the event state.
     /// </summary>
-    public void Undo()
+    public bool Undo()
     {
         if (InnerUndo())
         {
             State = EventState.Reverted;
+            return true;
         }
         else
         {
             _logger.LogWarning("Failed to revert event.");
+            return false;
         }
     }
 

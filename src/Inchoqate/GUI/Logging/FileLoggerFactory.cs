@@ -15,7 +15,17 @@ public static class FileLoggerFactory
 
     static FileLoggerFactory()
     {
-        string logFilePath = "log.txt";
+        string logFilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "0qln",
+            "Inchoqate",
+            "Logging",
+            $"{DateTime.Now:yyyy-MM-dd}",
+            $"{DateTime.Now:HH-mm-ss}.txt");
+
+        if (Directory.Exists(Path.GetDirectoryName(logFilePath)) == false)
+            Directory.CreateDirectory(Path.GetDirectoryName(logFilePath)!);
+
         _writer = new(logFilePath, append: true);
         _factory = LoggerFactory.Create(builder =>
         {

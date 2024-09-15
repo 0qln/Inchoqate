@@ -19,6 +19,7 @@
             <conv:VisibilityToIndicatorStringConverter x:Key="VisibilityToIndicatorStringConverter"/>
             <conv:BorderlessWinCornerConverter x:Key="BorderlessWinCornerConverter"/>
             <conv:BorderlessWinBorderThicknessConverter x:Key="BorderlessWinBorderThicknessConverter"/>
+            <conv:VisibleIfNotNullConverter x:Key="VisibleIfNotNullConverter" />
 
             <Style x:Key="BorderlessWindowBaseStyle" TargetType="win:BorderlessWindowBase">
                 <Setter Property="WindowStyle" Value="None"/>

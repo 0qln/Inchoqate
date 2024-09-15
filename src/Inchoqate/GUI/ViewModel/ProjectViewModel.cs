@@ -5,6 +5,8 @@ using Inchoqate.GUI;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
+using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Inchoqate.ViewModel;
@@ -14,33 +16,45 @@ namespace Inchoqate.ViewModel;
 /// </summary>
 public class ProjectViewModel : BaseViewModel
 {
-    private string _activeEditor;
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<ProjectViewModel>();
+
+    private string? _activeEditor;
     private string _sourceImage;
 
     public ProjectViewModel()
     {
-        Editors = new()
-        {
-            { nameof(StackEditor), new StackEditorViewModel() }
-        };
-
-        ActiveEditor = nameof(StackEditor);
-        SourceImage = @"D:\Pictures\Wallpapers\everforest-walls\nature\mist_forest_1.png";
+        Editors = new();
+        _sourceImage = String.Empty;
     }
 
+    [JsonIgnore]
     public Dictionary<string, RenderEditorViewModel> Editors { get; }
 
-    public string ActiveEditor
+    public string? ActiveEditor
     {
         get => _activeEditor;
         set => SetProperty(ref _activeEditor, value);
     }
 
-    public StackEditorViewModel StackEditor
+    [JsonIgnore]
+    public StackEditorViewModel? StackEditor
     {
-        get => (StackEditorViewModel)Editors[nameof(StackEditor)];
+        get
+        {
+            if (!Editors.TryGetValue(nameof(StackEditor), out var editor)) 
+                return default;
+
+            return (StackEditorViewModel)editor;
+        }
         set
         {
+            if (value is null)
+            {
+                Editors.Remove(nameof(StackEditor));
+                return;
+            }
+
+            value.SetSource(TextureModel.FromFile(SourceImage));
             Editors[nameof(StackEditor)] = value;
             OnPropertyChanged();
         }
@@ -70,31 +84,63 @@ public class ProjectViewModel : BaseViewModel
         }
     }
 
-    // public ProjectViewModel LoadFromFile(string dir)
-    public void LoadFromFile(string dir)
+    public static ProjectViewModel? LoadFromFile(string dir)
     {
         var app = (App)Application.Current;
         if (!app.MainWindow?.IsLoaded ?? true) throw new("Application has not loaded yet.");
 
-        // TODO
+        var result = JsonConvert.DeserializeObject<ProjectViewModel>(
+            File.ReadAllText(Path.Combine(dir, "Config.json")
+        ));
 
-        // temp: load stack editor
-        EventSerdeModel.Directory = dir;
-        var tree = EventSerdeModel.Deserialize<EventTreeViewModel>(nameof(StackEditor));
+        if (result is null)
+        {
+            Logger.LogError("Failed to deserialize project config from {Path}", dir);
+            return default;
+        }
 
-        StackEditor = new(tree);
-        StackEditor.SetSource(TextureModel.FromFile(SourceImage));
+        var editorsDir = Path.Combine(dir, "Editors");
+        EventSerdeModel.Directory = editorsDir;
+        foreach (var editorFile in Directory.EnumerateFiles(editorsDir))
+        {
+            var editorName = Path.GetFileNameWithoutExtension(editorFile);
+            var tree = EventSerdeModel.Deserialize<EventTreeViewModel>(editorName);
+            if (tree is null)
+            {
+                Logger.LogError("Failed to deserialize event tree from {Path}", editorFile);
+                return default;
+            }
+
+            RenderEditorViewModel? editor = editorName switch
+            {
+                nameof(StackEditor) => new StackEditorViewModel(tree),
+                _ => null
+            };
+
+            if (editor is null)
+            {
+                Logger.LogError("Unknown editor: {Editor}", editorName);
+                return default;
+            }
+
+            if (result.SourceImage != string.Empty)
+                editor.SetSource(TextureModel.FromFile(result.SourceImage));
+
+            result.Editors[editorName] = editor;
+        }
+
+        return result;
     }
 
     public void SaveToFile(string dir)
     {
-        // Debug.Assert(!File.Exists(path));
-        // Debug.Assert(Path.GetExtension(path) == ".json");
+        EventSerdeModel.Directory = Path.Combine(dir, "Editors");
+        foreach (var editor in Editors)
+            EventSerdeModel.Serialize(editor.Value.EventTree, editor.Key);
 
-        // TODO
-
-        // temp: save stack editor 
-        EventSerdeModel.Directory = dir;
-        EventSerdeModel.Serialize(StackEditor.EventTree, nameof(StackEditor));
+        File.WriteAllText(
+            Path.Combine(dir, "Config.json"),
+            JsonConvert.SerializeObject(this, Formatting.None)
+        );
     }
 }
