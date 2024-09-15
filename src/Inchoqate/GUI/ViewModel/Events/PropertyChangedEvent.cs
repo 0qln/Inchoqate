@@ -1,55 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Inchoqate.GUI.Model;
-using Inchoqate.GUI.ViewModel;
+﻿using Inchoqate.GUI.Model;
 
-namespace Inchoqtae.GUI.ViewModel.Events;
+namespace Inchoqate.GUI.ViewModel.Events;
 
-public abstract class PropertyChangedEvent<TProperty>(string propertyName, TProperty oldValue, TProperty newValue) 
-    : EventViewModelBase($"{propertyName} Changed")
+public abstract class PropertyChangedEvent<TProperty> : EventViewModelBase
 {
-    [ViewProperty]
-    public TProperty OldValue { get; } = oldValue;
+    [ViewProperty] public TProperty? OldValue { get; init; }
 
-    [ViewProperty]
-    public TProperty NewValue { get; } = newValue;
-
-
-    [ViewProperty]
-    public TProperty NewValue0 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue1 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue2 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue3 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue4 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue5 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue6 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue7 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue8 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue9 { get; } = newValue;
-    [ViewProperty]
-    public TProperty NewValue10 { get; } = newValue;
+    [ViewProperty] public TProperty? NewValue { get; init; }
 
 
     protected override bool InnerDo()
     {
-        return Setter(newValue);
+        if (NewValue is null)
+            return false;
+
+        return Setter(NewValue);
     }
 
     protected override bool InnerUndo()
     {
-        return Setter(oldValue);
+        if (OldValue is null)
+            return false;
+
+        return Setter(OldValue);
     }
 
 

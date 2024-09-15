@@ -62,7 +62,7 @@ public partial class PreviewImageView : UserControl
 
         GLImage.Start(new GLWpfControlSettings { RenderContinuously = false });
 
-        DataContext = _viewModel = new PreviewImageViewModel();
+        DataContext = _viewModel = new();
         _viewModel.PropertyChanged += (s, e) =>
         {
             switch (e.PropertyName)
@@ -81,8 +81,7 @@ public partial class PreviewImageView : UserControl
 
     private Size GetDesiredImageSize(Size bounds, Size sourceSize)
     {
-        if (_viewModel is null
-            || _viewModel.RenderEditor is null)
+        if (_viewModel.RenderEditor is null)
         {
             return bounds;
         }

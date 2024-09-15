@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Windows;
 using System.Windows.Media;
+using OpenTK.Mathematics;
 
 namespace Inchoqate.GUI;
 
@@ -33,5 +34,10 @@ public static class Utils
         }
 
         return default;
+    }
+
+    public static bool All(this Vector3 v, Predicate<float> predicate)
+    {
+        return predicate(v.X) && predicate(v.Y) && predicate(v.Z);
     }
 }

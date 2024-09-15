@@ -1,4 +1,5 @@
-﻿using Inchoqate.GUI.ViewModel;
+﻿using System.ComponentModel;
+using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
 using System.Windows.Controls.Primitives;
 using System.Windows;
@@ -50,7 +51,7 @@ public partial class StackEditorNodeView : UserControl
 
     private Point _dragOffset;
 
-    public EditorNodeCollectionLinear? BackingCollection { get; set; }
+    public EditorNodeCollectionLinear? SelfContainer { get; set; }
 
 
     public StackEditorNodeView()
@@ -72,25 +73,25 @@ public partial class StackEditorNodeView : UserControl
 
     private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
     {
-        if (BackingCollection is null)
+        if (SelfContainer is null)
         {
             return;
         }
 
-        var index = BackingCollection.IndexOf(ViewModel);
+        var index = SelfContainer.IndexOf(ViewModel);
 
         var stackPanel = (StackPanel)VisualParent;
 
-        if (index < BackingCollection.Count - 1 && 
+        if (index < SelfContainer.Count - 1 && 
             e.VerticalChange + _dragOffset.Y > stackPanel.Children[index + 1].TransformToVisual(this).Transform(new()).Y)
         {
-            BackingCollection.Eventuate<ItemMovedEvent, IMoveItemsWrapper>(new(index, index + 1));
+            SelfContainer.Delegate(new ItemMovedEvent { From = index, To = index + 1});
         }   
 
         if (index > 0 && 
             e.VerticalChange + _dragOffset.Y < stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
         {
-            BackingCollection.Eventuate<ItemMovedEvent, IMoveItemsWrapper>(new(index, index - 1));
+            SelfContainer.Delegate(new ItemMovedEvent { From = index, To = index - 1});
         }
     }
 

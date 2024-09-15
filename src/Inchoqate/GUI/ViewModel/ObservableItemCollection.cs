@@ -10,18 +10,25 @@ namespace Inchoqate.GUI.ViewModel;
 public class ObservableItemCollection<T> : ObservableCollectionBase<T>
     where T : INotifyPropertyChanged
 {
+    /// <summary>
+    /// Occurs when items in the collection change.
+    /// </summary>
     public event PropertyChangedEventHandler? ItemsPropertyChanged;
 
 
-    public ObservableItemCollection() : base()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObservableItemCollection{T}"/> class.
+    /// </summary>
+    public ObservableItemCollection()
     {
+        // ReSharper disable once VirtualMemberCallInConstructor
         CollectionChanged += ObservableItemCollection_CollectionChanged;
     }
 
 
     private void ObservableItemCollection_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems != null)
+        if (e.NewItems is not null)
         {
             foreach (INotifyPropertyChanged item in e.NewItems)
             {
@@ -29,7 +36,7 @@ public class ObservableItemCollection<T> : ObservableCollectionBase<T>
             }
         }
 
-        if (e.OldItems != null)
+        if (e.OldItems is not null)
         {
             foreach (INotifyPropertyChanged item in e.OldItems)
             {

@@ -8,12 +8,6 @@ public enum EventState
 
 public interface IEvent
 {
-    DateTime CreationDate { get; }
-
-    IEvent? GetPrevious();
-
-    IEvent? GetNext(DateTime key);
-
     EventState State { get; }
 
     void Do();

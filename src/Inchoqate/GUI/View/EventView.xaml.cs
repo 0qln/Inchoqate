@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.View;
 
@@ -80,7 +81,7 @@ public partial class EventView : UserControl
             NextNodes.Remove(NextNodes.First(x => x.ViewModel == viewModel));
 
         foreach (var viewModel in ViewModel.Next.Values.Except(NextNodes.Select(x => x.ViewModel)))
-            NextNodes.Add(new EventView
+            NextNodes.Add(new()
             {
                 Tree = Tree,
                 ViewModel = viewModel,

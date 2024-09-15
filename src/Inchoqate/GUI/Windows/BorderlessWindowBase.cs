@@ -57,6 +57,7 @@ public class BorderlessWindowBase : Window
         }
     }
 
+
     private void FixSizingGlitch()
     {
         IntPtr handle = new WindowInteropHelper(this).Handle;

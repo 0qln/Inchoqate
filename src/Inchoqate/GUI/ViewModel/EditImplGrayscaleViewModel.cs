@@ -8,20 +8,25 @@ using OpenTK.Mathematics;
 using System.Windows.Media;
 using Inchoqate.GUI.Converters;
 using Inchoqate.GUI.ViewModel.Events;
-using Inchoqtae.GUI.ViewModel.Events;
+using Newtonsoft.Json;
+using Inchoqate.Converters;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public class EditImplGrayscaleViewModel : EditBaseLinearShader, IEventRelayModel<IntensityChangedEvent>, IIntensityProperty, IGuidHolder
+public class EditImplGrayscaleViewModel : 
+    EditBaseLinearShader, 
+    IEventDelegate<IntensityChangedEvent>, 
+    IIntensityProperty,
+    IDeserializable<EditImplGrayscaleViewModel>
 {
-    private readonly EventTreeViewModel _eventTree;
+    public IEventTree<EventViewModelBase> DelegationTarget { get; init; }
 
-    private readonly ExtSliderView _intenstityControl;
-    private readonly ExtSliderView _weightsControl;
+    IEventTree<IntensityChangedEvent> IEventDelegate<IntensityChangedEvent>.DelegationTarget => DelegationTarget;
 
     public override ObservableCollection<ContentControl> OptionControls { get; }
 
-    private double _intensity, _intensityChangeBegin;
+    private double _intensity;
+    private double _intensityChangeBegin;
     private Vector3 _weights;
 
     public const double IntensityMin = 0;
@@ -34,65 +39,60 @@ public class EditImplGrayscaleViewModel : EditBaseLinearShader, IEventRelayModel
         get => _intensity;
         set => SetProperty(ref _intensity, value,
             validateValue: (_, val) => val is >= IntensityMin and <= IntensityMax,
-            onChanged: () => _shader?.SetUniform("intensity", (float)value));
+            onChanged: () => _shader?.SetUniform(nameof(_intensity), (float)value));
     }
 
+    [JsonConverter(typeof(Vector3JsonConverter))]
     public Vector3 Weights
     {
         get => _weights;
         set => SetProperty(ref _weights, value,
-            onChanged: () => _shader?.SetUniform("weights", value));
+            validateValue: (_, vec) => vec.All(c => c is >= 0 and <= 1), // TODO: more checks?
+            onChanged: () => _shader?.SetUniform(nameof(_weights), value));
     }
 
+    public EditImplGrayscaleViewModel() : this(BufferUsageHint.StaticDraw) { }
 
-    public EditImplGrayscaleViewModel(EventTreeViewModel eventTree, BufferUsageHint usage) : base(usage)
+    public EditImplGrayscaleViewModel(BufferUsageHint usage) : base(usage)
     {
-        _eventTree = eventTree;
-
         Intensity = 2.0; // should be between 0 and 1, but yields interesting results for out of range values xd
         Weights = new(0.2126f, 0.7152f, 0.0722f);
         Title = "Grayscale";
 
-        _intenstityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity], ShowValues = [true] };
-        _intenstityControl.SetBinding(
+        ExtSliderView intensityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity], ShowValues = [true] };
+        intensityControl.SetBinding(
             ExtSliderView.ValuesProperty,
             new Binding(nameof(Intensity))
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new ElementToArrayConverter<double>() });
-        _intenstityControl.ThumbDragCompleted += (s, e) => Eventuate<IntensityChangedEvent, IIntensityProperty>(new(_intensityChangeBegin, _intensity));
-        _intenstityControl.ThumbDragStarted += (s, e) => _intensityChangeBegin = Intensity;
+        intensityControl.ThumbDragCompleted += (s, e) => Delegate(new() {OldValue = _intensityChangeBegin, NewValue = _intensity });
+        intensityControl.ThumbDragStarted += (s, e) => _intensityChangeBegin = Intensity;
 
-        _weightsControl = new()
+        ExtSliderView weightsControl = new()
         {
             RangeCount = 3, Minimum = 0, Maximum = 1,
             BackgroundGradientBrushes = [Colors.Red, Colors.Green, Colors.Blue], ShowRanges = [true, true, true]
         };
-        _weightsControl.SetBinding(
+        weightsControl.SetBinding(
             ExtSliderView.RangesProperty,
             new Binding(nameof(Weights))
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });
 
-        OptionControls =
-        [
-            new() { Content = _intenstityControl, Name = nameof(Intensity) },
-            new() { Content = _weightsControl, Name = nameof(Weights) }
+        OptionControls = [
+            new() { Content = intensityControl, Name = nameof(Intensity) },
+            new() { Content = weightsControl, Name = nameof(Weights) }
         ];
-    }
-
-    public EditImplGrayscaleViewModel(EventTreeViewModel eventTree) : this(eventTree, BufferUsageHint.StaticDraw)
-    {
     }
 
 
     public override ShaderModel? GetShader(out bool success) =>
         ShaderModel.FromUri(
-            new Uri("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
-            new Uri("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
+            new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
+            new("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
             out success);
 
-    public bool Eventuate<TEvent, TParam>(TEvent @event) 
-        where TEvent : IntensityChangedEvent, IParameterInjected<TParam>
+    public bool Delegate(IntensityChangedEvent @event) 
     {
-        @event.Parameter = this;
-        return _eventTree.Novelty(@event, true);
+        @event.Object = this;
+        return DelegationTarget.Novelty(@event, true);
     }
 }

@@ -1,13 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace Inchoqate.Logging;
 
 public class FileLogger(string categoryName, StreamWriter logFileWriter) : ILogger
 {
-    private readonly string _categoryName = categoryName;
-    private readonly StreamWriter _logFileWriter = logFileWriter;
-
     IDisposable ILogger.BeginScope<TState>(TState state)
     {
         return null!;
@@ -25,14 +23,11 @@ public class FileLogger(string categoryName, StreamWriter logFileWriter) : ILogg
         Exception? exception,
         Func<TState, Exception?, string> formatter)
     {
-        if (!IsEnabled(logLevel))
-        {
-            return;
-        }
+        if (!IsEnabled(logLevel)) return;
 
         var message = formatter(state, exception);
 
-        _logFileWriter.WriteLine($"[{logLevel}] [{DateTime.Now}] [{_categoryName}] {message}");
-        _logFileWriter.Flush();
+        logFileWriter.WriteLine($"[{logLevel}] [{DateTime.Now}] [{categoryName}] {message}");
+        logFileWriter.Flush();
     }
 }

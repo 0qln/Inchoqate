@@ -1,24 +1,19 @@
 ﻿using System.Windows;
-using System.Windows.Input;
 using System.Windows.Controls.Primitives;
-using Inchoqate.GUI.ViewModel;
+using System.Windows.Input;
 using Inchoqate.GUI.Model;
+using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
-using Microsoft.Extensions.Logging;
 using Inchoqate.Logging;
-using Inchoqtae.GUI.ViewModel.Events;
+using Inchoqate.ViewModel;
+using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 
 namespace Inchoqate.GUI.Windows;
 
 public partial class MainWindow : BorderlessWindowBase
 {
     private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
-
-    private FlowchartEditorWindow? _editorWindow;
-
-    private EventTreeWindow? _undoTreeWindow;
-
-    private RenderEditorViewModel? _activeEditor;
 
 
     public static readonly RoutedCommand OpenFlowchartEditorCommand =
@@ -40,6 +35,14 @@ public partial class MainWindow : BorderlessWindowBase
             typeof(MainWindow),
             [new KeyGesture(Key.S, ModifierKeys.Control)]);
 
+    public static readonly RoutedCommand SaveProjectCommand =
+        new("SaveProject",
+            typeof(MainWindow));
+
+    public static readonly RoutedCommand LoadProjectCommand =
+        new("LoadProject",
+            typeof(MainWindow));
+
     public static readonly RoutedCommand AddNodeGrayscaleCommand =
         new("AddNodeGrayscale",
             typeof(MainWindow));
@@ -48,28 +51,48 @@ public partial class MainWindow : BorderlessWindowBase
         new("AddNodeNoGreen",
             typeof(MainWindow));
 
+    private readonly App _app = (App)Application.Current;
+
+    private FlowchartEditorWindow? _editorWindow;
+    private EventTreeWindow? _undoTreeWindow;
 
     public MainWindow()
     {
         InitializeComponent();
 
-        Loaded += delegate
+        _app.DataContext.PropertyChanged += (_, e1) =>
         {
-            if (PreviewImage.DataContext is PreviewImageViewModel pvm)
+            switch (e1.PropertyName)
             {
-                if (StackEditor.DataContext is StackEditorViewModel svm)
-                {
-                    pvm.RenderEditor = svm;
-                }
+                case nameof(App.DataContext.Project):
+                    var proj = _app.DataContext.Project;
+                    var imageContext = (PreviewImageViewModel)PreviewImage.DataContext;
+
+                    if (proj is null)
+                    {
+                        _logger.LogError("Project is null.");
+                        break;
+                    }
+
+                    imageContext.RenderEditor = _app.ActiveEditor;
+                    StackEditor.DataContext = proj.StackEditor;
+
+                    proj.PropertyChanged += (_, e2) =>
+                    {
+                        switch (e2.PropertyName)
+                        {
+                            case nameof(ProjectViewModel.ActiveEditor):
+                                imageContext.RenderEditor = _app.ActiveEditor;
+                                break;
+                            case nameof(ProjectViewModel.StackEditor):
+                                StackEditor.DataContext = proj.StackEditor;
+                                break;
+                        }
+                    };
+
+                    break;
             }
         };
-
-        _activeEditor = StackEditor.DataContext as StackEditorViewModel;
-        _activeEditor?.SetSource(TextureModel.FromFile(@"D:\Pictures\Wallpapers\z\wallhaven-l8rloq.jpg"));
-
-        var edit = new EditImplGrayscaleViewModel(_activeEditor.EventTree);
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(edit));
-        edit.Eventuate<IntensityChangedEvent, IIntensityProperty>(new(edit.Intensity, 0.1));
 
         Closed += delegate { Application.Current.Shutdown(); };
     }
@@ -77,10 +100,8 @@ public partial class MainWindow : BorderlessWindowBase
     private void SliderThumb_DragDelta(object sender, DragDeltaEventArgs e)
     {
         if (e.HorizontalChange != 0)
-        {
             Sidebar.Width = Math.Clamp(Sidebar.Width - e.HorizontalChange, 0,
                 ActualWidth - SliderThumb.ActualWidth);
-        }
     }
 
     private static void ToggleWindow<TWindow>(ref TWindow? windowCache, Action clearWindowCache)
@@ -92,7 +113,7 @@ public partial class MainWindow : BorderlessWindowBase
         }
         else
         {
-            windowCache = new TWindow();
+            windowCache = new();
             windowCache.Show();
             windowCache.Closed += delegate { clearWindowCache(); };
         }
@@ -110,17 +131,29 @@ public partial class MainWindow : BorderlessWindowBase
 
     private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _activeEditor?.EventTree.Undo();
+        if (!_app.ActiveEditor?.EventTree.Undo() ?? true)
+        {
+            _logger.LogError("Undo failed.");
+        }
     }
 
     private void RedoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _activeEditor?.EventTree.Redo();
+        if (!_app.ActiveEditor?.EventTree.Redo() ?? true)
+        {
+            _logger.LogError("Redo failed.");
+        }
     }
 
     private void OpenImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        var dialog = new Microsoft.Win32.OpenFileDialog
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
+        var dialog = new OpenFileDialog
         {
             // TODO
             FileName = "Picture",
@@ -130,15 +163,18 @@ public partial class MainWindow : BorderlessWindowBase
 
         var result = dialog.ShowDialog();
 
-        if (result == true)
-        {
-            _activeEditor?.SetSource(TextureModel.FromFile(dialog.FileName));
-        }
+        if (result == true) _app.DataContext.Project.SourceImage = dialog.FileName;
     }
 
     private void SaveImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        var dialog = new Microsoft.Win32.SaveFileDialog
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
+        var dialog = new SaveFileDialog
         {
             // TODO
             FileName = "Picture",
@@ -146,40 +182,60 @@ public partial class MainWindow : BorderlessWindowBase
             Filter = "Images |*.png"
         };
 
+        if (dialog.ShowDialog() != true) return;
 
-        if (dialog.ShowDialog() == true)
+        if (!_app.ActiveEditor!.Computed) _app.ActiveEditor.Compute();
+
+        if (_app.ActiveEditor.Result is null)
         {
-            if (_activeEditor is null)
-            {
-                _logger.LogInformation("No active editor to save the image.");
-                return;
-            }
-                
-            if (!_activeEditor.Computed)
-            {
-                _activeEditor.Compute();
-            }
-                
-            if (_activeEditor.Result is null)
-            {
-                _logger.LogError("No result to save the image after computing.");
-                return;
-            }
-                
-            var data = PixelBufferModel.FromGpu(_activeEditor.Result);
-            data.SaveToFile(dialog.FileName);
+            _logger.LogError("No result to save the image after computing.");
+            return;
         }
+
+        var data = PixelBufferModel.FromGpu(_app.ActiveEditor.Result);
+        data.SaveToFile(dialog.FileName);
+    }
+
+    private void SaveProjectCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
+        var dialog = new OpenFolderDialog();
+
+        if (dialog.ShowDialog() != true) return;
+
+        _app.DataContext.Project.SaveToFile(dialog.FolderName);
+    }
+
+    private void LoadProjectCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
+        var dialog = new OpenFolderDialog();
+
+        if (dialog.ShowDialog() != true) return;
+
+        // _app.DataContext.Project = ProjectViewModel.LoadFromFile(dialog.FolderName);
+        _app.DataContext.Project.LoadFromFile(dialog.FolderName);
     }
 
     private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(
-            new(new EditImplGrayscaleViewModel(_activeEditor.EventTree)));
+        if (_app.ActiveEditor is StackEditorViewModel stackEditor)
+            stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplGrayscaleViewModel { DelegationTarget = _app.ActiveEditor!.EventTree } });
     }
 
     private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(
-            new(new EditImplNoGreenViewModel()));
+        if (_app.ActiveEditor is StackEditorViewModel stackEditor)
+            stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplNoGreenViewModel() });
     }
 }
