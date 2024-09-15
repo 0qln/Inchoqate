@@ -11,12 +11,18 @@ public class PixelBufferModel(int size, int width, int height) : IDisposable, IE
     public byte[] Data { get; private set; } = new byte[size];
     public readonly int Width = width, Height = height;
 
-    public static PixelBufferModel FromGpu(FrameBufferModel buffer)
+
+    public static PixelBufferModel FromGpu(TextureModel buffer)
     {
-        PixelBufferModel result = new(buffer.Data.Stride * buffer.Data.Height, buffer.Data.Width, buffer.Data.Height);
-        buffer.Use(FramebufferTarget.Framebuffer);
-        GL.ReadPixels(0, 0, buffer.Data.Width, buffer.Data.Height, TextureModel.GLPixelFormat, TextureModel.GLPixelType, result.Data);
+        PixelBufferModel result = new(buffer.Stride * buffer.Height, buffer.Width, buffer.Height);
+        result.LoadData(buffer);
         return result;
+    }
+
+    public void LoadData(TextureModel buffer)
+    {
+        buffer.Use();
+        GL.GetnTexImage(TextureTarget.Texture2D, 0, TextureModel.GLPixelFormat, TextureModel.GLPixelType, Data.Length, Data);
     }
 
     public void SaveToFile(string path)

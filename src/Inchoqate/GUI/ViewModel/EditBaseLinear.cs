@@ -1,4 +1,6 @@
-﻿namespace Inchoqate.GUI.ViewModel;
+﻿using Inchoqate.GUI.Model;
+
+namespace Inchoqate.GUI.ViewModel;
 
 public abstract class EditBaseLinear : EditBaseViewModel
 {

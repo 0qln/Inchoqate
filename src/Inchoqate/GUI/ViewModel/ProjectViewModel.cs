@@ -123,8 +123,7 @@ public class ProjectViewModel : BaseViewModel
                 return default;
             }
 
-            if (result.SourceImage != string.Empty)
-                editor.SetSource(TextureModel.FromFile(result.SourceImage));
+            editor.SetSource(TextureModel.FromFile(result.SourceImage));
 
             result.Editors[editorName] = editor;
         }

@@ -5,10 +5,17 @@ public interface IEditModel
     public int ExpectedInputCount { get; }
 
     /// <summary>
-    /// Apply's the edit to the contents of <paramref name="sources"/> and writes
-    /// into the buffer <paramref name="destination"/>.
+    /// Apply the edit to the contents of <see cref="Sources"/> and write
+    /// into the buffer <see cref="Destination"/>.
     /// </summary>
-    /// <param name="sources">The source data.</param>
-    /// <param name="destination">The destinaiton buffer.</param>
-    bool Apply(IEditDestinationModel destination, params IEditSourceModel [] sources);
+    bool Apply();
+} 
+
+public interface IEditModel<TBufferIn, TBufferOut> : IEditModel
+    where TBufferIn : IEditSourceModel
+    where TBufferOut : IEditDestinationModel
+{
+    public TBufferOut Destination { get; set; }
+
+    public TBufferIn[] Sources { get; set; }
 }

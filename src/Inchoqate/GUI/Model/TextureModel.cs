@@ -71,12 +71,23 @@ public class TextureModel : IDisposable, IEditSourceModel
         BorderColor = Color.FromRgb(255, 99, 71);
     }
 
-    public static TextureModel FromFile(string path, TextureUnit unit = TextureUnit.Texture0)
+    public static TextureModel? FromFile(string path, TextureUnit unit = TextureUnit.Texture0)
     {
+        if (!File.Exists(path))
+            return null;
+
         StbImage.stbi_set_flip_vertically_on_load(1);
         using Stream stream = File.OpenRead(path);
-        ImageResult image = ImageResult.FromStream(stream, PixelComponents);
-        return FromData(image.Width, image.Height, image.Data, unit);
+        try
+        {
+            ImageResult image = ImageResult.FromStream(stream, PixelComponents);
+            return FromData(image.Width, image.Height, image.Data, unit);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while reading image data: {Path}", path);
+            return null;
+        }
     }
 
     public static TextureModel FromData(int width, int height, byte[]? data = null, TextureUnit unit = TextureUnit.Texture0)
@@ -86,10 +97,17 @@ public class TextureModel : IDisposable, IEditSourceModel
             Width = width,
             Height = height
         };
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, GLPixelFormat, GLPixelType, data);
-        result.InitDefaults();
-        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+        result.LoadData(width, height, data);
         return result;
+    }
+
+    // TODO: test this
+    public void LoadData(int width, int height, byte[]? data = null)
+    {
+        Use();
+        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, GLPixelFormat, GLPixelType, data);
+        InitDefaults();
+        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
     }
 
 

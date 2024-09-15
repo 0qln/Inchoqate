@@ -13,7 +13,7 @@ public abstract class EditBaseViewModel : BaseViewModel, IEditModel
 
     public abstract int ExpectedInputCount { get; }
 
-    public abstract bool Apply(IEditDestinationModel destination, params IEditSourceModel[] sources);
+    public abstract bool Apply();
 
     public override string ToString()
     {

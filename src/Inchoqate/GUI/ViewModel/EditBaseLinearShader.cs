@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public abstract class EditBaseLinearShader : EditBaseLinear, IDisposable
+public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureModel, FrameBufferModel>, IDisposable
 {
     private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditBaseLinearShader>();  
 
@@ -50,16 +50,16 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IDisposable
     public abstract ShaderModel? GetShader(out bool success);
 
 
-    public override bool Apply(IEditDestinationModel destination, params IEditSourceModel[] sources)
+    public override bool Apply()
     {
-        if (destination is FrameBufferModel fb &&
-            sources[0] is TextureModel tex)
-        {
-            return Apply(fb, tex);
-        }
-
-        return false;
+        return Apply(Destination, Sources[0]);
     }
+
+    /// <inheritdoc />
+    public FrameBufferModel Destination { get; set; }
+
+    /// <inheritdoc />
+    public TextureModel[] Sources { get; set; }
 
     public bool Apply(FrameBufferModel destination, TextureModel source)
     {

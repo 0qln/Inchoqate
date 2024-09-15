@@ -55,6 +55,10 @@ public partial class MainWindow : BorderlessWindowBase
         new("AddNodeNoGreen",
             typeof(MainWindow));
 
+    public static readonly RoutedCommand AddNodePixelSorterCommand =
+        new("AddNodePixelSorter",
+            typeof(MainWindow));
+
     private readonly App _app = (App)Application.Current;
 
     private FlowchartEditorWindow? _editorWindow;
@@ -208,7 +212,7 @@ public partial class MainWindow : BorderlessWindowBase
             return;
         }
 
-        var data = PixelBufferModel.FromGpu(_app.ActiveEditor.Result);
+        var data = PixelBufferModel.FromGpu(_app.ActiveEditor.Result.Data);
         data.SaveToFile(dialog.FileName);
     }
 
@@ -252,6 +256,11 @@ public partial class MainWindow : BorderlessWindowBase
     {
         if (_app.ActiveEditor is StackEditorViewModel stackEditor)
             stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplNoGreenViewModel() });
+    }
+    private void AddNodePixelSorterCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        if (_app.ActiveEditor is StackEditorViewModel stackEditor)
+            stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplPixelSorterViewModel() });
     }
 
     private void OpenStackEditorCommand_Executed(object sender, ExecutedRoutedEventArgs e)

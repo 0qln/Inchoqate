@@ -1,4 +1,5 @@
-﻿using Inchoqate.GUI.Model;
+﻿using System.Windows.Controls;
+using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
     private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<StackEditorViewModel>();
 
     private FrameBufferModel? _framebuffer1, _framebuffer2;
+    private PixelBufferModel? _pixelBuffer1, _pixelBuffer2;
     private TextureModel? _sourceTexture;
     private readonly EditorNodeCollectionLinear _edits;
 
@@ -25,9 +27,19 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 
         switch (propertyName)
         {
+            // case nameof(Edits):
+            //     ReloadBuffer(ref _framebuffer1);
+            //     ReloadBuffer(ref _framebuffer2);
+            //     ReloadBuffer(ref _pixelBuffer1);
+            //     ReloadBuffer(ref _pixelBuffer2);
+            //     break;
             case nameof(RenderSize):
                 ReloadBuffer(ref _framebuffer1);
                 ReloadBuffer(ref _framebuffer2);
+                ReloadBuffer(ref _pixelBuffer1);
+                ReloadBuffer(ref _pixelBuffer2);
+                break;
+            case nameof(SourceSize):
                 break;
             case nameof(VoidColor):
                 if (_framebuffer1 is not null) _framebuffer1.Data.BorderColor = VoidColor;
@@ -78,7 +90,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
     private void ReloadBuffer(ref FrameBufferModel? buffer)
     {
         buffer?.Dispose();
-        buffer = new((int)_renderSize.Width, (int)_renderSize.Height, out var success);
+        buffer = new((int)RenderSize.Width, (int)RenderSize.Height, out var success);
         if (!success)
         {
             _logger.LogError("Failed to create framebuffer.");
@@ -88,42 +100,121 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         buffer.Data.BorderColor = VoidColor;
     }
 
+    private void ReloadBuffer(ref PixelBufferModel? buffer)
+    {
+        buffer?.Dispose();
+        buffer = new(
+            (int)RenderSize.Width * (int)RenderSize.Height * TextureModel.PixelDepth,
+            (int)RenderSize.Width, (int)RenderSize.Height);
+    }
+
+
+    private readonly Lazy<EditImplIdentityViewModel> _identity = new(() => new());
+
 
     public override bool Compute()
     {
         if (_sourceTexture is null)
+        {
             return false;
+        }
 
         // If there are no edits given, return identity.
         if (_edits.Count == 0)
         {
-            EditImplIdentityViewModel identity = new();
-            identity.Apply(_framebuffer1!, _sourceTexture);
+            _identity.Value.Sources = [_sourceTexture];
+            _identity.Value.Destination = _framebuffer1!;
+            _identity.Value.Apply();
             Result = _framebuffer1;
             return true;
         }
 
-        FrameBufferModel source = _framebuffer1!, destination = _framebuffer2!;
         var edits = _edits.ToList();
 
+        PixelBufferModel pbDest = _pixelBuffer1!, pbSrc = _pixelBuffer2!;
+        FrameBufferModel fbDest = _framebuffer1!, fbSrc = _framebuffer2!;
+        IEditModel?  currentEdit = edits.First(), lastEdit = null;
+
+        SwapBuffers();
+
         // Initial pass: load source texture.
-        if (!edits.First().Apply(destination, _sourceTexture))
+        if (!currentEdit.Apply())
         {
+            _logger.LogError("Failed to apply first edit during rendering pass. (Faulty edit: {Edit})", currentEdit);
             return false;
         }
+
+        lastEdit = edits.First();
 
         // Subsequent passes: switch between frame buffers.
         foreach (var edit in edits[1..])
         {
-            (source, destination) = (destination, source);
-            if (!edit.Apply(destination, source.Data))
+            currentEdit = edit;
+
+            SwapBuffers();
+
+            if (!edit.Apply())
             {
+                _logger.LogError("Failed to apply edit during rendering pass. (Faulty edit: {Edit})", edit);
                 return false;
             }
+
+            lastEdit = edit;
+            currentEdit = null;
         }
 
-        Result = destination;
+        if (lastEdit is IEditModel<TextureModel, FrameBufferModel> lastEditFrameBuffer)
+        {
+            Result = lastEditFrameBuffer.Destination;
+        }
+        else if (lastEdit is IEditModel<PixelBufferModel, PixelBufferModel> lastEditPixelBuffer)
+        {
+            Result = ConvertToFb(lastEditPixelBuffer.Destination, fbDest);
+        }
+
         return true;
+
+        FrameBufferModel ConvertToFb(PixelBufferModel from, FrameBufferModel to)
+        {
+            to.Data.LoadData(from.Width, from.Height, from.Data);
+            return to;
+        }
+
+        PixelBufferModel ConvertToPb(TextureModel from, PixelBufferModel to)
+        {
+            to.LoadData(from);
+            return to;
+        }
+
+        void SwapBuffers()
+        {
+            (pbDest, pbSrc) = (pbSrc, pbDest);
+            (fbDest, fbSrc) = (fbSrc, fbDest);
+
+            switch (currentEdit)
+            {
+                case IEditModel<TextureModel, FrameBufferModel> currentFb:
+                    currentFb.Destination = fbDest;
+                    currentFb.Sources = lastEdit switch
+                    {
+                        null => [_sourceTexture],
+                        IEditModel<PixelBufferModel, PixelBufferModel> lastPb => [ConvertToFb(lastPb.Destination, fbSrc).Data],
+                        IEditModel<TextureModel, FrameBufferModel> lastFb => [lastFb.Destination.Data],
+                        _ => throw new NotSupportedException()
+                    };
+                    break;
+                case IEditModel<PixelBufferModel, PixelBufferModel> currentPb:
+                    currentPb.Destination = pbDest;
+                    currentPb.Sources = lastEdit switch
+                    {
+                        null => [ConvertToPb(_sourceTexture, pbSrc)], 
+                        IEditModel<PixelBufferModel, PixelBufferModel> lastPb => [lastPb.Destination],
+                        IEditModel<TextureModel, FrameBufferModel> lastFb => [ConvertToPb(lastFb.Destination.Data, pbSrc)],
+                        _ => throw new NotSupportedException()
+                    };
+                    break;
+            }
+        }
     }
 
 
@@ -149,9 +240,12 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
     {
         if (!_disposedValue)
         {
+            _pixelBuffer1?.Dispose();
+            _pixelBuffer2?.Dispose();
             _framebuffer1?.Dispose();
-            _framebuffer1?.Dispose();
+            _framebuffer2?.Dispose();
             _sourceTexture?.Dispose();
+            if (_identity.IsValueCreated) _identity.Value.Dispose();
 
             foreach (var edit in _edits)
             {

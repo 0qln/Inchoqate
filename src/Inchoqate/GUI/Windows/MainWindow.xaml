@@ -57,6 +57,10 @@
             x:Name="AddNodeNoGreenCmdBinding"
             Command="{x:Static local:MainWindow.AddNodeNoGreenCommand}"
             Executed="AddNodeNoGreenCmdBinding_Executed"/>
+        <CommandBinding
+            x:Name="AddNodePixelSorterCmdBinding"
+            Command="{x:Static local:MainWindow.AddNodePixelSorterCommand}"
+            Executed="AddNodePixelSorterCmdBinding_Executed"/>
     </Window.CommandBindings>
 
     <Canvas>
@@ -111,6 +115,9 @@
                                             <view:TitlebarActionButtonCommandView
                                                 Title="No Green"
                                                 CommandBinding="{x:Reference AddNodeNoGreenCmdBinding}"/>
+                                            <view:TitlebarActionButtonCommandView
+                                                Title="Pixel Sorter"
+                                                CommandBinding="{x:Reference AddNodePixelSorterCmdBinding}"/>
                                         </view:TitlebarActionButtonOptionCollection>
                                     </view:TitlebarActionButtonMenuView.Options>
                                 </view:TitlebarActionButtonMenuView>

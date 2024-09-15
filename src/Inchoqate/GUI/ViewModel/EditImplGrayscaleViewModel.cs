@@ -14,7 +14,7 @@ using Inchoqate.Converters;
 namespace Inchoqate.GUI.ViewModel;
 
 public class EditImplGrayscaleViewModel : 
-    EditBaseLinearShader, 
+    EditBaseLinearShader,
     IEventDelegate<IntensityChangedEvent>, 
     IIntensityProperty,
     IDeserializable<EditImplGrayscaleViewModel>
