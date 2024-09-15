@@ -5,9 +5,11 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public class EditImplNoGreenViewModel : EditBaseLinearShader
+public class EditImplNoGreenViewModel : EditBaseLinearShader, IDeserializable<EditImplNoGreenViewModel>
 {
-    public EditImplNoGreenViewModel(BufferUsageHint usage = BufferUsageHint.StaticDraw) : base(usage)
+    public EditImplNoGreenViewModel() : this(BufferUsageHint.StaticDraw) { }
+
+    public EditImplNoGreenViewModel(BufferUsageHint usage) : base(usage)
     {
         Title = "No Green";
         OptionControls = [];

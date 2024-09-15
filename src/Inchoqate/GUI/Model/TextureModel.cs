@@ -10,7 +10,7 @@ namespace Inchoqate.GUI.Model;
 
 public class TextureModel : IDisposable, IEditSourceModel
 {
-    private static readonly ILogger<TextureModel> _logger = FileLoggerFactory.CreateLogger<TextureModel>();
+    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<TextureModel>();
 
     public readonly int Handle;
 

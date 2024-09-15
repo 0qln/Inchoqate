@@ -37,6 +37,14 @@
             x:Name="SaveImageCmdBinding"
             Command="{x:Static local:MainWindow.SaveImageCommand}"
             Executed="SaveImageCmdBinding_Executed"/>
+        <CommandBinding 
+            x:Name="SaveProjectCmdBinding"
+            Command="{x:Static local:MainWindow.SaveProjectCommand}"
+            Executed="SaveProjectCmdBinding_Executed"/>
+        <CommandBinding 
+            x:Name="LoadProjectCmdBinding"
+            Command="{x:Static local:MainWindow.LoadProjectCommand}"
+            Executed="LoadProjectCmdBinding_Executed"/>
         <CommandBinding
             x:Name="AddNodeGrayscaleCmdBinding"
             Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}"
@@ -66,6 +74,12 @@
                                 <view:TitlebarActionButtonCommandView 
                                     Title="Save Image"
                                     CommandBinding="{x:Reference SaveImageCmdBinding}"/>
+                                <view:TitlebarActionButtonCommandView
+                                    Title="Save Project"
+                                    CommandBinding="{x:Reference SaveProjectCmdBinding}"/>
+                                <view:TitlebarActionButtonCommandView
+                                    Title="Load Project"
+                                    CommandBinding="{x:Reference LoadProjectCmdBinding}"/>
                             </view:TitlebarActionButtonOptionCollection>
                         </view:TitlebarActionButtonMenuView.Options>
                     </view:TitlebarActionButtonMenuView>

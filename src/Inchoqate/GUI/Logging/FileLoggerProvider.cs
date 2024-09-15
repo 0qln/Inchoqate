@@ -3,6 +3,10 @@ using System.IO;
 
 namespace Inchoqate.Logging;
 
+/// <summary>
+/// File logger provider
+/// </summary>
+/// <param name="logFileWriter"></param>
 public class FileLoggerProvider(StreamWriter logFileWriter) : ILoggerProvider
 {
     private readonly StreamWriter _logFileWriter =

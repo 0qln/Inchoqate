@@ -1,10 +1,8 @@
 ﻿using Inchoqate.GUI.Model;
-using Inchoqate.GUI.View;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
-namespace Inchoqate.GUI.ViewModel;
+namespace Inchoqate.GUI.ViewModel.Events;
 
 public abstract class EventViewModelBase : BaseViewModel, IEvent
 {
@@ -36,8 +34,6 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent
         }
     }
 
-    public IEvent? GetPrevious() => _previous;
-
     // Although an 'ObservableSortedList' would be preferred, it is not 
     // necessary as an update in the 'Next' property of this object can be 
     // caught and acted upon by observing the 'Previous' property of the
@@ -55,12 +51,7 @@ public abstract class EventViewModelBase : BaseViewModel, IEvent
     public EventState State
     {
         get => _state;
-        protected set
-        {
-            if (Equals(value, _state)) return;
-            _state = value;
-            OnPropertyChanged();
-        }
+        protected set => SetProperty(ref _state, value);
     }
 
 

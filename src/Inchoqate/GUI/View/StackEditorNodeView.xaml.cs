@@ -1,4 +1,5 @@
-﻿using Inchoqate.GUI.ViewModel;
+﻿using System.ComponentModel;
+using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.Model;
 using System.Windows.Controls.Primitives;
 using System.Windows;
@@ -84,13 +85,13 @@ public partial class StackEditorNodeView : UserControl
         if (index < SelfContainer.Count - 1 && 
             e.VerticalChange + _dragOffset.Y > stackPanel.Children[index + 1].TransformToVisual(this).Transform(new()).Y)
         {
-            SelfContainer.Eventuate<ItemMovedEvent, IMoveItemsWrapper>(new() { From = index, To = index + 1});
+            SelfContainer.Delegate(new ItemMovedEvent { From = index, To = index + 1});
         }   
 
         if (index > 0 && 
             e.VerticalChange + _dragOffset.Y < stackPanel.Children[index - 1].TransformToVisual(this).Transform(new()).Y)
         {
-            SelfContainer.Eventuate<ItemMovedEvent, IMoveItemsWrapper>(new() { From = index, To = index - 1});
+            SelfContainer.Delegate(new ItemMovedEvent { From = index, To = index - 1});
         }
     }
 

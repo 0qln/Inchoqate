@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using Inchoqate.GUI.Model;
+using Newtonsoft.Json;
 
-namespace Inchoqate.GUI.ViewModel;
+namespace Inchoqate.GUI.ViewModel.Events;
 
 /// <summary>
 ///     Provides a view model for an event tree model.
 /// </summary>
-public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
+public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>, IDeserializable<EventTreeViewModel>
 {
     private EventViewModelBase _current;
 
@@ -16,6 +17,14 @@ public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
     /// </summary>
     private volatile bool _locked;
 
+    /// <summary>
+    /// Serialization constructor.
+    /// </summary>
+    public EventTreeViewModel()
+    {
+        RegisteredTrees.Add(this);
+    }
+
 
     public EventTreeViewModel(string title, EventViewModelBase? initial = null)
     {
@@ -23,23 +32,31 @@ public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
         Initial = initial ?? new DummyEvent();
         _current = Initial;
 
-        // Set current to the last executed event.
-        if (initial is not null) Current = this.Last();
+        if (initial is not null)
+            Current = EnumerateExecutedEvents().Last();
 
         RegisteredTrees.Add(this);
     }
 
+    // TODO: move into project model
     /// <summary>
     ///     All registered event trees.
     /// </summary>
+    [JsonIgnore]
     public static ObservableCollection<EventTreeViewModel> RegisteredTrees { get; } = [];
 
-    public EventViewModelBase Initial { get; }
+    public EventViewModelBase Initial
+    {
+        get;
+        // For serialization
+        set;
+    }
 
     public EventViewModelBase Current
     {
         get => _current;
-        private set
+        // For serialization public
+        set
         {
             if (Equals(value, _current)) return;
             _current = value;
@@ -47,22 +64,9 @@ public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
         }
     }
 
-    /// <inheritdoc />
-    public IEnumerator<EventViewModelBase> GetEnumerator()
-    {
-        return new ExecutedEventsEnumerator(Initial);
-    }
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
-
-
     public bool Novelty(EventViewModelBase e, bool execute = false)
     {
-        if (_locked || !Current.Next.TryAdd(novelty.CreationDate, e))
+        if (_locked || !Current.Next.TryAdd(e.CreationDate, e))
             return false;
 
         if (execute) e.Do();
@@ -87,13 +91,13 @@ public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
         return true;
     }
 
-    public bool Redo(int next = 0)
+    public bool Redo(int next = 0, EventViewModelBase? @event = null)
     {
         if (_locked || next >= Current.Next.Count)
             return false;
 
         _locked = true;
-        var e = Current.Next.Values[next];
+        var e = @event ?? Current.Next.Values[next];
         e.Do();
         _locked = false;
         Current = e;
@@ -102,9 +106,33 @@ public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
     }
 
     /// <summary>
+    ///     Iterate over the event and all events in its subtree.
+    /// </summary>
+    /// <param name="event"></param>
+    /// <returns></returns>
+    public IEnumerable<EventViewModelBase> EnumerateSubtree(EventViewModelBase? @event = null)
+    {
+        @event ??= Initial;
+
+        return @event.Next.Values
+            .SelectMany(EnumerateSubtree)
+            .Prepend(@event);
+    }
+
+    /// <summary>
+    ///     Iterates over all executed events.
+    /// </summary>
+    /// <param name="event"></param>
+    /// <returns></returns>
+    public IEnumerable<EventViewModelBase> EnumerateExecutedEvents(EventViewModelBase? @event = null)
+    {
+        return new ExecutedEventsEnumerable(@event ?? Initial);
+    }
+
+    /// <summary>
     ///     Dummy event.
     /// </summary>
-    protected sealed class DummyEvent : EventViewModelBase
+    protected sealed class DummyEvent : EventViewModelBase, IDeserializable<DummyEvent>
     {
         protected override bool InnerDo()
         {
@@ -117,31 +145,55 @@ public class EventTreeViewModel : BaseViewModel, IEnumerable<EventViewModelBase>
         }
     }
 
+
+    public class ExecutedEventsEnumerable(EventViewModelBase initial) : IEnumerable<EventViewModelBase>
+    {
+        /// <inheritdoc />
+        public IEnumerator<EventViewModelBase> GetEnumerator()
+        {
+            return new ExecutedEventsEnumerator(initial);
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+
     /// <summary>
     ///     Iterates over all executed events.
     /// </summary>
     /// <param name="initial"></param>
     public class ExecutedEventsEnumerator(EventViewModelBase initial) : IEnumerator<EventViewModelBase>
     {
+        private EventViewModelBase? _current;
+
         /// <inheritdoc />
         public bool MoveNext()
         {
-            var next = Current.Next.Values.FirstOrDefault(x => x.State == EventState.Executed);
+            if (_current is null)
+            {
+                _current = initial;
+                return true;
+            }
 
+            var next = _current.Next.Values.FirstOrDefault(x => x.State == EventState.Executed);
             if (next is null) return false;
 
-            Current = next;
+            _current = next;
             return true;
         }
 
         /// <inheritdoc />
         public void Reset()
         {
-            Current = initial;
+            _current = null;
         }
 
         /// <inheritdoc />
-        public EventViewModelBase Current { get; private set; } = initial;
+        public EventViewModelBase Current => _current!; // Safety: is _current is still null, MoveNext has not been called yet.
 
         /// <inheritdoc />
         object IEnumerator.Current => Current;

@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Inchoqate.GUI.Model;
+﻿using Inchoqate.GUI.Model;
 using System.Windows;
 using System.Windows.Media;
+using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.ViewModel;
 
@@ -16,7 +16,8 @@ public abstract class RenderEditorViewModel : BaseViewModel, IEditorModel<Textur
     private Color _voidColor;
 
 
-    public abstract IEventRelayModel<EventViewModelBase>? Edits { get; }
+    // TODO: this is a mistake. what events does it delegate?
+    // public abstract IEventDelegate<EventViewModelBase>? Edits { get; }
 
     public abstract EventTreeViewModel EventTree { get; }
 

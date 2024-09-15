@@ -1,8 +1,7 @@
 ﻿using Inchoqate.GUI.Model;
+using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
-using System.Collections.Specialized;
-using Inchoqate.GUI.View;
 
 namespace Inchoqate.GUI.ViewModel;
 
@@ -15,7 +14,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
     private readonly EditorNodeCollectionLinear _edits;
 
 
-    public override EditorNodeCollectionLinear Edits => _edits;
+    public EditorNodeCollectionLinear Edits => _edits;
 
     public sealed override EventTreeViewModel EventTree { get; }
 
@@ -46,13 +45,30 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
     {
         EventTree = eventTree;
         _edits = new(relayTarget: EventTree);
-        foreach (var @event in EventTree)
-        {
-            if (@event is IParameterInjected<ICollection<EditBaseLinear>> pi)
-                pi.Parameter = _edits;
 
+        // Inject dependencies.
+        foreach (var @event in EventTree.EnumerateSubtree())
+        {
+            switch (@event)
+            {
+                case IDependencyInjected<ICollection<EditBaseLinear>> a:
+                    a.Dependency = _edits;
+                    break;
+                case IDependencyInjected<MonitoredObservableItemCollection<EditBaseLinear>> a:
+                    a.Dependency = _edits;
+                    break;
+                case IDependencyInjected<IMoveItemsWrapper> a:
+                    a.Dependency = _edits;
+                    break;
+            }
+        }
+
+        // Apply events.
+        foreach (var @event in EventTree.EnumerateExecutedEvents())
+        {
             @event.Do();
         }
+
         _edits.CollectionChanged += (_, _) => Invalidate();
         _edits.ItemsPropertyChanged += (_, _) => Invalidate();
     }

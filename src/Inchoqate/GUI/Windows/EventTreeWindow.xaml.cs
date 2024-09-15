@@ -1,6 +1,6 @@
-﻿using Inchoqate.GUI.ViewModel;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
+using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.Windows;
 

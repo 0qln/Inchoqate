@@ -1,7 +1,6 @@
 ﻿using Inchoqate.GUI.Model;
-using Inchoqate.Logging;
-using Microsoft.Extensions.Logging;
 using System.ComponentModel;
+using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.ViewModel;
 
@@ -10,23 +9,39 @@ namespace Inchoqate.GUI.ViewModel;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 /// <param name="relayTarget"></param>
-public class MonitoredObservableItemCollection<T>(EventTreeViewModel relayTarget) : ObservableItemCollection<T>, IEventRelayModel<EventViewModelBase>
+public class MonitoredObservableItemCollection<T>(EventTreeViewModel relayTarget) : ObservableItemCollection<T>, 
+    IEventDelegate<MonitoredObservableItemCollectionEvent<T>>, 
+    IEventDelegate<CollectionEvent<T>>, 
+    IEventDelegate<ItemMovedEvent>
     where T : INotifyPropertyChanged
 {
-    private readonly ILogger _logger = FileLoggerFactory.CreateLogger<MonitoredObservableItemCollection<T>>();
-
-    public bool Eventuate<TEvent, TParam>(TEvent @event) 
-        where TEvent : EventViewModelBase, IParameterInjected<TParam>
+    /// <inheritdoc />
+    public bool Delegate(MonitoredObservableItemCollectionEvent<T> @event) 
     {
-        if (this is TParam param)
-        {
-            @event.Parameter = param;
-            @event.Do();
-            relayTarget.Novelty(@event);
-            return true;
-        }
-
-        _logger.LogWarning("Type mismatch. Cannot apply event to this object.");
-        return false;
+        @event.Dependency = this;
+        return relayTarget.Novelty(@event, true);
     }
+
+    /// <inheritdoc />
+    public bool Delegate(CollectionEvent<T> @event)
+    {
+        @event.Dependency = this;
+        return relayTarget.Novelty(@event, true);
+    }
+
+    /// <inheritdoc />
+    public bool Delegate(ItemMovedEvent @event)
+    {
+        @event.Dependency = this;
+        return relayTarget.Novelty(@event, true);
+    }
+
+    /// <inheritdoc />
+    IEventTree<ItemMovedEvent> IEventDelegate<ItemMovedEvent>.DelegationTarget => relayTarget;
+
+    /// <inheritdoc />
+    IEventTree<CollectionEvent<T>> IEventDelegate<CollectionEvent<T>>.DelegationTarget => relayTarget;
+
+    /// <inheritdoc />
+    IEventTree<MonitoredObservableItemCollectionEvent<T>> IEventDelegate<MonitoredObservableItemCollectionEvent<T>>.DelegationTarget => relayTarget;
 }

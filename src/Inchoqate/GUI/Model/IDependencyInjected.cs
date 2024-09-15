@@ -2,11 +2,11 @@
 
 namespace Inchoqate.GUI.Model;
 
-public interface IParameterInjected<TParam>
+public interface IDependencyInjected<TParam>
 {
     /// <summary>
     /// An externally injected parameter. 
     /// </summary>
     [JsonIgnore]
-    public TParam? Parameter { get; set; }
+    public TParam? Dependency { get; set; }
 }

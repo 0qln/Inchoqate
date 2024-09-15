@@ -37,7 +37,7 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IDisposable
         _shader = GetShader(out var success);
         if (!success)
         {
-            _logger.LogWarning("Deriving class failed to generate the shader.");
+            _logger.LogError("Deriving class failed to generate the shader.");
         }
     }
 

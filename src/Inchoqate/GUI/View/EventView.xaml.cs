@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.View;
 

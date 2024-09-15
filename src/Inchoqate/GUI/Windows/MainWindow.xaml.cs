@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel;
@@ -9,7 +8,6 @@ using Inchoqate.Logging;
 using Inchoqate.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
-using Inchoqtae.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.Windows;
 
@@ -37,6 +35,14 @@ public partial class MainWindow : BorderlessWindowBase
             typeof(MainWindow),
             [new KeyGesture(Key.S, ModifierKeys.Control)]);
 
+    public static readonly RoutedCommand SaveProjectCommand =
+        new("SaveProject",
+            typeof(MainWindow));
+
+    public static readonly RoutedCommand LoadProjectCommand =
+        new("LoadProject",
+            typeof(MainWindow));
+
     public static readonly RoutedCommand AddNodeGrayscaleCommand =
         new("AddNodeGrayscale",
             typeof(MainWindow));
@@ -60,37 +66,33 @@ public partial class MainWindow : BorderlessWindowBase
             {
                 case nameof(App.DataContext.Project):
                     var proj = _app.DataContext.Project;
+                    var imageContext = (PreviewImageViewModel)PreviewImage.DataContext;
 
                     if (proj is null)
                     {
                         _logger.LogError("Project is null.");
-                        return;
+                        break;
                     }
 
-                    var pvm = (PreviewImageViewModel)PreviewImage.DataContext;
-                    pvm.RenderEditor = proj.Editors[proj.ActiveEditor];
+                    imageContext.RenderEditor = _app.ActiveEditor;
+                    StackEditor.DataContext = proj.StackEditor;
 
                     proj.PropertyChanged += (_, e2) =>
                     {
                         switch (e2.PropertyName)
                         {
                             case nameof(ProjectViewModel.ActiveEditor):
-                                pvm.RenderEditor = proj.Editors[proj.ActiveEditor];
+                                imageContext.RenderEditor = _app.ActiveEditor;
+                                break;
+                            case nameof(ProjectViewModel.StackEditor):
+                                StackEditor.DataContext = proj.StackEditor;
                                 break;
                         }
                     };
 
-                    StackEditor.SetBinding(
-                        DataContextProperty,
-                        new Binding(nameof(ProjectViewModel.StackEditor)) { Source = proj });
                     break;
             }
         };
-
-        // Resolve merge 
-        var edit = new EditImplGrayscaleViewModel(_activeEditor.EventTree);
-        _activeEditor?.EditsProvider.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new(edit));
-        edit.Eventuate<IntensityChangedEvent, IIntensityProperty>(new(edit.Intensity, 0.1));
 
         Closed += delegate { Application.Current.Shutdown(); };
     }
@@ -129,12 +131,18 @@ public partial class MainWindow : BorderlessWindowBase
 
     private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _app.ActiveEditor?.EventTree.Undo();
+        if (!_app.ActiveEditor?.EventTree.Undo() ?? true)
+        {
+            _logger.LogError("Undo failed.");
+        }
     }
 
     private void RedoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _app.ActiveEditor?.EventTree.Redo();
+        if (!_app.ActiveEditor?.EventTree.Redo() ?? true)
+        {
+            _logger.LogError("Redo failed.");
+        }
     }
 
     private void OpenImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -174,7 +182,6 @@ public partial class MainWindow : BorderlessWindowBase
             Filter = "Images |*.png"
         };
 
-
         if (dialog.ShowDialog() != true) return;
 
         if (!_app.ActiveEditor!.Computed) _app.ActiveEditor.Compute();
@@ -189,13 +196,46 @@ public partial class MainWindow : BorderlessWindowBase
         data.SaveToFile(dialog.FileName);
     }
 
+    private void SaveProjectCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
+        var dialog = new OpenFolderDialog();
+
+        if (dialog.ShowDialog() != true) return;
+
+        _app.DataContext.Project.SaveToFile(dialog.FolderName);
+    }
+
+    private void LoadProjectCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        if (_app.DataContext.Project is null)
+        {
+            _logger.LogError("Project is null.");
+            return;
+        }
+
+        var dialog = new OpenFolderDialog();
+
+        if (dialog.ShowDialog() != true) return;
+
+        // _app.DataContext.Project = ProjectViewModel.LoadFromFile(dialog.FolderName);
+        _app.DataContext.Project.LoadFromFile(dialog.FolderName);
+    }
+
     private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _app.ActiveEditor?.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplGrayscaleViewModel() });
+        if (_app.ActiveEditor is StackEditorViewModel stackEditor)
+            stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplGrayscaleViewModel { DelegationTarget = _app.ActiveEditor!.EventTree } });
     }
 
     private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _app.ActiveEditor?.Edits?.Eventuate<LinearEditAddedEvent, ICollection<EditBaseLinear>>(new() { Item = new EditImplNoGreenViewModel() });
+        if (_app.ActiveEditor is StackEditorViewModel stackEditor)
+            stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplNoGreenViewModel() });
     }
 }
