@@ -6,7 +6,7 @@ namespace Inchoqate.GUI.Model;
 
 public class FrameBufferModel : IDisposable, IEditDestinationModel
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<FrameBufferModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<FrameBufferModel>();
 
     public readonly int Handle;
     public readonly TextureModel Data;
@@ -30,7 +30,7 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
         var successFramebuffer = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
         if (successFramebuffer != FramebufferErrorCode.FramebufferComplete)
         {
-            _logger.LogError(
+            Logger.LogError(
                 "OpenGL error while generating framebuffer: Code:{error} | Status:{successFramebuffer}",
                 GL.GetError(),
                 successFramebuffer);
@@ -77,16 +77,16 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
 
     #region Clean up
 
-    private bool disposedValue;
+    private bool _disposedValue;
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             Data.Dispose();
             GL.DeleteFramebuffer(Handle);
 
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 
@@ -96,9 +96,9 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
         // The OpenGL resources have to be released from a thread with an active OpenGL Context.
         // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
         // is not possible.
-        if (disposedValue == false)
+        if (_disposedValue == false)
         {
-            _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }
     }
 

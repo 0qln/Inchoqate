@@ -7,9 +7,9 @@ public interface IEditModel
     public int ExpectedInputCount { get; }
 
     /// <summary>
-    /// Apply the edit to the contents of <see cref="Sources"/> and write
-    /// into the buffer <see cref="Destination"/>.
+    /// Applies the edit.
     /// </summary>
+    /// <returns></returns>
     bool Apply();
 } 
 
@@ -17,9 +17,15 @@ public interface IEditModel<TBufferIn, TBufferOut> : IEditModel
     where TBufferIn : IEditSourceModel
     where TBufferOut : IEditDestinationModel
 {
+    /// <summary>
+    /// The destination.
+    /// </summary>
     [JsonIgnore]
-    public TBufferOut Destination { get; set; }
+    public TBufferOut? Destination { get; set; }
 
+    /// <summary>
+    /// The sources.
+    /// </summary>
     [JsonIgnore]
-    public TBufferIn[] Sources { get; set; }
+    public TBufferIn[]? Sources { get; set; }
 }

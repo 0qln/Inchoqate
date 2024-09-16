@@ -9,14 +9,11 @@ namespace Inchoqate.GUI.Model;
 
 public class ShaderModel : IDisposable
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<ShaderModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<ShaderModel>();
 
     public readonly int Handle;
 
     private readonly Dictionary<string, int> _uniformLocations = [];
-
-
-    public delegate ShaderModel? ModelGen(out bool success);
 
 
     public static ShaderModel FromSource(string vertexSource, string fragmentSource, out bool success)
@@ -29,29 +26,31 @@ public class ShaderModel : IDisposable
         var vertexSource = File.ReadAllText(vertexPath);
         var fragmentSource = File.ReadAllText(fragmentPath);
 
-        return ShaderModel.FromSource(vertexSource, fragmentSource, out success);
+        return FromSource(vertexSource, fragmentSource, out success);
     }
 
     public static ShaderModel? FromUri(Uri vertexPath, Uri fragmentPath, out bool success)
     {
         // In the xaml designer, the URI cannot be resolved and throws.
-        // TODO: find a way to check if the resource can be located and remove
-        // the try-catch block.
         try
         {
             var vertexResource = Application.GetResourceStream(vertexPath);
+            if (vertexResource is null) throw new IOException(
+                $"The resource at {vertexPath.OriginalString} could not be found.");
             using var vertexReader = new StreamReader(vertexResource.Stream);
             var vertexSource = vertexReader.ReadToEnd();
 
             var fragmentResource = Application.GetResourceStream(fragmentPath);
+            if (fragmentResource is null) throw new IOException(
+                $"The resource at {vertexPath.OriginalString} could not be found.");
             using var fragmentReader = new StreamReader(fragmentResource.Stream);
             var fragmentSource = fragmentReader.ReadToEnd();
 
-            return ShaderModel.FromSource(vertexSource, fragmentSource, out success);
+            return FromSource(vertexSource, fragmentSource, out success);
         }
         catch (IOException e)
         {
-            _logger.LogError(e,
+            Logger.LogError(e,
                 "Application resource could not be located from one or more the given URIs: " +
                 "{vert}, {frag}. This a know error in the xaml designer.",
                 vertexPath.OriginalString,
@@ -63,29 +62,29 @@ public class ShaderModel : IDisposable
 
     public ShaderModel(string vertexSource, string fragmentSource, out bool success)
     {
-        int VertexShader = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(VertexShader, vertexSource);
+        var vertexShader = GL.CreateShader(ShaderType.VertexShader);
+        GL.ShaderSource(vertexShader, vertexSource);
 
-        int FragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(FragmentShader, fragmentSource);
+        var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+        GL.ShaderSource(fragmentShader, fragmentSource);
 
-        GL.CompileShader(VertexShader);
-        GL.GetShader(VertexShader, ShaderParameter.CompileStatus, out int successVertexShader);
+        GL.CompileShader(vertexShader);
+        GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out var successVertexShader);
         if (successVertexShader == 0)
         {
-            _logger.LogError(
+            Logger.LogError(
                 "OpenGL error while generating shader: Code:{error} | Info:{info}",
                 GL.GetError(),
-                GL.GetShaderInfoLog(VertexShader));
+                GL.GetShaderInfoLog(vertexShader));
             success = false;
             goto clean_up;
         }
 
-        GL.CompileShader(FragmentShader);
-        GL.GetShader(FragmentShader, ShaderParameter.CompileStatus, out int successFragmentShader);
+        GL.CompileShader(fragmentShader);
+        GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out var successFragmentShader);
         if (successFragmentShader == 0)
         {
-            _logger.LogError(
+            Logger.LogError(
                 "OpenGL error while generating shader: Code:{error} | Info:{info}",
                 GL.GetError(),
                 GL.GetShaderInfoLog(successFragmentShader));
@@ -95,15 +94,15 @@ public class ShaderModel : IDisposable
 
         Handle = GL.CreateProgram();
 
-        GL.AttachShader(Handle, VertexShader);
-        GL.AttachShader(Handle, FragmentShader);
+        GL.AttachShader(Handle, vertexShader);
+        GL.AttachShader(Handle, fragmentShader);
 
         GL.LinkProgram(Handle);
 
-        GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int successProgram);
+        GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out var successProgram);
         if (successProgram == 0)
         {
-            _logger.LogError(
+            Logger.LogError(
                 "OpenGL error while generating shader: Code:{error} | Info:{info}",
                 GL.GetError(),
                 GL.GetShaderInfoLog(Handle));
@@ -115,17 +114,17 @@ public class ShaderModel : IDisposable
         // not have the required attributes.
         Use();
 
-        int aPositionLoc = GL.GetAttribLocation(Handle, "aPosition");
+        var aPositionLoc = GL.GetAttribLocation(Handle, "aPosition");
         GL.EnableVertexAttribArray(aPositionLoc);
         GL.VertexAttribPointer(aPositionLoc, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
-        int aTexCoordLoc = GL.GetAttribLocation(Handle, "aTexCoord");
+        var aTexCoordLoc = GL.GetAttribLocation(Handle, "aTexCoord");
         GL.EnableVertexAttribArray(aTexCoordLoc);
         GL.VertexAttribPointer(aTexCoordLoc, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
         // Initiate uniform dict
         GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
-        for (int i = 0; i < numberOfUniforms; i++)
+        for (var i = 0; i < numberOfUniforms; i++)
         {
             var key = GL.GetActiveUniform(Handle, i, out _, out _);
             var location = GL.GetUniformLocation(Handle, key);
@@ -135,19 +134,19 @@ public class ShaderModel : IDisposable
         success = true;
 
         clean_up:
-        GL.DetachShader(Handle, VertexShader);
-        GL.DetachShader(Handle, FragmentShader);
-        GL.DeleteShader(FragmentShader);
-        GL.DeleteShader(VertexShader);
+        GL.DetachShader(Handle, vertexShader);
+        GL.DetachShader(Handle, fragmentShader);
+        GL.DeleteShader(fragmentShader);
+        GL.DeleteShader(vertexShader);
     }
 
 
     public bool SetUniform<T>(string name, T value)
         where T : struct
     {
-        if (!_uniformLocations.TryGetValue(name, out int index))
+        if (!_uniformLocations.TryGetValue(name, out var index))
         {
-            _logger.LogWarning("Tried to set non existant uniform attribute \"{name}\"", name);
+            Logger.LogWarning("Tried to set non existent uniform attribute \"{name}\"", name);
             return false;
         }
 
@@ -160,7 +159,7 @@ public class ShaderModel : IDisposable
             float   val => () => GL.Uniform1(index, val),
             double  val => () => GL.Uniform1(index, val),
             Vector3 val => () => GL.Uniform3(index, val),
-            _ => () => _logger.LogWarning("Tried to set invalid uniform type {t}", typeof(T))
+            _ => () => Logger.LogWarning("Tried to set invalid uniform type {t}", typeof(T))
         }))();
 
         return true;
@@ -175,13 +174,13 @@ public class ShaderModel : IDisposable
 
     #region Clean up
 
-    private bool disposedValue = false;
+    private bool _disposedValue;
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="disposing">
-    /// Wether this opject is being disposed right now or not. 
+    /// Whether this object is being disposed right now or not. 
     /// If that is not the case the only other option should be that the GC is 
     /// finalizing the object right now, in which case, it is only safe to 
     /// dispose of unmanaged resources, because the managed ones have already 
@@ -189,11 +188,11 @@ public class ShaderModel : IDisposable
     /// </param>
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             GL.DeleteProgram(Handle);
 
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 
@@ -201,11 +200,11 @@ public class ShaderModel : IDisposable
     {
         // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
         // The OpenGL resources have to be released from a thread with an active OpenGL Context.
-        // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
+        // The GC runs on a separate thread, thus releasing unmanaged GL resources inside the finalizer
         // is not possible.
-        if (disposedValue == false)
+        if (_disposedValue == false)
         {
-            _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }
     }
 

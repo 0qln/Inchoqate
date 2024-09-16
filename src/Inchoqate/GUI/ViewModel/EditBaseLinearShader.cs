@@ -30,7 +30,7 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
 
     protected EditBaseLinearShader(BufferUsageHint usage = BufferUsageHint.StaticDraw)
     {
-        Vao = new VertexArrayModel(Indices, Vertices, usage);
+        Vao = new(Indices, Vertices, usage);
         Vao.Use();
 
         // TODO: fix virtual member call in constructor
@@ -52,29 +52,25 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
 
     public override bool Apply()
     {
-        return Apply(Destination, Sources[0]);
-    }
-
-    /// <inheritdoc />
-    public FrameBufferModel Destination { get; set; }
-
-    /// <inheritdoc />
-    public TextureModel[] Sources { get; set; }
-
-    public bool Apply(FrameBufferModel destination, TextureModel source)
-    {
-        if (Shader is null)
+        if (Shader is null || Sources is null || Destination is null)
         {
+            Logger.LogWarning("Missing shader or sources or destination.");
             return false;
         }
 
-        destination.UseAndClear(FramebufferTarget.Framebuffer);
-        source.Use(TextureUnit.Texture0);
+        Destination.UseAndClear(FramebufferTarget.Framebuffer);
+        Sources[0].Use(TextureUnit.Texture0);
         Shader.Use();
         Vao.Use();
         GL.DrawElements(PrimitiveType.Triangles, Vao.IndexCount, DrawElementsType.UnsignedInt, 0);
         return true;
     }
+
+    /// <inheritdoc />
+    public FrameBufferModel? Destination { get; set; }
+
+    /// <inheritdoc />
+    public TextureModel[]? Sources { get; set; }
 
 
     #region Clean up

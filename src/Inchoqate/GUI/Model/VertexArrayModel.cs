@@ -6,7 +6,7 @@ namespace Inchoqate.GUI.Model;
 
 public class VertexArrayModel : IDisposable
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<VertexArrayModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<VertexArrayModel>();
 
     public readonly int Handle;
     public readonly int IndexCount;
@@ -75,17 +75,17 @@ public class VertexArrayModel : IDisposable
 
     #region Clean up
 
-    private bool disposedValue;
+    private bool _disposedValue;
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             GL.DeleteVertexArray(Handle);
             _elementBufferObject.Dispose();
             _vertexBufferObject.Dispose();
 
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 
@@ -93,11 +93,11 @@ public class VertexArrayModel : IDisposable
     {
         // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
         // The OpenGL resources have to be released from a thread with an active OpenGL Context.
-        // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
+        // The GC runs on a separate thread, thus releasing unmanaged GL resources inside the finalizer
         // is not possible.
-        if (disposedValue == false)
+        if (_disposedValue == false)
         {
-            _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }
     }
 
