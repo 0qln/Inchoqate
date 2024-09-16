@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RootNamespace>$(MSBuildSolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>Inchoqate.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -33,13 +33,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="0qln.PixelSorting" Version="1.0.0" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="0qln.PixelSorting" Version="1.1.0-alpha" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <!--Newer versions of OpenTK seems to have breaking changes. Do not upgrade.-->
+    <!--TODO: Why are there breaking changes?-->
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.3" />
     <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
-    <PackageReference Include="StbImageSharp" Version="2.27.14" />
+    <PackageReference Include="StbImageSharp" Version="2.30.15" />
     <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
   </ItemGroup>
 

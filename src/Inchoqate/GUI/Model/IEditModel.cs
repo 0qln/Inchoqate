@@ -4,6 +4,9 @@ namespace Inchoqate.GUI.Model;
 
 public interface IEditModel
 {
+    /// <summary>
+    /// How many sources this edit expects.
+    /// </summary>
     public int ExpectedInputCount { get; }
 
     /// <summary>

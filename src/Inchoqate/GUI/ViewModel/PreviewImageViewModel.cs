@@ -16,10 +16,6 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
 {
     private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<PreviewImageViewModel>();
 
-    // Used for the final preview rendering.
-    private readonly ShaderModel _shader;
-    private readonly VertexArrayModel _vertexArray;
-
     private float[] _vertices =
     [
         // Position             Texture coordinates
@@ -71,13 +67,13 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
     /// <summary>
     /// The shader used for the preview. Will be disposed.
     /// </summary>
-    public ShaderModel Shader => _shader;
+    public ShaderModel Shader { get; }
 
     /// <summary>
     /// The vertex array used for the preview. Will be disposed.
     /// </summary>
-    public VertexArrayModel VertexArray => _vertexArray;
-        
+    public VertexArrayModel VertexArray { get; }
+
     /// <summary>
     /// The editor applied on the image for the preview. Will not be disposed.
     /// </summary>
@@ -181,20 +177,20 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
 
     public PreviewImageViewModel()
     {
-        _vertexArray = new(sIndx: _indices, sVert: _vertices, BufferUsageHint.StaticDraw);
-        _vertexArray.Use();
+        VertexArray = new(sIndx: _indices, sVert: _vertices, BufferUsageHint.StaticDraw);
+        VertexArray.Use();
 
-        _shader = ShaderModel.FromUri(
+        Shader = ShaderModel.FromUri(
             new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
-            out bool success)!;
+            out var success)!;
 
         if (!success)
         {
             Logger.LogError("Failed to create preview image shader.");
         }
 
-        PropertyChanged += (s, e) =>
+        PropertyChanged += (_, e) =>
         {
             switch (e.PropertyName)
             {
@@ -214,12 +210,12 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
 
     public void MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
     {
-        float zoomDelta = (float)e.Delta > 0 ? ZoomMaxInner : -ZoomMaxInner;
-        Point relative = e.GetPosition((IInputElement)sender);
-        float relativeXScaled = (float)(relative.X / BoundsSize.Width) * 2 - 1;
-        float relativeYScaled = (float)(relative.Y / BoundsSize.Height) * 2 - 1;
+        var zoomDelta = (float)e.Delta > 0 ? ZoomMaxInner : -ZoomMaxInner;
+        var relative = e.GetPosition((IInputElement)sender);
+        var relativeXScaled = (float)(relative.X / BoundsSize.Width) * 2 - 1;
+        var relativeYScaled = (float)(relative.Y / BoundsSize.Height) * 2 - 1;
 
-        float newZoom = _zoomValue + (zoomDelta / _zoomLevels);
+        var newZoom = _zoomValue + (zoomDelta / _zoomLevels);
         newZoom = Math.Clamp(newZoom, ZoomMinInner, ZoomMaxInner * _zoomLimit);
 
         _panXStart = (_panXStart + relativeXScaled * _zoomValue) - (relativeXScaled * newZoom);
@@ -305,13 +301,13 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
 
         Norm = new(wNorm, hNorm);
 
-        float panX = _panXDelta + _panXStart;
-        float panY = _panYDelta + _panYStart;
+        var panX = _panXDelta + _panXStart;
+        var panY = _panYDelta + _panYStart;
 
-        float left      = 0 + _zoomValue - panX;
-        float right     = 1 - _zoomValue - panX;
-        float top       = 1 - _zoomValue + panY;
-        float bottom    = 0 + _zoomValue + panY;
+        var left      = 0 + _zoomValue - panX;
+        var right     = 1 - _zoomValue - panX;
+        var top       = 1 - _zoomValue + panY;
+        var bottom    = 0 + _zoomValue + panY;
 
         // align top
         float
@@ -335,23 +331,23 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
             -1,  1, 0,      layout.TopLeft.X,       layout.TopLeft.Y,    // top left
         ];
 
-        _vertexArray.UpdateVertices(_vertices);
+        VertexArray.UpdateVertices(_vertices);
 
         ActualLayout = layout;
     }
 
     #region Clean up
 
-    private bool disposedValue;
+    private bool _disposedValue;
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
-            _vertexArray.Dispose();
-            _shader?.Dispose();
+            VertexArray.Dispose();
+            Shader.Dispose();
 
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 
@@ -361,7 +357,7 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
         // The OpenGL resources have to be released from a thread with an active OpenGL Context.
         // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
         // is not possible.
-        if (disposedValue == false)
+        if (_disposedValue == false)
         {
             Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }
