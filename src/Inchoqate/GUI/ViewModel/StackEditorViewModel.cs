@@ -27,19 +27,11 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 
         switch (propertyName)
         {
-            // case nameof(Edits):
-            //     ReloadBuffer(ref _framebuffer1);
-            //     ReloadBuffer(ref _framebuffer2);
-            //     ReloadBuffer(ref _pixelBuffer1);
-            //     ReloadBuffer(ref _pixelBuffer2);
-            //     break;
             case nameof(RenderSize):
                 ReloadBuffer(ref _framebuffer1);
                 ReloadBuffer(ref _framebuffer2);
                 ReloadBuffer(ref _pixelBuffer1);
                 ReloadBuffer(ref _pixelBuffer2);
-                break;
-            case nameof(SourceSize):
                 break;
             case nameof(VoidColor):
                 if (_framebuffer1 is not null) _framebuffer1.Data.BorderColor = VoidColor;

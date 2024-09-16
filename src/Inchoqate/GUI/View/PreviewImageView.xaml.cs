@@ -4,12 +4,17 @@ using Inchoqate.GUI.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Wpf;
 
 namespace Inchoqate.GUI.View;
 
 public partial class PreviewImageView : UserControl
 {
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<PreviewImageView>();
+
     public static readonly DependencyProperty StretchProperty =
         DependencyProperty.Register(
             nameof(Stretch),
@@ -111,18 +116,18 @@ public partial class PreviewImageView : UserControl
     protected override Size ArrangeOverride(Size arrangeBounds)
     {
         var sourceSize = _viewModel.RenderEditor?.SourceSize ?? default;
-        _viewModel.DisplaySize = GetDesiredImageSize(arrangeBounds, sourceSize);
 
-        // render size has to be atleast bounds size, otherwise the
-        // result will clip outside the GLImage while zooming and panning.
-        var renderSize = new Size (
+        _viewModel.DisplaySize = GetDesiredImageSize(arrangeBounds, sourceSize);
+        _viewModel.BoundsSize = new(
             width: Math.Max(sourceSize.Width, arrangeBounds.Width),
-            height: Math.Max(sourceSize.Height, arrangeBounds.Height));
-        if (_viewModel.RenderEditor is not null)
-            _viewModel.RenderEditor.RenderSize = renderSize;
-        _viewModel.BoundsSize = renderSize;
-        GLImage.Width = renderSize.Width;
-        GLImage.Height = renderSize.Height;
+            height: Math.Max(sourceSize.Height, arrangeBounds.Height)
+        );
+
+        // This will always run before the GLImage is rendered. (WPF pipeline)
+        // Prepare the GL image to render the image in source size before
+        // rendering to the screen with bounds size.
+        GLImage.Width = sourceSize.Width;
+        GLImage.Height = sourceSize.Height;
             
         Thumb.Width = arrangeBounds.Width;
         Thumb.Height = arrangeBounds.Height;
@@ -137,7 +142,40 @@ public partial class PreviewImageView : UserControl
 
     private void OpenTK_OnRender(TimeSpan delta)
     {
-        _viewModel?.RenderToImage(GLImage);
+        var editor = _viewModel.RenderEditor;
+        var shader = _viewModel.Shader;
+        var vertex = _viewModel.VertexArray;
+        if (editor is null)
+        {
+            return;
+        }
+
+        if (_viewModel.RenderEditor?.Result is null)
+        {
+            var success = editor.Compute();
+
+            if (!success || editor.Result is null)
+            {
+                Logger.LogError("Failed to compute preview image.");
+                return;
+            }
+        }
+
+        // The GL image should only render at BoundsSize once the editor has
+        // Finished working on the image before rendering to the screen.
+        // Otherwise, the image will be distorted and glitched.
+        GLImage.Width = (int)_viewModel.BoundsSize.Width;
+        GLImage.Height = (int)_viewModel.BoundsSize.Height;
+                 
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, GLImage.Framebuffer);
+        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        GL.Clear(ClearBufferMask.ColorBufferBit);
+
+        editor.Result!.Data.Use(TextureUnit.Texture0);
+        shader.Use();
+        vertex.Use();
+        GL.DrawElements(PrimitiveType.Triangles, vertex.IndexCount, DrawElementsType.UnsignedInt, 0);
+
     }
 
     private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)

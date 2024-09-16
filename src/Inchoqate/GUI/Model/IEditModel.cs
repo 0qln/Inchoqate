@@ -1,4 +1,6 @@
-﻿namespace Inchoqate.GUI.Model;
+﻿using Newtonsoft.Json;
+
+namespace Inchoqate.GUI.Model;
 
 public interface IEditModel
 {
@@ -15,7 +17,9 @@ public interface IEditModel<TBufferIn, TBufferOut> : IEditModel
     where TBufferIn : IEditSourceModel
     where TBufferOut : IEditDestinationModel
 {
+    [JsonIgnore]
     public TBufferOut Destination { get; set; }
 
+    [JsonIgnore]
     public TBufferIn[] Sources { get; set; }
 }

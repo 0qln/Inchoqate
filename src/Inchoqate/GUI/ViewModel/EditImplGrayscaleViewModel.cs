@@ -39,7 +39,7 @@ public class EditImplGrayscaleViewModel :
         get => _intensity;
         set => SetProperty(ref _intensity, value,
             validateValue: (_, val) => val is >= IntensityMin and <= IntensityMax,
-            onChanged: () => _shader?.SetUniform(nameof(_intensity), (float)value));
+            onChanged: () => Shader?.SetUniform(nameof(_intensity), (float)value));
     }
 
     [JsonConverter(typeof(Vector3JsonConverter))]
@@ -48,7 +48,7 @@ public class EditImplGrayscaleViewModel :
         get => _weights;
         set => SetProperty(ref _weights, value,
             validateValue: (_, vec) => vec.All(c => c is >= 0 and <= 1), // TODO: more checks?
-            onChanged: () => _shader?.SetUniform(nameof(_weights), value));
+            onChanged: () => Shader?.SetUniform(nameof(_weights), value));
     }
 
     public EditImplGrayscaleViewModel() : this(BufferUsageHint.StaticDraw) { }

@@ -212,7 +212,13 @@ public partial class MainWindow : BorderlessWindowBase
             return;
         }
 
-        var data = PixelBufferModel.FromGpu(_app.ActiveEditor.Result.Data);
+        var renderer = _app.ActiveEditor;
+        renderer.RenderSize = renderer.SourceSize;
+        PreviewImage.GLImage.Width = renderer.SourceSize.Width;
+        PreviewImage.GLImage.Height = renderer.SourceSize.Height;
+        renderer.Invalidate();
+        renderer.Compute();
+        var data = PixelBufferModel.FromGpu(renderer.Result.Data);
         data.SaveToFile(dialog.FileName);
     }
 

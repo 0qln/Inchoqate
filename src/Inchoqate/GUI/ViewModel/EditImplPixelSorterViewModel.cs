@@ -12,7 +12,7 @@ using Sorting.Pixels.Comparer;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public class EditImplPixelSorterViewModel : EditBaseLinear, IEditModel<PixelBufferModel, PixelBufferModel>
+public class EditImplPixelSorterViewModel : EditBaseLinear, IEditModel<PixelBufferModel, PixelBufferModel>, IDeserializable<EditImplPixelSorterViewModel>
 {
     private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditImplPixelSorterViewModel>();
 
@@ -30,7 +30,7 @@ public class EditImplPixelSorterViewModel : EditBaseLinear, IEditModel<PixelBuff
     public EditImplPixelSorterViewModel() 
     {
         Title = "Pixel Sorter";
-        Slider angleControl = new() { Minimum = 0, Maximum = double.Pi * 2, Value = 0 };
+        Slider angleControl = new() { Minimum = 0, Maximum = double.Pi * 0.99, Value = 0 };
         angleControl.SetBinding(
             Slider.ValueProperty, 
             new Binding(nameof(Angle)) { Source = this, Mode=BindingMode.TwoWay });
@@ -65,18 +65,18 @@ public class EditImplPixelSorterViewModel : EditBaseLinear, IEditModel<PixelBuff
     public bool Apply(PixelBufferModel destination, PixelBufferModel source)
     {
         Debug.Assert(source.Data.Length == destination.Data.Length);
+        unsafe
+        {
+            var pixelSorter = new Sorter32Bit(
+                (Pixel32bitUnion*)Unsafe.AsPointer(ref source.Data[0]),
+                source.Width,
+                source.Height,
+                source.Width * TextureModel.PixelDepth);
+            var comparer = new PixelComparer.Ascending.Red();
+            var sorter = new Sorter32Bit.IntrospectiveSorter(comparer);
+            pixelSorter.SortAngle(Angle, pixelSorter.GetAngleSorterInfo(sorter));
+        }
         Array.Copy(source.Data, destination.Data, source.Data.Length);
-        // unsafe
-        // {
-        //     var pixelSorter = new Sorter32Bit(
-        //         (Pixel32bitUnion*)Unsafe.AsPointer(ref source.Data[0]),
-        //         source.Width,
-        //         source.Height,
-        //         source.Width * 4);
-        //     var comparer = new PixelComparer.Ascending.Red();
-        //     var sorter = new Sorter32Bit.IntrospectiveSorter(comparer);
-        //     pixelSorter.SortAngle(0, pixelSorter.GetAngleSorterInfo(sorter));
-        // }
         return true;
     }
 }

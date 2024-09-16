@@ -30,6 +30,7 @@ public static class FileLoggerFactory
         _factory = LoggerFactory.Create(builder =>
         {
             builder.AddProvider(new FileLoggerProvider(_writer));
+            builder.SetMinimumLevel(LogLevel.Trace);
         });
 
         _factory

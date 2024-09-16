@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using Microsoft.Extensions.Logging;
 
 namespace Inchoqate.Logging;
@@ -28,6 +27,14 @@ public class FileLogger(string categoryName, StreamWriter logFileWriter) : ILogg
         var message = formatter(state, exception);
 
         logFileWriter.WriteLine($"[{logLevel}] [{DateTime.Now}] [{categoryName}] {message}");
+
+        if (exception is not null)
+        {
+            logFileWriter.WriteLine("=== EXCEPTION ===");
+            logFileWriter.WriteLine(exception.ToString());
+            logFileWriter.WriteLine("=== END EXCEPTION ===");
+        }
+
         logFileWriter.Flush();
     }
 }

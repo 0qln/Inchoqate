@@ -14,10 +14,10 @@ namespace Inchoqate.GUI.ViewModel;
 
 public class PreviewImageViewModel : BaseViewModel, IDisposable
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<PreviewImageViewModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<PreviewImageViewModel>();
 
     // Used for the final preview rendering.
-    private readonly ShaderModel? _shader;
+    private readonly ShaderModel _shader;
     private readonly VertexArrayModel _vertexArray;
 
     private float[] _vertices =
@@ -36,9 +36,9 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
     ];
 
     // display properties
-    private Size displaySize;
-    private Size boundsSize;
-    private SolidColorBrush voidColor = Brushes.Aquamarine;
+    private Size _displaySize;
+    private Size _boundsSize;
+    private SolidColorBrush _voidColor = Brushes.Aquamarine;
     private RenderEditorViewModel? _editor; // will not be disposed
 
     /// <summary>
@@ -46,8 +46,8 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
     /// </summary>
     public Size DisplaySize
     {
-        get => displaySize;
-        set => SetProperty(ref displaySize, value);
+        get => _displaySize;
+        set => SetProperty(ref _displaySize, value);
     }
 
     /// <summary>
@@ -55,8 +55,8 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
     /// </summary>
     public SolidColorBrush VoidColor
     {
-        get => voidColor;
-        set => SetProperty(ref voidColor, value);
+        get => _voidColor;
+        set => SetProperty(ref _voidColor, value);
     }
 
     /// <summary>
@@ -64,9 +64,19 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
     /// </summary>
     public Size BoundsSize
     {
-        get => boundsSize;
-        set => SetProperty(ref boundsSize, value);
+        get => _boundsSize;
+        set => SetProperty(ref _boundsSize, value);
     }
+
+    /// <summary>
+    /// The shader used for the preview. Will be disposed.
+    /// </summary>
+    public ShaderModel Shader => _shader;
+
+    /// <summary>
+    /// The vertex array used for the preview. Will be disposed.
+    /// </summary>
+    public VertexArrayModel VertexArray => _vertexArray;
         
     /// <summary>
     /// The editor applied on the image for the preview. Will not be disposed.
@@ -88,7 +98,7 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
             if (_editor is not null)
             {
                 _editor.VoidColor = VoidColor.Color;
-                _editor.RenderSize = BoundsSize;
+                _editor.RenderSize = _editor.SourceSize;
                 _editor.PropertyChanged += Editor_PropertyChanged;
             }
         }
@@ -98,6 +108,9 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
     {
         switch (e.PropertyName)
         {
+            case nameof(_editor.SourceSize):
+                if (_editor is not null) _editor.RenderSize = _editor.SourceSize;
+                break;
             case 
                 nameof(_editor.Computed) or 
                 nameof(_editor.RenderSize) or 
@@ -117,8 +130,8 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
     private float _zoomValue;
 
     // architecture constants
-    private const float _zoomMin = 0.0f;
-    private const float _zoomMax = 0.5f;
+    private const float ZoomMinInner = 0.0f;
+    private const float ZoomMaxInner = 0.5f;
 
     // hyper parameters
     private float _panSensitivity = 1.0f;
@@ -152,7 +165,7 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
         set
         {
             SetProperty(ref _zoomLimit, value);
-            SetProperty(ref _zoomValue, Math.Min(_zoomValue, _zoomMax * value));
+            SetProperty(ref _zoomValue, Math.Min(_zoomValue, ZoomMaxInner * value));
         }
     }
 
@@ -174,80 +187,40 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
         _shader = ShaderModel.FromUri(
             new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
-            out bool success);
+            out bool success)!;
 
         if (!success)
         {
-            // TODO: handle error
+            Logger.LogError("Failed to create preview image shader.");
         }
 
         PropertyChanged += (s, e) =>
         {
             switch (e.PropertyName)
             {
-                case nameof(Zoom) or nameof(ZoomLimit):
-                    ReloadLayout();
-                    break;
-
-                case nameof(BoundsSize):
-                    if (_editor is not null)
-                        _editor.RenderSize = BoundsSize;
-                    ReloadLayout();
-                    break;
-
-                case nameof(VoidColor):
-                    if (_editor is not null)
-                        _editor.VoidColor = VoidColor.Color;
-                    break;
-
-                case nameof(DisplaySize):
-                    ReloadLayout();
-                    break;
-
                 case nameof(RenderEditor):
+                case nameof(DisplaySize):
+                case nameof(BoundsSize):
+                case nameof(ZoomLimit):
+                case nameof(Zoom):
                     ReloadLayout();
+                    break;
+                case nameof(VoidColor):
+                    if (_editor is not null) _editor.VoidColor = VoidColor.Color;
                     break;
             }
         };
     }
 
-
-    public void RenderToImage(GLWpfControl image)
-    {
-        if (_shader is null || _editor is null)
-        {
-            return;
-        }
-
-        if (_editor.Result is null)
-        {
-            var success = _editor.Compute();
-            if (!success || _editor.Result is null)
-            {
-                return;
-            }
-        }
-                 
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, image.Framebuffer);
-        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        GL.Clear(ClearBufferMask.ColorBufferBit);
-
-        _editor.Result.Data.Use(TextureUnit.Texture0);
-        _shader.Use();
-        _vertexArray.Use();
-        GL.DrawElements(PrimitiveType.Triangles, _vertexArray.IndexCount, DrawElementsType.UnsignedInt, 0);
-    }
-
-
     public void MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
     {
-        float zoomDelta = (float)e.Delta > 0 ? _zoomMax : -_zoomMax;
+        float zoomDelta = (float)e.Delta > 0 ? ZoomMaxInner : -ZoomMaxInner;
         Point relative = e.GetPosition((IInputElement)sender);
         float relativeXScaled = (float)(relative.X / BoundsSize.Width) * 2 - 1;
         float relativeYScaled = (float)(relative.Y / BoundsSize.Height) * 2 - 1;
 
         float newZoom = _zoomValue + (zoomDelta / _zoomLevels);
-        newZoom = Math.Clamp(newZoom, _zoomMin, _zoomMax * _zoomLimit);
+        newZoom = Math.Clamp(newZoom, ZoomMinInner, ZoomMaxInner * _zoomLimit);
 
         _panXStart = (_panXStart + relativeXScaled * _zoomValue) - (relativeXScaled * newZoom);
         _panYStart = (_panYStart + relativeYScaled * _zoomValue) - (relativeYScaled * newZoom);
@@ -390,7 +363,7 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
         // is not possible.
         if (disposedValue == false)
         {
-            _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }
     }
 

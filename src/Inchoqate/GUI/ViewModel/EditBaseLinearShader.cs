@@ -7,9 +7,9 @@ namespace Inchoqate.GUI.ViewModel;
 
 public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureModel, FrameBufferModel>, IDisposable
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditBaseLinearShader>();  
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<EditBaseLinearShader>();  
 
-    protected static readonly ReadOnlyMemory<float> _vertices = (float[])
+    protected static readonly ReadOnlyMemory<float> Vertices = (float[])
     [
         // Position             Texture coordinates
         1.0f,  1.0f, 0.0f,     1.0f, 1.0f, // top right
@@ -18,26 +18,26 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
         -1.0f,  1.0f, 0.0f,     0.0f, 1.0f  // top left
     ];
 
-    protected static readonly ReadOnlyMemory<uint> _indices = (uint[])
+    protected static readonly ReadOnlyMemory<uint> Indices = (uint[])
     [
         0, 1, 3,
         1, 2, 3
     ];
 
-    protected readonly ShaderModel? _shader;
-    protected readonly VertexArrayModel _vao;
+    protected readonly ShaderModel? Shader;
+    protected readonly VertexArrayModel Vao;
 
 
     protected EditBaseLinearShader(BufferUsageHint usage = BufferUsageHint.StaticDraw)
     {
-        _vao = new VertexArrayModel(_indices, _vertices, usage);
-        _vao.Use();
+        Vao = new VertexArrayModel(Indices, Vertices, usage);
+        Vao.Use();
 
         // TODO: fix virtual member call in constructor
-        _shader = GetShader(out var success);
+        Shader = GetShader(out var success);
         if (!success)
         {
-            _logger.LogError("Deriving class failed to generate the shader.");
+            Logger.LogError("Deriving class failed to generate the shader.");
         }
     }
 
@@ -63,16 +63,16 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
 
     public bool Apply(FrameBufferModel destination, TextureModel source)
     {
-        if (_shader is null)
+        if (Shader is null)
         {
             return false;
         }
 
         destination.UseAndClear(FramebufferTarget.Framebuffer);
         source.Use(TextureUnit.Texture0);
-        _shader.Use();
-        _vao.Use();
-        GL.DrawElements(PrimitiveType.Triangles, _vao.IndexCount, DrawElementsType.UnsignedInt, 0);
+        Shader.Use();
+        Vao.Use();
+        GL.DrawElements(PrimitiveType.Triangles, Vao.IndexCount, DrawElementsType.UnsignedInt, 0);
         return true;
     }
 
@@ -85,8 +85,8 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
     {
         if (!_disposed)
         {
-            _shader?.Dispose();
-            _vao.Dispose();
+            Shader?.Dispose();
+            Vao.Dispose();
 
             _disposed = true;
         }
@@ -100,7 +100,7 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
         // is not possible.
         if (_disposed == false)
         {
-            _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }
     }
 

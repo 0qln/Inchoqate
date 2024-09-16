@@ -73,7 +73,7 @@ public class EventSerdeModel
         }
         catch (Exception e)
         {
-            Logger.LogError(e, "Failed to serialize event tree {treeName}", treeName);
+            Logger.LogError(e, "Failed to serialize event tree '{treeName}'", treeName);
         }
     }
 
@@ -116,7 +116,7 @@ public class EventSerdeModel
         /// <exception cref="JsonSerializationException"></exception>
         public override JsonContract ResolveContract(Type type)
         {
-            if (type is { IsAbstract: false, IsEnum: false, IsInterface: false } &&
+            if (type is { IsAbstract: false, IsEnum: false, IsInterface: false, IsGenericParameter: false, IsGenericTypeParameter:false, IsPointer:false,  } &&
                 !(type.Namespace?.StartsWith(nameof(System)) ?? false) && 
                 !(type.Namespace?.StartsWith(nameof(OpenTK)) ?? false))
             {
