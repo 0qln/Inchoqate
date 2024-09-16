@@ -80,7 +80,7 @@ public class TextureModel : IDisposable, IEditSourceModel
         using Stream stream = File.OpenRead(path);
         try
         {
-            ImageResult image = ImageResult.FromStream(stream, PixelComponents);
+            var image = ImageResult.FromStream(stream, PixelComponents);
             return FromData(image.Width, image.Height, image.Data, unit);
         }
         catch (Exception e)
@@ -101,7 +101,6 @@ public class TextureModel : IDisposable, IEditSourceModel
         return result;
     }
 
-    // TODO: test this
     public void LoadData(int width, int height, byte[]? data = null)
     {
         Use();
@@ -125,15 +124,15 @@ public class TextureModel : IDisposable, IEditSourceModel
 
     #region Clean up
 
-    private bool disposedValue = false;
+    private bool _disposed = false;
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposed)
         {
             GL.DeleteTexture(Handle);
 
-            disposedValue = true;
+            _disposed = true;
         }
     }
 
@@ -141,9 +140,9 @@ public class TextureModel : IDisposable, IEditSourceModel
     {
         // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
         // The OpenGL resources have to be released from a thread with an active OpenGL Context.
-        // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
+        // The GC runs on a separate thread, thus releasing unmanaged GL resources inside the finalizer
         // is not possible.
-        if (disposedValue == false)
+        if (_disposed == false)
         {
             _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }

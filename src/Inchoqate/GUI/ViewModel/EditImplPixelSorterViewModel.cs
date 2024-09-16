@@ -15,7 +15,7 @@ namespace Inchoqate.GUI.ViewModel;
 
 public class EditImplPixelSorterViewModel : EditBaseLinear, IEditModel<PixelBufferModel, PixelBufferModel>, IDeserializable<EditImplPixelSorterViewModel>
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<EditImplPixelSorterViewModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<EditImplPixelSorterViewModel>();
 
     public override ObservableCollection<ContentControl> OptionControls { get; }
 

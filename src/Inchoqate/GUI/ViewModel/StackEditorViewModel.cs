@@ -34,8 +34,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
                 ReloadBuffer(ref _pixelBuffer2);
                 break;
             case nameof(VoidColor):
-                if (_framebuffer1 is not null) _framebuffer1.Data.BorderColor = VoidColor;
-                if (_framebuffer2 is not null) _framebuffer2.Data.BorderColor = VoidColor;
+                Invalidate();
                 break;
         }
     }
@@ -86,10 +85,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         if (!success)
         {
             _logger.LogError("Failed to create framebuffer.");
-            return;
         }
-
-        buffer.Data.BorderColor = VoidColor;
     }
 
     private void ReloadBuffer(ref PixelBufferModel? buffer)
@@ -118,6 +114,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
             _identity.Value.Destination = _framebuffer1!;
             _identity.Value.Apply();
             Result = _framebuffer1;
+            Result!.Data.BorderColor = VoidColor;
             return true;
         }
 
@@ -152,7 +149,6 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
             }
 
             lastEdit = edit;
-            currentEdit = null;
         }
 
         if (lastEdit is IEditModel<TextureModel, FrameBufferModel> lastEditFrameBuffer)
@@ -163,6 +159,12 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         {
             Result = ConvertToFb(lastEditPixelBuffer.Destination, fbDest);
         }
+        else
+        {
+            throw new NotSupportedException();
+        }
+
+        Result.Data.BorderColor = VoidColor;
 
         return true;
 
