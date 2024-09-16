@@ -9,6 +9,7 @@ using System.Windows.Data;
 using Sorting;
 using Sorting.Pixels._32;
 using Sorting.Pixels.Comparer;
+using Sorting.Pixels.KeySelector;
 
 namespace Inchoqate.GUI.ViewModel;
 
@@ -42,28 +43,11 @@ public class EditImplPixelSorterViewModel : EditBaseLinear, IEditModel<PixelBuff
 
     public override bool Apply()
     {
-        // if (sources.Length == 0 || sources[0] != destination)
-        // {
-        //     // Makes the actual computation later easier.
-        //     _logger.LogWarning("The source and destination buffers should be the same.");
-        //     return false;
-        // }
-        // else
-        {
-            return Apply(Destination, Sources[0]);
-        }
+        if (Sources.Length == 0)
+            return false;
 
-        return false;
-    }
-
-    /// <inheritdoc />
-    public PixelBufferModel Destination { get; set; }
-
-    /// <inheritdoc />
-    public PixelBufferModel[] Sources { get; set; }
-
-    public bool Apply(PixelBufferModel destination, PixelBufferModel source)
-    {
+        PixelBufferModel destination = Destination;
+        PixelBufferModel source = Sources[0];
         Debug.Assert(source.Data.Length == destination.Data.Length);
         unsafe
         {
@@ -71,12 +55,27 @@ public class EditImplPixelSorterViewModel : EditBaseLinear, IEditModel<PixelBuff
                 (Pixel32bitUnion*)Unsafe.AsPointer(ref source.Data[0]),
                 source.Width,
                 source.Height,
-                source.Width * TextureModel.PixelDepth);
-            var comparer = new PixelComparer.Ascending.Red();
-            var sorter = new Sorter32Bit.IntrospectiveSorter(comparer);
+                source.Width * TextureModel.PixelDepth)
+            {
+                ParallelOpts =
+                {
+                    MaxDegreeOfParallelism = -1
+                }
+            };
+            var comparer = new OrderedKeySelector.Ascending.Red();
+            var sorter = new Sorter32Bit.PigeonholeSorter(comparer);
             pixelSorter.SortAngle(Angle, pixelSorter.GetAngleSorterInfo(sorter));
         }
-        Array.Copy(source.Data, destination.Data, source.Data.Length);
+
+        // We can swap the buffers instead of copying the data from the source to the destination
+        // buffer as we are not going to use the source buffer anymore.
+        (Destination, Sources[0]) = (Sources[0], Destination);
         return true;
     }
+
+    /// <inheritdoc />
+    public PixelBufferModel Destination { get; set; }
+
+    /// <inheritdoc />
+    public PixelBufferModel[] Sources { get; set; }
 }
