@@ -4,6 +4,7 @@ using Inchoqate.GUI.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Inchoqate.GUI.Model;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
@@ -66,6 +67,10 @@ public partial class PreviewImageView : UserControl
         GLImage.RegisterToEventsDirectly = false;
 
         GLImage.Start(new GLWpfControlSettings { RenderContinuously = false });
+
+        Logger.LogInformation("GL Version: {version}", GL.GetString(StringName.Version));
+        Logger.LogInformation("GL Renderer: {renderer}", GL.GetString(StringName.Renderer));
+        Logger.LogInformation("GL ShadingLanguageVersion: {version}", GL.GetString(StringName.ShadingLanguageVersion));
 
         DataContext = _viewModel = new();
         _viewModel.PropertyChanged += (s, e) =>
@@ -176,6 +181,8 @@ public partial class PreviewImageView : UserControl
         vertex.Use();
         GL.DrawElements(PrimitiveType.Triangles, vertex.IndexCount, DrawElementsType.UnsignedInt, 0);
 
+        if (GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to render preview image");
     }
 
     private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)

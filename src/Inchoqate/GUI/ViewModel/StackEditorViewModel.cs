@@ -151,20 +151,15 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
             lastEdit = edit;
         }
 
-        if (lastEdit is IEditModel<TextureModel, FrameBufferModel> lastEditFrameBuffer)
+        Result = lastEdit switch
         {
-            Result = lastEditFrameBuffer.Destination;
-        }
-        else if (lastEdit is IEditModel<PixelBufferModel, PixelBufferModel> lastEditPixelBuffer)
-        {
-            Result = ConvertToFb(lastEditPixelBuffer.Destination, fbDest);
-        }
-        else
-        {
-            throw new NotSupportedException();
-        }
+            IEditModel<TextureModel, FrameBufferModel> lastEditFrameBuffer => lastEditFrameBuffer.Destination,
+            IEditModel<PixelBufferModel, PixelBufferModel> lastEditPixelBuffer => ConvertToFb(
+                lastEditPixelBuffer.Destination, fbDest),
+            _ => throw new NotSupportedException()
+        };
 
-        Result.Data.BorderColor = VoidColor;
+        Result!.Data.BorderColor = VoidColor;
 
         return true;
 

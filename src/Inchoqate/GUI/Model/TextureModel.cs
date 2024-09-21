@@ -62,6 +62,10 @@ public class TextureModel : IDisposable, IEditSourceModel
     private TextureModel(TextureUnit unit = TextureUnit.Texture0)
     {
         Handle = GL.GenTexture();
+
+        if (GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to generate texture");
+
         Unit = unit;
         Use();
     }

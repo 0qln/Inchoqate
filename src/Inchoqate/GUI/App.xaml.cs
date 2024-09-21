@@ -1,5 +1,8 @@
 ﻿using System.Windows;
 using Inchoqate.GUI.ViewModel;
+using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI;
 
@@ -8,6 +11,9 @@ namespace Inchoqate.GUI;
 /// </summary>
 public partial class App : Application
 {
+    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<App>();
+
+
     public App()
     {
         Startup += delegate

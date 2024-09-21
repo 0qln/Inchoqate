@@ -63,7 +63,7 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
         Shader.Use();
         Vao.Use();
         GL.DrawElements(PrimitiveType.Triangles, Vao.IndexCount, DrawElementsType.UnsignedInt, 0);
-        return true;
+        return !GraphicsModel.CheckErrors("Failed to apply linear shader", Logger);
     }
 
     /// <inheritdoc />

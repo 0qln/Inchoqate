@@ -13,7 +13,7 @@ namespace Inchoqate.GUI.Windows;
 
 public partial class MainWindow : BorderlessWindowBase
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<MainWindow>();
 
 
     public static readonly RoutedCommand OpenStackEditorCommand =
@@ -78,7 +78,7 @@ public partial class MainWindow : BorderlessWindowBase
 
                     if (proj is null)
                     {
-                        _logger.LogError("Project is null.");
+                        Logger.LogError("Project is null.");
                         break;
                     }
 
@@ -147,7 +147,7 @@ public partial class MainWindow : BorderlessWindowBase
 
         if (!_app.ActiveEditor.EventTree.Undo())
         {
-            _logger.LogError("Undo failed.");
+            Logger.LogError("Undo failed.");
         }
     }
 
@@ -161,7 +161,7 @@ public partial class MainWindow : BorderlessWindowBase
 
         if (!_app.ActiveEditor.EventTree.Redo())
         {
-            _logger.LogError("Redo failed.");
+            Logger.LogError("Redo failed.");
         }
     }
 
@@ -169,7 +169,7 @@ public partial class MainWindow : BorderlessWindowBase
     {
         if (_app.DataContext.Project is null)
         {
-            _logger.LogError("Project is null.");
+            Logger.LogError("Project is null.");
             return;
         }
 
@@ -190,7 +190,7 @@ public partial class MainWindow : BorderlessWindowBase
     {
         if (_app.DataContext.Project is null)
         {
-            _logger.LogError("Project is null.");
+            Logger.LogError("Project is null.");
             return;
         }
 
@@ -208,7 +208,7 @@ public partial class MainWindow : BorderlessWindowBase
 
         if (_app.ActiveEditor.Result is null)
         {
-            _logger.LogError("No result to save the image after computing.");
+            Logger.LogError("No result to save the image after computing.");
             return;
         }
 
@@ -226,7 +226,7 @@ public partial class MainWindow : BorderlessWindowBase
     {
         if (_app.DataContext.Project is null)
         {
-            _logger.LogError("Project is null.");
+            Logger.LogError("Project is null.");
             return;
         }
 
@@ -241,7 +241,7 @@ public partial class MainWindow : BorderlessWindowBase
     {
         if (_app.DataContext.Project is null)
         {
-            _logger.LogError("Project is null.");
+            Logger.LogError("Project is null.");
             return;
         }
 
@@ -273,7 +273,7 @@ public partial class MainWindow : BorderlessWindowBase
     {
         if (_app.DataContext.Project is null)
         {
-            _logger.LogError("Project is null.");
+            Logger.LogError("Project is null.");
             return;
         }
 
