@@ -10,12 +10,12 @@ namespace Inchoqate.GUI.Model;
 
 public class TextureModel : IDisposable, IEditSourceModel
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<TextureModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<TextureModel>();
 
     public readonly int Handle;
 
-    public int Width { get; private set; }
-    public int Height { get; private set; }
+    public int Width { get; private init; }
+    public int Height { get; private init; }
     /// <summary>The bytes per row of the texture.</summary>
     public int Stride => Width * PixelDepth;
     /// <summary>Pixel depth in bytes.</summary>
@@ -40,11 +40,17 @@ public class TextureModel : IDisposable, IEditSourceModel
             }
 
             Use();
-            float r = (float)value.R / 255.0f;
-            float g = (float)value.G / 255.0f;
-            float b = (float)value.B / 255.0f;
-            float a = (float)value.A / 255.0f;
+            var r = value.R / 255.0f;
+            var g = value.G / 255.0f;
+            var b = value.B / 255.0f;
+            var a = value.A / 255.0f;
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, [r, g, b, a]);
+
+            if (GraphicsModel.CheckErrors())
+            {
+                Logger.LogError("Failed to set texture parameter in {propertyName}", nameof(BorderColor));
+                return;
+            }
 
             _borderColor = value;
         }
@@ -68,6 +74,9 @@ public class TextureModel : IDisposable, IEditSourceModel
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
 
+        if (GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to initiate default texture parameter");
+
         BorderColor = Color.FromRgb(255, 99, 71);
     }
 
@@ -85,7 +94,7 @@ public class TextureModel : IDisposable, IEditSourceModel
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while reading image data: {Path}", path);
+            Logger.LogError(e, "Error while reading image data: {Path}", path);
             return null;
         }
     }
@@ -107,6 +116,11 @@ public class TextureModel : IDisposable, IEditSourceModel
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, GLPixelFormat, GLPixelType, data);
         InitDefaults();
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+        if (GraphicsModel.CheckErrors())
+        {
+            Logger.LogError("Failed to load data into texture");
+        }
     }
 
 
@@ -119,32 +133,32 @@ public class TextureModel : IDisposable, IEditSourceModel
     {
         GL.ActiveTexture(unit);
         GL.BindTexture(TextureTarget.Texture2D, Handle);
+
+        if (GraphicsModel.CheckErrors())
+        {
+            Logger.LogError("Failed to use texture");
+        }
     }
 
 
     #region Clean up
 
-    private bool _disposed = false;
+    private bool _disposed;
 
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)
         {
             GL.DeleteTexture(Handle);
-
-            _disposed = true;
+            _disposed = GraphicsModel.CheckErrors("Failed to delete texture", Logger);
         }
     }
 
     ~TextureModel()
     {
-        // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
-        // The OpenGL resources have to be released from a thread with an active OpenGL Context.
-        // The GC runs on a separate thread, thus releasing unmanaged GL resources inside the finalizer
-        // is not possible.
         if (_disposed == false)
         {
-            _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak!");
         }
     }
 

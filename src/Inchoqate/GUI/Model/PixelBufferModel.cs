@@ -1,12 +1,16 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using StbImageWriteSharp;
 using System.IO;
+using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Inchoqate.GUI.Model;
 
 public class PixelBufferModel(int size, int width, int height) : IDisposable, IEditSourceModel, IEditDestinationModel
 {
-    private bool disposedValue;
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<PixelBufferModel>();
+
+    private bool _disposedValue;
 
     public byte[] Data { get; private set; } = new byte[size];
     public readonly int Width = width, Height = height;
@@ -23,6 +27,9 @@ public class PixelBufferModel(int size, int width, int height) : IDisposable, IE
     {
         buffer.Use();
         GL.GetnTexImage(TextureTarget.Texture2D, 0, TextureModel.GLPixelFormat, TextureModel.GLPixelType, Data.Length, Data);
+
+        if (!GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to load data from texture");
     }
 
     public void SaveToFile(string path)
@@ -30,20 +37,20 @@ public class PixelBufferModel(int size, int width, int height) : IDisposable, IE
         StbImageWrite.stbi_flip_vertically_on_write(1);
         using Stream stream = File.OpenWrite(path);
         ImageWriter writer = new();
-        writer.WritePng(Data, Width, Height, StbImageWriteSharp.ColorComponents.RedGreenBlueAlpha, stream);
+        writer.WritePng(Data, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
     }
 
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             if (disposing)
             {
                 Data = null!;
             }
 
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 

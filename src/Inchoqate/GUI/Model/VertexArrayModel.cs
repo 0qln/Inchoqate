@@ -24,7 +24,11 @@ public class VertexArrayModel : IDisposable
     public VertexArrayModel(ReadOnlyMemory<uint> mIndx, ReadOnlyMemory<float> mVert, BufferUsageHint usage)
     {
         Handle = GL.GenVertexArray();
-        this.Use();
+
+        if (GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to create vertex array.");
+
+        Use();
 
         _vertexBufferObject = new BufferModel<float>(BufferTarget.ArrayBuffer, mVert, usage);
         _vertexBufferObject.Use();
@@ -44,7 +48,11 @@ public class VertexArrayModel : IDisposable
     public VertexArrayModel(Span<uint> sIndx, Span<float> sVert, BufferUsageHint usage)
     {
         Handle = GL.GenVertexArray();
-        this.Use();
+
+        if (GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to create vertex array.");
+
+        Use();
 
         _vertexBufferObject = new BufferModel<float>(BufferTarget.ArrayBuffer, sVert, usage);
         _vertexBufferObject.Use();
@@ -70,6 +78,11 @@ public class VertexArrayModel : IDisposable
     public void Use()
     {
         GL.BindVertexArray(Handle);
+
+        if (GraphicsModel.CheckErrors())
+        {
+            Logger.LogError("Failed to use vertex array.");
+        }
     }
 
 
@@ -84,17 +97,12 @@ public class VertexArrayModel : IDisposable
             GL.DeleteVertexArray(Handle);
             _elementBufferObject.Dispose();
             _vertexBufferObject.Dispose();
-
-            _disposedValue = true;
+            _disposedValue = !GraphicsModel.CheckErrors("Failed to delete vertex array.", Logger);
         }
     }
 
     ~VertexArrayModel()
     {
-        // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
-        // The OpenGL resources have to be released from a thread with an active OpenGL Context.
-        // The GC runs on a separate thread, thus releasing unmanaged GL resources inside the finalizer
-        // is not possible.
         if (_disposedValue == false)
         {
             Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");

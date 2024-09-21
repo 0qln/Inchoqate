@@ -29,89 +29,125 @@ public class ShaderModel : IDisposable
         return FromSource(vertexSource, fragmentSource, out success);
     }
 
-    public static ShaderModel? FromUri(Uri vertexPath, Uri fragmentPath, out bool success)
+    private static string GetSource(Uri uri)
+    {
+        var resource = Application.GetResourceStream(uri);
+        if (resource is null)
+            throw new IOException($"The resource at {resource} could not be found.");
+        using var reader = new StreamReader(resource.Stream);
+        return reader.ReadToEnd();
+    }
+
+    public static ShaderModel? FromUri(Uri vertex, Uri fragment, out bool success)
     {
         // In the xaml designer, the URI cannot be resolved and throws.
         try
         {
-            var vertexResource = Application.GetResourceStream(vertexPath);
-            if (vertexResource is null) throw new IOException(
-                $"The resource at {vertexPath.OriginalString} could not be found.");
-            using var vertexReader = new StreamReader(vertexResource.Stream);
-            var vertexSource = vertexReader.ReadToEnd();
-
-            var fragmentResource = Application.GetResourceStream(fragmentPath);
-            if (fragmentResource is null) throw new IOException(
-                $"The resource at {vertexPath.OriginalString} could not be found.");
-            using var fragmentReader = new StreamReader(fragmentResource.Stream);
-            var fragmentSource = fragmentReader.ReadToEnd();
-
-            return FromSource(vertexSource, fragmentSource, out success);
+            return FromSource(GetSource(vertex), GetSource(fragment), out success);
         }
         catch (IOException e)
         {
             Logger.LogError(e,
                 "Application resource could not be located from one or more the given URIs: " +
                 "{vert}, {frag}. This a know error in the xaml designer.",
-                vertexPath.OriginalString,
-                fragmentPath.OriginalString);
+                vertex.OriginalString,
+                fragment.OriginalString);
             success = false;
             return null;
         }
     }
 
+    private sealed class ShaderPart : IDisposable
+    {
+        private readonly int _programHandle;
+
+        public int Handle { get; }
+
+
+        public ShaderPart(string source, ShaderType type, int programHandle, out bool success)
+        {
+            _programHandle = programHandle;
+            Handle = GL.CreateShader(type);
+
+            GL.ShaderSource(Handle, source);
+            GL.CompileShader(Handle);
+            GL.GetShader(Handle, ShaderParameter.CompileStatus, out var compileSuccess);
+
+            if (compileSuccess == 0 || GraphicsModel.CheckErrors())
+            {
+                Logger.LogError(
+                    "OpenGL error while generating shader: Code:{error} | Info:{info}",
+                    GL.GetError(),
+                    GL.GetShaderInfoLog(Handle));
+                success = false;
+                return;
+            }
+
+            success = true;
+        }
+
+        private bool _disposed;
+    
+        // ReSharper disable once UnusedParameter.Local
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                GL.DetachShader(_programHandle, Handle);
+                GL.DeleteShader(Handle);
+                _disposed = !GraphicsModel.CheckErrors("Failed to delete shader part.", Logger);
+            }
+        } 
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~ShaderPart()
+        {
+            if (_disposed == false)
+            {
+                Logger.LogWarning("GPU Resource leak!");
+            }
+        }
+    }
+
     public ShaderModel(string vertexSource, string fragmentSource, out bool success)
     {
-        var vertexShader = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(vertexShader, vertexSource);
-
-        var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(fragmentShader, fragmentSource);
-
-        GL.CompileShader(vertexShader);
-        GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out var successVertexShader);
-        if (successVertexShader == 0)
-        {
-            Logger.LogError(
-                "OpenGL error while generating shader: Code:{error} | Info:{info}",
-                GL.GetError(),
-                GL.GetShaderInfoLog(vertexShader));
-            success = false;
-            goto clean_up;
-        }
-
-        GL.CompileShader(fragmentShader);
-        GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out var successFragmentShader);
-        if (successFragmentShader == 0)
-        {
-            Logger.LogError(
-                "OpenGL error while generating shader: Code:{error} | Info:{info}",
-                GL.GetError(),
-                GL.GetShaderInfoLog(successFragmentShader));
-            success = false;
-            goto clean_up;
-        }
-
         Handle = GL.CreateProgram();
 
-        GL.AttachShader(Handle, vertexShader);
-        GL.AttachShader(Handle, fragmentShader);
+        using var vertex = new ShaderPart(vertexSource, ShaderType.VertexShader, Handle, out success);
+        if (!success)
+        {
+            Logger.LogError("Failed to create vertex shader");
+            return;
+        }
+
+        using var fragment = new ShaderPart(fragmentSource, ShaderType.FragmentShader, Handle, out success);
+        if (!success)
+        {
+            Logger.LogError("Failed to create fragment shader");
+            return;
+        }
+
+        GL.AttachShader(Handle, vertex.Handle);
+        GL.AttachShader(Handle, fragment.Handle);
 
         GL.LinkProgram(Handle);
 
         GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out var successProgram);
-        if (successProgram == 0)
+        if (successProgram == 0 || GraphicsModel.CheckErrors())
         {
             Logger.LogError(
                 "OpenGL error while generating shader: Code:{error} | Info:{info}",
                 GL.GetError(),
                 GL.GetShaderInfoLog(Handle));
             success = false;
-            goto clean_up;
+            return;
         }
 
-        // TODO: handle the case where the shader does
-        // not have the required attributes.
         Use();
 
         var aPositionLoc = GL.GetAttribLocation(Handle, "aPosition");
@@ -131,13 +167,7 @@ public class ShaderModel : IDisposable
             _uniformLocations.Add(key, location);
         }
 
-        success = true;
-
-        clean_up:
-        GL.DetachShader(Handle, vertexShader);
-        GL.DetachShader(Handle, fragmentShader);
-        GL.DeleteShader(fragmentShader);
-        GL.DeleteShader(vertexShader);
+        success = !GraphicsModel.CheckErrors("Failed to setup up a shader", Logger);
     }
 
 
@@ -162,6 +192,9 @@ public class ShaderModel : IDisposable
             _ => () => Logger.LogWarning("Tried to set invalid uniform type {t}", typeof(T))
         }))();
 
+        if (GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to set uniform: [{n}, {v}]", name, value);
+
         return true;
     }
 
@@ -169,12 +202,15 @@ public class ShaderModel : IDisposable
     public void Use()
     {
         GL.UseProgram(Handle);
+
+        if (GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to use shader");
     }
 
 
     #region Clean up
 
-    private bool _disposedValue;
+    private bool _disposed;
 
     /// <summary>
     /// 
@@ -188,11 +224,10 @@ public class ShaderModel : IDisposable
     /// </param>
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposedValue)
+        if (!_disposed)
         {
             GL.DeleteProgram(Handle);
-
-            _disposedValue = true;
+            _disposed = !GraphicsModel.CheckErrors("Failed to delete shader", Logger);
         }
     }
 
@@ -202,9 +237,9 @@ public class ShaderModel : IDisposable
         // The OpenGL resources have to be released from a thread with an active OpenGL Context.
         // The GC runs on a separate thread, thus releasing unmanaged GL resources inside the finalizer
         // is not possible.
-        if (_disposedValue == false)
+        if (_disposed == false)
         {
-            Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak!");
         }
     }
 

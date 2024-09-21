@@ -27,21 +27,13 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
             Data.Handle,
             0);
 
-        var successFramebuffer = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
-        if (successFramebuffer != FramebufferErrorCode.FramebufferComplete)
-        {
-            Logger.LogError(
-                "OpenGL error while generating framebuffer: Code:{error} | Status:{successFramebuffer}",
-                GL.GetError(),
-                successFramebuffer);
-            success = false;
-            goto clean_up;
-        }
+        var successFrameBuffer = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+        var errors = GraphicsModel.CheckErrors();
 
-        success = true;
+        success = !errors && successFrameBuffer == FramebufferErrorCode.FramebufferComplete;
 
-        clean_up:
-        return;
+        if (!success)
+            Logger.LogError("Failed to generate frame buffer: Status:{s}", successFrameBuffer);
     }
 
     public FrameBufferModel(PixelBufferModel buffer, out bool success)
@@ -58,19 +50,24 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
     public void Use(FramebufferTarget target)
     {
         GL.BindFramebuffer(target, Handle);
+
+        if (GraphicsModel.CheckErrors())
+            Logger.LogError("Failed to use frame buffer");
     }
 
     public void UseAndClear(FramebufferTarget target, ClearBufferMask? clear = ClearBufferMask.ColorBufferBit)
     {
         if (target == FramebufferTarget.ReadFramebuffer)
-        {
             throw new ArgumentException("Cannot clear a readonly buffer.");
-        }
+
         Use(target);
         if (clear is not null)
         {
             GL.ClearColor(0, 1, 0, 0);
             GL.Clear((ClearBufferMask)clear);
+
+            if (GraphicsModel.CheckErrors())
+                Logger.LogError("Failed to clear frame buffer");
         }
     }
 
@@ -85,20 +82,15 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
         {
             Data.Dispose();
             GL.DeleteFramebuffer(Handle);
-
-            _disposedValue = true;
+            _disposedValue = GraphicsModel.CheckErrors("Failed to delete frame buffer", Logger);
         }
     }
 
     ~FrameBufferModel()
     {
-        // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
-        // The OpenGL resources have to be released from a thread with an active OpenGL Context.
-        // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
-        // is not possible.
         if (_disposedValue == false)
         {
-            Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak!");
         }
     }
 

@@ -24,9 +24,10 @@ public class BufferModel<T> : IDisposable
         Handle = GL.GenBuffer();
         GL.BindBuffer(bufferTarget, Handle);
         using var pin = values.Pin();
-        IntPtr data = (IntPtr)pin.Pointer;
-        IntPtr size = Size;
-        GL.BufferData(bufferTarget, size, data, usage);
+        GL.BufferData(bufferTarget, (IntPtr)Size, (IntPtr)pin.Pointer, usage);
+
+        if (GraphicsModel.CheckErrors())
+            _logger.LogError("Failed to generate buffer.");
     }
 
     public BufferModel(BufferTarget bufferTarget, Span<T> values, BufferUsageHint usage)
@@ -36,7 +37,10 @@ public class BufferModel<T> : IDisposable
 
         Handle = GL.GenBuffer();
         GL.BindBuffer(bufferTarget, Handle);
-        GL.BufferData<T>(bufferTarget, Size, ref values[0], usage);
+        GL.BufferData(bufferTarget, Size, ref values[0], usage);
+
+        if (GraphicsModel.CheckErrors())
+            _logger.LogError("Failed to generate buffer.");
     }
 
 
@@ -55,38 +59,39 @@ public class BufferModel<T> : IDisposable
 
         Use();
         GL.BufferSubData(Target, offset, Size, data);
+
+        if (GraphicsModel.CheckErrors())
+            _logger.LogError("Failed to update buffer.");
     }
 
 
     public void Use()
     {
         GL.BindBuffer(Target, Handle);
+
+        if (GraphicsModel.CheckErrors())
+            _logger.LogError("Failed to update buffer.");
     }
 
 
     #region Clean up
 
-    private bool disposedValue;
+    private bool _disposed;
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposed)
         {
             GL.DeleteBuffer(Handle);
-
-            disposedValue = true;
+            _disposed = !GraphicsModel.CheckErrors("Failed to delete buffer.", _logger);
         }
     }
 
     ~BufferModel()
     {
-        // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
-        // The OpenGL resources have to be released from a thread with an active OpenGL Context.
-        // The GC runs on a seperate thread, thus releasing unmanaged GL resources inside the finalizer
-        // is not possible.
-        if (disposedValue == false)
+        if (_disposed == false)
         {
-            _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            _logger.LogWarning("GPU Resource leak!");
         }
     }
 
