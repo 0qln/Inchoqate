@@ -13,11 +13,11 @@ public class EditImplIdentityViewModel : EditBaseLinearShader
         OptionControls = [];
     }
 
-    public override ObservableCollection<ContentControl> OptionControls { get; }
+    public override ObservableCollection<(Control, string)> OptionControls { get; }
 
-    public override ShaderModel? GetShader(out bool success)
+    public override Shader? GetShader(out bool success)
     {
-        return ShaderModel.FromUri(
+        return Model.Shader.FromUri(
             new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
             out success);

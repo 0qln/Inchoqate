@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace Inchoqate.GUI.Model;
+namespace Inchoqate.Graphics;
 
-public interface IEditModel
+public interface IEdit
 {
     /// <summary>
     /// How many sources this edit expects.
@@ -16,19 +16,19 @@ public interface IEditModel
     bool Apply();
 } 
 
-public interface IEditModel<TBufferIn, TBufferOut> : IEditModel
-    where TBufferIn : IEditSourceModel
-    where TBufferOut : IEditDestinationModel
+public interface IEdit<TSource, TDestination> : IEdit
+    where TSource : IEditSource
+    where TDestination : IEditDestination
 {
     /// <summary>
     /// The destination.
     /// </summary>
     [JsonIgnore]
-    public TBufferOut? Destination { get; set; }
+    public TDestination? Destination { get; set; }
 
     /// <summary>
     /// The sources.
     /// </summary>
     [JsonIgnore]
-    public TBufferIn[]? Sources { get; set; }
+    public TSource[]? Sources { get; set; }
 }

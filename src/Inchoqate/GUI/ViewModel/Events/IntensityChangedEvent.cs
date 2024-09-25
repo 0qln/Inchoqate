@@ -2,14 +2,9 @@
 
 namespace Inchoqate.GUI.ViewModel.Events;
 
-public class IntensityChangedEvent : PropertyChangedEvent<double>, IDeserializable<IntensityChangedEvent>
+public class IntensityChangedEvent :
+    PropertyChangedEvent<IIntensityProperty, double>,
+    IDeserializable<IntensityChangedEvent>
 {
-    public IIntensityProperty? Object { get; set; }
-
-    protected override bool Setter(double value)
-    {
-        if (Object is null) return false;
-        Object.Intensity = value;
-        return true;
-    }
+    protected override void Setter(IIntensityProperty prop, double val) => prop.Intensity = val;
 }

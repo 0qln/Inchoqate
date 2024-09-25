@@ -5,11 +5,11 @@ using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public abstract class RenderEditorViewModel : BaseViewModel, IEditorModel<TextureModel, FrameBufferModel>
+public abstract class RenderEditorViewModel : BaseViewModel, IEditor<Texture, FrameBuffer>
 {
     protected bool _computed;
 
-    protected FrameBufferModel? _result;
+    protected FrameBuffer? _result;
 
     protected Size _renderSize, _sourceSize;
 
@@ -45,7 +45,7 @@ public abstract class RenderEditorViewModel : BaseViewModel, IEditorModel<Textur
         protected set => SetProperty(ref _computed, value);
     }
 
-    public FrameBufferModel? Result
+    public FrameBuffer? Result
     {
         get => _result;
         protected set => SetProperty(ref _result, value);
@@ -73,5 +73,5 @@ public abstract class RenderEditorViewModel : BaseViewModel, IEditorModel<Textur
 
     public abstract bool Compute();
 
-    public abstract void SetSource(TextureModel? source);
+    public abstract void SetSource(Texture? source);
 }

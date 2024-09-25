@@ -9,5 +9,5 @@ public interface IEventDelegate<in TEvent>
     bool Delegate(TEvent @event);
 
     [JsonIgnore]
-    public IEventTree<TEvent> DelegationTarget { get; }
+    public IEventTree<TEvent>? DelegationTarget { get; }
 }

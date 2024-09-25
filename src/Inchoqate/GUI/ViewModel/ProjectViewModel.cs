@@ -1,15 +1,12 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
-using Inchoqate.GUI;
+using Inchoqate.GUI.Logging;
 using Inchoqate.GUI.Model;
-using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
-using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Inchoqate.ViewModel;
+namespace Inchoqate.GUI.ViewModel;
 
 /// <summary>
 ///     A project that stores the event tree histories etc.
@@ -54,7 +51,7 @@ public class ProjectViewModel : BaseViewModel
                 return;
             }
 
-            value.SetSource(TextureModel.FromFile(SourceImage));
+            value.SetSource(Texture.FromFile(SourceImage));
             Editors[nameof(StackEditor)] = value;
             OnPropertyChanged();
         }
@@ -75,7 +72,7 @@ public class ProjectViewModel : BaseViewModel
         {
             case nameof(SourceImage):
                 foreach (var editor in Editors.Values)
-                    editor.SetSource(TextureModel.FromFile(SourceImage));
+                    editor.SetSource(Texture.FromFile(SourceImage));
                 break;
             case nameof(StackEditor):
                 if (ActiveEditor == nameof(StackEditor))
@@ -123,7 +120,7 @@ public class ProjectViewModel : BaseViewModel
                 return default;
             }
 
-            editor.SetSource(TextureModel.FromFile(result.SourceImage));
+            editor.SetSource(Texture.FromFile(result.SourceImage));
 
             result.Editors[editorName] = editor;
         }

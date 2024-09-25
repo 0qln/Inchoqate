@@ -1,6 +1,5 @@
 ﻿using MvvmHelpers;
 using Inchoqate.GUI.Model;
-using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 using System.Windows;
@@ -8,6 +7,7 @@ using OpenTK.Wpf;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.ComponentModel;
+using Inchoqate.GUI.Logging;
 using PointF = System.Drawing.PointF;
 
 namespace Inchoqate.GUI.ViewModel;
@@ -67,12 +67,12 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
     /// <summary>
     /// The shader used for the preview. Will be disposed.
     /// </summary>
-    public ShaderModel Shader { get; }
+    public Shader Shader { get; }
 
     /// <summary>
     /// The vertex array used for the preview. Will be disposed.
     /// </summary>
-    public VertexArrayModel VertexArray { get; }
+    public VertexArray VertexArray { get; }
 
     /// <summary>
     /// The editor applied on the image for the preview. Will not be disposed.
@@ -180,7 +180,7 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
         VertexArray = new(sIndx: _indices, sVert: _vertices, BufferUsageHint.StaticDraw);
         VertexArray.Use();
 
-        Shader = ShaderModel.FromUri(
+        Shader = Shader.FromUri(
             new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
             out var success)!;

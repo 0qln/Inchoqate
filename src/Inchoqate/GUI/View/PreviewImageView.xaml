@@ -19,7 +19,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Panel.ZIndex="1"
-            Visibility="Visible">
+            Visibility="Collapsed">
 
             <TextBlock Foreground="White">
                 Zoom: <Run Text="{Binding Zoom}"/>

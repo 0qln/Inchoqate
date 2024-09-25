@@ -6,9 +6,9 @@ using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
-namespace Inchoqate.GUI.Model;
+namespace Inchoqate.Graphics;
 
-public class TextureModel : IDisposable, IEditSourceModel
+public class TextureModel : IDisposable, IEditSource
 {
     private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<TextureModel>();
 
@@ -46,7 +46,7 @@ public class TextureModel : IDisposable, IEditSourceModel
             var a = value.A / 255.0f;
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, [r, g, b, a]);
 
-            if (GraphicsModel.CheckErrors())
+            if (Logger.CheckErrors())
             {
                 Logger.LogError("Failed to set texture parameter in {propertyName}", nameof(BorderColor));
                 return;
@@ -74,8 +74,7 @@ public class TextureModel : IDisposable, IEditSourceModel
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
 
-        if (GraphicsModel.CheckErrors())
-            Logger.LogError("Failed to initiate default texture parameter");
+        Logger.CheckErrors("Failed to initiate default texture parameter");
 
         BorderColor = Color.FromRgb(255, 99, 71);
     }
@@ -117,10 +116,7 @@ public class TextureModel : IDisposable, IEditSourceModel
         InitDefaults();
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-        if (GraphicsModel.CheckErrors())
-        {
-            Logger.LogError("Failed to load data into texture");
-        }
+        Logger.CheckErrors("Failed to load data into texture");
     }
 
 
@@ -134,10 +130,7 @@ public class TextureModel : IDisposable, IEditSourceModel
         GL.ActiveTexture(unit);
         GL.BindTexture(TextureTarget.Texture2D, Handle);
 
-        if (GraphicsModel.CheckErrors())
-        {
-            Logger.LogError("Failed to use texture");
-        }
+        Logger.CheckErrors("Failed to use texture");
     }
 
 
@@ -150,7 +143,7 @@ public class TextureModel : IDisposable, IEditSourceModel
         if (!_disposed)
         {
             GL.DeleteTexture(Handle);
-            _disposed = GraphicsModel.CheckErrors("Failed to delete texture", Logger);
+            _disposed = Logger.CheckErrors("Failed to delete texture");
         }
     }
 

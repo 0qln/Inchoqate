@@ -1,11 +1,11 @@
-﻿using Inchoqate.GUI.Model;
-using Inchoqate.Logging;
+﻿using Inchoqate.GUI.Logging;
+using Inchoqate.GUI.Model;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureModel, FrameBufferModel>, IDisposable
+public abstract class EditBaseLinearShader : EditBaseLinear, IEdit<Texture, FrameBuffer>, IDisposable
 {
     private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<EditBaseLinearShader>();  
 
@@ -24,8 +24,8 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
         1, 2, 3
     ];
 
-    protected readonly ShaderModel? Shader;
-    protected readonly VertexArrayModel Vao;
+    protected readonly Shader? Shader;
+    protected readonly VertexArray Vao;
 
 
     protected EditBaseLinearShader(BufferUsageHint usage = BufferUsageHint.StaticDraw)
@@ -47,7 +47,7 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
     /// </summary>
     /// <param name="success"></param>
     /// <returns></returns>
-    public abstract ShaderModel? GetShader(out bool success);
+    public abstract Shader? GetShader(out bool success);
 
 
     public override bool Apply()
@@ -67,10 +67,10 @@ public abstract class EditBaseLinearShader : EditBaseLinear, IEditModel<TextureM
     }
 
     /// <inheritdoc />
-    public FrameBufferModel? Destination { get; set; }
+    public FrameBuffer? Destination { get; set; }
 
     /// <inheritdoc />
-    public TextureModel[]? Sources { get; set; }
+    public Texture[]? Sources { get; set; }
 
 
     #region Clean up

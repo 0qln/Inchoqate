@@ -2,17 +2,17 @@
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 
-namespace Inchoqate.GUI.Model;
+namespace Inchoqate.Graphics;
 
-public class FrameBufferModel : IDisposable, IEditDestinationModel
+public class FrameBuffer : IDisposable, IEditDestination
 {
-    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<FrameBufferModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<FrameBuffer>();
 
     public readonly int Handle;
     public readonly TextureModel Data;
 
 
-    public FrameBufferModel(TextureModel texture, out bool success)
+    public FrameBuffer(TextureModel texture, out bool success)
     {    
         Handle = GL.GenFramebuffer();
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
@@ -28,7 +28,7 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
             0);
 
         var successFrameBuffer = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
-        var errors = GraphicsModel.CheckErrors();
+        var errors = Logger.CheckErrors();
 
         success = !errors && successFrameBuffer == FramebufferErrorCode.FramebufferComplete;
 
@@ -36,12 +36,12 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
             Logger.LogError("Failed to generate frame buffer: Status:{s}", successFrameBuffer);
     }
 
-    public FrameBufferModel(PixelBufferModel buffer, out bool success)
+    public FrameBuffer(PixelBuffer buffer, out bool success)
         : this(TextureModel.FromData(buffer.Width, buffer.Height, buffer.Data), out success)
     { 
     }
 
-    public FrameBufferModel(int width, int height, out bool success)
+    public FrameBuffer(int width, int height, out bool success)
         : this(TextureModel.FromData(width, height), out success)
     {
     }
@@ -51,8 +51,7 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
     {
         GL.BindFramebuffer(target, Handle);
 
-        if (GraphicsModel.CheckErrors())
-            Logger.LogError("Failed to use frame buffer");
+        Logger.CheckErrors("Failed to use frame buffer");
     }
 
     public void UseAndClear(FramebufferTarget target, ClearBufferMask? clear = ClearBufferMask.ColorBufferBit)
@@ -66,8 +65,7 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
             GL.ClearColor(0, 1, 0, 0);
             GL.Clear((ClearBufferMask)clear);
 
-            if (GraphicsModel.CheckErrors())
-                Logger.LogError("Failed to clear frame buffer");
+            Logger.CheckErrors("Failed to clear frame buffer");
         }
     }
 
@@ -82,11 +80,11 @@ public class FrameBufferModel : IDisposable, IEditDestinationModel
         {
             Data.Dispose();
             GL.DeleteFramebuffer(Handle);
-            _disposedValue = GraphicsModel.CheckErrors("Failed to delete frame buffer", Logger);
+            _disposedValue = Logger.CheckErrors("Failed to delete frame buffer");
         }
     }
 
-    ~FrameBufferModel()
+    ~FrameBuffer()
     {
         if (_disposedValue == false)
         {

@@ -1,11 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using Inchoqate.GUI.Logging;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
-using Inchoqate.Logging;
-using Inchoqate.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
@@ -218,7 +217,7 @@ public partial class MainWindow : BorderlessWindowBase
         PreviewImage.GLImage.Height = renderer.SourceSize.Height;
         renderer.Invalidate();
         renderer.Compute();
-        var data = PixelBufferModel.FromGpu(renderer.Result.Data);
+        var data = PixelBuffer.FromGpu(renderer.Result.Data);
         data.SaveToFile(dialog.FileName);
     }
 

@@ -1,81 +1,142 @@
-﻿using Inchoqate.GUI.Model;
-using Inchoqate.Logging;
-using Microsoft.Extensions.Logging;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using Inchoqate.GUI.Converters;
+using Inchoqate.GUI.Logging;
+using Inchoqate.GUI.Model;
+using Inchoqate.GUI.View;
+using Inchoqate.GUI.ViewModel.Events;
+using Microsoft.Extensions.Logging;
 using Sorting;
 using Sorting.Pixels._32;
 using Sorting.Pixels.Comparer;
-using Sorting.Pixels.KeySelector;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public class EditImplPixelSorterViewModel : EditBaseLinear, IEditModel<PixelBufferModel, PixelBufferModel>, IDeserializable<EditImplPixelSorterViewModel>
+public class EditImplPixelSorterViewModel :
+    EditBaseLinear,
+    IEdit<PixelBuffer, PixelBuffer>,
+    IDeserializable<EditImplPixelSorterViewModel>,
+    IEventDelegate<AngleChangedEvent>, IAngleProperty,
+    IEventDelegate<SorterChangedEvent>, ISorterProperty
 {
+    public const double AngleMin = 0;
+    public const double AngleMax = Math.PI;
     private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<EditImplPixelSorterViewModel>();
 
-    public override ObservableCollection<ContentControl> OptionControls { get; }
+    private double _angle, _angleChangeBegin;
+    private Sorter32Bit.ISorter? _sorterConfig;
 
-    private double _angle;
+
+    public EditImplPixelSorterViewModel()
+    {
+        Title = "Pixel Sorter";
+
+        ExtSliderView angleControl = new() { Minimum = AngleMin, Maximum = AngleMax, Values = [0], ShowValues = [true] };
+        angleControl.SetBinding(
+            ExtSliderView.ValuesProperty,
+            new Binding(nameof(Angle)) { Source = this, Mode = BindingMode.TwoWay, Converter = new ElementToArrayConverter<double>() });
+        angleControl.ThumbDragStarted += (_, _) => _angleChangeBegin = _angle;
+        angleControl.ThumbDragCompleted += (_, _) => Delegate(new AngleChangedEvent { OldValue = _angleChangeBegin, NewValue = _angle });
+
+        DisplayComboBox sortersControl = new()
+        {
+            Items =
+            [
+                (new CombSorterView(), "Comb Sort" ),
+            ]
+        };
+        // sortersControl.ComboBox.SetBinding(
+        //     Selector.SelectedItemProperty,
+        //     new Binding(nameof(Sorter)) { Source = this, Mode = BindingMode.OneWay, Converter = new SelectConverter<Control, Sorter32Bit.ISorter>(view => ((IViewModel<Sorter32Bit.ISorter>)view.DataContext).Model) });
+        // sortersControl.ComboBox.SelectionChanged += (_, _) => Delegate(new SorterChangedEvent { OldValue = _sorterConfig, NewValue = _sorterConfig });
+
+        OptionControls =
+        [
+            (angleControl, nameof(Angle)),
+            (sortersControl, nameof(Sorter))
+        ];
+    }
+
+    public IEventTree<EventViewModelBase>? DelegationTarget { get; init; }
+
+    public override ObservableCollection<(Control, string)> OptionControls { get; }
+
+    // TODO: default value and not nullable
+    public Sorter32Bit.ISorter? Sorter
+    {
+        get => _sorterConfig;
+        set => SetProperty(ref _sorterConfig, value);
+    }
 
     public double Angle
     {
         get => _angle;
-        set => SetProperty(ref _angle, value);
-    }
-
-
-    public EditImplPixelSorterViewModel() 
-    {
-        Title = "Pixel Sorter";
-        Slider angleControl = new() { Minimum = 0, Maximum = double.Pi * 0.99, Value = 0 };
-        angleControl.SetBinding(
-            Slider.ValueProperty, 
-            new Binding(nameof(Angle)) { Source = this, Mode=BindingMode.TwoWay });
-
-        OptionControls = [
-            new() { Content = angleControl, Name = nameof(Angle) }
-        ];
+        set => SetProperty(ref _angle, value,
+            validateValue: (_, val) => val is >= AngleMin and <= AngleMax);
     }
 
     public override bool Apply()
     {
-        if (Sources.Length == 0)
+        if (Sources is null || Destination is null || Sources.Length == 0 || Sorter is null)
             return false;
 
-        PixelBufferModel destination = Destination;
-        PixelBufferModel source = Sources[0];
+        // SorterConfig = new Sorter<Pixel32bitUnion>.CombSorter(new PixelComparer.Descending.Red())
+        // {
+        //     Pureness = 1
+        // };
+
+        var destination = Destination;
+        var source = Sources[0];
         Debug.Assert(source.Data.Length == destination.Data.Length);
+
         unsafe
         {
-            var pixelSorter = new Sorter32Bit(
+            // The sorter is very lightweight, allocations shouldn't be a problem.
+            var sorter = new Sorter32Bit(
                 (Pixel32bitUnion*)Unsafe.AsPointer(ref source.Data[0]),
                 source.Width,
                 source.Height,
-                source.Width * TextureModel.PixelDepth)
+                source.Width * Texture.PixelDepth)
             {
                 ParallelOpts =
                 {
-                    MaxDegreeOfParallelism = -1
+                    MaxDegreeOfParallelism = 4
                 }
             };
-            var comparer = new OrderedKeySelector.Ascending.Red();
-            var sorter = new Sorter32Bit.PigeonholeSorter(comparer);
-            pixelSorter.SortAngle(Angle, pixelSorter.GetAngleSorterInfo(sorter));
+
+            sorter.SortAngleAsync(Angle, sorter.GetAngleSorterInfo(Sorter));
         }
 
         // We can swap the buffers instead of copying the data from the source to the destination
         // buffer as we are not going to use the source buffer anymore.
+        // TODO Sort methods that utilize auxiliary arrays, such as pigeonhole sort, could 
+        // TODO utilize the second buffer for less memory allocations. 
         (Destination, Sources[0]) = (Sources[0], Destination);
         return true;
     }
 
     /// <inheritdoc />
-    public PixelBufferModel Destination { get; set; }
+    public PixelBuffer? Destination { get; set; }
 
     /// <inheritdoc />
-    public PixelBufferModel[] Sources { get; set; }
+    public PixelBuffer[]? Sources { get; set; }
+
+    IEventTree<AngleChangedEvent>? IEventDelegate<AngleChangedEvent>.DelegationTarget => DelegationTarget;
+    IEventTree<SorterChangedEvent>? IEventDelegate<SorterChangedEvent>.DelegationTarget => DelegationTarget;
+
+    public bool Delegate(AngleChangedEvent @event)
+    {
+        @event.Object = this;
+        return DelegationTarget?.Novelty(@event, true) ?? false;
+    }
+
+    public bool Delegate(SorterChangedEvent @event)
+    {
+        @event.Object = this;
+        return DelegationTarget?.Novelty(@event, true) ?? false;
+    }
 }

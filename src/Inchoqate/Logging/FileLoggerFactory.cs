@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using System.IO;
-using Inchoqate.GUI.Logging;
+﻿using System.IO;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 
 namespace Inchoqate.Logging;
@@ -10,8 +9,7 @@ namespace Inchoqate.Logging;
 /// </summary>
 public static class FileLoggerFactory
 {
-    private static readonly ILoggerFactory _factory;
-    private static readonly StreamWriter _writer;
+    private static readonly ILoggerFactory Factory;
 
     static FileLoggerFactory()
     {
@@ -26,14 +24,14 @@ public static class FileLoggerFactory
         if (Directory.Exists(Path.GetDirectoryName(logFilePath)) == false)
             Directory.CreateDirectory(Path.GetDirectoryName(logFilePath)!);
 
-        _writer = new(logFilePath, append: true);
-        _factory = LoggerFactory.Create(builder =>
+        StreamWriter writer = new(logFilePath, append: true);
+        Factory = LoggerFactory.Create(builder =>
         {
-            builder.AddProvider(new FileLoggerProvider(_writer));
+            builder.AddProvider(new FileLoggerProvider(writer));
             builder.SetMinimumLevel(LogLevel.Trace);
         });
 
-        _factory
+        Factory
             .CreateLogger("Logging")
             .LogInformation("File logger initiated.");
     }
@@ -45,7 +43,7 @@ public static class FileLoggerFactory
     /// <returns></returns>
     public static ILogger<T> CreateLogger<T>()
     {
-        return _factory.CreateLogger<T>();
+        return Factory.CreateLogger<T>();
     }
 
     /// <summary>

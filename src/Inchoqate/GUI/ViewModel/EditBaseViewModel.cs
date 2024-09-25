@@ -6,10 +6,10 @@ using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;
 
-public abstract class EditBaseViewModel : BaseViewModel, IEditModel
+public abstract class EditBaseViewModel : BaseViewModel, IEdit
 {
     [JsonIgnore]
-    public abstract ObservableCollection<ContentControl> OptionControls { get; }
+    public abstract ObservableCollection<(Control, string)> OptionControls { get; }
 
     public abstract int ExpectedInputCount { get; }
 

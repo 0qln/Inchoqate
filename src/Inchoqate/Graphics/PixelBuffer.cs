@@ -1,14 +1,14 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using StbImageWriteSharp;
-using System.IO;
+﻿using System.IO;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
+using OpenTK.Graphics.OpenGL4;
+using StbImageWriteSharp;
 
-namespace Inchoqate.GUI.Model;
+namespace Inchoqate.Graphics;
 
-public class PixelBufferModel(int size, int width, int height) : IDisposable, IEditSourceModel, IEditDestinationModel
+public class PixelBuffer(int size, int width, int height) : IDisposable, IEditSource, IEditDestination
 {
-    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<PixelBufferModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<PixelBuffer>();
 
     private bool _disposedValue;
 
@@ -16,9 +16,9 @@ public class PixelBufferModel(int size, int width, int height) : IDisposable, IE
     public readonly int Width = width, Height = height;
 
 
-    public static PixelBufferModel FromGpu(TextureModel buffer)
+    public static PixelBuffer FromGpu(TextureModel buffer)
     {
-        PixelBufferModel result = new(buffer.Stride * buffer.Height, buffer.Width, buffer.Height);
+        PixelBuffer result = new(buffer.Stride * buffer.Height, buffer.Width, buffer.Height);
         result.LoadData(buffer);
         return result;
     }
@@ -28,8 +28,7 @@ public class PixelBufferModel(int size, int width, int height) : IDisposable, IE
         buffer.Use();
         GL.GetnTexImage(TextureTarget.Texture2D, 0, TextureModel.GLPixelFormat, TextureModel.GLPixelType, Data.Length, Data);
 
-        if (!GraphicsModel.CheckErrors())
-            Logger.LogError("Failed to load data from texture");
+        Logger.CheckErrors("Failed to load data from texture");
     }
 
     public void SaveToFile(string path)

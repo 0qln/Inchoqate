@@ -1,14 +1,14 @@
-﻿using Inchoqate.Logging;
+﻿using System.Runtime.InteropServices;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
-using System.Runtime.InteropServices;
 
-namespace Inchoqate.GUI.Model;
+namespace Inchoqate.Graphics;
 
-public class BufferModel<T> : IDisposable
+public class Buffer<T> : IDisposable
     where T : struct
 {
-    private readonly ILogger _logger = FileLoggerFactory.CreateLogger<BufferModel<T>>();
+    private readonly ILogger _logger = FileLoggerFactory.CreateLogger<Buffer<T>>();
 
     public readonly int Handle;
 
@@ -16,7 +16,7 @@ public class BufferModel<T> : IDisposable
     public readonly int Size;
 
 
-    public unsafe BufferModel(BufferTarget bufferTarget, ReadOnlyMemory<T> values, BufferUsageHint usage)
+    public unsafe Buffer(BufferTarget bufferTarget, ReadOnlyMemory<T> values, BufferUsageHint usage)
     {
         Target = bufferTarget;
         Size = values.Length * Marshal.SizeOf<T>();
@@ -26,11 +26,10 @@ public class BufferModel<T> : IDisposable
         using var pin = values.Pin();
         GL.BufferData(bufferTarget, (IntPtr)Size, (IntPtr)pin.Pointer, usage);
 
-        if (GraphicsModel.CheckErrors())
-            _logger.LogError("Failed to generate buffer.");
+        _logger.CheckErrors("Failed to generate buffer.");
     }
 
-    public BufferModel(BufferTarget bufferTarget, Span<T> values, BufferUsageHint usage)
+    public Buffer(BufferTarget bufferTarget, Span<T> values, BufferUsageHint usage)
     {
         Target = bufferTarget;
         Size = values.Length * Marshal.SizeOf<T>();
@@ -39,8 +38,7 @@ public class BufferModel<T> : IDisposable
         GL.BindBuffer(bufferTarget, Handle);
         GL.BufferData(bufferTarget, Size, ref values[0], usage);
 
-        if (GraphicsModel.CheckErrors())
-            _logger.LogError("Failed to generate buffer.");
+        _logger.CheckErrors("Failed to generate buffer.");
     }
 
 
@@ -60,8 +58,7 @@ public class BufferModel<T> : IDisposable
         Use();
         GL.BufferSubData(Target, offset, Size, data);
 
-        if (GraphicsModel.CheckErrors())
-            _logger.LogError("Failed to update buffer.");
+        _logger.CheckErrors("Failed to update buffer.");
     }
 
 
@@ -69,8 +66,7 @@ public class BufferModel<T> : IDisposable
     {
         GL.BindBuffer(Target, Handle);
 
-        if (GraphicsModel.CheckErrors())
-            _logger.LogError("Failed to update buffer.");
+        _logger.CheckErrors("Failed to update buffer.");
     }
 
 
@@ -83,11 +79,11 @@ public class BufferModel<T> : IDisposable
         if (!_disposed)
         {
             GL.DeleteBuffer(Handle);
-            _disposed = !GraphicsModel.CheckErrors("Failed to delete buffer.", _logger);
+            _disposed = !_logger.CheckErrors("Failed to delete buffer.");
         }
     }
 
-    ~BufferModel()
+    ~Buffer()
     {
         if (_disposed == false)
         {

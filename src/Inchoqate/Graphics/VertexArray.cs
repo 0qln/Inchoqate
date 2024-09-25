@@ -1,18 +1,18 @@
-﻿using Microsoft.Extensions.Logging;
-using Inchoqate.Logging;
+﻿using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 
-namespace Inchoqate.GUI.Model;
+namespace Inchoqate.Graphics;
 
-public class VertexArrayModel : IDisposable
+public class VertexArray : IDisposable
 {
-    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<VertexArrayModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<VertexArray>();
 
     public readonly int Handle;
     public readonly int IndexCount;
 
-    private readonly BufferModel<uint> _elementBufferObject;
-    private readonly BufferModel<float> _vertexBufferObject;
+    private readonly Buffer<uint> _elementBufferObject;
+    private readonly Buffer<float> _vertexBufferObject;
 
 
     /// <summary>
@@ -21,19 +21,18 @@ public class VertexArrayModel : IDisposable
     /// <param name="mIndx">The indices.</param>
     /// <param name="mVert">The verteces.</param>
     /// <param name="usage"></param>
-    public VertexArrayModel(ReadOnlyMemory<uint> mIndx, ReadOnlyMemory<float> mVert, BufferUsageHint usage)
+    public VertexArray(ReadOnlyMemory<uint> mIndx, ReadOnlyMemory<float> mVert, BufferUsageHint usage)
     {
         Handle = GL.GenVertexArray();
 
-        if (GraphicsModel.CheckErrors())
-            Logger.LogError("Failed to create vertex array.");
+        Logger.CheckErrors("Failed to create vertex array.");
 
         Use();
 
-        _vertexBufferObject = new BufferModel<float>(BufferTarget.ArrayBuffer, mVert, usage);
+        _vertexBufferObject = new Buffer<float>(BufferTarget.ArrayBuffer, mVert, usage);
         _vertexBufferObject.Use();
 
-        _elementBufferObject = new BufferModel<uint>(BufferTarget.ElementArrayBuffer, mIndx, usage);
+        _elementBufferObject = new Buffer<uint>(BufferTarget.ElementArrayBuffer, mIndx, usage);
         _elementBufferObject.Use();
 
         IndexCount = mIndx.Length;
@@ -45,19 +44,18 @@ public class VertexArrayModel : IDisposable
     /// <param name="sIndx">The indices.</param>
     /// <param name="sVert">The verteces.</param>
     /// <param name="usage"></param>
-    public VertexArrayModel(Span<uint> sIndx, Span<float> sVert, BufferUsageHint usage)
+    public VertexArray(Span<uint> sIndx, Span<float> sVert, BufferUsageHint usage)
     {
         Handle = GL.GenVertexArray();
 
-        if (GraphicsModel.CheckErrors())
-            Logger.LogError("Failed to create vertex array.");
+        Logger.CheckErrors("Failed to create vertex array.");
 
         Use();
 
-        _vertexBufferObject = new BufferModel<float>(BufferTarget.ArrayBuffer, sVert, usage);
+        _vertexBufferObject = new Buffer<float>(BufferTarget.ArrayBuffer, sVert, usage);
         _vertexBufferObject.Use();
 
-        _elementBufferObject = new BufferModel<uint>(BufferTarget.ElementArrayBuffer, sIndx, usage);
+        _elementBufferObject = new Buffer<uint>(BufferTarget.ElementArrayBuffer, sIndx, usage);
         _elementBufferObject.Use();
 
         IndexCount = sIndx.Length;
@@ -79,10 +77,7 @@ public class VertexArrayModel : IDisposable
     {
         GL.BindVertexArray(Handle);
 
-        if (GraphicsModel.CheckErrors())
-        {
-            Logger.LogError("Failed to use vertex array.");
-        }
+        Logger.CheckErrors("Failed to use vertex array.");
     }
 
 
@@ -97,11 +92,11 @@ public class VertexArrayModel : IDisposable
             GL.DeleteVertexArray(Handle);
             _elementBufferObject.Dispose();
             _vertexBufferObject.Dispose();
-            _disposedValue = !GraphicsModel.CheckErrors("Failed to delete vertex array.", Logger);
+            _disposedValue = !Logger.CheckErrors("Failed to delete vertex array.");
         }
     }
 
-    ~VertexArrayModel()
+    ~VertexArray()
     {
         if (_disposedValue == false)
         {

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
+using Inchoqate.GUI.Logging;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel.Events;
-using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Inchoqate.GUI.ViewModel;
@@ -10,9 +10,9 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 {
     private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<StackEditorViewModel>();
 
-    private FrameBufferModel? _framebuffer1, _framebuffer2;
-    private PixelBufferModel? _pixelBuffer1, _pixelBuffer2;
-    private TextureModel? _sourceTexture;
+    private FrameBuffer? _framebuffer1, _framebuffer2;
+    private PixelBuffer? _pixelBuffer1, _pixelBuffer2;
+    private Texture? _sourceTexture;
     private readonly EditorNodeCollectionLinear _edits;
 
 
@@ -78,7 +78,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 
 
     // TODO: if the new size is smaller, don't dispose and just use a subset of the buffer.
-    private void ReloadBuffer(ref FrameBufferModel? buffer)
+    private void ReloadBuffer(ref FrameBuffer? buffer)
     {
         buffer?.Dispose();
         buffer = new((int)RenderSize.Width, (int)RenderSize.Height, out var success);
@@ -88,11 +88,11 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         }
     }
 
-    private void ReloadBuffer(ref PixelBufferModel? buffer)
+    private void ReloadBuffer(ref PixelBuffer? buffer)
     {
         buffer?.Dispose();
         buffer = new(
-            (int)RenderSize.Width * (int)RenderSize.Height * TextureModel.PixelDepth,
+            (int)RenderSize.Width * (int)RenderSize.Height * Texture.PixelDepth,
             (int)RenderSize.Width, (int)RenderSize.Height);
     }
 
@@ -120,9 +120,9 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 
         var edits = _edits.ToList();
 
-        PixelBufferModel pbDest = _pixelBuffer1!, pbSrc = _pixelBuffer2!;
-        FrameBufferModel fbDest = _framebuffer1!, fbSrc = _framebuffer2!;
-        IEditModel?  currentEdit = edits.First(), lastEdit = null;
+        PixelBuffer pbDest = _pixelBuffer1!, pbSrc = _pixelBuffer2!;
+        FrameBuffer fbDest = _framebuffer1!, fbSrc = _framebuffer2!;
+        IEdit?  currentEdit = edits.First(), lastEdit = null;
 
         SwapBuffers();
 
@@ -151,11 +151,11 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
             lastEdit = edit;
         }
 
-        if (lastEdit is IEditModel<TextureModel, FrameBufferModel> lastEditFrameBuffer)
+        if (lastEdit is IEdit<Texture, FrameBuffer> lastEditFrameBuffer)
         {
             Result = lastEditFrameBuffer.Destination;
         }
-        else if (lastEdit is IEditModel<PixelBufferModel, PixelBufferModel> lastEditPixelBuffer)
+        else if (lastEdit is IEdit<PixelBuffer, PixelBuffer> lastEditPixelBuffer)
         {
             Result = ConvertToFb(lastEditPixelBuffer.Destination, fbDest);
         }
@@ -168,13 +168,13 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 
         return true;
 
-        FrameBufferModel ConvertToFb(PixelBufferModel from, FrameBufferModel to)
+        FrameBuffer ConvertToFb(PixelBuffer from, FrameBuffer to)
         {
             to.Data.LoadData(from.Width, from.Height, from.Data);
             return to;
         }
 
-        PixelBufferModel ConvertToPb(TextureModel from, PixelBufferModel to)
+        PixelBuffer ConvertToPb(Texture from, PixelBuffer to)
         {
             to.LoadData(from);
             return to;
@@ -187,23 +187,23 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 
             switch (currentEdit)
             {
-                case IEditModel<TextureModel, FrameBufferModel> currentFb:
+                case IEdit<Texture, FrameBuffer> currentFb:
                     currentFb.Destination = fbDest;
                     currentFb.Sources = lastEdit switch
                     {
                         null => [_sourceTexture],
-                        IEditModel<PixelBufferModel, PixelBufferModel> lastPb => [ConvertToFb(lastPb.Destination, fbSrc).Data],
-                        IEditModel<TextureModel, FrameBufferModel> lastFb => [lastFb.Destination.Data],
+                        IEdit<PixelBuffer, PixelBuffer> lastPb => [ConvertToFb(lastPb.Destination, fbSrc).Data],
+                        IEdit<Texture, FrameBuffer> lastFb => [lastFb.Destination.Data],
                         _ => throw new NotSupportedException()
                     };
                     break;
-                case IEditModel<PixelBufferModel, PixelBufferModel> currentPb:
+                case IEdit<PixelBuffer, PixelBuffer> currentPb:
                     currentPb.Destination = pbDest;
                     currentPb.Sources = lastEdit switch
                     {
                         null => [ConvertToPb(_sourceTexture, pbSrc)], 
-                        IEditModel<PixelBufferModel, PixelBufferModel> lastPb => [lastPb.Destination],
-                        IEditModel<TextureModel, FrameBufferModel> lastFb => [ConvertToPb(lastFb.Destination.Data, pbSrc)],
+                        IEdit<PixelBuffer, PixelBuffer> lastPb => [lastPb.Destination],
+                        IEdit<Texture, FrameBuffer> lastFb => [ConvertToPb(lastFb.Destination.Data, pbSrc)],
                         _ => throw new NotSupportedException()
                     };
                     break;
@@ -212,7 +212,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
     }
 
 
-    public override void SetSource(TextureModel? value)
+    public override void SetSource(Texture? value)
     {
         if (value == _sourceTexture)
         {

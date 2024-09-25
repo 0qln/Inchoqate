@@ -2,29 +2,30 @@
 
 namespace Inchoqate.GUI.ViewModel.Events;
 
-public abstract class PropertyChangedEvent<TProperty> : EventViewModelBase
+public abstract class PropertyChangedEvent<TProperty, T> : EventViewModelBase
 {
-    [ViewProperty] public TProperty? OldValue { get; init; }
+    [ViewProperty]
+    public TProperty? Object { get; set; }
 
-    [ViewProperty] public TProperty? NewValue { get; init; }
+    [ViewProperty]
+    public T? NewValue { get; set; }
 
+    [ViewProperty]
+    public T? OldValue { get; set; }
 
     protected override bool InnerDo()
     {
-        if (NewValue is null)
-            return false;
-
-        return Setter(NewValue);
+        if (Object is null || NewValue is null) return false;
+        Setter(Object, NewValue);
+        return true;
     }
 
     protected override bool InnerUndo()
     {
-        if (OldValue is null)
-            return false;
-
-        return Setter(OldValue);
+        if (Object is null || OldValue is null) return false;
+        Setter(Object, OldValue);
+        return true;
     }
 
-
-    protected abstract bool Setter(TProperty value);
+    protected abstract void Setter(TProperty prop, T? val);
 }

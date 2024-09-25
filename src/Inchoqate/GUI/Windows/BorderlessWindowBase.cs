@@ -1,8 +1,8 @@
-﻿using Inchoqate.Logging;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using Inchoqate.GUI.Logging;
 
 namespace Inchoqate.GUI.Windows;
 

@@ -9,21 +9,19 @@ using System.Windows.Media;
 using Inchoqate.GUI.Converters;
 using Inchoqate.GUI.ViewModel.Events;
 using Newtonsoft.Json;
-using Inchoqate.Converters;
 
 namespace Inchoqate.GUI.ViewModel;
 
 public class EditImplGrayscaleViewModel : 
     EditBaseLinearShader,
-    IEventDelegate<IntensityChangedEvent>, 
-    IIntensityProperty,
+    IEventDelegate<IntensityChangedEvent>, IIntensityProperty,
     IDeserializable<EditImplGrayscaleViewModel>
 {
-    public IEventTree<EventViewModelBase> DelegationTarget { get; init; }
+    public IEventTree<EventViewModelBase>? DelegationTarget { get; init; }
 
-    IEventTree<IntensityChangedEvent> IEventDelegate<IntensityChangedEvent>.DelegationTarget => DelegationTarget;
+    IEventTree<IntensityChangedEvent>? IEventDelegate<IntensityChangedEvent>.DelegationTarget => DelegationTarget;
 
-    public override ObservableCollection<ContentControl> OptionControls { get; }
+    public override ObservableCollection<(Control, string)> OptionControls { get; }
 
     private double _intensity;
     private double _intensityChangeBegin;
@@ -31,8 +29,6 @@ public class EditImplGrayscaleViewModel :
 
     public const double IntensityMin = 0;
     public const double IntensityMax = 1;
-
-    public Guid Id { get; } = Guid.NewGuid();
 
     public double Intensity
     {
@@ -47,7 +43,7 @@ public class EditImplGrayscaleViewModel :
     {
         get => _weights;
         set => SetProperty(ref _weights, value,
-            validateValue: (_, vec) => vec.All(c => c is >= 0 and <= 1), // TODO: more checks?
+            validateValue: (_, vec) => vec.All(c => c is >= 0 and <= 1) && Math.Abs(vec.Sum() - 1) < 0.00001,
             onChanged: () => Shader?.SetUniform(nameof(_weights), value));
     }
 
@@ -64,7 +60,7 @@ public class EditImplGrayscaleViewModel :
             ExtSliderView.ValuesProperty,
             new Binding(nameof(Intensity))
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new ElementToArrayConverter<double>() });
-        intensityControl.ThumbDragCompleted += (s, e) => Delegate(new() {OldValue = _intensityChangeBegin, NewValue = _intensity });
+        intensityControl.ThumbDragCompleted += (s, e) => Delegate(new() { OldValue = _intensityChangeBegin, NewValue = _intensity });
         intensityControl.ThumbDragStarted += (s, e) => _intensityChangeBegin = Intensity;
 
         ExtSliderView weightsControl = new()
@@ -78,14 +74,14 @@ public class EditImplGrayscaleViewModel :
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });
 
         OptionControls = [
-            new() { Content = intensityControl, Name = nameof(Intensity) },
-            new() { Content = weightsControl, Name = nameof(Weights) }
+            (intensityControl, nameof(Intensity)),
+            (weightsControl, nameof(Weights))
         ];
     }
 
 
-    public override ShaderModel? GetShader(out bool success) =>
-        ShaderModel.FromUri(
+    public override Shader? GetShader(out bool success) =>
+        Model.Shader.FromUri(
             new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
             out success);
@@ -93,6 +89,6 @@ public class EditImplGrayscaleViewModel :
     public bool Delegate(IntensityChangedEvent @event) 
     {
         @event.Object = this;
-        return DelegationTarget.Novelty(@event, true);
+        return DelegationTarget?.Novelty(@event, true) ?? false;
     }
 }

@@ -40,4 +40,9 @@ public static class Utils
     {
         return predicate(v.X) && predicate(v.Y) && predicate(v.Z);
     }
+
+    public static float Sum(this Vector3 v)
+    {
+        return v.X + v.Y + v.Z;
+    }
 }

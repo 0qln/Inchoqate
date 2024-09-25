@@ -1,11 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace Inchoqate.GUI.Model;
+namespace Inchoqate.Graphics;
 
-public interface IEditorModel<in TSource, out TResult>
-    where TResult : IEditDestinationModel
-    where TSource : IEditSourceModel
+public interface IEditor<in TSource, out TResult>
+    where TResult : IEditDestination
+    where TSource : IEditSource
 {
     /// <summary>
     /// Compute the result of the render queue.
@@ -20,7 +20,7 @@ public interface IEditorModel<in TSource, out TResult>
     public void Invalidate();
 
     /// <summary>
-    /// Wether the result is computed or not.
+    /// Whether the result is computed or not.
     /// </summary>
     public bool Computed { get; }
 

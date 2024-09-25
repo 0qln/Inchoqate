@@ -1,27 +1,27 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using Microsoft.Extensions.Logging;
-using System.IO;
-using Inchoqate.Logging;
+﻿using System.IO;
 using System.Windows;
+using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace Inchoqate.GUI.Model;
+namespace Inchoqate.Graphics;
 
-public class ShaderModel : IDisposable
+public class Shader : IDisposable
 {
-    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<ShaderModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<Shader>();
 
     public readonly int Handle;
 
     private readonly Dictionary<string, int> _uniformLocations = [];
 
 
-    public static ShaderModel FromSource(string vertexSource, string fragmentSource, out bool success)
+    public static Shader FromSource(string vertexSource, string fragmentSource, out bool success)
     {
         return new(vertexSource, fragmentSource, out success);
     }
 
-    public static ShaderModel FromPath(string vertexPath, string fragmentPath, out bool success)
+    public static Shader FromPath(string vertexPath, string fragmentPath, out bool success)
     {
         var vertexSource = File.ReadAllText(vertexPath);
         var fragmentSource = File.ReadAllText(fragmentPath);
@@ -38,7 +38,7 @@ public class ShaderModel : IDisposable
         return reader.ReadToEnd();
     }
 
-    public static ShaderModel? FromUri(Uri vertex, Uri fragment, out bool success)
+    public static Shader? FromUri(Uri vertex, Uri fragment, out bool success)
     {
         // In the xaml designer, the URI cannot be resolved and throws.
         try
@@ -73,7 +73,7 @@ public class ShaderModel : IDisposable
             GL.CompileShader(Handle);
             GL.GetShader(Handle, ShaderParameter.CompileStatus, out var compileSuccess);
 
-            if (compileSuccess == 0 || GraphicsModel.CheckErrors())
+            if (compileSuccess == 0 || Logger.CheckErrors())
             {
                 Logger.LogError(
                     "OpenGL error while generating shader: Code:{error} | Info:{info}",
@@ -95,7 +95,7 @@ public class ShaderModel : IDisposable
             {
                 GL.DetachShader(_programHandle, Handle);
                 GL.DeleteShader(Handle);
-                _disposed = !GraphicsModel.CheckErrors("Failed to delete shader part.", Logger);
+                _disposed = !Logger.CheckErrors("Failed to delete shader part.");
             }
         } 
 
@@ -114,7 +114,7 @@ public class ShaderModel : IDisposable
         }
     }
 
-    public ShaderModel(string vertexSource, string fragmentSource, out bool success)
+    public Shader(string vertexSource, string fragmentSource, out bool success)
     {
         Handle = GL.CreateProgram();
 
@@ -138,7 +138,7 @@ public class ShaderModel : IDisposable
         GL.LinkProgram(Handle);
 
         GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out var successProgram);
-        if (successProgram == 0 || GraphicsModel.CheckErrors())
+        if (successProgram == 0 || Logger.CheckErrors())
         {
             Logger.LogError(
                 "OpenGL error while generating shader: Code:{error} | Info:{info}",
@@ -167,7 +167,7 @@ public class ShaderModel : IDisposable
             _uniformLocations.Add(key, location);
         }
 
-        success = !GraphicsModel.CheckErrors("Failed to setup up a shader", Logger);
+        success = !Logger.CheckErrors("Failed to setup up a shader");
     }
 
 
@@ -192,7 +192,7 @@ public class ShaderModel : IDisposable
             _ => () => Logger.LogWarning("Tried to set invalid uniform type {t}", typeof(T))
         }))();
 
-        if (GraphicsModel.CheckErrors())
+        if (Logger.CheckErrors())
             Logger.LogError("Failed to set uniform: [{n}, {v}]", name, value);
 
         return true;
@@ -203,8 +203,7 @@ public class ShaderModel : IDisposable
     {
         GL.UseProgram(Handle);
 
-        if (GraphicsModel.CheckErrors())
-            Logger.LogError("Failed to use shader");
+        Logger.CheckErrors("Failed to use shader");
     }
 
 
@@ -227,11 +226,11 @@ public class ShaderModel : IDisposable
         if (!_disposed)
         {
             GL.DeleteProgram(Handle);
-            _disposed = !GraphicsModel.CheckErrors("Failed to delete shader", Logger);
+            _disposed = !Logger.CheckErrors("Failed to delete shader");
         }
     }
 
-    ~ShaderModel()
+    ~Shader()
     {
         // https://www.khronos.org/opengl/wiki/Common_Mistakes#The_Object_Oriented_Language_Problem
         // The OpenGL resources have to be released from a thread with an active OpenGL Context.

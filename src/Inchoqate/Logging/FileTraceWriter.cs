@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 
-namespace Inchoqate.GUI.Logging;
+namespace Inchoqate.Logging;
 
 /// <summary>
 /// Provides a trace writer that writes to a file.
