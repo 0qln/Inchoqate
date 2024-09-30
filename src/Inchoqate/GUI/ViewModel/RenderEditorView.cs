@@ -1,6 +1,6 @@
-﻿using Inchoqate.GUI.Model;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
+using Inchoqate.Graphics;
 using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.ViewModel;

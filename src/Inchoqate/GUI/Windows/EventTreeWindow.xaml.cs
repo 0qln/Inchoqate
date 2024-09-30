@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
+using Inchoqate.CustomControls;
 using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.Windows;
 
-public partial class EventTreeWindow : BorderlessWindowBase
+public partial class EventTreeWindow : BorderlessWindow
 {
     // TODO: make readonly
     public static readonly DependencyProperty EventTreesProperty = 

@@ -1,7 +1,7 @@
-﻿using System.Windows.Controls;
-using Inchoqate.GUI.Logging;
+﻿using Inchoqate.Graphics;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel.Events;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Inchoqate.GUI.ViewModel;

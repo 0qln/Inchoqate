@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using Inchoqate.GUI.Converters;
+using Inchoqate.Converters;
 using Inchoqate.GUI.ViewModel;
 
 namespace Inchoqate.GUI.View
@@ -17,5 +17,5 @@ namespace Inchoqate.GUI.View
         }
     }
 
-    public class PurenessConverter() : SelectBackConverter<string?, int?>(s => int.TryParse(s, out var value) ? value : null);
+    public class PurenessConverter() : SelectConverter<int?, string?>(convertBack: s => int.TryParse(s, out var value) ? value : null);
 }

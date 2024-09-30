@@ -1,13 +1,15 @@
 ﻿using Inchoqate.GUI.Model;
-using Inchoqate.GUI.View;
 using OpenTK.Graphics.OpenGL4;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Data;
 using OpenTK.Mathematics;
 using System.Windows.Media;
+using Inchoqate.Converters;
+using Inchoqate.Graphics;
 using Inchoqate.GUI.Converters;
 using Inchoqate.GUI.ViewModel.Events;
+using Inchoqate.UserControls;
 using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;
@@ -55,21 +57,21 @@ public class EditImplGrayscaleViewModel :
         Weights = new(0.2126f, 0.7152f, 0.0722f);
         Title = "Grayscale";
 
-        ExtSliderView intensityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity], ShowValues = [true] };
+        ExtSlider intensityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity], ShowValues = [true] };
         intensityControl.SetBinding(
-            ExtSliderView.ValuesProperty,
+            ExtSlider.ValuesProperty,
             new Binding(nameof(Intensity))
-                { Source = this, Mode = BindingMode.TwoWay, Converter = new ElementToArrayConverter<double>() });
+                { Source = this, Mode = BindingMode.TwoWay, Converter = new ArrayBoxingConverter<double>() });
         intensityControl.ThumbDragCompleted += (s, e) => Delegate(new() { OldValue = _intensityChangeBegin, NewValue = _intensity });
         intensityControl.ThumbDragStarted += (s, e) => _intensityChangeBegin = Intensity;
 
-        ExtSliderView weightsControl = new()
+        ExtSlider weightsControl = new()
         {
             RangeCount = 3, Minimum = 0, Maximum = 1,
             BackgroundGradientBrushes = [Colors.Red, Colors.Green, Colors.Blue], ShowRanges = [true, true, true]
         };
         weightsControl.SetBinding(
-            ExtSliderView.RangesProperty,
+            ExtSlider.RangesProperty,
             new Binding(nameof(Weights))
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });
 
@@ -81,7 +83,7 @@ public class EditImplGrayscaleViewModel :
 
 
     public override Shader? GetShader(out bool success) =>
-        Model.Shader.FromUri(
+        Shader.FromUri(
             new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
             out success);

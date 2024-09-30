@@ -2,9 +2,9 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Inchoqate.GUI.Converters;
+namespace Inchoqate.Converters;
 
-// The 'fallbackPredicate' dertermines whether the fallback value should be returned or not.
+// The 'fallbackPredicate' determines whether the fallback value should be returned or not.
 // The 'IndexTransform' is used to transform the index before it is used.
 public class ElementAtConverter<T>(
     int? index = null,
@@ -55,6 +55,6 @@ public class ElementAtConverter<T>(
 
     public virtual object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }

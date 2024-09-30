@@ -1,13 +1,13 @@
-﻿using Inchoqate.GUI.Converters;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Inchoqate.Converters;
 
-namespace Inchoqate.GUI.View;
+namespace Inchoqate.UserControls;
 
 // TODO: implement remaining features
 /// <summary>
@@ -16,12 +16,12 @@ namespace Inchoqate.GUI.View;
 ///     - Keyboard navigation
 ///     - Naming the thumbs with title and value bindings
 /// </summary>
-public partial class ExtSliderView : UserControl
+public partial class ExtSlider : UserControl
 {
     public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(
         nameof(Minimum),
         typeof(double),
-        typeof(ExtSliderView),
+        typeof(ExtSlider),
         new FrameworkPropertyMetadata(
             0.0,
             FrameworkPropertyMetadataOptions.AffectsArrange |
@@ -30,7 +30,7 @@ public partial class ExtSliderView : UserControl
     public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(
         nameof(Maximum),
         typeof(double),
-        typeof(ExtSliderView),
+        typeof(ExtSlider),
         new FrameworkPropertyMetadata(
             1.0,
             FrameworkPropertyMetadataOptions.AffectsArrange |
@@ -42,7 +42,7 @@ public partial class ExtSliderView : UserControl
         DependencyProperty.RegisterAttached(
             "Values",
             typeof(double[]),
-            typeof(ExtSliderView),
+            typeof(ExtSlider),
             new FrameworkPropertyMetadata(
                 propertyChangedCallback: ValuespropertyChangedCallback,
                 coerceValueCallback: ValuespropertyCoerceValueCallback));
@@ -51,7 +51,7 @@ public partial class ExtSliderView : UserControl
         DependencyProperty.RegisterAttached(
             "Ranges",
             typeof(double[]),
-            typeof(ExtSliderView),
+            typeof(ExtSlider),
             new FrameworkPropertyMetadata(
                 propertyChangedCallback: RangespropertyChangedCallback,
                 coerceValueCallback: RangespropertyCoerceValueCallback));
@@ -59,7 +59,7 @@ public partial class ExtSliderView : UserControl
     public static readonly DependencyProperty ValueCountProperty = DependencyProperty.Register(
         nameof(ValueCount),
         typeof(int),
-        typeof(ExtSliderView),
+        typeof(ExtSlider),
         new FrameworkPropertyMetadata(
             1,
             FrameworkPropertyMetadataOptions.AffectsArrange |
@@ -69,7 +69,7 @@ public partial class ExtSliderView : UserControl
     public static readonly DependencyProperty RangeCountProperty = DependencyProperty.Register(
         nameof(RangeCount),
         typeof(int),
-        typeof(ExtSliderView),
+        typeof(ExtSlider),
         new FrameworkPropertyMetadata(
             2,
             FrameworkPropertyMetadataOptions.AffectsArrange |
@@ -80,7 +80,7 @@ public partial class ExtSliderView : UserControl
         DependencyProperty.Register(
             nameof(ShowValues),
             typeof(bool[]),
-            typeof(ExtSliderView),
+            typeof(ExtSlider),
             new FrameworkPropertyMetadata(
                 null,
                 FrameworkPropertyMetadataOptions.AffectsRender));
@@ -90,7 +90,7 @@ public partial class ExtSliderView : UserControl
         DependencyProperty.Register(
             nameof(ShowRanges),
             typeof(bool[]),
-            typeof(ExtSliderView),
+            typeof(ExtSlider),
             new FrameworkPropertyMetadata(
                 null,
                 FrameworkPropertyMetadataOptions.AffectsRender));
@@ -99,11 +99,9 @@ public partial class ExtSliderView : UserControl
         DependencyProperty.Register(
             nameof(BackgroundGradientBrushes),
             typeof(Color[]),
-            typeof(ExtSliderView),
+            typeof(ExtSlider),
             new FrameworkPropertyMetadata(
-                new [] { 
-                    (Color)((App)Application.Current).ThemeDictionary["Element_Idle_3"]
-                },
+                null,
                 FrameworkPropertyMetadataOptions.AffectsRender));
 
 
@@ -198,7 +196,7 @@ public partial class ExtSliderView : UserControl
     }
 
 
-    public ExtSliderView()
+    public ExtSlider()
     {
         InitializeComponent();
 
@@ -208,7 +206,7 @@ public partial class ExtSliderView : UserControl
 
     private static void RangespropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var slider = (ExtSliderView)d;
+        var slider = (ExtSlider)d;
         var ranges = (double[])e.NewValue;
         var values = new double[ranges.Length - 1];
             
@@ -222,7 +220,7 @@ public partial class ExtSliderView : UserControl
 
     private static object RangespropertyCoerceValueCallback(DependencyObject d, object baseValue)
     {
-        var extSlider = (ExtSliderView)d;
+        var extSlider = (ExtSlider)d;
 
         switch (baseValue)
         {
@@ -240,7 +238,7 @@ public partial class ExtSliderView : UserControl
 
     private static void ValuespropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var slider = (ExtSliderView)d;
+        var slider = (ExtSlider)d;
         var values = (double[])e.NewValue;
         var ranges = new double[values.Length + 1];
             
@@ -255,7 +253,7 @@ public partial class ExtSliderView : UserControl
 
     private static object ValuespropertyCoerceValueCallback(DependencyObject d, object baseValue)
     {
-        var extSlider = (ExtSliderView)d;
+        var extSlider = (ExtSlider)d;
 
         switch (baseValue)
         {
@@ -438,7 +436,7 @@ public class SliderInfoAdorner : Adorner
             typeof(Brush),
             typeof(SliderInfoAdorner),
             new FrameworkPropertyMetadata(
-                new SolidColorBrush((Color)((App)Application.Current).ThemeDictionary["Text_2"]),
+                null,
                 FrameworkPropertyMetadataOptions.AffectsRender));
 
     public static readonly DependencyProperty BackgroundBrushProperty =
@@ -447,7 +445,7 @@ public class SliderInfoAdorner : Adorner
             typeof(Brush),
             typeof(SliderInfoAdorner),
             new FrameworkPropertyMetadata(
-                new SolidColorBrush((Color)((App)Application.Current).ThemeDictionary["Popup_Idle_1"]),
+                null,
                 FrameworkPropertyMetadataOptions.AffectsRender));
 
 
@@ -590,7 +588,7 @@ public class SliderInfoAdorner : Adorner
 
 
 public class CountToSliderConverter() 
-    : CountToControlsConverter<SliderPart>((_, container, index) =>
+    : CountToObservableCollectionConverter<SliderPart>((_, container, index) =>
     {
         var prevSlider = index > 0 ? container[index - 1] : null;
         var slider = new SliderPart(prevSlider) { Name = $"Slider{index}", Index = index };
@@ -656,7 +654,7 @@ public class SliderPart : Slider
     public static readonly DependencyProperty ExtSliderProperty =
         DependencyProperty.Register(
             nameof(ExtSlider),
-            typeof(ExtSliderView),
+            typeof(ExtSlider),
             typeof(SliderPart),
             new FrameworkPropertyMetadata(
                 null,
@@ -748,9 +746,9 @@ public class SliderPart : Slider
         set => SetValue(RangeProperty, value);
     }
 
-    public ExtSliderView ExtSlider
+    public ExtSlider ExtSlider
     {
-        get => (ExtSliderView)GetValue(ExtSliderProperty);
+        get => (ExtSlider)GetValue(ExtSliderProperty);
         set => SetValue(ExtSliderProperty, value);
     }
 

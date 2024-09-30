@@ -7,11 +7,6 @@ namespace Inchoqate.GUI;
 
 public static class Utils
 {
-    public static double Lerp(double min, double max, double t)
-    {
-        return min + (max - min) * t;
-    }
-
     public static TTarget FindVisualChildOfType<TTarget>(DependencyObject reference)
         where TTarget : DependencyObject
     {

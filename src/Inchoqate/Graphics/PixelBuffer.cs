@@ -16,17 +16,17 @@ public class PixelBuffer(int size, int width, int height) : IDisposable, IEditSo
     public readonly int Width = width, Height = height;
 
 
-    public static PixelBuffer FromGpu(TextureModel buffer)
+    public static PixelBuffer FromGpu(Texture buffer)
     {
         PixelBuffer result = new(buffer.Stride * buffer.Height, buffer.Width, buffer.Height);
         result.LoadData(buffer);
         return result;
     }
 
-    public void LoadData(TextureModel buffer)
+    public void LoadData(Texture buffer)
     {
         buffer.Use();
-        GL.GetnTexImage(TextureTarget.Texture2D, 0, TextureModel.GLPixelFormat, TextureModel.GLPixelType, Data.Length, Data);
+        GL.GetnTexImage(TextureTarget.Texture2D, 0, Texture.GLPixelFormat, Texture.GLPixelType, Data.Length, Data);
 
         Logger.CheckErrors("Failed to load data from texture");
     }

@@ -1,5 +1,4 @@
-﻿using Inchoqate.GUI.ViewModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.Model;
 

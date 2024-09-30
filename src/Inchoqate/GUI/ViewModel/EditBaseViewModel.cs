@@ -1,7 +1,6 @@
-﻿using Inchoqate.GUI.Model;
-using MvvmHelpers;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using Inchoqate.Graphics;
 using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;

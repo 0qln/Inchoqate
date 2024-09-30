@@ -1,5 +1,6 @@
-﻿using Inchoqate.GUI.Logging;
-using Inchoqate.GUI.Model;
+﻿using Inchoqate.GUI.Model;
+using Inchoqate.GUI.View;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Inchoqate.GUI.ViewModel.Events;

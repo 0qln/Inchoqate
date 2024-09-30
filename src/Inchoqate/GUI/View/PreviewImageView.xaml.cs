@@ -4,7 +4,7 @@ using Inchoqate.GUI.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Inchoqate.GUI.Logging;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Wpf;

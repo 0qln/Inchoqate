@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Windows.Data;
 
-namespace Inchoqate.GUI.Converters;
+namespace Inchoqate.Converters;
 
 public class SubtractionConverter<T> : IMultiValueConverter
     where T : ISubtractionOperators<T, T, T>
@@ -16,6 +16,6 @@ public class SubtractionConverter<T> : IMultiValueConverter
 
     object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
-        throw new InvalidOperationException();
+        throw new NotSupportedException();
     }
 }

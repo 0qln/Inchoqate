@@ -2,17 +2,17 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using Inchoqate.GUI.Converters;
-using Inchoqate.GUI.Logging;
+using Inchoqate.Converters;
+using Inchoqate.Graphics;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.View;
 using Inchoqate.GUI.ViewModel.Events;
+using Inchoqate.Logging;
+using Inchoqate.UserControls;
 using Microsoft.Extensions.Logging;
 using Sorting;
 using Sorting.Pixels._32;
-using Sorting.Pixels.Comparer;
 
 namespace Inchoqate.GUI.ViewModel;
 
@@ -35,10 +35,10 @@ public class EditImplPixelSorterViewModel :
     {
         Title = "Pixel Sorter";
 
-        ExtSliderView angleControl = new() { Minimum = AngleMin, Maximum = AngleMax, Values = [0], ShowValues = [true] };
+        ExtSlider angleControl = new() { Minimum = AngleMin, Maximum = AngleMax, Values = [0], ShowValues = [true] };
         angleControl.SetBinding(
-            ExtSliderView.ValuesProperty,
-            new Binding(nameof(Angle)) { Source = this, Mode = BindingMode.TwoWay, Converter = new ElementToArrayConverter<double>() });
+            ExtSlider.ValuesProperty,
+            new Binding(nameof(Angle)) { Source = this, Mode = BindingMode.TwoWay, Converter = new ArrayBoxingConverter<double>() });
         angleControl.ThumbDragStarted += (_, _) => _angleChangeBegin = _angle;
         angleControl.ThumbDragCompleted += (_, _) => Delegate(new AngleChangedEvent { OldValue = _angleChangeBegin, NewValue = _angle });
 

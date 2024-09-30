@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Inchoqate.GUI.Logging;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

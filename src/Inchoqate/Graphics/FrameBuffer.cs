@@ -9,10 +9,10 @@ public class FrameBuffer : IDisposable, IEditDestination
     private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<FrameBuffer>();
 
     public readonly int Handle;
-    public readonly TextureModel Data;
+    public readonly Texture Data;
 
 
-    public FrameBuffer(TextureModel texture, out bool success)
+    public FrameBuffer(Texture texture, out bool success)
     {    
         Handle = GL.GenFramebuffer();
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
@@ -37,12 +37,12 @@ public class FrameBuffer : IDisposable, IEditDestination
     }
 
     public FrameBuffer(PixelBuffer buffer, out bool success)
-        : this(TextureModel.FromData(buffer.Width, buffer.Height, buffer.Data), out success)
+        : this(Texture.FromData(buffer.Width, buffer.Height, buffer.Data), out success)
     { 
     }
 
     public FrameBuffer(int width, int height, out bool success)
-        : this(TextureModel.FromData(width, height), out success)
+        : this(Texture.FromData(width, height), out success)
     {
     }
 

@@ -20,38 +20,34 @@
 
   <ItemGroup>
     <None Remove="image.jpg" />
-    <None Remove="Shaders\Base.frag" />
-    <None Remove="Shaders\Base.vert" />
-    <None Remove="Shaders\Grayscale.frag" />
-    <None Remove="Shaders\NoGreen.frag" />
-    <None Remove="Shaders\NoRed.frag" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Shaders\NoGreen.frag" />
-    <Resource Include="Shaders\NoRed.frag" />
+    <None Remove="Resources\icon.svg" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="0qln.PixelSorting" Version="1.2.0-pre" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <!--Newer versions of OpenTK seems to have breaking changes. Do not upgrade.-->
     <!--TODO: Why are there breaking changes?-->
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.3" />
     <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
+    <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
     <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Shaders\Base.frag">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    <ProjectReference Include="..\Converters\Converters.csproj" />
+    <ProjectReference Include="..\CustomControls\CustomControls.csproj" />
+    <ProjectReference Include="..\Graphics\Graphics.csproj" />
+    <ProjectReference Include="..\Logging\Logging.csproj" />
+    <ProjectReference Include="..\Misc\Misc.csproj" />
+    <ProjectReference Include="..\UserControls\UserControls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\icon.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Shaders\Base.vert">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Shaders\Grayscale.frag" />
   </ItemGroup>
 
 </Project>

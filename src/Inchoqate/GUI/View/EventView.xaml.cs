@@ -1,7 +1,6 @@
 ﻿using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;

@@ -1,13 +1,11 @@
-﻿using MvvmHelpers;
-using Inchoqate.GUI.Model;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 using System.Windows;
-using OpenTK.Wpf;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.ComponentModel;
-using Inchoqate.GUI.Logging;
+using Inchoqate.Graphics;
+using Inchoqate.Logging;
 using PointF = System.Drawing.PointF;
 
 namespace Inchoqate.GUI.ViewModel;

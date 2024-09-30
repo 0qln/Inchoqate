@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Inchoqate.GUI.View;
-using MvvmHelpers;
 using System.Windows;
 using System.Windows.Input;
 

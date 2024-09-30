@@ -1,9 +1,11 @@
-﻿namespace Inchoqate.GUI.Windows;
+﻿using Inchoqate.CustomControls;
+
+namespace Inchoqate.GUI.Windows;
 
 /// <summary>
 /// Interaction logic for FlowchartEditorWindow.xaml
 /// </summary>
-public partial class FlowchartEditorWindow : BorderlessWindowBase
+public partial class FlowchartEditorWindow : BorderlessWindow
 {
     public FlowchartEditorWindow()
     {

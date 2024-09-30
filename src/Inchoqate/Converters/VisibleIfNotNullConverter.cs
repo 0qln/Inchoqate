@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Inchoqate.GUI.Converters
+namespace Inchoqate.Converters
 {
     [ValueConversion(typeof(object), typeof(Visibility))]
     public class VisibleIfNotNullConverter : IValueConverter
@@ -19,9 +14,9 @@ namespace Inchoqate.GUI.Converters
         }
 
         /// <inheritdoc />
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

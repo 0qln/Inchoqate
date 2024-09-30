@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using Inchoqate.GUI.ViewModel;
-using Inchoqate.GUI.Model;
+﻿using Inchoqate.GUI.ViewModel;
 using System.Windows.Controls.Primitives;
 using System.Windows;
 using System.Windows.Controls;

@@ -1,10 +1,10 @@
 ﻿<UserControl 
-    x:Class="Inchoqate.GUI.View.ExtSliderView"
+    x:Class="Inchoqate.UserControls.ExtSlider"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:local="clr-namespace:Inchoqate.GUI.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Inchoqate.UserControls"
     mc:Ignorable="d" 
     d:DesignHeight="50" d:DesignWidth="300"
     x:Name="ControlRoot">
@@ -311,13 +311,13 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="local:SliderPart">
-                        <Setter Property="Minimum" Value="{Binding Minimum, RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
-                        <Setter Property="Maximum" Value="{Binding Maximum, RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
-                        <Setter Property="ExtSlider" Value="{Binding RelativeSource={RelativeSource AncestorType=local:ExtSliderView}}"/>
+                        <Setter Property="Minimum" Value="{Binding Minimum, RelativeSource={RelativeSource AncestorType=local:ExtSlider}}"/>
+                        <Setter Property="Maximum" Value="{Binding Maximum, RelativeSource={RelativeSource AncestorType=local:ExtSlider}}"/>
+                        <Setter Property="ExtSlider" Value="{Binding RelativeSource={RelativeSource AncestorType=local:ExtSlider}}"/>
                         <Setter Property="Value">
                             <Setter.Value>
                                 <MultiBinding Converter="{StaticResource SliderValueIndexer}" Mode="OneWay">
-                                    <Binding Path="Values" RelativeSource="{RelativeSource AncestorType=local:ExtSliderView}"/>
+                                    <Binding Path="Values" RelativeSource="{RelativeSource AncestorType=local:ExtSlider}"/>
                                     <Binding Path="Index" RelativeSource="{RelativeSource Mode=Self}"/>
                                 </MultiBinding>
                             </Setter.Value>
@@ -325,7 +325,7 @@
                         <Setter Property="ShowValue">
                             <Setter.Value>
                                 <MultiBinding Converter="{StaticResource SliderShowValueIndexer}" Mode="OneWay">
-                                    <Binding Path="ShowValues" RelativeSource="{RelativeSource AncestorType=local:ExtSliderView}"/>
+                                    <Binding Path="ShowValues" RelativeSource="{RelativeSource AncestorType=local:ExtSlider}"/>
                                     <Binding Path="Index" RelativeSource="{RelativeSource Mode=Self}"/>
                                 </MultiBinding>
                             </Setter.Value>

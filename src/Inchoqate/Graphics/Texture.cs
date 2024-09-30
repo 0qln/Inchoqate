@@ -8,9 +8,9 @@ using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace Inchoqate.Graphics;
 
-public class TextureModel : IDisposable, IEditSource
+public class Texture : IDisposable, IEditSource
 {
-    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<TextureModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<Texture>();
 
     public readonly int Handle;
 
@@ -59,7 +59,7 @@ public class TextureModel : IDisposable, IEditSource
     public TextureUnit Unit;
 
 
-    private TextureModel(TextureUnit unit = TextureUnit.Texture0)
+    private Texture(TextureUnit unit = TextureUnit.Texture0)
     {
         Handle = GL.GenTexture();
         Unit = unit;
@@ -79,7 +79,7 @@ public class TextureModel : IDisposable, IEditSource
         BorderColor = Color.FromRgb(255, 99, 71);
     }
 
-    public static TextureModel? FromFile(string path, TextureUnit unit = TextureUnit.Texture0)
+    public static Texture? FromFile(string path, TextureUnit unit = TextureUnit.Texture0)
     {
         if (!File.Exists(path))
             return null;
@@ -98,9 +98,9 @@ public class TextureModel : IDisposable, IEditSource
         }
     }
 
-    public static TextureModel FromData(int width, int height, byte[]? data = null, TextureUnit unit = TextureUnit.Texture0)
+    public static Texture FromData(int width, int height, byte[]? data = null, TextureUnit unit = TextureUnit.Texture0)
     {
-        var result = new TextureModel(unit)
+        var result = new Texture(unit)
         {
             Width = width,
             Height = height
@@ -147,7 +147,7 @@ public class TextureModel : IDisposable, IEditSource
         }
     }
 
-    ~TextureModel()
+    ~Texture()
     {
         if (_disposed == false)
         {

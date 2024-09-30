@@ -1,5 +1,5 @@
-﻿using Inchoqate.GUI.Logging;
-using Inchoqate.GUI.Model;
+﻿using Inchoqate.Graphics;
+using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 

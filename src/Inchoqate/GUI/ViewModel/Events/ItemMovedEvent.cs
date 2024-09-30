@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using Inchoqate.GUI.Model;
-using Newtonsoft.Json;
+﻿using Inchoqate.GUI.Model;
+using Inchoqate.GUI.View;
 
 namespace Inchoqate.GUI.ViewModel.Events;
 

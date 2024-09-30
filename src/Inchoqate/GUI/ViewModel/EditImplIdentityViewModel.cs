@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using Inchoqate.GUI.Model;
+using Inchoqate.Graphics;
 using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.ViewModel;
@@ -17,7 +17,7 @@ public class EditImplIdentityViewModel : EditBaseLinearShader
 
     public override Shader? GetShader(out bool success)
     {
-        return Model.Shader.FromUri(
+        return Shader.FromUri(
             new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
             new("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
             out success);
