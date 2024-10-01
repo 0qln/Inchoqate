@@ -45,31 +45,30 @@
                             </MultiBinding>
                         </Border.BorderThickness>
                         <Canvas ClipToBounds="True">
-                        <Canvas.Clip>
-                                    <MultiBinding Converter="{StaticResource BorderToContentSizeConverter}">
-                                        <Binding Path="ActualWidth" ElementName="WindowContainer" />
-                                        <Binding Path="ActualHeight" ElementName="WindowContainer" />
-                                        <Binding Path="CornerRadius" ElementName="WindowContainer" />
-                                        <Binding Path="BorderThickness" ElementName="WindowContainer" />
-                                    </MultiBinding>
-                        </Canvas.Clip>
+                            <Canvas.Clip>
+                                <MultiBinding Converter="{StaticResource BorderToContentSizeConverter}">
+                                    <Binding Path="ActualWidth" ElementName="WindowContainer" />
+                                    <Binding Path="ActualHeight" ElementName="WindowContainer" />
+                                    <Binding Path="CornerRadius" ElementName="WindowContainer" />
+                                    <Binding Path="BorderThickness" ElementName="WindowContainer" />
+                                </MultiBinding>
+                            </Canvas.Clip>
                             <Grid
                                 Height="{Binding TitlebarHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                 Width="{TemplateBinding Width}">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>                                <StackPanel
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel
                                     Grid.Column="3"
                                     VerticalAlignment="Top"
                                     Orientation="Horizontal">
                                     <StackPanel.Resources>
                                         <Style x:Key="DefaultStyle" TargetType="Button">
-                                            <Setter Property="Width"
-                                                    Value="{Binding ActualHeight, RelativeSource={RelativeSource Mode=Self}}" />
-                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Width" Value="{Binding ActualHeight, RelativeSource={RelativeSource Mode=Self}}" />
                                             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
                                         </Style>
                                     </StackPanel.Resources>
@@ -94,7 +93,7 @@
                                     Grid.Column="0"
                                     Width="{TemplateBinding TitlebarHeight}"
                                     Height="{TemplateBinding TitlebarHeight}"
-                                    Content="{TemplateBinding Icon}"/>
+                                    Content="{TemplateBinding Icon}" />
                                 <TextBlock
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
@@ -112,14 +111,13 @@
                                 Canvas.Top="{Binding TitlebarHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                 Content="{TemplateBinding Content}"
                                 Width="{TemplateBinding Width}"
-                                Height="{TemplateBinding Height}"/>
+                                Height="{TemplateBinding Height}" />
                         </Canvas>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsActive" Value="True">
                             <Trigger.Setters>
-                                <Setter Property="BorderBrush" TargetName="WindowContainer"
-                                        Value="LightSlateGray" />
+                                <Setter Property="BorderBrush" TargetName="WindowContainer" Value="LightSlateGray" />
                             </Trigger.Setters>
                         </Trigger>
                     </ControlTemplate.Triggers>
