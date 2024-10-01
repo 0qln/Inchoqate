@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
-using Inchoqate.CustomControls;
+using Inchoqate.CustomControls.BorderlessWindow;
 using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.Windows;

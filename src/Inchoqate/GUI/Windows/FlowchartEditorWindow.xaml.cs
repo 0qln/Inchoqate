@@ -1,4 +1,4 @@
-﻿using Inchoqate.CustomControls;
+﻿using Inchoqate.CustomControls.BorderlessWindow;
 
 namespace Inchoqate.GUI.Windows;
 

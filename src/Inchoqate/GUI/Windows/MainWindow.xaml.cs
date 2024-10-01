@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Inchoqate.CustomControls;
+using Inchoqate.CustomControls.BorderlessWindow;
 using Inchoqate.Graphics;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;

@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -7,7 +6,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using MvvmHelpers.Commands;
 
-namespace Inchoqate.CustomControls;
+namespace Inchoqate.CustomControls.BorderlessWindow;
 
 public class BorderlessWindow : Window
 {
@@ -17,15 +16,6 @@ public class BorderlessWindow : Window
             typeof(BorderlessWindow),
             new FrameworkPropertyMetadata(typeof(BorderlessWindow)));
     }
-
-    public static readonly DependencyProperty TitleBrushProperty =
-        DependencyProperty.Register(
-            nameof(TitleBrush),
-            typeof(Brush),
-            typeof(BorderlessWindow),
-            new FrameworkPropertyMetadata(
-                Brushes.White,
-                FrameworkPropertyMetadataOptions.AffectsRender));
 
     public new static readonly DependencyProperty IconProperty =
         DependencyProperty.Register(
@@ -103,36 +93,11 @@ public class BorderlessWindow : Window
             Converter = new HeightBindingConverter(this),
             Mode = BindingMode.TwoWay
         };
-        heightBinding.Bindings.Add(new Binding(nameof(Height)) { Source = this });
+        heightBinding.Bindings.Add(new Binding(nameof(ActualHeight)) { Source = this });
         heightBinding.Bindings.Add(new Binding(nameof(TitlebarHeight)) { Source = this });
         SetBinding(ContentHeightProperty, heightBinding);
 
         Loaded += OnLoaded;
-    }
-
-    private class HeightBindingConverter(BorderlessWindow source) : IMultiValueConverter
-    {
-        /// <inheritdoc />
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            var height = (double)values[0];
-            var titlebarHeight = (double)values[1];
-            return height - titlebarHeight;
-        }
-
-        /// <inheritdoc />
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            var height = source.Height;
-            var contentHeight = (double)value;
-            return [ height, height - contentHeight ];
-        }
-    }
-
-    public Brush TitleBrush
-    {
-        get => (Brush)GetValue(TitleBrushProperty);
-        set => SetValue(TitleBrushProperty, value);
     }
 
     public new object? Icon
@@ -267,62 +232,5 @@ public class BorderlessWindow : Window
     private struct Rect
     {
         public int left, top, right, bottom;
-    }
-}
-
-public class BorderlessWinCornerConverter : IMultiValueConverter
-{
-    object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-    {
-        var state = (WindowState)values[0];
-        var corner = (CornerRadius)values[1];
-        return state == WindowState.Normal ? corner : new CornerRadius(0);
-    }
-
-    object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class BorderlessWinBorderThicknessConverter : IMultiValueConverter
-{
-    object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-    {
-        var state = (WindowState)values[0];
-        var corner = (Thickness)values[1];
-        return state == WindowState.Normal ? corner : new Thickness(0);
-    }
-
-    object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-internal class BorderToContentSizeConverter : IMultiValueConverter
-{
-    object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-    {
-        var width = (double)values[0];
-        var height = (double)values[1];
-        var cornerRadius = (CornerRadius)values[2];
-        var borderThickness = (Thickness)values[3];
-
-        return new RectangleGeometry
-        {
-            RadiusX = cornerRadius.TopRight,
-            RadiusY = cornerRadius.TopRight,
-            Rect = new Rect
-            {
-                Width = Math.Max(0, width - borderThickness.Left - borderThickness.Right),
-                Height = Math.Max(0, height - borderThickness.Top - borderThickness.Bottom),
-            }
-        };
-    }
-
-    object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
     }
 }
