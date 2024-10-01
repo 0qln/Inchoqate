@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <menuButton:MenuPositionToRowConverter x:Key="MenuPositionToRowConverter" />
         <menuButton:MenuPositionToColumnConverter x:Key="MenuPositionToColumnConverter" />
-        <menuButton:KeyBindingToStringConverter x:Key="KeyBindingToStringConverter" />
+        <menuButton:MenuButtonToKeyBindingConverter x:Key="MenuButtonToKeyBindingConverter" />
         <menuButton:MenuButtonToContentConverter x:Key="MenuButtonToContentConverter" />
         <menuButton:MenuButtonToMenuItemsConverter x:Key="MenuButtonToMenuConverter" />
         <menuButton:MenuButtonToCommandConverter x:Key="MenuButtonToCommandConverter" />
@@ -64,7 +64,7 @@
                                     Content="{Binding ., Converter={StaticResource MenuButtonToContentConverter}}" />
                                 <TextBlock
                                     Grid.Column="2"
-                                    Text="{Binding KeyBinding, Converter={StaticResource KeyBindingToStringConverter}}" />
+                                    Text="{Binding ., Converter={StaticResource MenuButtonToKeyBindingConverter}}" />
                                 <!--TODO: expandable indicator-->
                                 <ContentPresenter
                                     Grid.Column="4"

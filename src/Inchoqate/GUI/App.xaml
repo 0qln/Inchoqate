@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:win="clr-namespace:Inchoqate.GUI.Windows"
              xmlns:conv="clr-namespace:Inchoqate.GUI.Converters"
-             xmlns:convBase="clr-namespace:Inchoqate.Converters;assembly=Converters">
+             xmlns:convBase="clr-namespace:Inchoqate.Converters;assembly=Converters"
+             xmlns:mb="clr-namespace:Inchoqate.UserControls.MenuButton;assembly=UserControls">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -17,6 +18,8 @@
 
             <conv:VisibilityToIndicatorStringConverter x:Key="VisibilityToIndicatorStringConverter"/>
             <convBase:VisibleIfNotNullConverter x:Key="VisibleIfNotNullConverter" />
+
+            <Style x:Key="TitlebarMenuButtonStyle" TargetType="mb:MenuButton" />
 
         </ResourceDictionary>
     </Application.Resources>

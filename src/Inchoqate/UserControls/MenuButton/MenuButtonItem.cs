@@ -1,15 +1,10 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Inchoqate.UserControls.MenuButton;
 
 // ObservableCollection is gets treated in a special way by xaml.
 // It can be initialized in xaml and does not get ignored by DataTemplates.
-/// <summary>
-/// Insert the content in following oder:
-/// </summary>
 public class MenuButtonItem : ObservableCollection<object?>
 {
     public object? Icon { get; set; }
@@ -17,6 +12,8 @@ public class MenuButtonItem : ObservableCollection<object?>
     public KeyBinding? KeyBinding { get; set; }
 
     public ICommand? Command { get; set; }
+
+    public CommandBinding? CommandBinding { get; set; }
 
     internal MenuButton? Parent { get; set; }
 }

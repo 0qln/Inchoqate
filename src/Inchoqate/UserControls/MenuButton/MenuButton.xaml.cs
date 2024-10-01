@@ -9,7 +9,7 @@ namespace Inchoqate.UserControls.MenuButton;
 /// <summary>
 ///     Interaction logic for MenuButton.xaml
 /// </summary>
-[ContentProperty(nameof(ButtonContent))]
+[ContentProperty(nameof(MenuItems))]
 // ReSharper disable once RedundantExtendsListEntry
 public partial class MenuButton : UserControl
 {

@@ -18,7 +18,9 @@ public class MenuButtonToCommandConverter : IValueConverter
             return new RelayCommand(() =>
             {
                 menuButtonItem.Parent?.CollapseAll();
-                menuButtonItem.Command?.Execute(null);
+
+                var cmd = menuButtonItem.Command ?? menuButtonItem.CommandBinding?.Command;
+                cmd?.Execute(null);
             });
         }
 

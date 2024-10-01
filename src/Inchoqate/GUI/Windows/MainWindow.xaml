@@ -28,54 +28,18 @@
     </Window.Background>
 
     <Window.CommandBindings>
-        <CommandBinding
-            x:Name="UndoCmdBinding"
-            Command="ApplicationCommands.Undo"
-            Executed="UndoCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="RedoCmdBinding"
-            Command="ApplicationCommands.Redo"
-            Executed="RedoCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="OpenStackEditorCmdBinding"
-            Command="{x:Static local:MainWindow.OpenStackEditorCommand}"
-            Executed="OpenStackEditorCommand_Executed" />
-        <CommandBinding
-            x:Name="OpenFlowchartEditorCmdBinding"
-            Command="{x:Static local:MainWindow.OpenFlowchartEditorCommand}"
-            Executed="OpenFlowchartEditorCommand_Executed" />
-        <CommandBinding
-            x:Name="OpenUndoTreeCmdBinding"
-            Command="{x:Static local:MainWindow.OpenUndoTreeCommand}"
-            Executed="OpenUndoTreeCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="OpenImageCmdBinding"
-            Command="{x:Static local:MainWindow.OpenImageCommand}"
-            Executed="OpenImageCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="SaveImageCmdBinding"
-            Command="{x:Static local:MainWindow.SaveImageCommand}"
-            Executed="SaveImageCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="SaveProjectCmdBinding"
-            Command="{x:Static local:MainWindow.SaveProjectCommand}"
-            Executed="SaveProjectCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="LoadProjectCmdBinding"
-            Command="{x:Static local:MainWindow.LoadProjectCommand}"
-            Executed="LoadProjectCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="AddNodeGrayscaleCmdBinding"
-            Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}"
-            Executed="AddNodeGrayscaleCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="AddNodeNoGreenCmdBinding"
-            Command="{x:Static local:MainWindow.AddNodeNoGreenCommand}"
-            Executed="AddNodeNoGreenCmdBinding_Executed" />
-        <CommandBinding
-            x:Name="AddNodePixelSorterCmdBinding"
-            Command="{x:Static local:MainWindow.AddNodePixelSorterCommand}"
-            Executed="AddNodePixelSorterCmdBinding_Executed" />
+        <CommandBinding x:Name="UndoCmdBinding" Command="ApplicationCommands.Undo" Executed="UndoCmdBinding_Executed" />
+        <CommandBinding x:Name="RedoCmdBinding" Command="ApplicationCommands.Redo" Executed="RedoCmdBinding_Executed" />
+        <CommandBinding x:Name="OpenStackEditorCmdBinding" Command="{x:Static local:MainWindow.OpenStackEditorCommand}" Executed="OpenStackEditorCommand_Executed" />
+        <CommandBinding x:Name="OpenFlowchartEditorCmdBinding" Command="{x:Static local:MainWindow.OpenFlowchartEditorCommand}" Executed="OpenFlowchartEditorCommand_Executed" />
+        <CommandBinding x:Name="OpenUndoTreeCmdBinding" Command="{x:Static local:MainWindow.OpenUndoTreeCommand}" Executed="OpenUndoTreeCmdBinding_Executed" />
+        <CommandBinding x:Name="OpenImageCmdBinding" Command="{x:Static local:MainWindow.OpenImageCommand}" Executed="OpenImageCmdBinding_Executed" />
+        <CommandBinding x:Name="SaveImageCmdBinding" Command="{x:Static local:MainWindow.SaveImageCommand}" Executed="SaveImageCmdBinding_Executed" />
+        <CommandBinding x:Name="SaveProjectCmdBinding" Command="{x:Static local:MainWindow.SaveProjectCommand}" Executed="SaveProjectCmdBinding_Executed" />
+        <CommandBinding x:Name="LoadProjectCmdBinding" Command="{x:Static local:MainWindow.LoadProjectCommand}" Executed="LoadProjectCmdBinding_Executed" />
+        <CommandBinding x:Name="AddNodeGrayscaleCmdBinding" Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}" Executed="AddNodeGrayscaleCmdBinding_Executed" />
+        <CommandBinding x:Name="AddNodeNoGreenCmdBinding" Command="{x:Static local:MainWindow.AddNodeNoGreenCommand}" Executed="AddNodeNoGreenCmdBinding_Executed" />
+        <CommandBinding x:Name="AddNodePixelSorterCmdBinding" Command="{x:Static local:MainWindow.AddNodePixelSorterCommand}" Executed="AddNodePixelSorterCmdBinding_Executed" />
     </Window.CommandBindings>
 
     <customControls:BorderlessWindow.TitlebarContent>
@@ -90,140 +54,61 @@
                     ActivatedValue="{x:Static Visibility.Visible}"
                     Activate="{x:Static mb:MenuButton.ShowMenu}" />
             </StackPanel.DataContext>
-            <mb:MenuButton WindowChrome.IsHitTestVisibleInChrome="True"
-                           misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}">
-                <TextBlock>Menu Button 1</TextBlock>
-                <mb:MenuButton.MenuItems>
-                    <mb:MenuButtonItem>
-                        <mb:MenuButtonItem.KeyBinding>
-                            <KeyBinding Gesture="Ctrl+A" />
-                        </mb:MenuButtonItem.KeyBinding>
-                        <TextBlock Background="Blue" Foreground="White">Menu Button Item 1 (long name)</TextBlock>
-                    </mb:MenuButtonItem>
-                    <mb:MenuButtonItem>
-                        <mb:MenuButton Background="Green" MenuPosition="Right">
-                            <TextBlock Background="White">Menu Button Item 2 with a Menu Button as Item</TextBlock>
-                            <mb:MenuButton.MenuItems>
-                                <mb:MenuButtonItem>
-                                    <TextBlock Background="Blue" Foreground="White">Menu Button Item 2.1 (long name)</TextBlock>
-                                </mb:MenuButtonItem>
-                                <mb:MenuButtonItem>
-                                    <TextBlock Background="Red">Menu Button Item 2.2</TextBlock>
-                                </mb:MenuButtonItem>
-                            </mb:MenuButton.MenuItems>
-                        </mb:MenuButton>
-                    </mb:MenuButtonItem>
-                    <mb:MenuButtonItem>
-                        <TextBlock Background="Red">Menu Button Item 3</TextBlock>
-                    </mb:MenuButtonItem>
-                    <mb:MenuButtonItem>
-                        <TextBlock Background="Green">Menu Button Item 4</TextBlock>
-                    </mb:MenuButtonItem>
-                </mb:MenuButton.MenuItems>
+            <mb:MenuButton misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
+                           Style="{StaticResource TitlebarMenuButtonStyle}"
+                           ButtonContent="File">
+                <mb:MenuButtonItem CommandBinding="{x:Reference SaveImageCmdBinding}">
+                    <TextBlock> Save Image </TextBlock>
+                </mb:MenuButtonItem>
+                <mb:MenuButtonItem CommandBinding="{x:Reference OpenImageCmdBinding}">
+                    <TextBlock> Open Image </TextBlock>
+                </mb:MenuButtonItem>
+                <mb:MenuButtonItem CommandBinding="{x:Reference LoadProjectCmdBinding}">
+                    <TextBlock> Load Project </TextBlock>
+                </mb:MenuButtonItem>
+                <mb:MenuButtonItem CommandBinding="{x:Reference SaveProjectCmdBinding}">
+                    <TextBlock> Save Project </TextBlock>
+                </mb:MenuButtonItem>
             </mb:MenuButton>
-            <mb:MenuButton WindowChrome.IsHitTestVisibleInChrome="True"
-                           misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}">
-                <TextBlock>Menu Button 2</TextBlock>
-                <mb:MenuButton.MenuItems>
-                    <mb:MenuButtonItem>
-                        <mb:MenuButtonItem.KeyBinding>
-                            <KeyBinding Gesture="Ctrl+A" />
-                        </mb:MenuButtonItem.KeyBinding>
-                        <TextBlock Background="Blue" Foreground="White">Menu Button Item 1 (long name)</TextBlock>
-                    </mb:MenuButtonItem>
-                    <mb:MenuButtonItem>
-                        <mb:MenuButton Background="Green" MenuPosition="Right">
-                            <TextBlock Background="White">Menu Button Item 2 with a Menu Button as Item</TextBlock>
-                            <mb:MenuButton.MenuItems>
-                                <mb:MenuButtonItem>
-                                    <TextBlock Background="Blue" Foreground="White">Menu Button Item 2.1 (long name)</TextBlock>
-                                </mb:MenuButtonItem>
-                                <mb:MenuButtonItem>
-                                    <TextBlock Background="Red">Menu Button Item 2.2</TextBlock>
-                                </mb:MenuButtonItem>
-                            </mb:MenuButton.MenuItems>
-                        </mb:MenuButton>
-                    </mb:MenuButtonItem>
-                    <mb:MenuButtonItem>
-                        <TextBlock Background="Red">Menu Button Item 3</TextBlock>
-                    </mb:MenuButtonItem>
-                    <mb:MenuButtonItem>
-                        <TextBlock Background="Green">Menu Button Item 4</TextBlock>
-                    </mb:MenuButtonItem>
-                </mb:MenuButton.MenuItems>
+            <mb:MenuButton misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
+                           ButtonContent="Edit">
+                <mb:MenuButtonItem CommandBinding="{x:Reference OpenStackEditorCmdBinding}">
+                    <TextBlock> Open Stack editor </TextBlock>
+                </mb:MenuButtonItem>
+                <mb:MenuButtonItem>
+                    <mb:MenuButton ButtonContent="History">
+                        <mb:MenuButtonItem CommandBinding="{x:Reference UndoCmdBinding}">
+                            <TextBlock> Undo </TextBlock>
+                        </mb:MenuButtonItem>
+                        <mb:MenuButtonItem CommandBinding="{x:Reference RedoCmdBinding}">
+                            <TextBlock> Redo </TextBlock>
+                        </mb:MenuButtonItem>
+                    </mb:MenuButton>
+                </mb:MenuButtonItem>
+                <mb:MenuButtonItem>
+                    <mb:MenuButton ButtonContent="Add editor node">
+                        <mb:MenuButtonItem CommandBinding="{x:Reference AddNodePixelSorterCmdBinding}">
+                            <TextBlock> Pixel Sorter </TextBlock>
+                        </mb:MenuButtonItem>
+                        <mb:MenuButtonItem CommandBinding="{x:Reference AddNodeGrayscaleCmdBinding}">
+                            <TextBlock> Grayscale </TextBlock>
+                        </mb:MenuButtonItem>
+                        <mb:MenuButtonItem CommandBinding="{x:Reference AddNodeNoGreenCmdBinding}">
+                            <TextBlock> No Green </TextBlock>
+                        </mb:MenuButtonItem>
+                    </mb:MenuButton>
+                </mb:MenuButtonItem>
+            </mb:MenuButton>
+            <mb:MenuButton misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
+                           ButtonContent="Windows">
+                <mb:MenuButtonItem CommandBinding="{x:Reference OpenFlowchartEditorCmdBinding}">
+                    <TextBlock>Open flow chart editor</TextBlock>
+                </mb:MenuButtonItem>
+                <mb:MenuButtonItem CommandBinding="{x:Reference OpenUndoTreeCmdBinding}">
+                    <TextBlock>Open undo tree</TextBlock>
+                </mb:MenuButtonItem>
             </mb:MenuButton>
         </StackPanel>
-        <!-- <view:WindowTitlebarView> -->
-        <!--     <view:WindowTitlebarView.ActionButtons> -->
-        <!--         <view:ActionButtonCollection> -->
-        <!--             <view:TitlebarActionButtonMenuView Title="File" -->
-        <!--                                                OptionsPosition="Bottom"> -->
-        <!--                 <view:TitlebarActionButtonMenuView.Options> -->
-        <!--                     <view:TitlebarActionButtonOptionCollection> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Open Image" -->
-        <!--                             CommandBinding="{x:Reference OpenImageCmdBinding}" /> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Save Image" -->
-        <!--                             CommandBinding="{x:Reference SaveImageCmdBinding}" /> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Save Project" -->
-        <!--                             CommandBinding="{x:Reference SaveProjectCmdBinding}" /> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Load Project" -->
-        <!--                             CommandBinding="{x:Reference LoadProjectCmdBinding}" /> -->
-        <!--                     </view:TitlebarActionButtonOptionCollection> -->
-        <!--                 </view:TitlebarActionButtonMenuView.Options> -->
-        <!--             </view:TitlebarActionButtonMenuView> -->
-        <!--             <view:TitlebarActionButtonMenuView Title="Edit" -->
-        <!--                                                OptionsPosition="Bottom"> -->
-        <!--                 <view:TitlebarActionButtonMenuView.Options> -->
-        <!--                     <view:TitlebarActionButtonOptionCollection> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Open Stack Editor" -->
-        <!--                             CommandBinding="{x:Reference OpenStackEditorCmdBinding}" /> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Undo" -->
-        <!--                             CommandBinding="{x:Reference UndoCmdBinding}" /> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Redo" -->
-        <!--                             CommandBinding="{x:Reference RedoCmdBinding}" /> -->
-        <!--                         <view:TitlebarActionButtonMenuView Title="Add Node" -->
-        <!--                                                            OptionsPosition="Right" -->
-        <!--                                                            ClickMode="Hover"> -->
-        <!--                             <view:TitlebarActionButtonMenuView.Options> -->
-        <!--                                 <view:TitlebarActionButtonOptionCollection> -->
-        <!--                                     <view:TitlebarActionButtonCommandView -->
-        <!--                                         Title="Grayscale" -->
-        <!--                                         CommandBinding="{x:Reference AddNodeGrayscaleCmdBinding}" /> -->
-        <!--                                     <view:TitlebarActionButtonCommandView -->
-        <!--                                         Title="No Green" -->
-        <!--                                         CommandBinding="{x:Reference AddNodeNoGreenCmdBinding}" /> -->
-        <!--                                     <view:TitlebarActionButtonCommandView -->
-        <!--                                         Title="Pixel Sorter" -->
-        <!--                                         CommandBinding="{x:Reference AddNodePixelSorterCmdBinding}" /> -->
-        <!--                                 </view:TitlebarActionButtonOptionCollection> -->
-        <!--                             </view:TitlebarActionButtonMenuView.Options> -->
-        <!--                         </view:TitlebarActionButtonMenuView> -->
-        <!--                     </view:TitlebarActionButtonOptionCollection> -->
-        <!--                 </view:TitlebarActionButtonMenuView.Options> -->
-        <!--             </view:TitlebarActionButtonMenuView> -->
-        <!--             <view:TitlebarActionButtonMenuView Title="Windows" -->
-        <!--                                                OptionsPosition="Bottom"> -->
-        <!--                 <view:TitlebarActionButtonMenuView.Options> -->
-        <!--                     <view:TitlebarActionButtonOptionCollection> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Open flow chart editor" -->
-        <!--                             CommandBinding="{x:Reference OpenFlowchartEditorCmdBinding}" /> -->
-        <!--                         <view:TitlebarActionButtonCommandView -->
-        <!--                             Title="Open undo tree" -->
-        <!--                             CommandBinding="{x:Reference OpenUndoTreeCmdBinding}" /> -->
-        <!--                     </view:TitlebarActionButtonOptionCollection> -->
-        <!--                 </view:TitlebarActionButtonMenuView.Options> -->
-        <!--             </view:TitlebarActionButtonMenuView> -->
-        <!--         </view:ActionButtonCollection> -->
-        <!--     </view:WindowTitlebarView.ActionButtons> -->
-        <!-- </view:WindowTitlebarView> -->
     </customControls:BorderlessWindow.TitlebarContent>
 
     <Grid>

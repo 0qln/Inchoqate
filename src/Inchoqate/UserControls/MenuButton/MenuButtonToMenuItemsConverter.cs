@@ -16,11 +16,12 @@ public class MenuButtonToMenuItemsConverter : IValueConverter
             menuButton.Root.Children.Remove(menu);
             return menu;
         }
+
         return null;
     }
 
     /// <inheritdoc />
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

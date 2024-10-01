@@ -5,13 +5,28 @@ using System.Windows.Input;
 
 namespace Inchoqate.UserControls.MenuButton;
 
-[ValueConversion(typeof(KeyBinding), typeof(string))]
-public class KeyBindingToStringConverter : IValueConverter
+[ValueConversion(typeof(MenuButton), typeof(string))]
+public class MenuButtonToKeyBindingConverter : IValueConverter
 {
-    object IValueConverter.Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    private static string ToString(KeyGesture kb) => $"{kb.Modifiers} + {kb.Key}";
+
+    object? IValueConverter.Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is KeyBinding kb)
-            return $"{kb.Modifiers} + {kb.Key}";
+        if (value is MenuButtonItem menuButtonItem)
+        {
+            var cmdBindings = (menuButtonItem.CommandBinding?.Command as RoutedCommand)
+                ?.InputGestures
+                ?.Cast<KeyGesture>()
+                .ToArray();
+                
+            var cmdBinding = cmdBindings?.Any() ?? false 
+                ?  cmdBindings
+                    .Select(ToString)
+                    .Aggregate((a, b) => $"{a} | {b}") 
+                : null;
+
+            return menuButtonItem.KeyBinding ?? cmdBinding as object;
+        }
 
         return "";
     }
