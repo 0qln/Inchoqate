@@ -111,7 +111,7 @@
                                 Canvas.Top="{Binding TitlebarHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                 Content="{TemplateBinding Content}"
                                 Width="{TemplateBinding Width}"
-                                Height="{TemplateBinding Height}" />
+                                Height="{TemplateBinding ContentHeight}" />
                         </Canvas>
                     </Border>
                     <ControlTemplate.Triggers>

@@ -57,6 +57,16 @@ public class BorderlessWindow : Window
                 FrameworkPropertyMetadataOptions.AffectsRender |
                 FrameworkPropertyMetadataOptions.AffectsArrange));
 
+    public static readonly DependencyProperty ContentHeightProperty =
+        DependencyProperty.Register(
+            nameof(ContentHeight),
+            typeof(double),
+            typeof(BorderlessWindow),
+            new FrameworkPropertyMetadata(
+                0.0,
+                FrameworkPropertyMetadataOptions.AffectsRender |
+                FrameworkPropertyMetadataOptions.AffectsArrange));
+
     public static readonly DependencyProperty TitlebarContentProperty =
         DependencyProperty.Register(
             nameof(TitlebarContent),
@@ -88,7 +98,35 @@ public class BorderlessWindow : Window
 
     public BorderlessWindow()
     {
+        var heightBinding = new MultiBinding
+        {
+            Converter = new HeightBindingConverter(this),
+            Mode = BindingMode.TwoWay
+        };
+        heightBinding.Bindings.Add(new Binding(nameof(Height)) { Source = this });
+        heightBinding.Bindings.Add(new Binding(nameof(TitlebarHeight)) { Source = this });
+        SetBinding(ContentHeightProperty, heightBinding);
+
         Loaded += OnLoaded;
+    }
+
+    private class HeightBindingConverter(BorderlessWindow source) : IMultiValueConverter
+    {
+        /// <inheritdoc />
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var height = (double)values[0];
+            var titlebarHeight = (double)values[1];
+            return height - titlebarHeight;
+        }
+
+        /// <inheritdoc />
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            var height = source.Height;
+            var contentHeight = (double)value;
+            return [ height, height - contentHeight ];
+        }
     }
 
     public Brush TitleBrush
@@ -113,6 +151,12 @@ public class BorderlessWindow : Window
     {
         get => (double)GetValue(TitlebarHeightProperty);
         set => SetValue(TitlebarHeightProperty, value);
+    }
+
+    public double ContentHeight
+    {
+        get => (double)GetValue(ContentHeightProperty);
+        set => SetValue(ContentHeightProperty, value);
     }
 
     public object TitlebarContent
