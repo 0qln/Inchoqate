@@ -30,7 +30,8 @@
                     <Border
                         Background="{TemplateBinding Background}"
                         x:Name="WindowContainer"
-                        BorderBrush="{TemplateBinding BorderBrush}">
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        ClipToBounds="True">
                         <Border.CornerRadius>
                             <MultiBinding Converter="{StaticResource BorderlessWinCornerConverter}">
                                 <Binding Path="WindowState" RelativeSource="{RelativeSource TemplatedParent}" />
@@ -43,25 +44,24 @@
                                 <Binding Path="BorderThickness" RelativeSource="{RelativeSource TemplatedParent}" />
                             </MultiBinding>
                         </Border.BorderThickness>
-                        <Canvas>
-                            <Grid
-                                MaxHeight="{Binding TitlebarHeight, RelativeSource={RelativeSource TemplatedParent}}"
-                                Width="{TemplateBinding Width}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <Grid.Clip>
+                        <Canvas ClipToBounds="True">
+                        <Canvas.Clip>
                                     <MultiBinding Converter="{StaticResource BorderToContentSizeConverter}">
                                         <Binding Path="ActualWidth" ElementName="WindowContainer" />
                                         <Binding Path="ActualHeight" ElementName="WindowContainer" />
                                         <Binding Path="CornerRadius" ElementName="WindowContainer" />
                                         <Binding Path="BorderThickness" ElementName="WindowContainer" />
                                     </MultiBinding>
-                                </Grid.Clip>
-                                <StackPanel
+                        </Canvas.Clip>
+                            <Grid
+                                Height="{Binding TitlebarHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                Width="{TemplateBinding Width}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>                                <StackPanel
                                     Grid.Column="3"
                                     VerticalAlignment="Top"
                                     Orientation="Horizontal">
@@ -108,11 +108,11 @@
                                     Content="{TemplateBinding TitlebarContent}" />
                             </Grid>
                             <ContentPresenter
+                                Canvas.ZIndex="-1"
                                 Canvas.Top="{Binding TitlebarHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                 Content="{TemplateBinding Content}"
-                                ClipToBounds="True"
-                                VerticalAlignment="Stretch"
-                                HorizontalAlignment="Stretch" />
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}"/>
                         </Canvas>
                     </Border>
                     <ControlTemplate.Triggers>
