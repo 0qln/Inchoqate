@@ -65,8 +65,29 @@
                                 <TextBlock
                                     Grid.Column="2"
                                     Text="{Binding ., Converter={StaticResource MenuButtonToKeyBindingConverter}}" />
-                                <!--TODO: expandable indicator-->
+                                <TextBlock
+                                    Grid.Column="3">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Content.(UIElement.Visibility), ElementName=MenuPresenter}"
+                                                             Value="Visible">
+                                                    <DataTrigger.Setters>
+                                                        <Setter Property="Text" Value="⌵"></Setter>
+                                                    </DataTrigger.Setters>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Content.(UIElement.Visibility), ElementName=MenuPresenter}"
+                                                             Value="Collapsed">
+                                                    <DataTrigger.Setters>
+                                                        <Setter Property="Text" Value=">"></Setter>
+                                                    </DataTrigger.Setters>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                                 <ContentPresenter
+                                    x:Name="MenuPresenter"
                                     Grid.Column="4"
                                     Content="{Binding .[0], Converter={StaticResource MenuButtonToMenuConverter}}" />
                             </Grid>
