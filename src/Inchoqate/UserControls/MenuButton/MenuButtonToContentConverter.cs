@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows.Data;
+using Inchoqate.Misc;
 
 namespace Inchoqate.UserControls.MenuButton;
 
@@ -16,6 +17,7 @@ public class MenuButtonToContentConverter : IValueConverter
             var innerContent = menuButton.ButtonContent;
             menuButton.Button.Content = null;
             menuButton.NestingParent = menuButtonItem;
+            AtomicActivation.SetAtomicActivationGroup(menuButton, menuButtonItem?.Parent?.MenuItemsActivationGroup);
             return innerContent;
         }
 

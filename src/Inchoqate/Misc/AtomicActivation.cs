@@ -64,14 +64,14 @@ public class AtomicActivation : UIElement
 ///     A group of DOs that can be activated and deactivated.
 ///     Only one DO can be activated at a time.
 /// </summary>
-public class AtomicActivationGroup : ObservableObject
+public abstract class AtomicActivationGroup(DependencyProperty activationProperty) : ObservableObject
 {
     private DependencyObject? _activatedMember;
 
     /// <summary>
     ///     The property that is used to activate and deactivate the DO.
     /// </summary>
-    public required DependencyProperty ActivationProperty { get; init; }
+    public DependencyProperty ActivationProperty { get; } = activationProperty;
 
     /// <summary>
     ///     A property path on the DO. If null, the DO itself is used.
@@ -81,12 +81,12 @@ public class AtomicActivationGroup : ObservableObject
     /// <summary>
     ///     The value that the active DO has.
     /// </summary>
-    public required object? ActivatedValue { get; init; }
+    public object? ActivatedValue { get; init; }
 
     /// <summary>
     ///     The value that the inactive DO has.
     /// </summary>
-    public required object? DeactivatedValue { get; init; }
+    public object? DeactivatedValue { get; init; }
 
     /// <summary>
     ///     Called when the DO is activated.

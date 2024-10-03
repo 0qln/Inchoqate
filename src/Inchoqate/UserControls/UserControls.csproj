@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Converters\Converters.csproj" />
+    <ProjectReference Include="..\Misc\Misc.csproj" />
   </ItemGroup>
 
   <ItemGroup>

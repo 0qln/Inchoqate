@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:Inchoqate.GUI.Windows"
     xmlns:view="clr-namespace:Inchoqate.GUI.View"
-    xmlns:customControls="clr-namespace:Inchoqate.CustomControls;assembly=CustomControls"
     xmlns:mb="clr-namespace:Inchoqate.UserControls.MenuButton;assembly=UserControls"
     xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
     xmlns:misc="clr-namespace:Inchoqate.Misc;assembly=Misc"
@@ -46,14 +45,7 @@
     <win:BorderlessWindow.TitlebarContent>
         <StackPanel Orientation="Horizontal">
             <StackPanel.DataContext>
-                <misc:AtomicActivationGroup
-                    x:Name="WindowTitlebarActivations"
-                    ActivationProperty="{x:Static UIElement.VisibilityProperty}"
-                    TargetPropertyPath="{x:Static mb:MenuButton.MenuProperty}"
-                    DeactivatedValue="{x:Static Visibility.Collapsed}"
-                    Deactivate="{x:Static mb:MenuButton.HideMenu}"
-                    ActivatedValue="{x:Static Visibility.Visible}"
-                    Activate="{x:Static mb:MenuButton.ShowMenu}" />
+                <mb:MenuButtonActivationGroup x:Name="WindowTitlebarActivations"/>
             </StackPanel.DataContext>
             <mb:MenuButton misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
                            Style="{StaticResource TitlebarMenuButtonStyle}"

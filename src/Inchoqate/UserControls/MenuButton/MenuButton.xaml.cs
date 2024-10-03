@@ -3,8 +3,21 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using CommunityToolkit.Mvvm.Input;
+using Inchoqate.Misc;
 
 namespace Inchoqate.UserControls.MenuButton;
+
+public class MenuButtonActivationGroup : AtomicActivationGroup
+{
+    public MenuButtonActivationGroup() : base (UIElement.VisibilityProperty)
+    {
+        TargetPropertyPath = MenuButton.MenuProperty;
+        DeactivatedValue = Visibility.Collapsed;
+        Deactivate = MenuButton.HideMenu;
+        ActivatedValue = Visibility.Visible;
+        Activate = MenuButton.ShowMenu;
+    }
+}
 
 /// <summary>
 ///     Interaction logic for MenuButton.xaml
@@ -50,6 +63,8 @@ public partial class MenuButton : UserControl
         if (@this is MenuButton menuButton) menuButton.Show();
     };
 
+    private MenuButtonActivationGroup? _activationGroup;
+
 
     public MenuButton()
     {
@@ -58,10 +73,17 @@ public partial class MenuButton : UserControl
         SetValue(MenuProperty, Menu);
     }
 
+
     public object? ButtonContent
     {
         get => GetValue(ButtonContentProperty);
         set => SetValue(ButtonContentProperty, value);
+    }
+
+    public MenuButtonActivationGroup MenuItemsActivationGroup
+    {
+        get => _activationGroup ??= new();
+        set => _activationGroup = value;
     }
 
     /// <summary>
