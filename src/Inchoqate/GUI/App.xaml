@@ -4,28 +4,249 @@
              xmlns:win="clr-namespace:Inchoqate.GUI.Windows"
              xmlns:conv="clr-namespace:Inchoqate.GUI.Converters"
              xmlns:convBase="clr-namespace:Inchoqate.Converters;assembly=Converters"
-             xmlns:mb="clr-namespace:Inchoqate.UserControls.MenuButton;assembly=UserControls">
+             xmlns:bWin="clr-namespace:Inchoqate.CustomControls.BorderlessWindow;assembly=CustomControls">
 
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/View/ColorSchemes/Dark.xaml"/>
+                        <ResourceDictionary Source="/View/ColorSchemes/Dark.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
-            <conv:VisibilityToIndicatorStringConverter x:Key="VisibilityToIndicatorStringConverter"/>
+            <conv:VisibilityToIndicatorStringConverter x:Key="VisibilityToIndicatorStringConverter" />
             <convBase:VisibleIfNotNullConverter x:Key="VisibleIfNotNullConverter" />
 
-            <Style x:Key="TitlebarMenuButtonStyle" TargetType="mb:MenuButton" />
+            <Style TargetType="Button" x:Key="ButtonStyle1">
+                <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{DynamicResource Text_1}" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{DynamicResource Background_Idle_1}" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Border"
+                                    Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  RecognizesAccessKey="True" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter TargetName="Border"
+                                            Property="Background">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{DynamicResource Background_Focused_1}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="Button" x:Key="ButtonStyle2">
+                <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{DynamicResource Text_1}" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{DynamicResource Popup_Idle_1}" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border TextBlock.Foreground="{TemplateBinding Foreground}"
+                                    x:Name="Border"
+                                    Padding="{TemplateBinding Padding}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <Border.Background>
+                                    <SolidColorBrush Color="{DynamicResource Popup_Idle_1}" />
+                                </Border.Background>
+
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  RecognizesAccessKey="True" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter TargetName="Border"
+                                            Property="Background">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{DynamicResource Popup_Focused_1}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="{x:Type bWin:BorderlessWindow}" x:Key="WindowStyle1">
+
+                <Style.Resources>
+                    <bWin:StateToCornerRadiusConverter x:Key="StateToCornerConverter" />
+                    <bWin:StateToBorderThicknessConverter x:Key="StateToBorderThicknessConverter" />
+                    <bWin:BorderToContentSizeConverter x:Key="BorderToContentSizeConverter" />
+                </Style.Resources>
+
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{DynamicResource Background_Idle_1}" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type bWin:BorderlessWindow}">
+
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                x:Name="WindowContainer"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                ClipToBounds="True">
+                                <Border.CornerRadius>
+                                    <MultiBinding Converter="{StaticResource StateToCornerConverter}">
+                                        <Binding Path="WindowState" RelativeSource="{RelativeSource TemplatedParent}" />
+                                        <Binding Path="CornerRadius" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    </MultiBinding>
+                                </Border.CornerRadius>
+                                <Border.BorderThickness>
+                                    <MultiBinding Converter="{StaticResource StateToBorderThicknessConverter}">
+                                        <Binding Path="WindowState" RelativeSource="{RelativeSource TemplatedParent}" />
+                                        <Binding Path="BorderThickness" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    </MultiBinding>
+                                </Border.BorderThickness>
+                                <Canvas ClipToBounds="True">
+                                    <Canvas.Clip>
+                                        <MultiBinding Converter="{StaticResource BorderToContentSizeConverter}">
+                                            <Binding Path="ActualWidth" ElementName="WindowContainer" />
+                                            <Binding Path="ActualHeight" ElementName="WindowContainer" />
+                                            <Binding Path="CornerRadius" ElementName="WindowContainer" />
+                                            <Binding Path="BorderThickness" ElementName="WindowContainer" />
+                                        </MultiBinding>
+                                    </Canvas.Clip>
+                                    <Grid
+                                        Height="{Binding TitlebarHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Width="{TemplateBinding ActualWidth}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel
+                                            Grid.Column="3"
+                                            VerticalAlignment="Top"
+                                            Orientation="Horizontal">
+                                            <StackPanel.Resources>
+                                                <Style x:Key="DefaultStyle" TargetType="Button" BasedOn="{StaticResource ButtonStyle1}">
+                                                    <Setter Property="Width" Value="{Binding ActualHeight, RelativeSource={RelativeSource Mode=Self}}" />
+                                                </Style>
+                                                <Style x:Key="ExitButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultStyle}">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="Border"
+                                                                        Padding="{TemplateBinding Padding}"
+                                                                        Background="{TemplateBinding Background}">
+                                                                    <ContentPresenter
+                                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                        RecognizesAccessKey="True" />
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="true">
+                                                                        <Setter TargetName="Border"
+                                                                                Property="Background">
+                                                                            <Setter.Value>
+                                                                                <SolidColorBrush
+                                                                                    Color="{DynamicResource Button_Exit}" />
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+
+                                                    </Setter>
+                                                </Style>
+                                            </StackPanel.Resources>
+                                            <Button
+                                                Command="{TemplateBinding MinimizeCommand}"
+                                                Content="―"
+                                                Style="{StaticResource DefaultStyle}"
+                                                Height="{TemplateBinding TitlebarHeight}" />
+                                            <Button
+                                                Command="{TemplateBinding RestoreCommand}"
+                                                Content="▢"
+                                                Style="{StaticResource DefaultStyle}"
+                                                Height="{TemplateBinding TitlebarHeight}" />
+                                            <Button
+                                                Command="{TemplateBinding ExitCommand}"
+                                                Content="✕"
+                                                Style="{StaticResource ExitButtonStyle}"
+                                                Height="{TemplateBinding TitlebarHeight}" />
+                                        </StackPanel>
+                                        <ContentPresenter
+                                            VerticalAlignment="Center"
+                                            Grid.Column="0"
+                                            Width="{TemplateBinding TitlebarHeight}"
+                                            Height="{TemplateBinding TitlebarHeight}"
+                                            Content="{TemplateBinding Icon}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Text="{TemplateBinding Title}"
+                                            Foreground="White" />
+                                        <ContentPresenter
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"
+                                            WindowChrome.IsHitTestVisibleInChrome="True"
+                                            Content="{TemplateBinding TitlebarContent}" />
+                                    </Grid>
+                                    <ContentPresenter
+                                        Panel.ZIndex="-1"
+                                        Canvas.Top="{Binding TitlebarHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Content="{TemplateBinding Content}"
+                                        Width="{TemplateBinding ActualWidth}"
+                                        Height="{TemplateBinding ContentHeight}" />
+                                </Canvas>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsActive" Value="True">
+                                    <Trigger.Setters>
+                                        <Setter Property="BorderBrush" TargetName="WindowContainer" Value="LightSlateGray" />
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
         </ResourceDictionary>
     </Application.Resources>
-    
+
     <Application.MainWindow>
-        <win:MainWindow Visibility="Visible"/>
+        <win:MainWindow Visibility="Visible" />
     </Application.MainWindow>
-    
+
 </Application>

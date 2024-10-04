@@ -27,5 +27,6 @@
     <Color x:Key="Popup_Focused_1">#3d3d3d</Color>
     <Color x:Key="Popup_Idle_Contrast_1">#3d3d3d</Color>
     <Color x:Key="Popup_Focused_Contrast_1">#707070</Color>
+    <Color x:Key="Button_Exit">#a02020</Color>
 
 </ResourceDictionary>

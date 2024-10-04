@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Inchoqate.CustomControls.BorderlessWindow;
 
-internal class BorderToContentSizeConverter : IMultiValueConverter
+public class BorderToContentSizeConverter : IMultiValueConverter
 {
     object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {

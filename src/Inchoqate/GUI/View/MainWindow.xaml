@@ -13,7 +13,8 @@
     mc:Ignorable="d"
     Title="Inchoqate"
     Height="850"
-    Width="1600">
+    Width="1600"
+    Style="{StaticResource WindowStyle1}">
 
     <win:BorderlessWindow.Icon>
         <svgc:SvgViewbox
@@ -22,10 +23,6 @@
             Width="16"
             Margin="9" />
     </win:BorderlessWindow.Icon>
-
-    <Window.Background>
-        <SolidColorBrush Color="{DynamicResource Background_Idle_1}" />
-    </Window.Background>
 
     <Window.CommandBindings>
         <CommandBinding x:Name="UndoCmdBinding" Command="ApplicationCommands.Undo" Executed="UndoCmdBinding_Executed" />
@@ -48,7 +45,6 @@
                 <mb:MenuButtonActivationGroup x:Name="WindowTitlebarActivations"/>
             </StackPanel.DataContext>
             <mb:MenuButton misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
-                           Style="{StaticResource TitlebarMenuButtonStyle}"
                            ButtonContent="File">
                 <mb:MenuButtonItem CommandBinding="{x:Reference SaveImageCmdBinding}">
                     <TextBlock> Save Image </TextBlock>
