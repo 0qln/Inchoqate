@@ -1,17 +1,16 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Inchoqate.CustomControls.BorderlessWindow;
-using Inchoqate.Graphics;
+using Inchoqate.GUI.Model.Graphics;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
-namespace Inchoqate.GUI.Windows;
+namespace Inchoqate.GUI.View;
 
-public partial class MainWindow : BorderlessWindow
+public partial class MainWindow : BorderlessWindow.BorderlessWindow
 {
     private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<MainWindow>();
 

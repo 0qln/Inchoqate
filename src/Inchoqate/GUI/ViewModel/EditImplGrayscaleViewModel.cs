@@ -5,12 +5,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using OpenTK.Mathematics;
 using System.Windows.Media;
-using Inchoqate.Converters;
-using Inchoqate.Graphics;
-using Inchoqate.GUI.Converters;
+using Inchoqate.GUI.Model.Graphics;
+using Inchoqate.GUI.View.Converters;
+using Inchoqate.GUI.View.MultiSlider;
 using Inchoqate.GUI.ViewModel.Events;
-using Inchoqate.UserControls;
 using Newtonsoft.Json;
+using Inchoqate.GUI.View.SharedConverters;
 
 namespace Inchoqate.GUI.ViewModel;
 
@@ -57,21 +57,21 @@ public class EditImplGrayscaleViewModel :
         Weights = new(0.2126f, 0.7152f, 0.0722f);
         Title = "Grayscale";
 
-        ExtSlider intensityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity], ShowValues = [true] };
+        MultiSlider intensityControl = new() { Minimum = 0, Maximum = 1, Values = [Intensity], ShowValues = [true] };
         intensityControl.SetBinding(
-            ExtSlider.ValuesProperty,
+            MultiSlider.ValuesProperty,
             new Binding(nameof(Intensity))
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new ArrayBoxingConverter<double>() });
         intensityControl.ThumbDragCompleted += (s, e) => Delegate(new() { OldValue = _intensityChangeBegin, NewValue = _intensity });
         intensityControl.ThumbDragStarted += (s, e) => _intensityChangeBegin = Intensity;
 
-        ExtSlider weightsControl = new()
+        MultiSlider weightsControl = new()
         {
             RangeCount = 3, Minimum = 0, Maximum = 1,
             BackgroundGradientBrushes = [Colors.Red, Colors.Green, Colors.Blue], ShowRanges = [true, true, true]
         };
         weightsControl.SetBinding(
-            ExtSlider.RangesProperty,
+            MultiSlider.RangesProperty,
             new Binding(nameof(Weights))
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });
 

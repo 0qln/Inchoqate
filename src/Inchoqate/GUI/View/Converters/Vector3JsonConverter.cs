@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenTK.Mathematics;
 
-namespace Inchoqate.GUI.Converters;
+namespace Inchoqate.GUI.View.SharedConverters;
 
 public class Vector3JsonConverter : JsonConverter<Vector3>
 {

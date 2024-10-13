@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.ComponentModel;
-using Inchoqate.Graphics;
+using Inchoqate.GUI.Model.Graphics;
 using Inchoqate.Logging;
 using PointF = System.Drawing.PointF;
 

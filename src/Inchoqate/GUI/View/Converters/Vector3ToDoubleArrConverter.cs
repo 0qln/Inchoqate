@@ -2,7 +2,7 @@
 using OpenTK.Mathematics;
 using System.Globalization;
 
-namespace Inchoqate.GUI.Converters;
+namespace Inchoqate.GUI.View.SharedConverters;
 
 public class Vector3ToDoubleArrConverter : IValueConverter
 {

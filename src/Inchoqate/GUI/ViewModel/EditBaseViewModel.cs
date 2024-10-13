@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using Inchoqate.Graphics;
+using Inchoqate.GUI.Model.Graphics;
 using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel;

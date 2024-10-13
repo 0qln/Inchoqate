@@ -3,13 +3,14 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Inchoqate.Converters;
-using Inchoqate.Graphics;
 using Inchoqate.GUI.Model;
+using Inchoqate.GUI.Model.Graphics;
 using Inchoqate.GUI.View;
+using Inchoqate.GUI.View.Converters;
+using Inchoqate.GUI.View.DisplayComboBox;
+using Inchoqate.GUI.View.MultiSlider;
 using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.Logging;
-using Inchoqate.UserControls;
 using Microsoft.Extensions.Logging;
 using Sorting;
 using Sorting.Pixels._32;
@@ -35,9 +36,9 @@ public class EditImplPixelSorterViewModel :
     {
         Title = "Pixel Sorter";
 
-        ExtSlider angleControl = new() { Minimum = AngleMin, Maximum = AngleMax, Values = [0], ShowValues = [true] };
+        MultiSlider angleControl = new() { Minimum = AngleMin, Maximum = AngleMax, Values = [0], ShowValues = [true] };
         angleControl.SetBinding(
-            ExtSlider.ValuesProperty,
+            MultiSlider.ValuesProperty,
             new Binding(nameof(Angle)) { Source = this, Mode = BindingMode.TwoWay, Converter = new ArrayBoxingConverter<double>() });
         angleControl.ThumbDragStarted += (_, _) => _angleChangeBegin = _angle;
         angleControl.ThumbDragCompleted += (_, _) => Delegate(new AngleChangedEvent { OldValue = _angleChangeBegin, NewValue = _angle });
@@ -46,7 +47,7 @@ public class EditImplPixelSorterViewModel :
         {
             Items =
             [
-                (new CombSorterView(), "Comb Sort" ),
+                new CombSorterView() { Name = "Comb Sort" },
             ]
         };
         // sortersControl.ComboBox.SetBinding(

@@ -1,4 +1,4 @@
-﻿using Inchoqate.Graphics;
+﻿using Inchoqate.GUI.Model.Graphics;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;

@@ -1,0 +1,110 @@
+﻿<UserControl
+    x:Class="Inchoqate.GUI.View.MenuButton.MenuButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:menuButton="clr-namespace:Inchoqate.GUI.View.MenuButton"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800">
+    <UserControl.Resources>
+        <menuButton:MenuPositionToRowConverter x:Key="MenuPositionToRowConverter" />
+        <menuButton:MenuPositionToColumnConverter x:Key="MenuPositionToColumnConverter" />
+        <menuButton:MenuButtonToKeyBindingConverter x:Key="MenuButtonToKeyBindingConverter" />
+        <menuButton:MenuButtonToContentConverter x:Key="MenuButtonToContentConverter" />
+        <menuButton:MenuButtonToMenuItemsConverter x:Key="MenuButtonToMenuConverter" />
+        <menuButton:MenuButtonToCommandConverter x:Key="MenuButtonToCommandConverter" />
+    </UserControl.Resources>
+    <Grid x:Name="Root">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Button
+            Grid.Row="1"
+            Grid.Column="1"
+            x:Name="Button"
+            Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}"
+            Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}"
+            Content="{Binding ButtonContent, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}" 
+            Command="{Binding ToggleMenuCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}" />
+
+        <Canvas
+            x:Name="Menu"
+            Visibility="Collapsed"
+            Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}"
+            Grid.Row="{Binding MenuPosition, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}, Converter={StaticResource MenuPositionToRowConverter}}"
+            Grid.Column="{Binding MenuPosition, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}, Converter={StaticResource MenuPositionToColumnConverter}}">
+            <ItemsControl
+                x:Name="MenuItemsControl"
+                ItemsSource="{Binding MenuItems, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button HorizontalContentAlignment="Left"
+                                Command="{Binding ., Converter={StaticResource MenuButtonToCommandConverter}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="Icons" />
+                                    <ColumnDefinition SharedSizeGroup="Titles" />
+                                    <ColumnDefinition SharedSizeGroup="Shortcuts" />
+                                    <ColumnDefinition SharedSizeGroup="Indicators" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter
+                                    Grid.Column="0"
+                                    Content="{Binding Icon}" />
+                                <ContentPresenter
+                                    Grid.Column="1"
+                                    Content="{Binding ., Converter={StaticResource MenuButtonToContentConverter}}" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Text="{Binding ., Converter={StaticResource MenuButtonToKeyBindingConverter}}"/>
+                                <TextBlock
+                                    Grid.Column="3">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Content.(UIElement.Visibility), ElementName=MenuPresenter}"
+                                                             Value="Visible">
+                                                    <DataTrigger.Setters>
+                                                        <Setter Property="Text" Value="⌵"></Setter>
+                                                    </DataTrigger.Setters>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Content.(UIElement.Visibility), ElementName=MenuPresenter}"
+                                                             Value="Collapsed">
+                                                    <DataTrigger.Setters>
+                                                        <Setter Property="Text" Value=">"></Setter>
+                                                    </DataTrigger.Setters>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <ContentPresenter
+                                    x:Name="MenuPresenter"
+                                    Grid.Column="4"
+                                    Content="{Binding .[0], Converter={StaticResource MenuButtonToMenuConverter}}" />
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Grid.IsSharedSizeScope="True" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Canvas>
+
+    </Grid>
+</UserControl>

@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using Inchoqate.Converters;
+using Inchoqate.GUI.View.Converters;
 using Inchoqate.GUI.ViewModel;
 
 namespace Inchoqate.GUI.View

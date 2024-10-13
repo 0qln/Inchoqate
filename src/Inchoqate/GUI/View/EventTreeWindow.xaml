@@ -1,11 +1,11 @@
 ﻿<borderlessWindow:BorderlessWindow
-    x:Class="Inchoqate.GUI.Windows.EventTreeWindow"
+    x:Class="Inchoqate.GUI.View.EventTreeWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:Inchoqate.GUI.View"
-    xmlns:borderlessWindow="clr-namespace:Inchoqate.CustomControls.BorderlessWindow;assembly=CustomControls"
+    xmlns:borderlessWindow="clr-namespace:Inchoqate.GUI.View.BorderlessWindow"
     mc:Ignorable="d"
     Title="UndoTreeWindow" Height="450" Width="800"
     Style="{StaticResource WindowStyle1}"
