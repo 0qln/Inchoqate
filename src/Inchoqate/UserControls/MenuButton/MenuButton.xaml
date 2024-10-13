@@ -34,15 +34,19 @@
             Grid.Row="1"
             Grid.Column="1"
             x:Name="Button"
+            Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}"
+            Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}"
             Content="{Binding ButtonContent, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}" 
-            Command="{Binding ToggleMenuCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}"/>
+            Command="{Binding ToggleMenuCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}" />
 
         <Canvas
             x:Name="Menu"
             Visibility="Collapsed"
+            Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}"
             Grid.Row="{Binding MenuPosition, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}, Converter={StaticResource MenuPositionToRowConverter}}"
             Grid.Column="{Binding MenuPosition, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}, Converter={StaticResource MenuPositionToColumnConverter}}">
             <ItemsControl
+                x:Name="MenuItemsControl"
                 ItemsSource="{Binding MenuItems, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type menuButton:MenuButton}}}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -64,11 +68,12 @@
                                     Content="{Binding ., Converter={StaticResource MenuButtonToContentConverter}}" />
                                 <TextBlock
                                     Grid.Column="2"
-                                    Text="{Binding ., Converter={StaticResource MenuButtonToKeyBindingConverter}}" />
+                                    Text="{Binding ., Converter={StaticResource MenuButtonToKeyBindingConverter}}"
+                                    Style="{Binding KeyBindingStyle}"/>
                                 <TextBlock
                                     Grid.Column="3">
                                     <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
+                                        <Style TargetType="TextBlock" BasedOn="{Binding IndicatorStyle}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Content.(UIElement.Visibility), ElementName=MenuPresenter}"
                                                              Value="Visible">

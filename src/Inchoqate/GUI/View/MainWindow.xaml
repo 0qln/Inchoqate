@@ -1,104 +1,111 @@
-﻿<win:BorderlessWindow
-    x:Class="Inchoqate.GUI.Windows.MainWindow"
+﻿<borderlessWindow:BorderlessWindow
+    x:Class="Inchoqate.GUI.View.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:Inchoqate.GUI.Windows"
     xmlns:view="clr-namespace:Inchoqate.GUI.View"
-    xmlns:mb="clr-namespace:Inchoqate.UserControls.MenuButton;assembly=UserControls"
     xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
-    xmlns:misc="clr-namespace:Inchoqate.Misc;assembly=Misc"
-    xmlns:win="clr-namespace:Inchoqate.CustomControls.BorderlessWindow;assembly=CustomControls"
+    xmlns:borderlessWindow="clr-namespace:Inchoqate.GUI.View.BorderlessWindow"
+    xmlns:menuButton="clr-namespace:Inchoqate.GUI.View.MenuButton"
+    xmlns:atomicActivation="clr-namespace:Inchoqate.GUI.View.AtomicActivation"
     mc:Ignorable="d"
     Title="Inchoqate"
     Height="850"
     Width="1600"
     Style="{StaticResource WindowStyle1}">
 
-    <win:BorderlessWindow.Icon>
+    <borderlessWindow:BorderlessWindow.Icon>
         <svgc:SvgViewbox
             UriSource="/Resources/icon.svg"
             Height="16"
             Width="16"
             Margin="9" />
-    </win:BorderlessWindow.Icon>
+    </borderlessWindow:BorderlessWindow.Icon>
 
     <Window.CommandBindings>
         <CommandBinding x:Name="UndoCmdBinding" Command="ApplicationCommands.Undo" Executed="UndoCmdBinding_Executed" />
         <CommandBinding x:Name="RedoCmdBinding" Command="ApplicationCommands.Redo" Executed="RedoCmdBinding_Executed" />
-        <CommandBinding x:Name="OpenStackEditorCmdBinding" Command="{x:Static local:MainWindow.OpenStackEditorCommand}" Executed="OpenStackEditorCommand_Executed" />
-        <CommandBinding x:Name="OpenFlowchartEditorCmdBinding" Command="{x:Static local:MainWindow.OpenFlowchartEditorCommand}" Executed="OpenFlowchartEditorCommand_Executed" />
-        <CommandBinding x:Name="OpenUndoTreeCmdBinding" Command="{x:Static local:MainWindow.OpenUndoTreeCommand}" Executed="OpenUndoTreeCmdBinding_Executed" />
-        <CommandBinding x:Name="OpenImageCmdBinding" Command="{x:Static local:MainWindow.OpenImageCommand}" Executed="OpenImageCmdBinding_Executed" />
-        <CommandBinding x:Name="SaveImageCmdBinding" Command="{x:Static local:MainWindow.SaveImageCommand}" Executed="SaveImageCmdBinding_Executed" />
-        <CommandBinding x:Name="SaveProjectCmdBinding" Command="{x:Static local:MainWindow.SaveProjectCommand}" Executed="SaveProjectCmdBinding_Executed" />
-        <CommandBinding x:Name="LoadProjectCmdBinding" Command="{x:Static local:MainWindow.LoadProjectCommand}" Executed="LoadProjectCmdBinding_Executed" />
-        <CommandBinding x:Name="AddNodeGrayscaleCmdBinding" Command="{x:Static local:MainWindow.AddNodeGrayscaleCommand}" Executed="AddNodeGrayscaleCmdBinding_Executed" />
-        <CommandBinding x:Name="AddNodeNoGreenCmdBinding" Command="{x:Static local:MainWindow.AddNodeNoGreenCommand}" Executed="AddNodeNoGreenCmdBinding_Executed" />
-        <CommandBinding x:Name="AddNodePixelSorterCmdBinding" Command="{x:Static local:MainWindow.AddNodePixelSorterCommand}" Executed="AddNodePixelSorterCmdBinding_Executed" />
+        <CommandBinding x:Name="OpenStackEditorCmdBinding" Command="{x:Static view:MainWindow.OpenStackEditorCommand}" Executed="OpenStackEditorCommand_Executed" />
+        <CommandBinding x:Name="OpenFlowchartEditorCmdBinding" Command="{x:Static view:MainWindow.OpenFlowchartEditorCommand}" Executed="OpenFlowchartEditorCommand_Executed" />
+        <CommandBinding x:Name="OpenUndoTreeCmdBinding" Command="{x:Static view:MainWindow.OpenUndoTreeCommand}" Executed="OpenUndoTreeCmdBinding_Executed" />
+        <CommandBinding x:Name="OpenImageCmdBinding" Command="{x:Static view:MainWindow.OpenImageCommand}" Executed="OpenImageCmdBinding_Executed" />
+        <CommandBinding x:Name="SaveImageCmdBinding" Command="{x:Static view:MainWindow.SaveImageCommand}" Executed="SaveImageCmdBinding_Executed" />
+        <CommandBinding x:Name="SaveProjectCmdBinding" Command="{x:Static view:MainWindow.SaveProjectCommand}" Executed="SaveProjectCmdBinding_Executed" />
+        <CommandBinding x:Name="LoadProjectCmdBinding" Command="{x:Static view:MainWindow.LoadProjectCommand}" Executed="LoadProjectCmdBinding_Executed" />
+        <CommandBinding x:Name="AddNodeGrayscaleCmdBinding" Command="{x:Static view:MainWindow.AddNodeGrayscaleCommand}" Executed="AddNodeGrayscaleCmdBinding_Executed" />
+        <CommandBinding x:Name="AddNodeNoGreenCmdBinding" Command="{x:Static view:MainWindow.AddNodeNoGreenCommand}" Executed="AddNodeNoGreenCmdBinding_Executed" />
+        <CommandBinding x:Name="AddNodePixelSorterCmdBinding" Command="{x:Static view:MainWindow.AddNodePixelSorterCommand}" Executed="AddNodePixelSorterCmdBinding_Executed" />
     </Window.CommandBindings>
 
-    <win:BorderlessWindow.TitlebarContent>
+    <borderlessWindow:BorderlessWindow.TitlebarContent>
         <StackPanel Orientation="Horizontal">
             <StackPanel.DataContext>
-                <mb:MenuButtonActivationGroup x:Name="WindowTitlebarActivations"/>
+                <menuButton:MenuButtonActivationGroup x:Name="WindowTitlebarActivations" />
             </StackPanel.DataContext>
-            <mb:MenuButton misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
-                           ButtonContent="File">
-                <mb:MenuButtonItem CommandBinding="{x:Reference SaveImageCmdBinding}">
-                    <TextBlock> Save Image </TextBlock>
-                </mb:MenuButtonItem>
-                <mb:MenuButtonItem CommandBinding="{x:Reference OpenImageCmdBinding}">
-                    <TextBlock> Open Image </TextBlock>
-                </mb:MenuButtonItem>
-                <mb:MenuButtonItem CommandBinding="{x:Reference LoadProjectCmdBinding}">
-                    <TextBlock> Load Project </TextBlock>
-                </mb:MenuButtonItem>
-                <mb:MenuButtonItem CommandBinding="{x:Reference SaveProjectCmdBinding}">
-                    <TextBlock> Save Project </TextBlock>
-                </mb:MenuButtonItem>
-            </mb:MenuButton>
-            <mb:MenuButton misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
+            <menuButton:MenuButton 
+                atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
+                ButtonStyle="{StaticResource ButtonStyle1}">
+                <menuButton:MenuButton.ButtonContent>
+                    <TextBlock Style="{StaticResource TextBlockStyle1}"> File </TextBlock>
+                </menuButton:MenuButton.ButtonContent>
+                <menuButton:MenuButtonItem
+                    CommandBinding="{x:Reference SaveImageCmdBinding}">
+                    <TextBlock Style="{StaticResource TextBlockStyle1}"> Save Image </TextBlock>
+                </menuButton:MenuButtonItem>
+                <menuButton:MenuButtonItem
+                    CommandBinding="{x:Reference OpenImageCmdBinding}">
+                    <TextBlock Style="{StaticResource TextBlockStyle1}"> Open Image </TextBlock>
+                </menuButton:MenuButtonItem>
+                <menuButton:MenuButtonItem 
+                    CommandBinding="{x:Reference LoadProjectCmdBinding}">
+                    <TextBlock Style="{StaticResource TextBlockStyle1}"> Load Project </TextBlock>
+                </menuButton:MenuButtonItem>
+                <menuButton:MenuButtonItem 
+                    CommandBinding="{x:Reference SaveProjectCmdBinding}">
+                    <TextBlock Style="{StaticResource TextBlockStyle1}"> Save Project </TextBlock>
+                </menuButton:MenuButtonItem>
+            </menuButton:MenuButton>
+            <menuButton:MenuButton atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
                            ButtonContent="Edit">
-                <mb:MenuButtonItem CommandBinding="{x:Reference OpenStackEditorCmdBinding}">
+                <menuButton:MenuButtonItem CommandBinding="{x:Reference OpenStackEditorCmdBinding}">
                     <TextBlock> Open Stack editor </TextBlock>
-                </mb:MenuButtonItem>
-                <mb:MenuButtonItem>
-                    <mb:MenuButton ButtonContent="History">
-                        <mb:MenuButtonItem CommandBinding="{x:Reference UndoCmdBinding}">
+                </menuButton:MenuButtonItem>
+                <menuButton:MenuButtonItem>
+                    <menuButton:MenuButton ButtonContent="History">
+                        <menuButton:MenuButtonItem CommandBinding="{x:Reference UndoCmdBinding}">
                             <TextBlock> Undo </TextBlock>
-                        </mb:MenuButtonItem>
-                        <mb:MenuButtonItem CommandBinding="{x:Reference RedoCmdBinding}">
+                        </menuButton:MenuButtonItem>
+                        <menuButton:MenuButtonItem CommandBinding="{x:Reference RedoCmdBinding}">
                             <TextBlock> Redo </TextBlock>
-                        </mb:MenuButtonItem>
-                    </mb:MenuButton>
-                </mb:MenuButtonItem>
-                <mb:MenuButtonItem>
-                    <mb:MenuButton ButtonContent="Add editor node">
-                        <mb:MenuButtonItem CommandBinding="{x:Reference AddNodePixelSorterCmdBinding}">
+                        </menuButton:MenuButtonItem>
+                    </menuButton:MenuButton>
+                </menuButton:MenuButtonItem>
+                <menuButton:MenuButtonItem>
+                    <menuButton:MenuButton ButtonContent="Add editor node">
+                        <menuButton:MenuButtonItem CommandBinding="{x:Reference AddNodePixelSorterCmdBinding}">
                             <TextBlock> Pixel Sorter </TextBlock>
-                        </mb:MenuButtonItem>
-                        <mb:MenuButtonItem CommandBinding="{x:Reference AddNodeGrayscaleCmdBinding}">
+                        </menuButton:MenuButtonItem>
+                        <menuButton:MenuButtonItem CommandBinding="{x:Reference AddNodeGrayscaleCmdBinding}">
                             <TextBlock> Grayscale </TextBlock>
-                        </mb:MenuButtonItem>
-                        <mb:MenuButtonItem CommandBinding="{x:Reference AddNodeNoGreenCmdBinding}">
+                        </menuButton:MenuButtonItem>
+                        <menuButton:MenuButtonItem CommandBinding="{x:Reference AddNodeNoGreenCmdBinding}">
                             <TextBlock> No Green </TextBlock>
-                        </mb:MenuButtonItem>
-                    </mb:MenuButton>
-                </mb:MenuButtonItem>
-            </mb:MenuButton>
-            <mb:MenuButton misc:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
+                        </menuButton:MenuButtonItem>
+                    </menuButton:MenuButton>
+                </menuButton:MenuButtonItem>
+            </menuButton:MenuButton>
+            <menuButton:MenuButton atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
                            ButtonContent="Windows">
-                <mb:MenuButtonItem CommandBinding="{x:Reference OpenFlowchartEditorCmdBinding}">
+                <menuButton:MenuButtonItem CommandBinding="{x:Reference OpenFlowchartEditorCmdBinding}">
                     <TextBlock>Open flow chart editor</TextBlock>
-                </mb:MenuButtonItem>
-                <mb:MenuButtonItem CommandBinding="{x:Reference OpenUndoTreeCmdBinding}">
+                </menuButton:MenuButtonItem>
+                <menuButton:MenuButtonItem CommandBinding="{x:Reference OpenUndoTreeCmdBinding}">
                     <TextBlock>Open undo tree</TextBlock>
-                </mb:MenuButtonItem>
-            </mb:MenuButton>
+                </menuButton:MenuButtonItem>
+            </menuButton:MenuButton>
         </StackPanel>
-    </win:BorderlessWindow.TitlebarContent>
+    </borderlessWindow:BorderlessWindow.TitlebarContent>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -134,4 +141,4 @@
         </Grid>
 
     </Grid>
-</win:BorderlessWindow>
+</borderlessWindow:BorderlessWindow>

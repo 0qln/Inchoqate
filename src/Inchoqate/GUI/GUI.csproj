@@ -20,11 +20,17 @@
 
   <ItemGroup>
     <None Remove="image.jpg" />
+    <None Remove="Model\Graphics\Shaders\Base.frag" />
+    <None Remove="Model\Graphics\Shaders\Base.vert" />
+    <None Remove="Model\Graphics\Shaders\Grayscale.frag" />
+    <None Remove="Model\Graphics\Shaders\NoGreen.frag" />
+    <None Remove="Model\Graphics\Shaders\NoRed.frag" />
     <None Remove="Resources\icon.svg" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="0qln.PixelSorting" Version="1.2.0-pre" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <!--Newer versions of OpenTK seems to have breaking changes. Do not upgrade.-->
     <!--TODO: Why are there breaking changes?-->
@@ -36,18 +42,34 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Converters\Converters.csproj" />
-    <ProjectReference Include="..\CustomControls\CustomControls.csproj" />
-    <ProjectReference Include="..\Graphics\Graphics.csproj" />
     <ProjectReference Include="..\Logging\Logging.csproj" />
-    <ProjectReference Include="..\Misc\Misc.csproj" />
-    <ProjectReference Include="..\UserControls\UserControls.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Model\Graphics\Shaders\Base.frag">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Model\Graphics\Shaders\Base.vert">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Model\Graphics\Shaders\Grayscale.frag" />
+    <Resource Include="Model\Graphics\Shaders\NoGreen.frag" />
+    <Resource Include="Model\Graphics\Shaders\NoRed.frag" />
     <Resource Include="Resources\icon.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="View\DisplayComboBox\DisplayComboBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\MultiSlider\MultiSlider.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\MenuButton\MenuButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

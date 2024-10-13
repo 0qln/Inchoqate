@@ -9,7 +9,7 @@ namespace Inchoqate.UserControls.MenuButton;
 
 public class MenuButtonActivationGroup : AtomicActivationGroup
 {
-    public MenuButtonActivationGroup() : base (UIElement.VisibilityProperty)
+    public MenuButtonActivationGroup() : base(UIElement.VisibilityProperty)
     {
         TargetPropertyPath = MenuButton.MenuProperty;
         DeactivatedValue = Visibility.Collapsed;
@@ -73,6 +73,19 @@ public partial class MenuButton : UserControl
         SetValue(MenuProperty, Menu);
     }
 
+    public Style ButtonStyle
+    {
+        get => Button.Style;
+        set
+        {
+            Button.Style = value;
+
+            foreach (Button item in MenuItemsControl.Items)
+            {
+                item.Style = value;
+            }
+        }
+    }
 
     public object? ButtonContent
     {
