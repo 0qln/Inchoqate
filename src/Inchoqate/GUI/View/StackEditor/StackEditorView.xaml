@@ -1,21 +1,17 @@
-﻿<UserControl x:Class="Inchoqate.GUI.View.StackEditorView"
+﻿<UserControl x:Class="Inchoqate.GUI.View.StackEditor.StackEditorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Inchoqate.GUI.View"
+             xmlns:stackEditor="clr-namespace:Inchoqate.GUI.View.StackEditor"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="200"
              Focusable="True"
              x:Name="ControlRoot">
 
     <UserControl.Resources>
-        <local:StackEditorNodeViewWrapper x:Key="StackEditorNodeViewWrapper"/>
+        <stackEditor:StackEditorNodeViewWrapper x:Key="StackEditorNodeViewWrapper"/>
     </UserControl.Resources>
-
-    <UserControl.CommandBindings>
-        
-    </UserControl.CommandBindings>
 
     <Border
         BorderThickness="1"
@@ -52,7 +48,7 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="local:StackEditorNodeView">
+                    <Style TargetType="stackEditor:StackEditorNodeView">
                         <Setter Property="Margin" Value="5"/>
                     </Style>
                 </ItemsControl.ItemContainerStyle>

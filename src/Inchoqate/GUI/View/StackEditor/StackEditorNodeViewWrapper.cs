@@ -1,14 +1,8 @@
-﻿using Inchoqate.GUI.ViewModel;
-using System.Globalization;
-using System.Windows.Controls;
+﻿using System.Globalization;
 using System.Windows.Data;
+using Inchoqate.GUI.ViewModel;
 
-namespace Inchoqate.GUI.View;
-
-public class StackEditorNodeCollection : ObservableCollectionBase<StackEditorNodeView>
-{
-}
-
+namespace Inchoqate.GUI.View.StackEditor;
 
 // Creating new NodeViews each time the collection is changed will discard the 
 // state of the view each time, which breaks thumbs and other state dependent controls.
@@ -34,17 +28,5 @@ public class StackEditorNodeViewWrapper : IValueConverter
     object IValueConverter.ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
-    }
-}
-
-
-/// <summary>
-/// Interaction logic for StackEditorView.xaml
-/// </summary>
-public partial class StackEditorView : UserControl
-{
-    public StackEditorView()
-    {
-        InitializeComponent();
     }
 }

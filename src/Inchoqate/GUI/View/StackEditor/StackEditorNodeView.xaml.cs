@@ -1,11 +1,11 @@
-﻿using Inchoqate.GUI.ViewModel;
-using System.Windows.Controls.Primitives;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
 
-namespace Inchoqate.GUI.View;
+namespace Inchoqate.GUI.View.StackEditor;
 
 /// <summary>
 /// Interaction logic for StackEditorNodeView.xaml
