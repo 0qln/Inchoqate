@@ -72,6 +72,11 @@
                 </Setter>
             </Style>
 
+            <Style TargetType="Button" x:Key="MenuButtonStyle" BasedOn="{StaticResource ButtonStyle1}">
+                <Setter Property="Padding" Value="5, 2"/>
+                <Setter Property="Margin" Value="5, 0"/>
+            </Style>
+
             <Style TargetType="Button" x:Key="ButtonStyle2">
                 <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
                 <Setter Property="Foreground">
@@ -112,6 +117,10 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+            <Style TargetType="Button" x:Key="NestedMenuButtonStyle" BasedOn="{StaticResource ButtonStyle2}">
+                <Setter Property="Padding" Value="5, 3"/>
             </Style>
 
             <Style TargetType="{x:Type borderlessWindow:BorderlessWindow}" x:Key="WindowStyle1">
@@ -225,11 +234,13 @@
                                             Height="{TemplateBinding TitlebarHeight}"
                                             Content="{TemplateBinding Icon}" />
                                         <TextBlock
+                                            Margin="5, 0"
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
                                             Text="{TemplateBinding Title}"
                                             Foreground="White" />
                                         <ContentPresenter
+                                            Margin="5, 0"
                                             Grid.Column="2"
                                             VerticalAlignment="Center"
                                             HorizontalAlignment="Left"

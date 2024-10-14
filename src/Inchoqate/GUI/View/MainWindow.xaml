@@ -13,7 +13,7 @@
     Title="Inchoqate"
     Height="850"
     Width="1600"
-    Style="{StaticResource WindowStyle1}">
+    Style="{DynamicResource WindowStyle1}">
 
     <borderlessWindow:BorderlessWindow.Icon>
         <svgc:SvgViewbox
@@ -43,31 +43,32 @@
             <StackPanel.DataContext>
                 <menuButton:MenuButtonActivationGroup x:Name="WindowTitlebarActivations" />
             </StackPanel.DataContext>
-            <menuButton:MenuButton 
-                atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
-                ButtonStyle="{StaticResource ButtonStyle1}">
+            <menuButton:MenuButton
+                atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}">
                 <menuButton:MenuButton.ButtonContent>
-                    <TextBlock Style="{StaticResource TextBlockStyle1}"> File </TextBlock>
+                    <TextBlock Style="{DynamicResource TextBlockStyle1}"> File </TextBlock>
                 </menuButton:MenuButton.ButtonContent>
                 <menuButton:MenuButtonItem
                     CommandBinding="{x:Reference SaveImageCmdBinding}">
-                    <TextBlock Style="{StaticResource TextBlockStyle1}"> Save Image </TextBlock>
+                    <TextBlock> Save Image </TextBlock>
                 </menuButton:MenuButtonItem>
                 <menuButton:MenuButtonItem
                     CommandBinding="{x:Reference OpenImageCmdBinding}">
-                    <TextBlock Style="{StaticResource TextBlockStyle1}"> Open Image </TextBlock>
+                    <TextBlock> Open Image </TextBlock>
                 </menuButton:MenuButtonItem>
-                <menuButton:MenuButtonItem 
+                <menuButton:MenuButtonItem
                     CommandBinding="{x:Reference LoadProjectCmdBinding}">
-                    <TextBlock Style="{StaticResource TextBlockStyle1}"> Load Project </TextBlock>
+                    <TextBlock> Load Project </TextBlock>
                 </menuButton:MenuButtonItem>
-                <menuButton:MenuButtonItem 
+                <menuButton:MenuButtonItem
                     CommandBinding="{x:Reference SaveProjectCmdBinding}">
-                    <TextBlock Style="{StaticResource TextBlockStyle1}"> Save Project </TextBlock>
+                    <TextBlock> Save Project </TextBlock>
                 </menuButton:MenuButtonItem>
             </menuButton:MenuButton>
-            <menuButton:MenuButton atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
-                           ButtonContent="Edit">
+            <menuButton:MenuButton atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}">
+                <menuButton:MenuButton.ButtonContent>
+                    <TextBlock Style="{DynamicResource TextBlockStyle1}"> Edit </TextBlock>
+                </menuButton:MenuButton.ButtonContent>
                 <menuButton:MenuButtonItem CommandBinding="{x:Reference OpenStackEditorCmdBinding}">
                     <TextBlock> Open Stack editor </TextBlock>
                 </menuButton:MenuButtonItem>
@@ -95,8 +96,10 @@
                     </menuButton:MenuButton>
                 </menuButton:MenuButtonItem>
             </menuButton:MenuButton>
-            <menuButton:MenuButton atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}"
-                           ButtonContent="Windows">
+            <menuButton:MenuButton atomicActivation:AtomicActivation.AtomicActivationGroup="{x:Reference WindowTitlebarActivations}">
+                <menuButton:MenuButton.ButtonContent>
+                    <TextBlock Style="{DynamicResource TextBlockStyle1}">Windows</TextBlock>
+                </menuButton:MenuButton.ButtonContent>
                 <menuButton:MenuButtonItem CommandBinding="{x:Reference OpenFlowchartEditorCmdBinding}">
                     <TextBlock>Open flow chart editor</TextBlock>
                 </menuButton:MenuButtonItem>

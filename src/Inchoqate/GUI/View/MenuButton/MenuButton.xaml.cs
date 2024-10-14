@@ -73,20 +73,6 @@ public partial class MenuButton : UserControl
         SetValue(MenuProperty, Menu);
     }
 
-    public Style ButtonStyle
-    {
-        get => Button.Style;
-        set
-        {
-            Button.Style = value;
-
-            foreach (Button item in MenuItemsControl.Items)
-            {
-                item.Style = value;
-            }
-        }
-    }
-
     public object? ButtonContent
     {
         get => GetValue(ButtonContentProperty);

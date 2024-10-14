@@ -95,11 +95,13 @@
                                     Height="{TemplateBinding TitlebarHeight}"
                                     Content="{TemplateBinding Icon}" />
                                 <TextBlock
+                                    Margin="5, 0"
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     Text="{TemplateBinding Title}"
                                     Foreground="White" />
                                 <ContentPresenter
+                                    Margin="5, 0"
                                     Grid.Column="2"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Left"
