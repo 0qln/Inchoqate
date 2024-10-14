@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using Inchoqate.GUI.ViewModel.Events;
 
-namespace Inchoqate.GUI.View;
+namespace Inchoqate.GUI.View.Events;
 
 public partial class EventTreeView : UserControl
 {

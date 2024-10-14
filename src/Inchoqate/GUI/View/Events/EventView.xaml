@@ -1,15 +1,16 @@
-﻿<UserControl x:Class="Inchoqate.GUI.View.EventView"
+﻿<UserControl x:Class="Inchoqate.GUI.View.Events.EventView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inchoqate.GUI.View"
+             xmlns:events="clr-namespace:Inchoqate.GUI.View.Events"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="150"
              x:Name="ControlRoot">
 
     <UserControl.Resources>
-        <local:EventArgsInfoConverter x:Key="EventArgsInfoConverter"/>
+        <events:EventArgsInfoConverter x:Key="EventArgsInfoConverter"/>
     </UserControl.Resources>
 
     <Grid

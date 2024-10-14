@@ -2,7 +2,7 @@
 using System.Windows;
 using Inchoqate.GUI.ViewModel.Events;
 
-namespace Inchoqate.GUI.View;
+namespace Inchoqate.GUI.View.Events;
 
 public partial class EventTreeWindow : BorderlessWindow.BorderlessWindow
 {
