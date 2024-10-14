@@ -102,6 +102,20 @@ public partial class MultiSlider : UserControl
                 null,
                 FrameworkPropertyMetadataOptions.AffectsRender));
 
+    public static readonly DependencyProperty UseSmoothGradientsProperty =
+        DependencyProperty.Register(
+            nameof(UseSmoothGradients),
+            typeof(bool),
+            typeof(MultiSlider),
+            new FrameworkPropertyMetadata(
+                false,
+                FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public bool UseSmoothGradients
+    {
+        get => (bool)GetValue(UseSmoothGradientsProperty);
+        set => SetValue(UseSmoothGradientsProperty, value);
+    }
 
     public double Minimum
     {
@@ -151,9 +165,9 @@ public partial class MultiSlider : UserControl
         set => SetValue(ShowRangesProperty, value);
     }
 
-    public Color[] BackgroundGradientBrushes
+    public Color[]? BackgroundGradientBrushes
     {
-        get => (Color[])GetValue(BackgroundGradientBrushesProperty);
+        get => (Color[]?)GetValue(BackgroundGradientBrushesProperty);
         set => SetValue(BackgroundGradientBrushesProperty, value);
     }
 

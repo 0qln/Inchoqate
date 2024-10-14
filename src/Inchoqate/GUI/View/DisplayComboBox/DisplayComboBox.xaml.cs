@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace Inchoqate.GUI.View.DisplayComboBox;
@@ -11,7 +10,7 @@ public partial class DisplayComboBox : UserControl
 {
     public static readonly DependencyProperty ItemsProperty = DependencyProperty.Register(
         nameof(Items),
-        typeof(ObservableCollection<FrameworkElement>),
+        typeof(DisplayComboBoxItems),
         typeof(DisplayComboBox),
         new FrameworkPropertyMetadata(
             null,
@@ -19,7 +18,7 @@ public partial class DisplayComboBox : UserControl
 
     public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
         nameof(SelectedItem),
-        typeof(FrameworkElement),
+        typeof(DisplayComboBoxItem),
         typeof(DisplayComboBox),
         new FrameworkPropertyMetadata(
             null,
@@ -33,15 +32,15 @@ public partial class DisplayComboBox : UserControl
         InitializeComponent();
     }
 
-    public ObservableCollection<FrameworkElement>? Items
+    public DisplayComboBoxItems? Items
     {
-        get => (ObservableCollection<FrameworkElement>)GetValue(ItemsProperty);
+        get => (DisplayComboBoxItems?)GetValue(ItemsProperty);
         set => SetValue(ItemsProperty, value);
     }
 
-    public FrameworkElement? SelectedItem
+    public DisplayComboBoxItem? SelectedItem
     {
-        get => (FrameworkElement?)GetValue(SelectedItemProperty);
+        get => (DisplayComboBoxItem?)GetValue(SelectedItemProperty);
         set => SetValue(SelectedItemProperty, value);
     }
 

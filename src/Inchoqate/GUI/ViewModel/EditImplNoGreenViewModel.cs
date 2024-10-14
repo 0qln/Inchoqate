@@ -16,7 +16,7 @@ public class EditImplNoGreenViewModel : EditBaseLinearShader, IDeserializable<Ed
         OptionControls = [];
     }
 
-    public override ObservableCollection<(Control, string)> OptionControls { get; }
+    public override OptionControls OptionControls { get; }
 
     public override Shader? GetShader(out bool success) => Shader.FromSource(Shaders.BaseVert, Shaders.NoGreen, out success);
 }

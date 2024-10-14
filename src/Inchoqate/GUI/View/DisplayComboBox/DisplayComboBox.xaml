@@ -4,9 +4,13 @@
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
               xmlns:displayComboBox="clr-namespace:Inchoqate.GUI.View.DisplayComboBox"
+              xmlns:gui="clr-namespace:Inchoqate.GUI"
               mc:Ignorable="d"
               d:DesignHeight="450" d:DesignWidth="800">
 
+    <UserControl.Resources>
+        <displayComboBox:DisplayComboBoxItemToNameConverter x:Key="DisplayComboBoxItemToNameConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -16,13 +20,14 @@
         <ComboBox
             x:Name="ComboBox"
             Grid.Row="0"
-            ItemsSource="{Binding Items, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type displayComboBox:DisplayComboBox}}}"
-            SelectionChanged="ComboBox_OnSelectionChanged"/>
+            ItemsSource="{Binding Items, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type displayComboBox:DisplayComboBox}}, Converter={StaticResource DisplayComboBoxItemToNameConverter}}"
+            SelectionChanged="ComboBox_OnSelectionChanged">
+        </ComboBox>
         
         <ContentPresenter
             x:Name="ContentPresenter"
             Grid.Row="1"
-            Content="{Binding SelectedItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type displayComboBox:DisplayComboBox}}}"/>
+            Content="{Binding SelectedItem.Element, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type displayComboBox:DisplayComboBox}}}"/>
 
     </Grid>
 </UserControl>

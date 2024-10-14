@@ -8,7 +8,7 @@ namespace Inchoqate.GUI.ViewModel;
 
 public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 {
-    private static readonly ILogger _logger = FileLoggerFactory.CreateLogger<StackEditorViewModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<StackEditorViewModel>();
 
     private FrameBuffer? _framebuffer1, _framebuffer2;
     private PixelBuffer? _pixelBuffer1, _pixelBuffer2;
@@ -84,7 +84,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         buffer = new((int)RenderSize.Width, (int)RenderSize.Height, out var success);
         if (!success)
         {
-            _logger.LogError("Failed to create framebuffer.");
+            Logger.LogError("Failed to create framebuffer.");
         }
     }
 
@@ -129,7 +129,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         // Initial pass: load source texture.
         if (!currentEdit.Apply())
         {
-            _logger.LogError("Failed to apply first edit during rendering pass. (Faulty edit: {Edit})", currentEdit);
+            Logger.LogError("Failed to apply first edit during rendering pass. (Faulty edit: {Edit})", currentEdit);
             return false;
         }
 
@@ -144,7 +144,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
 
             if (!edit.Apply())
             {
-                _logger.LogError("Failed to apply edit during rendering pass. (Faulty edit: {Edit})", edit);
+                Logger.LogError("Failed to apply edit during rendering pass. (Faulty edit: {Edit})", edit);
                 return false;
             }
 
@@ -259,7 +259,7 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         // is not possible.
         if (_disposedValue == false)
         {
-            _logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
+            Logger.LogWarning("GPU Resource leak! Did you forget to call Dispose()?");
         }
     }
 

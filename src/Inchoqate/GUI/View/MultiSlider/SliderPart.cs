@@ -55,23 +55,24 @@ public class SliderPart : Slider
     {
         var @this = (SliderPart)d;
         var bgBinding = new MultiBinding() { Converter = new GradientStopsConverter() };
-        bgBinding.Bindings.Add(new Binding("BackgroundGradientBrushes") { Source = e.NewValue });
-        bgBinding.Bindings.Add(new Binding("Values") { Source = e.NewValue });
-        bgBinding.Bindings.Add(new Binding("Minimum") { Source = e.NewValue });
-        bgBinding.Bindings.Add(new Binding("Maximum") { Source = e.NewValue });
+        bgBinding.Bindings.Add(new Binding(nameof(MultiSlider.BackgroundGradientBrushes)) { Source = e.NewValue });
+        bgBinding.Bindings.Add(new Binding(nameof(MultiSlider.Values)) { Source = e.NewValue });
+        bgBinding.Bindings.Add(new Binding(nameof(MultiSlider.Minimum)) { Source = e.NewValue });
+        bgBinding.Bindings.Add(new Binding(nameof(MultiSlider.Maximum)) { Source = e.NewValue });
+        bgBinding.Bindings.Add(new Binding(nameof(MultiSlider.UseSmoothGradients)) { Source = e.NewValue });
         @this.SetBinding(BackgroundProperty, bgBinding);
 
         @this._infoAdorner = new SliderInfoAdorner(@this);
         AdornerLayer.GetAdornerLayer(@this).Add(@this._infoAdorner);
         var prBinding = new MultiBinding() { Converter = new ElementAtConverter<bool>(fallbackPredicateIndex: index => index != 0) };
-        prBinding.Bindings.Add(new Binding("ShowRanges") { Source = e.NewValue });
-        prBinding.Bindings.Add(new Binding("Index") { Source = @this });
+        prBinding.Bindings.Add(new Binding(nameof(MultiSlider.ShowRanges)) { Source = e.NewValue });
+        prBinding.Bindings.Add(new Binding(nameof(Index)) { Source = @this });
         @this._infoAdorner.SetBinding(SliderInfoAdorner.ShowPrevRangeProperty, prBinding);
         var nrBinding = new MultiBinding() { Converter = new ElementAtConverter<bool>(indexTransform: index => index + 1) };
-        nrBinding.Bindings.Add(new Binding("ShowRanges") { Source = e.NewValue });
-        nrBinding.Bindings.Add(new Binding("Index") { Source = @this });
+        nrBinding.Bindings.Add(new Binding(nameof(MultiSlider.ShowRanges)) { Source = e.NewValue });
+        nrBinding.Bindings.Add(new Binding(nameof(Index)) { Source = @this });
         @this._infoAdorner.SetBinding(SliderInfoAdorner.ShowNextRangeProperty, nrBinding);
-        @this._infoAdorner.SetBinding(SliderInfoAdorner.RangesProperty, new Binding("Ranges") { Source = e.NewValue });
+        @this._infoAdorner.SetBinding(SliderInfoAdorner.RangesProperty, new Binding(nameof(MultiSlider.Ranges)) { Source = e.NewValue });
     }
 
     public static readonly DependencyProperty TrackVisibilityProperty =
@@ -202,8 +203,8 @@ public class SliderPart : Slider
 
     public SliderPart(SliderPart? previousPart)
     {
-        SetBinding(RangeProperty, new Binding("Value") { Source = this, Converter = new ValueToRangeConverter(previousPart), Mode = BindingMode.TwoWay });
-        SetBinding(TrackVisibilityProperty, new Binding("Index") { Source = this, Converter = new IndexToTrackVisibilityConverter(), Mode = BindingMode.OneWay });
+        SetBinding(RangeProperty, new Binding(nameof(Value)) { Source = this, Converter = new ValueToRangeConverter(previousPart), Mode = BindingMode.TwoWay });
+        SetBinding(TrackVisibilityProperty, new Binding(nameof(Index)) { Source = this, Converter = new IndexToTrackVisibilityConverter(), Mode = BindingMode.OneWay });
     }
 
     private static void ValuepropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)

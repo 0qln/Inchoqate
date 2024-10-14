@@ -1,63 +1,64 @@
 ﻿<UserControl x:Class="Inchoqate.GUI.View.StackEditor.StackEditorNodeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" 
+             xmlns:viewModel="clr-namespace:Inchoqate.GUI.ViewModel"
+             mc:Ignorable="d"
              d:DesignHeight="150" d:DesignWidth="300"
              x:Name="ControlRoot">
 
-    <Border 
+    <Border
         BorderThickness="1">
         <Border.Background>
-            <SolidColorBrush Color="{DynamicResource Popup_Idle_1}"/>
+            <SolidColorBrush Color="{DynamicResource Popup_Idle_1}" />
         </Border.Background>
         <Border.BorderBrush>
-            <SolidColorBrush Color="{DynamicResource Popup_Idle_Contrast_1}"/>
+            <SolidColorBrush Color="{DynamicResource Popup_Idle_Contrast_1}" />
         </Border.BorderBrush>
 
         <Grid>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" x:Name="TitleRow"/>
-                <RowDefinition Height="3" x:Name="SeperatorRow"/>
-                <RowDefinition Height="*" x:Name="ContentRow"/>
+                <RowDefinition Height="Auto" x:Name="TitleRow" />
+                <RowDefinition Height="3" x:Name="SeperatorRow" />
+                <RowDefinition Height="*" x:Name="ContentRow" />
             </Grid.RowDefinitions>
 
-            <Border 
+            <Border
                 Grid.Row="0"
                 x:Name="TitleContainer">
                 <StackPanel
                     Orientation="Horizontal">
-                    <TextBlock 
+                    <TextBlock
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         Margin="5"
                         Text="{Binding ContentVisibility, ElementName=ControlRoot, Converter={StaticResource VisibilityToIndicatorStringConverter}}">
                         <TextBlock.Foreground>
-                            <SolidColorBrush Color="{DynamicResource Text_1}"/>
+                            <SolidColorBrush Color="{DynamicResource Text_1}" />
                         </TextBlock.Foreground>
                     </TextBlock>
-                    <TextBlock 
+                    <TextBlock
                         Text="{Binding Title}"
                         Margin="5">
                         <TextBlock.Foreground>
-                            <SolidColorBrush Color="{DynamicResource Text_1}"/>
+                            <SolidColorBrush Color="{DynamicResource Text_1}" />
                         </TextBlock.Foreground>
                     </TextBlock>
                 </StackPanel>
             </Border>
 
-            <Border 
+            <Border
                 Grid.Row="1"
                 x:Name="Seperator"
                 Visibility="{Binding ContentVisibility, ElementName=ControlRoot}">
-                <Border 
+                <Border
                     BorderThickness="1"
                     Height="1"
                     Margin="5, 0, 5, 0">
                     <Border.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource Popup_Idle_Contrast_1}"/>
+                        <SolidColorBrush Color="{DynamicResource Popup_Idle_Contrast_1}" />
                     </Border.BorderBrush>
                 </Border>
             </Border>
@@ -70,7 +71,7 @@
                        Cursor="Hand"
                        Width="{Binding Path=ActualWidth, ElementName=ThumbContainer}"
                        Height="{Binding Path=ActualHeight, ElementName=ThumbContainer}"
-                       Opacity="0"/>
+                       Opacity="0" />
             </Canvas>
 
             <ItemsControl Grid.Row="2"
@@ -79,49 +80,31 @@
                           ItemsSource="{Binding OptionControls}"
                           Margin="10, 5">
 
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentControl">
-                        <Setter Property="Margin" Value="0, 5"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ContentControl">
-                                    <Grid>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:OptionControl}">
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <TextBlock 
-                                            x:Name="NameControl"
-                                            Grid.Row="0"
-                                            Margin="0, 0, 0, 5"
-                                            Text="{TemplateBinding Name}">
-                                            <TextBlock.Foreground>
-                                                <SolidColorBrush Color="{DynamicResource Text_1}"/>
-                                            </TextBlock.Foreground>
-                                        </TextBlock>
-                                        <ContentPresenter 
-                                            x:Name="ContentPresenter"
-                                            Grid.Row="1"
-                                            Content="{TemplateBinding Content}"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"/>
-                                        <!--<Rectangle 
-                                            x:Name="Seperator"
-                                            Margin="0, 5"
-                                            Grid.Row="2"
-                                            Height="1"
-                                            HorizontalAlignment="Stretch"
-                                            Fill="{DynamicResource Background_Idle_Contrast_3}"/>-->
-
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="0, 0, 0, 5"
+                                Text="{Binding Title}">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource Text_1}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <ContentPresenter
+                                Grid.Row="1"
+                                Content="{Binding Control}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
 
             </ItemsControl>
 

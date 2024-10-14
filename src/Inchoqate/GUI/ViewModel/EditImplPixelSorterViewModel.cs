@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Inchoqate.GUI.Model;
@@ -44,28 +45,32 @@ public class EditImplPixelSorterViewModel :
         angleControl.ThumbDragStarted += (_, _) => _angleChangeBegin = _angle;
         angleControl.ThumbDragCompleted += (_, _) => Delegate(new AngleChangedEvent { OldValue = _angleChangeBegin, NewValue = _angle });
 
-        DisplayComboBox sortersControl = new()
-        {
-            Items =
-            [
-                new CombSorterView() { Name = "Comb Sort" },
-            ]
-        };
-        // sortersControl.ComboBox.SetBinding(
-        //     Selector.SelectedItemProperty,
-        //     new Binding(nameof(Sorter)) { Source = this, Mode = BindingMode.OneWay, Converter = new SelectConverter<Control, Sorter32Bit.ISorter>(view => ((IViewModel<Sorter32Bit.ISorter>)view.DataContext).Model) });
-        // sortersControl.ComboBox.SelectionChanged += (_, _) => Delegate(new SorterChangedEvent { OldValue = _sorterConfig, NewValue = _sorterConfig });
+        DisplayComboBox sortersControl = new() { Items = [ new("Comb Sort", new CombSorterView()), ] };
+
+        sortersControl.ComboBox.SetBinding(
+            DisplayComboBox.SelectedItemProperty,
+            new Binding(nameof(Sorter))
+            {
+                Source = this, 
+                Mode = BindingMode.OneWay,
+                Converter = new SelectConverter<Sorter32Bit.ISorter, DisplayComboBoxItem>(
+                    converter: sorter => sortersControl.Items.FirstOrDefault(item => GetSorter(item) == sorter),
+                    convertBack: GetSorter)
+            });
+        sortersControl.ComboBox.SelectionChanged += (_, _) => Delegate(new SorterChangedEvent { OldValue = _sorterConfig, NewValue = _sorterConfig });
 
         OptionControls =
         [
-            (angleControl, nameof(Angle)),
-            (sortersControl, nameof(Sorter))
+            new(angleControl, nameof(Angle)),
+            new(sortersControl, nameof(Sorter))
         ];
     }
 
+    private static Sorter32Bit.ISorter? GetSorter(DisplayComboBoxItem item) => ((item.Element as FrameworkElement)?.DataContext as IViewModel<Sorter32Bit.ISorter>)?.Model;
+
     public IEventTree<EventViewModelBase>? DelegationTarget { get; init; }
 
-    public override ObservableCollection<(Control, string)> OptionControls { get; }
+    public override OptionControls OptionControls { get; }
 
     // TODO: default value and not nullable
     public Sorter32Bit.ISorter? Sorter
@@ -85,11 +90,6 @@ public class EditImplPixelSorterViewModel :
     {
         if (Sources is null || Destination is null || Sources.Length == 0 || Sorter is null)
             return false;
-
-        // SorterConfig = new Sorter<Pixel32bitUnion>.CombSorter(new PixelComparer.Descending.Red())
-        // {
-        //     Pureness = 1
-        // };
 
         var destination = Destination;
         var source = Sources[0];

@@ -23,7 +23,7 @@ public class EditImplGrayscaleViewModel :
 
     IEventTree<IntensityChangedEvent>? IEventDelegate<IntensityChangedEvent>.DelegationTarget => DelegationTarget;
 
-    public override ObservableCollection<(Control, string)> OptionControls { get; }
+    public override OptionControls OptionControls { get; }
 
     private double _intensity;
     private double _intensityChangeBegin;
@@ -76,8 +76,8 @@ public class EditImplGrayscaleViewModel :
                 { Source = this, Mode = BindingMode.TwoWay, Converter = new Vector3ToDoubleArrConverter() });
 
         OptionControls = [
-            (intensityControl, nameof(Intensity)),
-            (weightsControl, nameof(Weights))
+            new(intensityControl, nameof(Intensity)),
+            new(weightsControl, nameof(Weights))
         ];
     }
 

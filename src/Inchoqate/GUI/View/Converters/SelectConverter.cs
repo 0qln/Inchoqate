@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace Inchoqate.GUI.View.Converters;
 
-public class SelectConverter<TIn, TOut>(Func<TIn, TOut>? converter = null, Func<TOut, TIn>? convertBack = null) : IValueConverter
+public class SelectConverter<TIn, TOut>(Func<TIn, TOut?>? converter = null, Func<TOut, TIn?>? convertBack = null) : IValueConverter
 {
     object? IValueConverter.Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

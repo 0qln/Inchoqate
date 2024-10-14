@@ -8,7 +8,7 @@ namespace Inchoqate.GUI.ViewModel;
 public abstract class EditBaseViewModel : BaseViewModel, IEdit
 {
     [JsonIgnore]
-    public abstract ObservableCollection<(Control, string)> OptionControls { get; }
+    public abstract OptionControls OptionControls { get; }
 
     public abstract int ExpectedInputCount { get; }
 
@@ -19,3 +19,7 @@ public abstract class EditBaseViewModel : BaseViewModel, IEdit
         return Title ?? GetType().Name;
     }
 }
+
+public class OptionControls : ObservableCollection<OptionControl>;
+
+public record OptionControl(Control Control, string Title);
