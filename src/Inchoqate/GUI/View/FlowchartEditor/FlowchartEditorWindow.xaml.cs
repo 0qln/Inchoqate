@@ -1,4 +1,4 @@
-﻿namespace Inchoqate.GUI.View;
+﻿namespace Inchoqate.GUI.View.FlowchartEditor;
 
 /// <summary>
 /// Interaction logic for FlowchartEditorWindow.xaml

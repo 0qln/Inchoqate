@@ -2,6 +2,8 @@
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Inchoqate.GUI.Model.Graphics;
+using Inchoqate.GUI.View.Events;
+using Inchoqate.GUI.View.FlowchartEditor;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.Logging;

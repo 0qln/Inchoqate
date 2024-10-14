@@ -1,9 +1,9 @@
-﻿using Inchoqate.GUI.ViewModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Inchoqate.GUI.ViewModel;
 
-namespace Inchoqate.GUI.View;
+namespace Inchoqate.GUI.View.FlowchartEditor;
 
 /// <summary>
 /// Interaction logic for FlowchartEditorNodeView.xaml
