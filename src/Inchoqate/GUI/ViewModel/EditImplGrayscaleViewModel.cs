@@ -82,11 +82,7 @@ public class EditImplGrayscaleViewModel :
     }
 
 
-    public override Shader? GetShader(out bool success) =>
-        Shader.FromUri(
-            new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
-            new("/Shaders/Grayscale.frag", UriKind.RelativeOrAbsolute),
-            out success);
+    public override Shader? GetShader(out bool success) => Shader.FromSource(Shaders.BaseVert, Shaders.Grayscale, out success);
 
     public bool Delegate(IntensityChangedEvent @event) 
     {

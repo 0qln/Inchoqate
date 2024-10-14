@@ -178,10 +178,7 @@ public class PreviewImageViewModel : BaseViewModel, IDisposable
         VertexArray = new(sIndx: _indices, sVert: _vertices, BufferUsageHint.StaticDraw);
         VertexArray.Use();
 
-        Shader = Shader.FromUri(
-            new("/Shaders/Base.vert", UriKind.RelativeOrAbsolute),
-            new("/Shaders/Base.frag", UriKind.RelativeOrAbsolute),
-            out var success)!;
+        Shader = Shader.FromSource(Shaders.BaseVert, Shaders.BaseFrag, out var success);
 
         if (!success)
         {

@@ -47,10 +47,10 @@
 
   <ItemGroup>
     <Resource Include="Model\Graphics\Shaders\Base.frag">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Model\Graphics\Shaders\Base.vert">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Model\Graphics\Shaders\Grayscale.frag" />
     <Resource Include="Model\Graphics\Shaders\NoGreen.frag" />
@@ -61,6 +61,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Model\Graphics\Shaders.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Shaders.resx</DependentUpon>
+    </Compile>
     <Compile Update="View\DisplayComboBox\DisplayComboBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -70,6 +75,13 @@
     <Compile Update="View\MenuButton\MenuButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Model\Graphics\Shaders.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Shaders.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
