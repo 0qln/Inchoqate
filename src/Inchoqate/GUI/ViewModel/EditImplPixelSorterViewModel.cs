@@ -8,6 +8,7 @@ using Inchoqate.GUI.Model.Graphics;
 using Inchoqate.GUI.View;
 using Inchoqate.GUI.View.Converters;
 using Inchoqate.GUI.View.DisplayComboBox;
+using Inchoqate.GUI.View.Edits;
 using Inchoqate.GUI.View.MultiSlider;
 using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.Logging;

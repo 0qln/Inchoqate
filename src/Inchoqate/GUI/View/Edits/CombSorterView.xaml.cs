@@ -1,8 +1,7 @@
 ﻿using System.Windows.Controls;
-using Inchoqate.GUI.View.Converters;
 using Inchoqate.GUI.ViewModel;
 
-namespace Inchoqate.GUI.View
+namespace Inchoqate.GUI.View.Edits
 {
     /// <summary>
     /// Interaction logic for CombSort.xaml
@@ -16,6 +15,4 @@ namespace Inchoqate.GUI.View
             InitializeComponent();
         }
     }
-
-    public class PurenessConverter() : SelectConverter<int?, string?>(convertBack: s => int.TryParse(s, out var value) ? value : null);
 }
