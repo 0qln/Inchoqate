@@ -15,7 +15,6 @@ namespace Inchoqate.GUI.ViewModel
 
         #region PropertySetterOverloads
 
-
         protected bool SetProperty<T>(
             Func<T> backingStorePropertyReferenceGetter, T value, 
             [CallerMemberName] string propertyName = "", 
@@ -52,7 +51,6 @@ namespace Inchoqate.GUI.ViewModel
             backingStoreSetter(temp);
             return result;
         }
-        
 
         #endregion
     }

@@ -13,7 +13,7 @@ public partial class EventView : UserControl
     public static readonly DependencyProperty ViewModelProperty =
         DependencyProperty.Register(
             nameof(ViewModel),
-            typeof(EventViewModelBase),
+            typeof(EventViewModel),
             typeof(EventView),
             new FrameworkPropertyMetadata(
                 null,
@@ -87,9 +87,9 @@ public partial class EventView : UserControl
 
 
 
-    public EventViewModelBase ViewModel
+    public EventViewModel ViewModel
     {
-        get => (EventViewModelBase)GetValue(ViewModelProperty);
+        get => (EventViewModel)GetValue(ViewModelProperty);
         set => SetValue(ViewModelProperty, value);
     }
 

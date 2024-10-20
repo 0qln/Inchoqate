@@ -1,7 +1,11 @@
 ﻿using System.IO;
 using System.Windows;
-using Inchoqate.GUI.Model;
+using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.Model.Graphics;
+using Inchoqate.GUI.View.Editors;
+using Inchoqate.GUI.View.Editors.StackEditor;
+using Inchoqate.GUI.ViewModel.Editors;
+using Inchoqate.GUI.ViewModel.Editors.StackEditor;
 using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
@@ -26,7 +30,7 @@ public class ProjectViewModel : BaseViewModel
     }
 
     [JsonIgnore]
-    public Dictionary<string, RenderEditorViewModel> Editors { get; }
+    public Dictionary<string, RenderEditorView> Editors { get; }
 
     public string? ActiveEditor
     {
@@ -35,14 +39,14 @@ public class ProjectViewModel : BaseViewModel
     }
 
     [JsonIgnore]
-    public StackEditorViewModel? StackEditor
+    public StackEditorView? StackEditor
     {
         get
         {
             if (!Editors.TryGetValue(nameof(StackEditor), out var editor)) 
                 return default;
 
-            return (StackEditorViewModel)editor;
+            return (StackEditorView)editor;
         }
         set
         {
@@ -52,7 +56,7 @@ public class ProjectViewModel : BaseViewModel
                 return;
             }
 
-            value.SetSource(Texture.FromFile(SourceImage));
+            value..SetSource(Texture.FromFile(SourceImage));
             Editors[nameof(StackEditor)] = value;
             OnPropertyChanged();
         }
@@ -133,7 +137,7 @@ public class ProjectViewModel : BaseViewModel
     {
         EventSerdeModel.Directory = Path.Combine(dir, "Editors");
         foreach (var editor in Editors)
-            EventSerdeModel.Serialize(editor.Value.EventTree, editor.Key);
+            EventSerdeModel.Serialize(editor.Value.ViewModel.EventTree, editor.Key);
 
         File.WriteAllText(
             Path.Combine(dir, "Config.json"),

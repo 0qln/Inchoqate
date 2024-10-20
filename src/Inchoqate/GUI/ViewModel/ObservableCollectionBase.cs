@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using Inchoqate.GUI.Model;
 
 namespace Inchoqate.GUI.ViewModel;
 

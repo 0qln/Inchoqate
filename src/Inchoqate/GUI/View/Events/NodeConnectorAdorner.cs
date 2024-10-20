@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using Inchoqate.GUI.Model;
+using Inchoqate.GUI.Model.Events;
 
 namespace Inchoqate.GUI.View.Events;
 

@@ -11,12 +11,12 @@ public class EventArgsInfoConverter : IValueConverter
     {
         var result = new ObservableCollection<string>();
         if (value is null) { return result; }
-        var vm = (EventViewModelBase)value;
+        var vm = (EventViewModel)value;
         foreach (var arg in vm.GetType()
                      .GetProperties()
                      .Where(prop => prop
                          .GetCustomAttributes(true)
-                         .OfType<ViewProperty>()
+                         .OfType<ViewPropertyAttribute>()
                          .Any()))
         {
             var argN = arg.Name;

@@ -9,7 +9,7 @@
     xmlns:borderlessWindow="clr-namespace:Inchoqate.GUI.View.BorderlessWindow"
     xmlns:menuButton="clr-namespace:Inchoqate.GUI.View.MenuButton"
     xmlns:atomicActivation="clr-namespace:Inchoqate.GUI.View.AtomicActivation"
-    xmlns:stackEditor="clr-namespace:Inchoqate.GUI.View.StackEditor"
+    xmlns:stackEditor="clr-namespace:Inchoqate.GUI.View.Editors.StackEditor"
     mc:Ignorable="d"
     Title="Inchoqate"
     Height="850"

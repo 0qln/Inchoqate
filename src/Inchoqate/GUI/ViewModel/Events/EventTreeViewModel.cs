@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using Inchoqate.GUI.Model;
+using Inchoqate.GUI.Model.Events;
 using Newtonsoft.Json;
 
 namespace Inchoqate.GUI.ViewModel.Events;
@@ -8,9 +9,9 @@ namespace Inchoqate.GUI.ViewModel.Events;
 /// <summary>
 ///     Provides a view model for an event tree model.
 /// </summary>
-public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>, IDeserializable<EventTreeViewModel>
+public class EventTreeViewModel : BaseViewModel, IEventTree, IDeserializable<EventTreeViewModel>
 {
-    private EventViewModelBase _current;
+    private EventViewModel _current;
 
     /// <summary>
     ///     Used to lock the manager from changes that originate in apply/revert actions.
@@ -26,10 +27,10 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
     }
 
 
-    public EventTreeViewModel(string title, EventViewModelBase? initial = null)
+    public EventTreeViewModel(string title, EventViewModel ? initial = null)
     {
         Title = title;
-        Initial = initial ?? new DummyEvent();
+        Initial = initial ?? new(new DummyEvent());
         _current = Initial;
 
         if (initial is not null)
@@ -45,14 +46,14 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
     [JsonIgnore]
     public static ObservableCollection<EventTreeViewModel> RegisteredTrees { get; } = [];
 
-    public EventViewModelBase Initial
+    public EventViewModel Initial
     {
         get;
         // For serialization
         set;
     }
 
-    public EventViewModelBase Current
+    public EventViewModel Current
     {
         get => _current;
         // For serialization public
@@ -64,13 +65,13 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
         }
     }
 
-    public bool Novelty(EventViewModelBase e, bool execute = false)
+    public bool Novelty(EventViewModel e, bool execute = false)
     {
-        if (_locked || !Current.Next.TryAdd(e.CreationDate, e))
+        if (_locked || !Current.Next.TryAdd(e.Model.CreationDate, e))
             return false;
 
         var result = true;
-        if (execute) result = e.Do();
+        if (execute) result = e.Model.Do();
 
         e.Previous = Current;
         Current = e;
@@ -85,21 +86,21 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
         // could modify state of the application and
         // allow for an event to be tried to push
         _locked = true;
-        var result = Current.Undo();
+        var result = Current.Model.Undo();
         _locked = false;
         Current = Current.Previous;
 
         return result;
     }
 
-    public bool Redo(int next = 0, EventViewModelBase? @event = null)
+    public bool Redo(int next = 0, EventViewModel? @event = null)
     {
         if (_locked || next >= Current.Next.Count)
             return false;
 
         _locked = true;
         var e = @event ?? Current.Next.Values[next];
-        var result = e.Do();
+        var result = e.Model.Do();
         _locked = false;
         Current = e;
 
@@ -111,7 +112,7 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
     /// </summary>
     /// <param name="event"></param>
     /// <returns></returns>
-    public IEnumerable<EventViewModelBase> EnumerateSubtree(EventViewModelBase? @event = null)
+    public IEnumerable<EventViewModel> EnumerateSubtree(EventViewModel? @event = null)
     {
         @event ??= Initial;
 
@@ -125,32 +126,15 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
     /// </summary>
     /// <param name="event"></param>
     /// <returns></returns>
-    public IEnumerable<EventViewModelBase> EnumerateExecutedEvents(EventViewModelBase? @event = null)
+    public IEnumerable<EventViewModel> EnumerateExecutedEvents(EventViewModel? @event = null)
     {
         return new ExecutedEventsEnumerable(@event ?? Initial);
     }
 
-    /// <summary>
-    ///     Dummy event.
-    /// </summary>
-    protected sealed class DummyEvent : EventViewModelBase, IDeserializable<DummyEvent>
-    {
-        protected override bool InnerDo()
-        {
-            return true;
-        }
-
-        protected override bool InnerUndo()
-        {
-            return true;
-        }
-    }
-
-
-    public class ExecutedEventsEnumerable(EventViewModelBase initial) : IEnumerable<EventViewModelBase>
+    public class ExecutedEventsEnumerable(EventViewModel initial) : IEnumerable<EventViewModel>
     {
         /// <inheritdoc />
-        public IEnumerator<EventViewModelBase> GetEnumerator()
+        public IEnumerator<EventViewModel> GetEnumerator()
         {
             return new ExecutedEventsEnumerator(initial);
         }
@@ -167,9 +151,9 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
     ///     Iterates over all executed events.
     /// </summary>
     /// <param name="initial"></param>
-    public class ExecutedEventsEnumerator(EventViewModelBase initial) : IEnumerator<EventViewModelBase>
+    public class ExecutedEventsEnumerator(EventViewModel initial) : IEnumerator<EventViewModel>
     {
-        private EventViewModelBase? _current;
+        private EventViewModel? _current;
 
         /// <inheritdoc />
         public bool MoveNext()
@@ -194,7 +178,7 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
         }
 
         /// <inheritdoc />
-        public EventViewModelBase Current => _current!; // Safety: is _current is still null, MoveNext has not been called yet.
+        public EventViewModel Current => _current!; // Safety: is _current is still null, MoveNext has not been called yet.
 
         /// <inheritdoc />
         object IEnumerator.Current => Current;
@@ -203,5 +187,12 @@ public class EventTreeViewModel : BaseViewModel, IEventTree<EventViewModelBase>,
         public void Dispose()
         {
         }
+    }
+
+    /// <inheritdoc />
+    public bool Novelty(IEvent e, bool execute = false)
+    {
+        if (e is not EventViewModel ev) throw new NotSupportedException();
+        return Novelty(ev, execute);
     }
 }

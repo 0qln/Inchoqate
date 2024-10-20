@@ -1,10 +1,16 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.Model.Graphics;
+using Inchoqate.GUI.View.Editors.Edits;
+using Inchoqate.GUI.View.Edits;
 using Inchoqate.GUI.View.Events;
 using Inchoqate.GUI.View.FlowchartEditor;
 using Inchoqate.GUI.ViewModel;
+using Inchoqate.GUI.ViewModel.Editors;
+using Inchoqate.GUI.ViewModel.Editors.StackEditor;
+using Inchoqate.GUI.ViewModel.Edits;
 using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
@@ -255,19 +261,18 @@ public partial class MainWindow : BorderlessWindow.BorderlessWindow
 
     private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        if (_app.ActiveEditor is StackEditorViewModel stackEditor)
-            stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplGrayscaleViewModel { DelegationTarget = _app.ActiveEditor!.EventTree } });
+        _app.ActiveEditor?.AddEdit(new EditImplGrayscaleView(new() { DelegationTarget = _app.ActiveEditor.ViewModel!.EventTree }));
     }
 
     private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
         if (_app.ActiveEditor is StackEditorViewModel stackEditor)
-            stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplNoGreenViewModel() });
+            stackEditor.Edits.Delegate(new EditAddedEvent { Item = new EditImplNoGreenViewModel() });
     }
     private void AddNodePixelSorterCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
         if (_app.ActiveEditor is StackEditorViewModel stackEditor)
-            stackEditor.Edits.Delegate(new LinearEditAddedEvent { Item = new EditImplPixelSorterViewModel() });
+            stackEditor.Edits.Delegate(new EditAddedEvent { Item = new EditImplPixelSorterViewModel() });
     }
 
     private void OpenStackEditorCommand_Executed(object sender, ExecutedRoutedEventArgs e)

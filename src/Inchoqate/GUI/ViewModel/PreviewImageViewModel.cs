@@ -7,6 +7,7 @@ using System.ComponentModel;
 using Inchoqate.GUI.Model.Graphics;
 using Inchoqate.Logging;
 using PointF = System.Drawing.PointF;
+using Inchoqate.GUI.ViewModel.Editors;
 
 namespace Inchoqate.GUI.ViewModel;
 

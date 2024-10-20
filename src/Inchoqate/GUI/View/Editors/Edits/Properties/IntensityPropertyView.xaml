@@ -1,0 +1,30 @@
+﻿<local:MonitoredPropertyView
+    x:TypeArguments="model:IIntensityProperty, events:IntensityChangedEvent"
+    x:Class="Inchoqate.GUI.View.Editors.Edits.Properties.IntensityPropertyView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:multiSlider="clr-namespace:Inchoqate.GUI.View.MultiSlider"
+    xmlns:model="clr-namespace:Inchoqate.GUI.Model"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:local="clr-namespace:Inchoqate.GUI.View.Editors.Edits.Properties"
+    xmlns:events="clr-namespace:Inchoqate.GUI.Model.Events"
+    mc:Ignorable="d"
+    d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:DoubleArrayBoxingConverter x:Key="ArrayBoxingConverter" />
+    </UserControl.Resources>
+    <multiSlider:MultiSlider
+        Minimum="{x:Static model:IIntensityProperty.Minimum}"
+        Maximum="{x:Static model:IIntensityProperty.Maximum}"
+        Values="{Binding (model:IIntensityProperty.Intensity), Mode=TwoWay, Converter={StaticResource ArrayBoxingConverter}}"
+        ThumbDragCompleted="MultiSlider_OnThumbDragCompleted"
+        ThumbDragStarted="MultiSlider_OnThumbDragStarted">
+        <multiSlider:MultiSlider.ShowValues>
+            <x:Array Type="{x:Type system:Boolean}">
+                <system:Boolean>True</system:Boolean>
+            </x:Array>
+        </multiSlider:MultiSlider.ShowValues>
+    </multiSlider:MultiSlider>
+</local:MonitoredPropertyView>

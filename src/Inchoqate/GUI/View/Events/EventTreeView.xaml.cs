@@ -35,7 +35,7 @@ public partial class EventTreeView : UserControl
         // TODO: view model has to be removed later.
         var @this = (EventTreeView)d;
         var tree = (EventTreeViewModel)e.NewValue;
-        @this.Head.ViewModel = tree.Initial;
+        @this.Head.ViewModel = (EventViewModel)tree.Initial;
         @this.Head.Tree = tree;
     }
 }

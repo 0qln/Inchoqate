@@ -1,5 +1,7 @@
 ﻿using System.Windows;
+using Inchoqate.GUI.View.Editors;
 using Inchoqate.GUI.ViewModel;
+using Inchoqate.GUI.ViewModel.Editors;
 
 namespace Inchoqate.GUI;
 
@@ -25,7 +27,7 @@ public partial class App : Application
 
     public ResourceDictionary ThemeDictionary => Current.Resources.MergedDictionaries.First();
 
-    public RenderEditorViewModel? ActiveEditor
+    public RenderEditorView? ActiveEditor
     {
         get
         {
