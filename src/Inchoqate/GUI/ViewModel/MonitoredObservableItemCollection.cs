@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using Inchoqate.GUI.Model;
 using Inchoqate.GUI.ViewModel.Events;
 using Inchoqate.GUI.Model.Events;

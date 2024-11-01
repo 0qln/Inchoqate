@@ -128,7 +128,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type local:PropertyView}">
+    <!--<Style TargetType="{x:Type local:PropertyView}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:PropertyView}">
@@ -139,5 +139,5 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

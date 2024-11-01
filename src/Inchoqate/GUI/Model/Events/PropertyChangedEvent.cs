@@ -2,33 +2,31 @@
 
 namespace Inchoqate.GUI.Model.Events;
 
-public abstract class PropertyChangedEvent<TProperty, T> : EventModel, IDependencyInjected<TProperty>
+public abstract class PropertyChangedEvent<TDp, TVal> : EventModel, IDependencyInjected<TDp>
 {
     /// <summary>
     ///     The object on which the property is changed.
     /// </summary>
     [ViewProperty]
-    public TProperty? Dependency { get; set; }
+    public TDp? Dependency { get; set; }
 
     [ViewProperty]
-    public T? NewValue { get; set; }
+    public TVal? NewValue { get; set; }
 
     [ViewProperty]
-    public T? OldValue { get; set; }
+    public TVal? OldValue { get; set; }
 
     protected override bool InnerDo()
     {
-        if (Dependency is null || NewValue is null) return false;
-        Setter(Dependency, NewValue);
-        return true;
+        if (Dependency is null) return false;
+        return Setter(Dependency, NewValue);
     }
 
     protected override bool InnerUndo()
     {
-        if (Dependency is null || OldValue is null) return false;
-        Setter(Dependency, OldValue);
-        return true;
+        if (Dependency is null) return false;
+        return Setter(Dependency, OldValue);
     }
 
-    protected abstract void Setter(TProperty prop, T? val);
+    protected abstract bool Setter(TDp prop, TVal? val);
 }

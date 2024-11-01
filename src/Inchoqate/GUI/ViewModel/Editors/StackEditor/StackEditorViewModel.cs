@@ -1,4 +1,5 @@
 ﻿using Inchoqate.GUI.Model;
+using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.Model.Graphics;
 using Inchoqate.GUI.ViewModel.Edits;
 using Inchoqate.GUI.ViewModel.Events;
@@ -7,7 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Inchoqate.GUI.ViewModel.Editors.StackEditor;
 
-public class StackEditorViewModel : RenderEditorViewModel, IDisposable
+public interface IStackEditorEditsEvent : IEvent;
+
+public class StackEditorViewModel : RenderEditorViewModel, IDisposable, IDeserializable<StackEditorViewModel>
 {
     private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<StackEditorViewModel>();
 
@@ -15,9 +18,6 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
     private PixelBuffer? _pixelBuffer1, _pixelBuffer2;
     private Texture? _sourceTexture;
 
-
-    /// <inheritdoc />
-    public override MonitoredObservableItemCollection<> Edits { get; }
 
     protected override void HandlePropertyChanged(string? propertyName)
     {
@@ -37,35 +37,10 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         }
     }
 
-    public StackEditorViewModel() : this(new("Stack Editor"))
-    {
-    }
+    public StackEditorViewModel() : this(new("Stack Editor")) { }
 
     public StackEditorViewModel(EventTreeViewModel eventTree) : base(eventTree)
     {
-        // TODO: clean this up.
-        // Inject dependencies.
-        foreach (var @event in EventTree.EnumerateSubtree())
-        {
-            switch (@event.Model)
-            {
-                case IDependencyInjected<ICollection<EditBaseLinear>> a:
-                    a.Dependency = Edits;
-                    break;
-                case IDependencyInjected<MonitoredObservableItemCollection<EditBaseLinear>> a:
-                    a.Dependency = Edits;
-                    break;
-                case IDependencyInjected<IMoveItemsWrapper> a:
-                    a.Dependency = Edits;
-                    break;
-            }
-        }
-
-        // Apply events.
-        foreach (var @event in EventTree.EnumerateExecutedEvents())
-        {
-            @event.Model.Do();
-        }
     }
 
 
@@ -215,6 +190,12 @@ public class StackEditorViewModel : RenderEditorViewModel, IDisposable
         _sourceTexture = value;
         SourceSize = new(_sourceTexture?.Width ?? 0, _sourceTexture?.Height ?? 0);
         Invalidate();
+    }
+
+    /// <inheritdoc />
+    public override Uri? GetUriSource()
+    {
+        return _sourceTexture?.Source;
     }
 
 

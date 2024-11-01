@@ -2,43 +2,42 @@
 using System.Windows.Media;
 using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.Model.Graphics;
-using Inchoqate.GUI.ViewModel.Edits;
 using Inchoqate.GUI.ViewModel.Events;
 
 namespace Inchoqate.GUI.ViewModel.Editors;
 
 
-public abstract class RenderEditorViewModel : BaseViewModel, IEditor<Texture, FrameBuffer>
+public abstract class RenderEditorViewModel : BaseViewModel, IEditor<Texture, FrameBuffer>,
+    IEventDelegate<RenderEditorSourceChangedEvent, RenderEditorViewModel>
 {
     private bool _computed;
 
-    private FrameBuffer? _result;
-
     private Size _renderSize, _sourceSize;
+
+    private FrameBuffer? _result;
 
     private Color _voidColor;
 
-    public abstract MonitoredObservableItemCollection<> Edits { get; }
-
     protected RenderEditorViewModel(EventTreeViewModel eventTree)
     {
-        EventTree = eventTree;
+        DelegationTarget = eventTree;
+        Edits = new(eventTree);
         Edits.CollectionChanged += (_, _) => Invalidate();
         Edits.ItemsPropertyChanged += (_, _) => Invalidate();
     }
 
-    public EventTreeViewModel EventTree { get; }
-
-    public Color VoidColor
-    {
-        get => _voidColor;
-        set => SetProperty(ref _voidColor, value);
-    }
+    public EditorNodeViewModelCollection Edits { get; }
 
     public Size SourceSize
     {
         get => _sourceSize;
         protected set => SetProperty(ref _sourceSize, value);
+    }
+
+    public Color VoidColor
+    {
+        get => _voidColor;
+        set => SetProperty(ref _voidColor, value);
     }
 
     public Size RenderSize
@@ -60,6 +59,18 @@ public abstract class RenderEditorViewModel : BaseViewModel, IEditor<Texture, Fr
     }
 
 
+    public virtual void Invalidate()
+    {
+        Result = null;
+    }
+
+    public abstract bool Compute();
+
+    public abstract void SetSource(Texture? source);
+
+    public abstract Uri? GetUriSource();
+
+
     protected override void HandlePropertyChanged(string? propertyName)
     {
         switch (propertyName)
@@ -73,13 +84,6 @@ public abstract class RenderEditorViewModel : BaseViewModel, IEditor<Texture, Fr
         }
     }
 
-
-    public virtual void Invalidate()
-    {
-        Result = null;
-    }
-
-    public abstract bool Compute();
-
-    public abstract void SetSource(Texture? source);
+    /// <inheritdoc />
+    public IEventReceiver? DelegationTarget { get; set; }
 }

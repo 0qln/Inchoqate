@@ -10,7 +10,7 @@ public abstract class EditBaseView(EditBaseViewModel vm, OptionControls optionCo
 
     public EditBaseViewModel ViewModel { get; } = vm;
 
-    public string Title => ViewModel.ToString();
+    public virtual string Title => ViewModel.ToString();
 }
 
 public class OptionControls : ObservableCollection<UIElement>;

@@ -17,37 +17,48 @@ public abstract class EventModel : IEvent
     public DateTime CreationDate { get; } = DateTime.Now;
 
     /// <summary>
-    ///     Executes the event. And changes the event state.
+    ///     Executes the event and changes the event state.
     /// </summary>
-    public bool Do()
+    /// <param name="force">
+    /// Whether the execution is forced.
+    /// </param>
+    public bool Do(bool force = true)
     {
-        if (InnerDo())
+        if (!force && State == EventState.Executed)
         {
-            State = EventState.Executed;
-            return true;
+            Logger.LogWarning("Event already executed.");
+            return false;
         }
-        else
+
+        if (!InnerDo())
         {
             Logger.LogWarning("Failed to execute event.");
             return false;
         }
+
+        State = EventState.Executed;
+        return true;
     }
 
     /// <summary>
-    ///     Reverts the event. And changes the event state.
+    ///     Reverts the event and changes the event state.
     /// </summary>
-    public bool Undo()
+    public bool Undo(bool force = true)
     {
-        if (InnerUndo())
+        if (!force && State == EventState.Reverted)
         {
-            State = EventState.Reverted;
-            return true;
+            Logger.LogWarning("Event already reverted.");
+            return false;
         }
-        else
+
+        if (!InnerUndo())
         {
             Logger.LogWarning("Failed to revert event.");
             return false;
         }
+
+        State = EventState.Reverted;
+        return true;
     }
 
     protected abstract bool InnerDo();

@@ -2,6 +2,7 @@
 using Inchoqate.GUI.View.Editors;
 using Inchoqate.GUI.ViewModel;
 using Inchoqate.GUI.ViewModel.Editors;
+using Inchoqate.GUI.ViewModel.Editors.StackEditor;
 
 namespace Inchoqate.GUI;
 
@@ -26,15 +27,6 @@ public partial class App : Application
     public AppViewModel DataContext { get; } = new();
 
     public ResourceDictionary ThemeDictionary => Current.Resources.MergedDictionaries.First();
-
-    public RenderEditorView? ActiveEditor
-    {
-        get
-        {
-            var proj = DataContext.Project;
-            return proj?.ActiveEditor is null ? default : proj?.Editors[proj.ActiveEditor];
-        }
-    }
 
     public void ChangeTheme(Uri uri)
     {

@@ -69,12 +69,15 @@ public partial class MainWindow : BorderlessWindow.BorderlessWindow
     private readonly App _app = (App)Application.Current;
 
     private FlowchartEditorWindow? _editorWindow;
-    private EventTreeWindow? _undoTreeWindow;
+    private EventTreeWindow? _eventTreeWindow;
 
     public MainWindow()
     {
         InitializeComponent();
 
+        DataContext = _app;
+
+        // todo: this should all get handled by one of the app classes.
         _app.DataContext.PropertyChanged += (_, e1) =>
         {
             switch (e1.PropertyName)
@@ -89,22 +92,9 @@ public partial class MainWindow : BorderlessWindow.BorderlessWindow
                         break;
                     }
 
-                    imageContext.RenderEditor = _app.ActiveEditor;
-                    StackEditor.DataContext = proj.StackEditor;
-
-                    proj.PropertyChanged += (_, e2) =>
-                    {
-                        switch (e2.PropertyName)
-                        {
-                            case nameof(ProjectViewModel.ActiveEditor):
-                                imageContext.RenderEditor = _app.ActiveEditor;
-                                break;
-                            case nameof(ProjectViewModel.StackEditor):
-                                StackEditor.DataContext = proj.StackEditor;
-                                break;
-                        }
-                    };
-
+                    imageContext.RenderEditor = _app.ActiveEditor; // should be an event
+                                                                   // and also there should be a direct way for the user to set the currently active render editor.
+                                                                   // todo: => move this to a dp property on the preview image view.
                     break;
             }
         };
@@ -141,35 +131,33 @@ public partial class MainWindow : BorderlessWindow.BorderlessWindow
 
     private void OpenUndoTreeCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        ToggleWindow(ref _undoTreeWindow, () => _undoTreeWindow = null);
+        ToggleWindow(ref _eventTreeWindow, () => _eventTreeWindow = null);
     }
 
     private void UndoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        if (_app.ActiveEditor is null)
-            return;
+        var project = _app.DataContext.Project;
 
-        if (_app.ActiveEditor.EventTree.Current.Previous is null)
-            return;
-
-        if (!_app.ActiveEditor.EventTree.Undo())
+        if (project is null)
         {
-            _logger.LogError("Undo failed.");
+            _logger.LogWarning("Application has no project.");
+            return;
         }
+
+        project.State.UndoMut();
     }
 
     private void RedoCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        if (_app.ActiveEditor is null)
-            return;
+        var project = _app.DataContext.Project;
 
-        if (_app.ActiveEditor.EventTree.Current.Next.Count == 0)
-            return;
-
-        if (!_app.ActiveEditor.EventTree.Redo())
+        if (project is null)
         {
-            _logger.LogError("Redo failed.");
+            _logger.LogWarning("Application has no project.");
+            return;
         }
+
+        project.State.RedoMut();
     }
 
     private void OpenImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -190,7 +178,17 @@ public partial class MainWindow : BorderlessWindow.BorderlessWindow
 
         var result = dialog.ShowDialog();
 
-        if (result == true) _app.DataContext.Project.SourceImage = dialog.FileName;
+        // todo: this should be an event
+        var editor = _app.DataContext.Project.ActiveEditor;
+        var eventDel = editor as IEventDelegate<RenderEditorSourceChangedEvent>;
+        if (result == true)
+        {
+            eventDel.Delegate(new()
+            {
+                OldValue = editor.GetUriSource(),
+                NewValue = new(dialog.FileName)
+            });
+        }
     }
 
     private void SaveImageCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -211,15 +209,16 @@ public partial class MainWindow : BorderlessWindow.BorderlessWindow
 
         if (dialog.ShowDialog() != true) return;
 
-        if (!_app.ActiveEditor!.Computed) _app.ActiveEditor.Compute();
+        var renderer = _app.DataContext.Project.ActiveEditor;
 
-        if (_app.ActiveEditor.Result is null)
+        if (!renderer!.Computed) renderer.Compute();
+
+        if (renderer.Result is null)
         {
             _logger.LogError("No result to save the image after computing.");
             return;
         }
 
-        var renderer = _app.ActiveEditor;
         renderer.RenderSize = renderer.SourceSize;
         PreviewImage.GLImage.Width = renderer.SourceSize.Width;
         PreviewImage.GLImage.Height = renderer.SourceSize.Height;
@@ -261,18 +260,19 @@ public partial class MainWindow : BorderlessWindow.BorderlessWindow
 
     private void AddNodeGrayscaleCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        _app.ActiveEditor?.AddEdit(new EditImplGrayscaleView(new() { DelegationTarget = _app.ActiveEditor.ViewModel!.EventTree }));
+        var state = _app.DataContext.Project.State;
+        var activeEditor = _app.DataContext.Project.ActiveEditor;
+        var editor = activeEditor.Edits as IEventDelegate<EditAddedEvent>;
+        editor.Delegate(new() { Item = new EditImplGrayscaleViewModel { DelegationTarget = state } });
     }
 
     private void AddNodeNoGreenCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        if (_app.ActiveEditor is StackEditorViewModel stackEditor)
-            stackEditor.Edits.Delegate(new EditAddedEvent { Item = new EditImplNoGreenViewModel() });
+        throw new NotImplementedException();
     }
     private void AddNodePixelSorterCmdBinding_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        if (_app.ActiveEditor is StackEditorViewModel stackEditor)
-            stackEditor.Edits.Delegate(new EditAddedEvent { Item = new EditImplPixelSorterViewModel() });
+        throw new NotImplementedException();
     }
 
     private void OpenStackEditorCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -283,7 +283,6 @@ public partial class MainWindow : BorderlessWindow.BorderlessWindow
             return;
         }
 
-        _app.DataContext.Project.StackEditor ??= new();
-        _app.DataContext.Project.ActiveEditor = nameof(ProjectViewModel.StackEditor);
+        _app.DataContext.Project.ActiveEditor = _app.DataContext.Project.StackEditor ??= new();
     }
 }

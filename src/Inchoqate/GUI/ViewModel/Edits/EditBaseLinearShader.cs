@@ -5,8 +5,11 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Inchoqate.GUI.ViewModel.Edits;
 
-public abstract class EditBaseLinearShader : EditBaseLinear, IEdit<Texture, FrameBuffer>, IDisposable
+public abstract class EditBaseLinearShader : EditBaseViewModel, IEdit<Texture, FrameBuffer>, IDisposable
 {
+    /// <inheritdoc />
+    public override int ExpectedInputCount => 1;
+
     private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<EditBaseLinearShader>();
 
     protected static readonly ReadOnlyMemory<float> Vertices = (float[])

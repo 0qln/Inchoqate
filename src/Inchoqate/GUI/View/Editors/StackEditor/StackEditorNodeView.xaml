@@ -75,22 +75,13 @@
                        Opacity="0" />
             </Canvas>
 
-            <StackPanel
-                x:Name="EditorContent"
-                Visibility="{Binding ContentVisibility, ElementName=ControlRoot}"
-                Margin="10, 5"
-                Grid.Row="2">
-                <pv:IntensityPropertyView DataContext="{Binding .}" DelegationTarget="{Binding .DelegationTarget}" />
-                <pv:WeightsPropertyView DataContext="{Binding .}" DelegationTarget="{Binding .DelegationTarget}" />
-            </StackPanel>
-
-            <!--<ItemsControl Grid.Row="2"
+            <ItemsControl Grid.Row="2"
                           x:Name="EditorContent"
                           Visibility="{Binding ContentVisibility, ElementName=ControlRoot}"
                           ItemsSource="{Binding (edits:EditBaseView.OptionControls)}"
                           Margin="10, 5">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type properties:PropertyBaseView}">
+                    <DataTemplate DataType="{x:Type pv:PropertyBaseView}">
                         <Grid Margin="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -114,7 +105,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
-            </ItemsControl>-->
+            </ItemsControl>
 
         </Grid>
 

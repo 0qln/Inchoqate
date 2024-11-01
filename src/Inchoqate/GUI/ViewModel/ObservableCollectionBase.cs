@@ -19,42 +19,50 @@ public class ObservableCollectionBase<T> : ObservableCollection<T>, IMoveItemsWr
     {
     }
 
-
-    public static ObservableCollectionBase<T> Mirror<TOther>(
-        ObservableCollectionBase<TOther> other, 
-        Func<TOther, T> cast, 
+    public void Mirror<TOther>(
+        ObservableCollectionBase<TOther> other,
+        Func<TOther, T> cast,
         Func<T, TOther> castBack)
     {
-        var result = new ObservableCollectionBase<T>();
-        foreach (var item in other)
-        {
-            result.Add(cast(item));
-        }
+        // Initial mirror
+        Clear();
+        foreach (var item in other) Add(cast(item));
 
+        // Mirror future changes
+        Func<TOther, T> find = x => this.First(y => castBack(y)!.Equals(x));
         other.CollectionChanged += (_, e) =>
         {
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    MirrorEventAdd(cast, e, result);
+                    MirrorEventAdd(cast, e, this);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    MirrorEventRemove(castBack, e, result);
+                    MirrorEventRemove(find, e, this);
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    MirrorEventReplace(cast, e, result);
+                    MirrorEventReplace(cast, find, e, this);
                     break;
                 case NotifyCollectionChangedAction.Move:
-                    MirrorEventMove(result, e);
+                    MirrorEventMove(this, e);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    MirrorEventReset(other, cast, result);
+                    MirrorEventReset(other, cast, this);
                     break;
                 default:
                     throw new UnreachableException();
             }
         };
+    }
 
+
+    public static ObservableCollectionBase<T> CreateMirror<TOther>(
+        ObservableCollectionBase<TOther> other, 
+        Func<TOther, T> cast, 
+        Func<T, TOther> castBack)
+    {
+        var result = new ObservableCollectionBase<T>();
+        result.Mirror(other, cast, castBack);
         return result;
     }
 
@@ -73,17 +81,17 @@ public class ObservableCollectionBase<T> : ObservableCollection<T>, IMoveItemsWr
         result.Move(e.OldStartingIndex, e.NewStartingIndex);
     }
 
-    private static void MirrorEventReplace<TOther>(Func<TOther, T> cast, NotifyCollectionChangedEventArgs e, ObservableCollectionBase<T> result)
+    private static void MirrorEventReplace<TOther>(Func<TOther, T> cast, Func<TOther, T> find, NotifyCollectionChangedEventArgs e, ObservableCollectionBase<T> result)
     {
         if (e.OldItems is null)
-            throw new ArgumentException("e.OldItems is null");
+            throw new ArgumentNullException(nameof(e.OldItems));
 
         if (e.NewItems is null)
-            throw new ArgumentException("e.NewItems is null");
+            throw new ArgumentNullException(nameof(e.NewItems));
 
         foreach (var item in e.OldItems)
         {
-            result.Remove(cast((TOther)item));
+            result.Remove(find((TOther)item));
         }
 
         foreach (var item in e.NewItems)
@@ -92,21 +100,21 @@ public class ObservableCollectionBase<T> : ObservableCollection<T>, IMoveItemsWr
         }
     }
 
-    private static void MirrorEventRemove<TOther>(Func<T, TOther> castBack, NotifyCollectionChangedEventArgs e, ObservableCollectionBase<T> result)
+    private static void MirrorEventRemove<TOther>(Func<TOther, T> find, NotifyCollectionChangedEventArgs e, ObservableCollectionBase<T> result)
     {
         if (e.OldItems is null)
-            throw new ArgumentException("e.OldItems is null");
+            throw new ArgumentNullException(nameof(e.OldItems));
 
         foreach (var item in e.OldItems)
         {
-            result.Remove(result.First(x => castBack(x)!.Equals((TOther)item)));
+            result.Remove(find((TOther)item));
         }
     }
 
     private static void MirrorEventAdd<TOther>(Func<TOther, T> cast, NotifyCollectionChangedEventArgs e, ObservableCollectionBase<T> result)
     {
         if (e.NewItems is null)
-            throw new ArgumentException("e.NewItems is null");
+            throw new ArgumentNullException(nameof(e.NewItems));
 
         foreach (var item in e.NewItems)
         {

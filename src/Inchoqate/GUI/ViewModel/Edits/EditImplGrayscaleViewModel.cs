@@ -1,6 +1,8 @@
 ﻿using Inchoqate.GUI.Model;
 using Inchoqate.GUI.Model.Events;
 using Inchoqate.GUI.Model.Graphics;
+using Inchoqate.GUI.View;
+using Inchoqate.GUI.View.Editors.Edits;
 using Inchoqate.GUI.View.SharedConverters;
 using Newtonsoft.Json;
 using OpenTK.Graphics.OpenGL4;
@@ -8,6 +10,7 @@ using OpenTK.Mathematics;
 
 namespace Inchoqate.GUI.ViewModel.Edits;
 
+[ForView(typeof(EditImplGrayscaleView))]
 public class EditImplGrayscaleViewModel :
     EditBaseLinearShader,
     IEventDelegate<IntensityChangedEvent, IIntensityProperty>, IIntensityProperty,
@@ -48,7 +51,7 @@ public class EditImplGrayscaleViewModel :
     }
 
 
-    public override Shader? GetShader(out bool success)
+    public override Shader GetShader(out bool success)
     {
         return Shader.FromSource(Shaders.BaseVert, Shaders.Grayscale, out success);
     }

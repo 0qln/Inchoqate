@@ -26,6 +26,8 @@ public class EventSerdeModel
         ContractResolver = new TypeCheckedContractResolver()
     };
 
+    private static readonly JsonSerializer Json = JsonSerializer.Create(SerializerSettings);
+
     private static string _directory;
 
     static EventSerdeModel()
@@ -66,10 +68,10 @@ public class EventSerdeModel
     {
         try
         {
-            File.WriteAllText(
-                Path.Combine(Directory, $"{treeName}.json"),
-                JsonConvert.SerializeObject(model, SerializerSettings)
-            );
+            var path = Path.Combine(Directory, $"{treeName}.json");
+            using var stream = File.Open(path, FileMode.OpenOrCreate, FileAccess.Write);
+            using var writer = new StreamWriter(stream);
+            Json.Serialize(writer, model, typeof(TEventTree));
         }
         catch (Exception e)
         {
@@ -89,10 +91,11 @@ public class EventSerdeModel
     {
         try
         {
-            return JsonConvert.DeserializeObject<TEventTree>(
-                File.ReadAllText(Path.Combine(Directory, $"{treeName}.json")),
-                SerializerSettings
-            );
+            var path = Path.Combine(Directory, $"{treeName}.json");
+            using var stream = File.Open(path, FileMode.Open, FileAccess.Read);
+            using var reader = new StreamReader(stream);
+            using var jsonReader = new JsonTextReader(reader);
+            return Json.Deserialize<TEventTree>(jsonReader);
         }
         catch (Exception e)
         {

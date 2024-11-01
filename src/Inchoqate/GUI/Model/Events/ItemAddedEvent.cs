@@ -1,4 +1,6 @@
-﻿using Inchoqate.GUI.View;
+﻿using Inchoqate.GUI.Model.Graphics;
+using Inchoqate.GUI.View;
+using Inchoqate.GUI.ViewModel.Editors;
 
 namespace Inchoqate.GUI.Model.Events;
 
@@ -25,5 +27,32 @@ public abstract class ItemAddedEvent<T> : CollectionEvent<T>
             return false;
         
         return Dependency.Remove(Item);
+    }
+}
+
+
+public interface IRenderEditorProperty : IProperty
+{
+    public RenderEditorViewModel? RenderEditor { get; set; }
+}
+
+public class ActiveEditorChangedEvent : PropertyChangedEvent<IRenderEditorProperty, RenderEditorViewModel>
+{
+    /// <inheritdoc />
+    protected override bool Setter(IRenderEditorProperty prop, RenderEditorViewModel? val)
+    {
+        prop.RenderEditor = val;
+        return true;
+    }
+}
+
+public class RenderEditorSourceChangedEvent : PropertyChangedEvent<RenderEditorViewModel, Uri>
+{
+    /// <inheritdoc />
+    protected override bool Setter(RenderEditorViewModel prop, Uri? val)
+    {
+        var texture = val is null ? null : Texture.FromUri(val);
+        prop.SetSource(texture);
+        return true;
     }
 }

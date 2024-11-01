@@ -5,14 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:editors="clr-namespace:Inchoqate.GUI.View.Editors"
              xmlns:local="clr-namespace:Inchoqate.GUI.View.Editors.StackEditor"
-             xmlns:edits="clr-namespace:Inchoqate.GUI.ViewModel.Edits"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="200"
              Focusable="True">
 
     <UserControl.Resources>
         <local:StackEditorNodeViewWrapper x:Key="StackEditorNodeViewWrapper"/>
-        <local:StackEditorNodeViewSelector x:Key="StackEditorNodeViewSelector" />
     </UserControl.Resources>
 
     <Border
@@ -45,22 +43,18 @@
                 Grid.Row="1"
                 ItemsSource="{Binding 
                     ViewModel.Edits, 
-                    RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=editors:RenderEditorView}}"
-                ItemTemplateSelector="{StaticResource StackEditorNodeViewSelector}">
+                    RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=editors:RenderEditorView},
+                    Converter={StaticResource StackEditorNodeViewWrapper}}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type edits:EditBaseLinear}">
-                        <ContentControl
-                            Margin="5"/>
-                        <local:StackEditorNodeView 
-                            Margin="5"
-                            DataContext="{Binding .}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="{x:Type local:StackEditorNodeView}">
+                        <Setter Property="Margin" Value="5"/>        
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
             </ItemsControl>
 
         </Grid>

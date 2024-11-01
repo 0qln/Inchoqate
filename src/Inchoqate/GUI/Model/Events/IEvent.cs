@@ -4,7 +4,7 @@ public interface IEvent
 {
     EventState State { get; }
 
-    bool Do();
+    bool Do(bool force = true);
 
-    bool Undo();
+    bool Undo(bool force = true);
 }

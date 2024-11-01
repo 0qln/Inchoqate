@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Net.Http;
 using System.Windows.Media;
 using Inchoqate.Logging;
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,8 @@ public class Texture : IDisposable, IEditSource
     public const PixelType GLPixelType = PixelType.UnsignedByte;
 
     private Color _borderColor;
+
+    public Uri? Source { get; private set; }
 
     public Color BorderColor
     {
@@ -79,23 +82,63 @@ public class Texture : IDisposable, IEditSource
         BorderColor = Color.FromRgb(255, 99, 71);
     }
 
-    public static Texture? FromFile(string path, TextureUnit unit = TextureUnit.Texture0)
+    public static Texture? FromUri(Uri uri, TextureUnit unit = TextureUnit.Texture0)
     {
-        if (!File.Exists(path))
-            return null;
+        Texture result;
 
+         // todo: does this work?
+        if (uri.IsFile)
+        {
+            var path = uri.LocalPath;
+            if (!File.Exists(path))
+            {
+                Logger.LogError("File not found: {Path}", path);
+                return null;
+            }
+
+            try
+            {
+                using Stream stream = File.OpenRead(path);
+                result = FromStream(stream, unit);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Error while reading image data: {Path}", path);
+                return null;
+            }
+        }
+        else
+        {
+            try
+            {
+                using var client = new HttpClient();
+                var response = client.GetAsync(uri).Result;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Logger.LogError("Failed to download image: {Uri}", uri);
+                    return null;
+                }
+
+                using var stream = response.Content.ReadAsStream();
+                result = FromStream(stream, unit);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Failed to read image: {Uri}", uri);
+                return null;
+            }
+        }
+
+        result.Source = uri;
+        return result;
+    }
+
+    public static Texture FromStream(Stream stream, TextureUnit unit = TextureUnit.Texture0)
+    {
         StbImage.stbi_set_flip_vertically_on_load(1);
-        using Stream stream = File.OpenRead(path);
-        try
-        {
-            var image = ImageResult.FromStream(stream, PixelComponents);
-            return FromData(image.Width, image.Height, image.Data, unit);
-        }
-        catch (Exception e)
-        {
-            Logger.LogError(e, "Error while reading image data: {Path}", path);
-            return null;
-        }
+        var image = ImageResult.FromStream(stream, PixelComponents);
+        return FromData(image.Width, image.Height, image.Data, unit);
     }
 
     public static Texture FromData(int width, int height, byte[]? data = null, TextureUnit unit = TextureUnit.Texture0)

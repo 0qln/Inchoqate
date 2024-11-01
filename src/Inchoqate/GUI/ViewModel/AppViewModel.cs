@@ -1,15 +1,19 @@
-﻿using MvvmHelpers;
+﻿using Inchoqate.GUI.ViewModel.Editors;
+using Inchoqate.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace Inchoqate.GUI.ViewModel
+namespace Inchoqate.GUI.ViewModel;
+
+public class AppViewModel : BaseViewModel
 {
-    public class AppViewModel : ObservableObject
-    {
-        private ProjectViewModel? _project;
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<AppViewModel>();
 
-        public ProjectViewModel? Project
-        {
-            get => _project;
-            set => SetProperty(ref _project, value);
-        }
+    private ProjectViewModel? _project;
+
+    public ProjectViewModel? Project
+    {
+        get => _project;
+        set => SetProperty(ref _project, value);
     }
+
 }
