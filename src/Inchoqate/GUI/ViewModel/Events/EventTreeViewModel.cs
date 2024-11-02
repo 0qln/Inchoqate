@@ -321,11 +321,4 @@ public class EventTreeViewModel : BaseViewModel, IEventTree, IDeserializable<Eve
         {
         }
     }
-
-    /// <inheritdoc />
-    public bool Novelty(IEvent e, bool execute = false)
-    {
-        if (e is not EventViewModel ev) throw new NotSupportedException();
-        return Novelty(ev, execute);
-    }
 }

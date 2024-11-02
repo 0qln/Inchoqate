@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Inchoqate.GUI.Model.Events;
+namespace Inchoqate.GUI.Model;
 
 /// <summary>
-///     A model for serializing and deserializing events.
+///     A model for serializing and deserializing.
 /// </summary>
-public class EventSerdeModel
+public class ProjectSerde
 {
-    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<EventSerdeModel>();
+    private static readonly ILogger Logger = FileLoggerFactory.CreateLogger<ProjectSerde>();
 
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {
@@ -28,78 +28,56 @@ public class EventSerdeModel
 
     private static readonly JsonSerializer Json = JsonSerializer.Create(SerializerSettings);
 
-    private static string _directory;
-
-    static EventSerdeModel()
-    {
-        Directory = _directory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "0qln",
-            "Inchoqate",
-            "Projects",
-            ".tmp",
-            $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}");
-    }
+    private static readonly string StdDir = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "0qln",
+        "Inchoqate",
+        "Projects",
+        ".tmp");
 
     /// <summary>
-    ///     The directory where the events are stored.
+    ///     Serialize a project.
     /// </summary>
-    public static string Directory
+    /// <typeparam name="T"></typeparam>
+    /// <param name="object"> The object. </param>
+    /// <param name="name"> The name of object. </param>
+    public static void Serialize<T>(T @object, string name, string? dir = null)
     {
-        get => _directory;
-        set
-        {
-            _directory = value;
+        dir ??= Path.Combine(StdDir, $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}");
+        if (!Directory.Exists(dir)) Directory.CreateDirectory(StdDir);
 
-            if (!System.IO.Directory.Exists(_directory))
-                System.IO.Directory.CreateDirectory(_directory);
-        }
-    }
-
-    /// <summary>
-    ///     Serialize an event tree.
-    /// </summary>
-    /// <typeparam name="TEventTree">
-    ///     The type of the event.
-    /// </typeparam>
-    /// <param name="model"> The event tree. </param>
-    /// <param name="treeName"> The name of the tree. </param>
-    public static void Serialize<TEventTree>(TEventTree model, string treeName)
-    {
         try
         {
-            var path = Path.Combine(Directory, $"{treeName}.json");
+            var path = Path.Combine(dir, $"{name}.json");
             using var stream = File.Open(path, FileMode.OpenOrCreate, FileAccess.Write);
             using var writer = new StreamWriter(stream);
-            Json.Serialize(writer, model, typeof(TEventTree));
+            Json.Serialize(writer, @object, typeof(T));
         }
         catch (Exception e)
         {
-            Logger.LogError(e, "Failed to serialize event tree '{treeName}'", treeName);
+            Logger.LogError(e, "Failed to serialize object '{0}'", name);
         }
     }
 
     /// <summary>
-    ///     Deserialize an event tree.
+    ///     Deserialize a project.
     /// </summary>
-    /// <typeparam name="TEventTree">
-    ///     The type of the event.
-    /// </typeparam>
-    /// <param name="treeName"> The name of the tree. </param>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="name"> The name of the object. </param>
     /// <returns> The deserialized event. </returns>
-    public static TEventTree? Deserialize<TEventTree>(string treeName)
+    public static T? Deserialize<T>(string name, string dir)
     {
         try
         {
-            var path = Path.Combine(Directory, $"{treeName}.json");
+            var path = Path.Combine(dir, $"{name}.json");
             using var stream = File.Open(path, FileMode.Open, FileAccess.Read);
             using var reader = new StreamReader(stream);
             using var jsonReader = new JsonTextReader(reader);
-            return Json.Deserialize<TEventTree>(jsonReader);
+            return Json.Deserialize<T>(jsonReader);
         }
         catch (Exception e)
         {
-            Logger.LogError(e, "Failed to deserialize event tree {treeName}", treeName);
+            Logger.LogError(e, "Failed to deserialize object {0}", name);
             return default;
         }
     }

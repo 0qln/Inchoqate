@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Inchoqate.GUI.Model;
+using Inchoqate.GUI.Model.Events;
+using Newtonsoft.Json;
 
-namespace Inchoqate.GUI.Model.Events;
+namespace Inchoqate.GUI.ViewModel.Events;
 
 public interface IEventReceiver
 {
@@ -10,11 +12,11 @@ public interface IEventReceiver
     /// <param name="e"></param>
     /// <param name="execute"></param>
     /// <returns></returns>
-    public bool Novelty(IEvent e, bool execute = false);
+    public bool Novelty(EventViewModel e, bool execute = false);
 }
 
 public interface IEventDelegate<in TEvent> 
-    where TEvent : IEvent
+    where TEvent : EventViewModel
 {
     /// <summary>
     ///     The target of the delegation.
@@ -47,7 +49,7 @@ public interface IEventDelegate<in TEvent>
 ///     The type of the dependency with which the event is injected.
 /// </typeparam>
 public interface IEventDelegate<in TEvent, in TDependency> : IEventDelegate<TEvent>
-    where TEvent : IEvent, IDependencyInjected<TDependency>
+    where TEvent : EventViewModel, IDependencyInjected<TDependency>
 {
     /// <summary>
     ///     Delegates the given event to the receiver.
